@@ -1,4 +1,0 @@
-- wollen wir eine custom id, zusätzliche custom id oder nur die standard id?
-- Anpassen der maximalen Stringlänge von 300 auf 500
-- sollen wie eif alles required machen damit man es nicht überprüfen muss?
-- value von actionEvent einfach nur string? (müsste dann je nach eventtyp unterschiedlich interpretiert werden)

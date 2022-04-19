@@ -7,8 +7,9 @@ export interface ActionEvent{
 }
 
 const actionEventSchema = new Schema<ActionEvent>({
-    eventType: {type: String, enum: ['additem', 'removeitem', 'addhp', 'removehp', 'adddmg', 'removedmg', 'addmana', 'removemana']},
-    description: {type: String, maxLength: 500}
+    eventType: {type: String, required: true},
+    value: {type: String, required: true}
 });
 
 const actionEvent = model<ActionEvent>('ActionEvent', actionEventSchema);
+export default actionEvent;

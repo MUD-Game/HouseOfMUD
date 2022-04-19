@@ -1,21 +1,21 @@
 import {Schema, model} from "mongoose";
-import { Item } from "./item";
 
 export interface Action{
     id: string,
     command: string,
     output: string,
     description: string,
-    events: ActionEvent[],
-    itemsneeded: Item[]
+    events: Schema.Types.ObjectId[],
+    itemsneeded: Schema.Types.ObjectId[]
 }
 
 const actionSchema = new Schema<Action>({
     command: {type: String, required: true, unique: true, maxLength: 15},
     output: {type: String, maxLength: 500},
     description: {type: String, maxLength: 500},
-    events: {type: [ActionEvents], required: true},
-    itemsneeded: {type: [Item]}
+    events: {type: [Schema.Types.ObjectId], ref: 'ActionEvent', required: true},
+    itemsneeded: {type: [Schema.Types.ObjectId], ref: 'Item'}
 });
 
 const action = model<Action>('Action', actionSchema);
+export default action;

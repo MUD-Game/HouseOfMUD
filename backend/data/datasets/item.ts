@@ -12,3 +12,4 @@ const itemSchema = new Schema<Item>({
 });
 
 const item = model<Item>('Item', itemSchema);
+export default item;

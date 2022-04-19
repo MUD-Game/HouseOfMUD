@@ -130,5 +130,3 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# extra
-junit.xml

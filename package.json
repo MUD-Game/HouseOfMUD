@@ -4,14 +4,15 @@
   "description": "MUD-Game provider",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage --coverageDirectory=output/coverage/jest"
   },
   "jest": {
     "coverageReporters": [
       "text"
     ],
     "reporters": [
-      "default"
+      "default",
+      "jest-junit"
     ],
     "preset": "ts-jest",
     "testEnvironment": "node",
@@ -21,6 +22,10 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/"
     ]
+  },
+  "jest-junit": {
+    "output": "output/coverage/junit/junit.xml",
+    "usePathForSuiteName": "true"
   },
   "repository": {
     "type": "git",
@@ -40,6 +45,7 @@
   },
   "dependencies": {
     "jest": "^27.5.1",
+    "jest-junit": "^13.1.0",
     "ts-jest": "^27.1.4"
   }
 }

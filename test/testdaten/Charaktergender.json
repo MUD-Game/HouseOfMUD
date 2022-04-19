@@ -1,0 +1,14 @@
+{
+    "CharacterSpecies": [
+        {
+        "id": "1",
+        "name": "Mann",
+        "description": "männliches Geschlecht"
+        },
+        {
+        "id": "2",
+        "name": "Frau",
+        "description": "weibliches Geschlecht"
+        }
+        ]
+       }

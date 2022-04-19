@@ -1,0 +1,42 @@
+{
+    "Room": [
+       {
+       "id": 1,
+       "name": "der erste Raum",
+       "description": "Der Raum in dem alles begann",
+       "npcs": [
+        {
+        "id": "1",
+        "name": "Bernd, der Barde",
+        "description": "Bernd liebt die Musik",
+        "species": "Hexer"
+        }
+        ],
+        "items":"",
+        "connections":"",
+        "actions":""
+       },
+       {
+        "id": 2,
+        "name": "der zweite Raum",
+        "description": "Der Raum nach dem Start",
+        "npcs": [
+         {
+         "id": "3",
+         "name": "Bernd, der Bardere",
+         "description": "Bernd liebt die Musik",
+         "species": "Hexer"
+         },
+         {
+            "id": "2",
+            "name": "Efi, der Elf",
+            "description": "Efi kommt aus dem Wald der Feen",
+            "species": "Elf"
+            }
+         ],
+         "items":"",
+         "connections":"",
+         "actions":""
+        }
+       ]
+      }

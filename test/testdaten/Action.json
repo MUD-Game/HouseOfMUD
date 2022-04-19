@@ -1,0 +1,28 @@
+{
+    "Action": [
+        {
+            "id": "1",
+            "command": "craft Schwert",
+            "output": "",
+            "description":"Du erhältst ein Steinschwert",
+            "events": [{
+                "eventtype": "additem",
+                "value": "1"
+                },
+                {
+                "eventtype": "adddmg",
+                "value": 2
+                }
+            ],
+            "itemsneeded":"Stock, Stein"
+        },
+        {
+            "id": "2",
+            "command": "springe",
+            "output": "Du bist gesprungen",
+            "description":"Mit diesem Befehl kannstt du springen",
+            "events": null,
+            "itemsneeded": null
+        }
+        ]
+       }

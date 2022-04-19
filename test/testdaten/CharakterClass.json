@@ -1,0 +1,26 @@
+{
+    "CharacterSpecies": [
+        {
+        "id": "1",
+        "name": "Magier",
+        "description": "Magier besitzen besondere Zauberkräfte",
+        "maxHP": 100,
+        "maxDmg": 20,
+        "maxMana": 100,
+        "startHP": 100,
+        "startDmg": 20,
+        "startMana": 100
+        },
+        {
+        "id": "2",
+        "name": "Kundschafter",
+        "description": "Kundschafter kämpfen mit Bogen",
+        "maxHP": 80,
+        "maxDmg": 15,
+        "maxMana": 200,
+        "startHP": 80,
+        "startDmg": 15,
+        "startMana": 200
+        }
+        ]
+       }

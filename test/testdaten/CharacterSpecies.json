@@ -1,0 +1,14 @@
+{
+    "CharacterSpecies": [
+        {
+        "id": "1",
+        "name": "Hexer",
+        "description": "Hexer besitzen besonder Zauberkräfte"
+        },
+        {
+        "id": "2",
+        "name": "Elf",
+        "description": "Elfen sind liebewürdige Wesen"
+        }
+        ]
+       }

@@ -2,6 +2,7 @@ import React from 'react';
 
 type AuthContextType = {
   user: any;
+  token: string;
   isAuthenticated: () => Promise<boolean>;
   login: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
   register: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
@@ -28,7 +29,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   let register = (newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
     
   }
-  let value = { user, login, logout, register, isAuthenticated };
+  let value = { user, token, login, logout, register, isAuthenticated };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

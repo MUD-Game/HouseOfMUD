@@ -22,7 +22,7 @@ const clearLoginCookie = () => {
 
 const authProvider = {
     login(username: string, password: string, success: (token:string)=>void, error: (error:string)=>void) {
-      
+        
     },
     logout(callback: VoidFunction) {
         clearLoginCookie();

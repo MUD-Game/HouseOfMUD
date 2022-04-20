@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useAuth } from 'src/hooks/useAuth';
-import { GetDungeonsResponse, GetMyDungeonsResponse, supervisor } from 'src/services/supervisor';
+import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse, supervisor } from 'src/services/supervisor';
 import  AllDungeons  from './AllDungeons';
 type DashboardProps = {
 }
@@ -10,11 +10,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     let auth = useAuth();
     let [allDungeons, setAllDungeons] = React.useState<GetDungeonsResponse>();
     let [myDungeons, setMyDungeons] = React.useState<GetMyDungeonsResponse>();
-    useEffect(() => {
-        supervisor.getAllDungeons(setAllDungeons, console.log)
-        supervisor.getAllDungeons(setMyDungeons, console.log);
-    }, [])
 
+    useEffect(() => {
+        let request : GetDungeonsRequest = {
+            user: auth.user,
+            auth: auth.token,
+        }
+        supervisor.getDungeons(request,setAllDungeons, console.log)
+        supervisor.getMyDungeons(request,setMyDungeons, console.log);
+    }, [])
     return (
         <div>
             <h1>Dashboard</h1>

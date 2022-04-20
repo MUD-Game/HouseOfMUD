@@ -11,7 +11,7 @@ export type Character = {
     gender: string;
 };
 
-export type CharacterStats = {
+export interface CharacterStats  {
     maxhp: number,
     hp: number,
     maxdmg: number,
@@ -20,46 +20,50 @@ export type CharacterStats = {
     mana: number
 }
 
+export interface CharacterClass  {
+    id: number;
+    name: string;
+    description: string;
+    maxHp: number;
+    maxDmg: number;
+    maxMana: number;
+
+}
+
+export interface SupervisorResponse {
+    ok: number
+}
+
+export interface ErrorResponse extends SupervisorResponse {
+    error: string
+}
+
+
 /**
  * Authenticates User via POST: /auth with either a token or password
  */
-export type AuthenticateRequest = {
+export interface AuthenticateRequest  {
     user: string;
-    password: string;
-} | {
-    user: string;
-    token: string;
+    password?: string;
+    token?: string;
 }
 
-export type AuthenticateResponse = {
-    ok: 1;
+export interface AuthenticateResponse extends SupervisorResponse {
     authToken: string;
 }
 
 /**
  * Login to a dungeon via POST: /login/:dungeonId
  */
-export type LoginRequest = {
+export interface LoginRequest  {
     user: string;
     character: string;
     auth: string;
 }
 
-type ErrorResponse = {
-    ok: 0;
-    error: string;
-}
+export interface LoginResponse extends SupervisorResponse {}
 
-type OkResponse = {
-    ok: 1;
-}
-
-export type LoginResponse = OkResponse
-
-
-
-
-type DungeonActionRequest = {
+interface DungeonActionRequest  {
     user: string;
     dungeon: string;
     auth: string;
@@ -67,20 +71,24 @@ type DungeonActionRequest = {
 /**
  * Starts a dungeon via POST: /startDungeon
  */
-export type StartDungeonRequest = DungeonActionRequest
-export type StartDungeonResponse = OkResponse
+export interface StartDungeonRequest {
+    user: string;
+    dungeon: string;
+    auth: string;
+}
+export interface StartDungeonResponse extends SupervisorResponse {}
 /**
  * Stops a dungeon via POST: /stopDungeon
  */
-export type StopDungeonRequest = DungeonActionRequest
-export type StopDungeonResponse = OkResponse
+export interface StopDungeonRequest extends DungeonActionRequest {}
+export interface StopDungeonResponse extends SupervisorResponse {}
 
-export type GetDungeonsRequest = {
+export interface GetDungeonsRequest  {
     user: string;
     auth: string;
 }
 
-type DungeonResponseData =
+interface DungeonResponseData 
     {
         id: string;
         name: string;
@@ -92,93 +100,152 @@ type DungeonResponseData =
 export type GetDungeonsResponse = DungeonResponseData[]
 
 
-export type GetMyDungeonsRequest = GetDungeonsRequest
-export type GetMyDungeonsResponse = GetDungeonsResponse
+export interface GetMyDungeonsRequest extends GetDungeonsRequest {}
+export interface GetMyDungeonsResponse extends GetDungeonsResponse {}
 
-export type CreateDungeonRequest = {
+export interface CreateDungeonRequest  {
     user: string;
     auth: string;
     dungeonData: any; //TODO: define Dungeon
 }
 
-export type CreateDungeonResponse = OkResponse
+export interface CreateDungeonResponse extends SupervisorResponse {}
 
-export type EditDungeonRequest = CreateDungeonRequest & { dungeon: string }
-export type EditDungeonResponse = CreateDungeonResponse
+export interface EditDungeonRequest extends CreateDungeonRequest { dungeon: string }
+export interface EditDungeonResponse extends CreateDungeonResponse {}
 
-export type DeleteDungeonRequest = {
+export interface DeleteDungeonRequest  {
     user: string;
     auth: string;
     dungeon: string;
 }
-export type DeleteDungeonResponse = OkResponse
+export interface DeleteDungeonResponse extends SupervisorResponse {}
 
-export type GetDungeonDataRequest = {
+export interface DungeonDataResponseData {
     user: string;
     auth: string;
     dungeon: string;
 }
 
-export type GetDungeonDataResponse = {
-    classes: [any]; // TODO: define class
-    species: [any]; // TODO: define species
-    genders: [any]; // TODO: define gender
+export type GetDungeonDataRequest = DungeonDataResponseData[];
+
+export interface GetDungeonDataResponse  {
+    classes: [{id:string, name: string, description: string}]; // TODO: define class
+    species: [{ id: string, name: string, description: string }]; // TODO: define species
+    genders: [{ id: string, name: string, description: string }]; // TODO: define gender
 }
 
-export type GetCharactersRequest = GetDungeonDataRequest
-export type GetCharactersResonse = [
+export interface GetCharactersRequest extends GetDungeonDataRequest {}
+export interface GetCharactersResponseData
     {
         character: string;
         name: string;
         class: string;
     }
-]
+export type GetCharactersResponse = GetCharactersResponseData[]
 
-export type CreateCharacterRequest = {
+export interface CreateCharacterRequest  {
     user: string;
     auth: string;
     character: any; //TODO: define Character
 }
 
-export type CreateCharacterResponse = OkResponse
+export interface CreateCharacterResponse extends SupervisorResponse { }
 
 export type GetDataType = 'dungeons' | 'mydungeons' | 'characters' | 'dungeonData'
 
-
 const supervisor = {
-    getData<T>(type:GetDataType, body:GetCharactersRequest|GetDungeonDataRequest|GetMyDungeonsRequest|GetDungeonsRequest, dataCallBack: (data: T)=>void, error: (error: ErrorResponse)=>void){
-        let apicall = '';
-        switch(type){
-            case 'dungeons':
-                apicall = '/dungeons';
-                break;
-            case 'mydungeons':
-                apicall = '/myDungeons';
-                break;
-            case 'characters':
-                apicall = '/getCharacters';
-                break;
-            case 'dungeonData':
-                apicall = '/dungeonData';
-                break;
-        }
-        fetch(connectionString + apicall, {
+    getDungeons(body:GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: GetDungeonsResponse = [
+            {
+                id: "1",
+                name: "Test Dungeon",
+                description: "This is a test dungeon",
+                maxplayercount: 10,
+                playercount: 0,
+                status: "online"
+            },
+            {
+                id: "2",
+                name: "Test Dungeon 2",
+                description: "This is a test dungeon",
+                maxplayercount: 10,
+                playercount: 0,
+                status: "offline"
+            }];
+        dataCallBack(data);
+        return;
+        fetch(connectionString + "/dungeons", {
             method: 'GET',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getDungeons(body:GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
-        this.getData<GetDungeonsResponse>('dungeons', body, dataCallBack, error);
-    },
     getMyDungeons(body:GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
-        this.getData<GetMyDungeonsResponse>('mydungeons', body, dataCallBack, error);
+        let data: GetMyDungeonsResponse = [
+            {
+                id: "1",
+                name: "Test Dungeon",
+                description: "This is a test dungeon",
+                maxplayercount: 10,
+                playercount: 0,
+                status: "online"
+            }];
+        dataCallBack(data);
+        return;
+        fetch(connectionString + "/myDungeons", {
+            method: 'GET',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getCharacters(body:GetCharactersRequest, dataCallBack: (data: GetCharactersResonse)=>void, error: (error: ErrorResponse)=>void){
-        this.getData<GetCharactersResonse>('characters', body, dataCallBack, error);
+    getCharacters(body:GetCharactersRequest, dataCallBack: (data: GetCharactersResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: GetCharactersResponse = [
+            {
+                character: "1",
+                name: "Test Character",
+                class: "1"
+            }
+        ]
+        ;
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/getCharacters', {
+            method: 'GET',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
     getDungeonData(body:GetDungeonDataRequest, dataCallBack: (data: GetDungeonDataResponse)=>void, error: (error: ErrorResponse)=>void){
-        this.getData<GetDungeonDataResponse>('dungeonData', body, dataCallBack, error);
-    }
+        let data: GetDungeonDataResponse = {
+            classes: [
+                {
+                    id: "1",
+                    name: "Test Class",
+                    description: "This is a test class"
+                }
+            ],
+            species: [
+                {
+                    id: "1",
+                    name: "Test Species",
+                    description: "This is a test species"
+                }
+            ],
+            genders: [
+                {
+                    id:"2",
+                    name: "Test gender",
+                    description: "This is a test gender"
+                }
+            ]
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/dungeonData', {
+            method: 'GET',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    
+
 }
 
 export { supervisor };

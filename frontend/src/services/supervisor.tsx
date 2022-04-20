@@ -178,9 +178,6 @@ const supervisor = {
     },
     getDungeonData(body:GetDungeonDataRequest, dataCallBack: (data: GetDungeonDataResponse)=>void, error: (error: ErrorResponse)=>void){
         this.getData<GetDungeonDataResponse>('dungeonData', body, dataCallBack, error);
-    },
-    getAllCharacters(dungeonId: string, characterId: string, dataCallback: (data: Character[]) => void, error: (error: string) => void) {
-        fetch(`${connectionString}/dungeons/${dungeonId}/characters`)
     }
 }
 

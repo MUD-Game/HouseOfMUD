@@ -1,4 +1,5 @@
 import {Schema, model} from "mongoose";
+import { CharacterStats } from "./charcterStats";
 
 export interface Character{
     id: string,
@@ -7,8 +8,8 @@ export interface Character{
     characterClass: Schema.Types.ObjectId,
     characterSpezies: Schema.Types.ObjectId,
     characterGender: Schema.Types.ObjectId,
-    maxStats: Schema.Types.ObjectId,
-    currentStats: Schema.Types.ObjectId,
+    maxStats: CharacterStats,
+    currentStats: CharacterStats,
     position: Schema.Types.ObjectId,
     inventory: Schema.Types.ObjectId[]
 }

@@ -6,7 +6,7 @@ export interface Item{
     description: string
 }
 
-const itemSchema = new Schema<Item>({
+export const itemSchema = new Schema<Item>({
     name: {type: String, maxLength: 50},
     description: {type: String, maxLength: 500}
 });

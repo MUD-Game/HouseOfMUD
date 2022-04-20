@@ -9,7 +9,7 @@ export interface Action{
     itemsneeded: Schema.Types.ObjectId[]
 }
 
-const actionSchema = new Schema<Action>({
+export const actionSchema = new Schema<Action>({
     command: {type: String, required: true, unique: true, maxLength: 15},
     output: {type: String, maxLength: 500},
     description: {type: String, maxLength: 500},

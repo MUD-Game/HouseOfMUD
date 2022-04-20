@@ -6,8 +6,8 @@ export interface ActionEvent{
     value: string
 }
 
-const actionEventSchema = new Schema<ActionEvent>({
-    eventType: {type: String, required: true},
+export const actionEventSchema = new Schema<ActionEvent>({
+    eventType: {type: String, required: true}, //TODO enum hinzufügen
     value: {type: String, required: true}
 });
 

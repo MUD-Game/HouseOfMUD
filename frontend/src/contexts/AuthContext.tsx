@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { supervisor as authProvider } from 'src/services/supervisor';
+
 type AuthContextType = {
   user: any;
   token: string;
@@ -18,16 +20,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     return true;
   }
 
-  let login = (user: string, password: string, success: VoidFunction,error:(error: string) => void) => {
-    
+  let login = (user: string, password: string, success: VoidFunction, error: (error: string) => void) => {
+
   };
 
   let logout = (callback: VoidFunction) => {
-    
+
   };
 
   let register = (newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
-    
+
   }
   let value = { user, token, login, logout, register, isAuthenticated };
 

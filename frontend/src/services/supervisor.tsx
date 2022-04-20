@@ -1,13 +1,12 @@
 import "src/types/supervisor";
 import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetDungeonDataRequest, GetDungeonDataResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse } from "src/types/supervisor";
 
+
 const connectionString = process.env.REACT_APP_HOM_API;
-
-
 
 // TODO: connect supervisor to the real supervisor
 const supervisor = {
-    getDungeons(body:GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
+    getDungeons(body: GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetDungeonsResponse = [
             {
                 id: "1",
@@ -32,11 +31,11 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getMyDungeons(body:GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
+    getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetMyDungeonsResponse = [
             {
                 id: "1",
-                name: "Test Dungeon",
+                name: "Test My Dungeon ",
                 description: "This is a test dungeon",
                 maxplayercount: 10,
                 playercount: 0,
@@ -49,7 +48,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getCharacters(body:GetCharactersRequest, dataCallBack: (data: GetCharactersResponse)=>void, error: (error: ErrorResponse)=>void){
+    getCharacters(body: GetCharactersRequest, dataCallBack: (data: GetCharactersResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetCharactersResponse = [
             {
                 character: "1",
@@ -57,7 +56,7 @@ const supervisor = {
                 class: "1"
             }
         ]
-        ;
+            ;
         dataCallBack(data);
         return;
         fetch(connectionString + '/getCharacters', {
@@ -65,7 +64,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getDungeonData(body:GetDungeonDataRequest, dataCallBack: (data: GetDungeonDataResponse)=>void, error: (error: ErrorResponse)=>void){
+    getDungeonData(body: GetDungeonDataRequest, dataCallBack: (data: GetDungeonDataResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetDungeonDataResponse = {
             classes: [
                 {
@@ -83,7 +82,7 @@ const supervisor = {
             ],
             genders: [
                 {
-                    id:"2",
+                    id: "2",
                     name: "Test gender",
                     description: "This is a test gender"
                 }
@@ -96,7 +95,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    authenticate(body:AuthenticateRequest, dataCallBack: (data: AuthenticateResponse)=>void, error: (error: ErrorResponse)=>void){
+    authenticate(body: AuthenticateRequest, dataCallBack: (data: AuthenticateResponse) => void, error: (error: ErrorResponse) => void) {
         let data: AuthenticateResponse = {
             ok: 1,
             authToken: "xxx"
@@ -108,7 +107,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    login(body:LoginRequest, dataCallBack: (data: LoginResponse)=>void, error: (error: ErrorResponse)=>void){
+    login(body: LoginRequest, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
         let data: LoginResponse = {
             ok: 1
         }
@@ -119,7 +118,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    startDungeon(body:StartDungeonRequest, dataCallBack: (data: StartDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+    startDungeon(body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: StartDungeonResponse = {
             ok: 1
         }
@@ -130,7 +129,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    stopDungeon(body:StopDungeonRequest, dataCallBack: (data: StopDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+    stopDungeon(body: StopDungeonRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: StopDungeonResponse = {
             ok: 1
         }
@@ -141,7 +140,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    createDungoen(body:CreateDungeonRequest, dataCallBack: (data: CreateDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+    createDungoen(body: CreateDungeonRequest, dataCallBack: (data: CreateDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: CreateDungeonResponse = {
             ok: 1
         }
@@ -152,7 +151,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    editDungeon(body:EditDungeonRequest, dataCallBack: (data: EditDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+    editDungeon(body: EditDungeonRequest, dataCallBack: (data: EditDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: EditDungeonResponse = {
             ok: 1
         }
@@ -163,7 +162,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    deleteDungeon(body:DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+    deleteDungeon(body: DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: DeleteDungeonResponse = {
             ok: 1
         }
@@ -174,7 +173,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    createCharacter(body:CreateCharacterRequest, dataCallBack: (data: CreateCharacterResponse)=>void, error: (error: ErrorResponse)=>void){
+    createCharacter(body: CreateCharacterRequest, dataCallBack: (data: CreateCharacterResponse) => void, error: (error: ErrorResponse) => void) {
         let data: CreateCharacterResponse = {
             ok: 1
         }

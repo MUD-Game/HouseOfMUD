@@ -122,7 +122,11 @@ export interface DungeonDataResponseData {
     dungeon: string;
 }
 
-export type GetDungeonDataRequest = DungeonDataResponseData[];
+export type GetDungeonDataRequest = {
+    user: string;
+    auth: string;
+    dungeon: string;
+};
 
 export interface GetDungeonDataResponse {
     classes: [{ id: string; name: string; description: string }]; // TODO: define class

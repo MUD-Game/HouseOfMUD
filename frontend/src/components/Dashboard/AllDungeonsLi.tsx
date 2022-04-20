@@ -4,7 +4,7 @@ import { useGame } from "src/hooks/useGame";
 
 
 type AllDungeonLiProps = {
-    id:string;
+    id: string;
     name: string;
     description: string;
     maxplayercount: number;
@@ -32,7 +32,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, play
             <p>{playercount}/{maxplayercount}</p>
             <p>{isPrivate ? 'Private' : 'Public'}</p>
             <p>{status}</p>
-            {status==='online' && <button onClick={joinDungeon}>Join</button>}
+            {status === 'online' && <button onClick={joinDungeon}>Join</button>}
         </div>
     )
 }

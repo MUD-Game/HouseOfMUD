@@ -45,6 +45,11 @@ export type LoginRequest = {
     auth: string;
 }
 
+type ErrorResponse = {
+    ok: 0;
+    error: string;
+}
+
 type OkResponse = {
     ok: 1;
 }
@@ -137,34 +142,42 @@ export type CreateCharacterRequest = {
 
 export type CreateCharacterResponse = OkResponse
 
+export type GetDataType = 'dungeons' | 'mydungeons' | 'characters' | 'dungeonData'
+
 
 const supervisor = {
-    getAllDungeons(dataCallback: (data: GetDungeonsResponse) => void, error: (error: string) => void) {
-        let data = [
-            {
-                id: "1",
-                name: "Static-Dungeon",
-                description: "A static dungeon",
-                maxplayercount: 10,
-                playercount: 0,
-                status: 'online',
-            } 
-        ] as GetDungeonsResponse ;
-        dataCallback(data);
+    getData<T>(type:GetDataType, body:GetCharactersRequest|GetDungeonDataRequest|GetMyDungeonsRequest|GetDungeonsRequest, dataCallBack: (data: T)=>void, error: (error: ErrorResponse)=>void){
+        let apicall = '';
+        switch(type){
+            case 'dungeons':
+                apicall = '/dungeons';
+                break;
+            case 'mydungeons':
+                apicall = '/myDungeons';
+                break;
+            case 'characters':
+                apicall = '/getCharacters';
+                break;
+            case 'dungeonData':
+                apicall = '/dungeonData';
+                break;
+        }
+        fetch(connectionString + apicall, {
+            method: 'GET',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getMyDungeons(dataCallback: (data: GetMyDungeonsResponse) => void, error: (error: string) => void) {
-        let data = [
-            {
-                id: "1",
-                name: "Static-Dungeon",
-                description: "A static dungeon",
-                maxplayercount: 10,
-                playercount: 0,
-                status: "online",
-            } 
-        ] as GetMyDungeonsResponse;
-        dataCallback(data);
-
+    getDungeons(body:GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
+        this.getData<GetDungeonsResponse>('dungeons', body, dataCallBack, error);
+    },
+    getMyDungeons(body:GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
+        this.getData<GetMyDungeonsResponse>('mydungeons', body, dataCallBack, error);
+    },
+    getCharacters(body:GetCharactersRequest, dataCallBack: (data: GetCharactersResonse)=>void, error: (error: ErrorResponse)=>void){
+        this.getData<GetCharactersResonse>('characters', body, dataCallBack, error);
+    },
+    getDungeonData(body:GetDungeonDataRequest, dataCallBack: (data: GetDungeonDataResponse)=>void, error: (error: ErrorResponse)=>void){
+        this.getData<GetDungeonDataResponse>('dungeonData', body, dataCallBack, error);
     },
     getAllCharacters(dungeonId: string, characterId: string, dataCallback: (data: Character[]) => void, error: (error: string) => void) {
         fetch(`${connectionString}/dungeons/${dungeonId}/characters`)

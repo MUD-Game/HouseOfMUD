@@ -53,7 +53,7 @@ const supervisor = {
             {
                 character: "1",
                 name: "Test Character",
-                class: "1"
+                class: "Goblin"
             }
         ]
             ;

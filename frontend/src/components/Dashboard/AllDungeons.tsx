@@ -1,6 +1,6 @@
 import React from 'react';
 import AllDungeonLi from './AllDungeonsLi';
-import { GetDungeonsResponse } from 'src/services/supervisor';
+import { GetDungeonsResponse } from 'src/types/supervisor';
 type AllDungeonProps = {
     allDungeons: GetDungeonsResponse;
 }

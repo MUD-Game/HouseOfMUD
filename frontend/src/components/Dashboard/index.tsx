@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useAuth } from 'src/hooks/useAuth';
-import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse, supervisor } from 'src/services/supervisor';
+import { supervisor } from 'src/services/supervisor';
+import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
 import  AllDungeons  from './AllDungeons';
 type DashboardProps = {
 }

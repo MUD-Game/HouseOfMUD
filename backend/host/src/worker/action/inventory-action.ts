@@ -1,0 +1,3 @@
+class InventoryAction extends Action {
+
+}

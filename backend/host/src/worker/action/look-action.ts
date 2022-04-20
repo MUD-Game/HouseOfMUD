@@ -1,0 +1,3 @@
+class LookAction extends Action {
+
+}

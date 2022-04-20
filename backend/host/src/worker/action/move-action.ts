@@ -1,0 +1,3 @@
+class MoveAction extends Action {
+
+}

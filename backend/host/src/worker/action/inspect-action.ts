@@ -1,0 +1,3 @@
+class InspectAction extends Action {
+
+}

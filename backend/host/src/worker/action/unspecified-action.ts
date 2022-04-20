@@ -1,0 +1,3 @@
+class UnspecifiedAction extends Action {
+
+}

@@ -1,0 +1,3 @@
+class MessageAction extends Action {
+
+}

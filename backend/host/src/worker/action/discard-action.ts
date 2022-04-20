@@ -1,0 +1,3 @@
+class DiscardAction extends Action {
+
+}

@@ -1,0 +1,3 @@
+class DungeonAction extends Action {
+
+}

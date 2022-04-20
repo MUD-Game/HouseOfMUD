@@ -12,8 +12,8 @@ type AuthContextType = {
 let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  let [user, setUser] = React.useState<any>(null);
-  let [token, setToken] = React.useState<string>('');
+  let [user, setUser] = React.useState<any>("DummyUser");
+  let [token, setToken] = React.useState<string>('xxx');
   let isAuthenticated = async () => {
     return true;
   }

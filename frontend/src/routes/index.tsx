@@ -16,6 +16,7 @@ const IndexRouter: React.FC = (): ReactElement => {
                 <GameProvider>
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/" element={<RequireAuth><Dashboard/></RequireAuth>} />
                     <Route path="/dashboard" element={<RequireAuth><Dashboard/></RequireAuth>} />
                     <Route path="/select-character" element={<RequireAuth><CharacterCreator/></RequireAuth>} />
                     <Route path="*" element={<NotFound />} />

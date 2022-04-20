@@ -38,7 +38,6 @@ export interface ErrorResponse extends SupervisorResponse {
     error: string
 }
 
-
 /**
  * Authenticates User via POST: /auth with either a token or password
  */
@@ -154,6 +153,7 @@ export interface CreateCharacterResponse extends SupervisorResponse { }
 
 export type GetDataType = 'dungeons' | 'mydungeons' | 'characters' | 'dungeonData'
 
+// TODO: connect supervisor to the real supervisor
 const supervisor = {
     getDungeons(body:GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse)=>void, error: (error: ErrorResponse)=>void){
         let data: GetDungeonsResponse = [
@@ -244,8 +244,95 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    
-
+    authenticate(body:AuthenticateRequest, dataCallBack: (data: AuthenticateResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: AuthenticateResponse = {
+            ok: 1,
+            authToken: "xxx"
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/auth', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    login(body:LoginRequest, dataCallBack: (data: LoginResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: LoginResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/login', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    startDungeon(body:StartDungeonRequest, dataCallBack: (data: StartDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: StartDungeonResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/startDungeon', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    stopDungeon(body:StopDungeonRequest, dataCallBack: (data: StopDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: StopDungeonResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/stopDungeon', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    createDungoen(body:CreateDungeonRequest, dataCallBack: (data: CreateDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: CreateDungeonResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/createDungeon', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    editDungeon(body:EditDungeonRequest, dataCallBack: (data: EditDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: EditDungeonResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/editDungeon', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    deleteDungeon(body:DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: DeleteDungeonResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/deleteDungeon', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    createCharacter(body:CreateCharacterRequest, dataCallBack: (data: CreateCharacterResponse)=>void, error: (error: ErrorResponse)=>void){
+        let data: CreateCharacterResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/createCharacter', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    }
 }
 
 export { supervisor };

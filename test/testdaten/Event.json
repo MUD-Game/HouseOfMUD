@@ -1,0 +1,13 @@
+{
+    "Event": [
+        {
+        "eventtype": "additem",
+        "value": "1"
+        },
+
+        {
+        "eventtype": "adddmg",
+        "value": 2
+        }
+        ]
+       }

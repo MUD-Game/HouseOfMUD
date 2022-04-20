@@ -1,0 +1,274 @@
+{
+    "Dungeon": [
+       {
+       "id": "1",
+       "name": "TestdungeonEins",
+       "creatorID": "1",
+       "masterID": "1",
+       "maxPlayers": 2,
+       "currentPlayers": 0,
+       "species": [
+            {
+            "id": "1",
+            "name": "Hexer",
+            "description": "Hexer besitzen besonder Zauberkräfte"
+            },
+            {
+            "id": "2",
+            "name": "Elf",
+            "description": "Elfen sind liebewürdige Wesen"
+            }
+            ],
+       "classes":[
+            {
+            "id": "1",
+            "name": "Magier",
+            "description": "Magier besitzen besondere Zauberkräfte",
+            "maxHP": 100,
+            "maxDmg": 20,
+            "maxMana": 100,
+            "startHP": 100,
+            "startDmg": 20,
+            "startMana": 100
+            },
+            {
+            "id": "2",
+            "name": "Kundschafter",
+            "description": "Kundschafter kämpfen mit Bogen",
+            "maxHP": 80,
+            "maxDmg": 15,
+            "maxMana": 200,
+            "startHP": 80,
+            "startDmg": 15,
+            "startMana": 200
+            }
+            ],
+       "genders": [
+        {
+        "id": "1",
+        "name": "Mann",
+        "description": "männliches Geschlecht"
+        },
+        {
+        "id": "2",
+        "name": "Frau",
+        "description": "weibliches Geschlecht"
+        }
+        ],
+       "rooms": [
+          {
+          "id": 1,
+          "name": "der erste Raum",
+          "description": "Der Raum in dem alles begann",
+          "npcs": [
+           {
+           "id": "1",
+           "name": "Bernd, der Barde",
+           "description": "Bernd liebt die Musik",
+           "species": "Hexer"
+           }
+           ],
+           "items":"",
+           "connections":"",
+           "actions":""
+          },
+          {
+           "id": 2,
+           "name": "der zweite Raum",
+           "description": "Der Raum nach dem Start",
+           "npcs": [
+            {
+            "id": "3",
+            "name": "Bernd, der Bardere",
+            "description": "Bernd liebt die Musik",
+            "species": "Hexer"
+            },
+            {
+               "id": "2",
+               "name": "Efi, der Elf",
+               "description": "Efi kommt aus dem Wald der Feen",
+               "species": "Elf"
+               }
+            ],
+            "items":"",
+            "connections":"",
+            "actions":""
+           }
+          ],
+       "blacklist": [
+          {
+          "id": "1",
+          "username": "Ash1",
+          "password": "Alabama"
+          },
+          {
+          "id": "2",
+          "username": "Brathering2",
+          "password": "Arkansas"
+          }
+          ],
+       "actions": [
+          {
+              "id": "1",
+              "command": "craft Schwert",
+              "output": "",
+              "description":"Du erhältst ein Steinschwert",
+              "events": [{
+                  "eventtype": "additem",
+                  "value": "1"
+                  },
+                  {
+                  "eventtype": "adddmg",
+                  "value": 2
+                  }
+              ],
+              "itemsneeded":"Stock, Stein"
+          },
+          {
+              "id": "2",
+              "command": "springe",
+              "output": "Du bist gesprungen",
+              "description":"Mit diesem Befehl kannstt du springen",
+              "events": null,
+              "itemsneeded": null
+          }
+          ]
+    
+       },
+          {
+          "id": "2",
+          "name": "TestdungeonZwei",
+          "creatorID": "2",
+          "masterID": "3",
+          "maxPlayers": 5,
+          "currentPlayers": 3,
+          "species": [
+               {
+               "id": "1",
+               "name": "Hexer",
+               "description": "Hexer besitzen besonder Zauberkräfte"
+               },
+               {
+               "id": "2",
+               "name": "Elf",
+               "description": "Elfen sind liebewürdige Wesen"
+               }
+               ],
+          "classes":[
+               {
+               "id": "1",
+               "name": "Magier",
+               "description": "Magier besitzen besondere Zauberkräfte",
+               "maxHP": 100,
+               "maxDmg": 20,
+               "maxMana": 100,
+               "startHP": 100,
+               "startDmg": 20,
+               "startMana": 100
+               },
+               {
+               "id": "2",
+               "name": "Kundschafter",
+               "description": "Kundschafter kämpfen mit Bogen",
+               "maxHP": 80,
+               "maxDmg": 15,
+               "maxMana": 200,
+               "startHP": 80,
+               "startDmg": 15,
+               "startMana": 200
+               }
+               ],
+          "genders": [
+           {
+           "id": "1",
+           "name": "Mann",
+           "description": "männliches Geschlecht"
+           },
+           {
+           "id": "2",
+           "name": "Frau",
+           "description": "weibliches Geschlecht"
+           }
+           ],
+          "rooms": [
+             {
+             "id": 1,
+             "name": "der erste Raum",
+             "description": "Der Raum in dem alles begann",
+             "npcs": [
+              {
+              "id": "1",
+              "name": "Bernd, der Barde",
+              "description": "Bernd liebt die Musik",
+              "species": "Hexer"
+              }
+              ],
+              "items":"",
+              "connections":"",
+              "actions":""
+             },
+             {
+              "id": 2,
+              "name": "der zweite Raum",
+              "description": "Der Raum nach dem Start",
+              "npcs": [
+               {
+               "id": "3",
+               "name": "Bernd, der Bardere",
+               "description": "Bernd liebt die Musik",
+               "species": "Hexer"
+               },
+               {
+                  "id": "2",
+                  "name": "Efi, der Elf",
+                  "description": "Efi kommt aus dem Wald der Feen",
+                  "species": "Elf"
+                  }
+               ],
+               "items":"",
+               "connections":"",
+               "actions":""
+              }
+             ],
+          "blacklist": [
+             {
+             "id": "1",
+             "username": "Ash1",
+             "password": "Alabama"
+             },
+             {
+             "id": "2",
+             "username": "Brathering2",
+             "password": "Arkansas"
+             }
+             ],
+          "actions": [
+             {
+                 "id": "1",
+                 "command": "craft Schwert",
+                 "output": "",
+                 "description":"Du erhältst ein Steinschwert",
+                 "events": [{
+                     "eventtype": "additem",
+                     "value": "1"
+                     },
+                     {
+                     "eventtype": "adddmg",
+                     "value": 2
+                     }
+                 ],
+                 "itemsneeded":"Stock, Stein"
+             },
+             {
+                 "id": "2",
+                 "command": "springe",
+                 "output": "Du bist gesprungen",
+                 "description":"Mit diesem Befehl kannstt du springen",
+                 "events": null,
+                 "itemsneeded": null
+             }
+             ]
+       
+          }
+     ]
+}

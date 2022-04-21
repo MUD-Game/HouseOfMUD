@@ -10,6 +10,7 @@
 
 
 import React from "react"
+import { Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "src/hooks/useGame";
 
@@ -38,14 +39,24 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, play
     }
 
     return (
-        <div>
-            <h2>{name}</h2>
-            <p>{description}</p>
-            <p>{playercount}/{maxplayercount}</p>
-            <p>{isPrivate ? 'Private' : 'Public'}</p>
-            <p>{status}</p>
-            {status === 'online' && <button onClick={joinDungeon}>Join</button>}
-        </div>
+        <Row className="dashboard-list align-items-center py-2">
+            <div className="col-3">
+                <b>{name}</b>
+            </div>
+            <div className="col-5">
+                {description}            
+            </div>
+            <div className="col-1">
+                {playercount}/{maxplayercount}          
+            </div>
+            <div className="col-1 text-center">        
+                {isPrivate ? '' : '🔒'}
+                {status === "online" ? '🟢' : '🔴'}
+            </div>
+            <div className="col-2">         
+                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>}
+            </div>
+        </Row>
     )
 }
 

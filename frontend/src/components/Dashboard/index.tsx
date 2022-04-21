@@ -58,6 +58,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
                 </Nav.Item>
             </Nav>
+            
             {dungeonView === "all" && allDungeons ? <AllDungeons allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <AllDungeons allDungeons={myDungeons} /> : null}
         </Container>

@@ -14,6 +14,7 @@ html, body {
   font: 20px/1.5 'Segoe UI', 'Calibri', Helvetica, sans-serif;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -54,6 +55,51 @@ a:hover {
   border: solid var(--accent);
   border-width: 3px 4px 3px 5px;
   border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
+}
+
+.btn-standard {
+  width: 100%;
+  color: var(--textcolor);
+}
+
+.btn-standard:hover {
+  color: var(--textcolor);
+  background-color: var(--accentlight);
+}
+
+/* Tabs Style */
+.nav-tabs {
+  border-bottom: 2px solid var(--textcolor);
+}
+.nav-link {
+  background-color: transparent !important;
+  font-weight: 400;
+  color: var(--textcolor);
+}
+.nav-link:focus {
+  background-color: transparent !important;
+  color: var(--textcolor);
+  border-color: transparent !important;
+}
+.nav-link:hover {
+  background-color: transparent !important;
+  font-weight: 400;
+  color: var(--accentlight);
+  border-color: transparent !important;
+}
+.nav-link.active {
+  background-color: var(--accentlight) !important;
+  color: white !important;
+  border: solid var(--accent);
+  border-color: var(--textcolor) !important;
+  border-width: 3px 4px 0 5px;
+  border-radius: 1% 98% 1% 99% /99% 2% 50% 1%;
+}
+
+.dashboard-list {
+  border: solid var(--accent);
+  border-radius: 0 0 2% 0/0 0 20% 0;
+  border-width: 0 0 3px;
 }
 
 code {

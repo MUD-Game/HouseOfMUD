@@ -152,7 +152,7 @@ export class AmqpAdapter {
      * Sends message to everyone in dungeon. ANPASSEN
      * @param msg Message to send.
      */
-    async broadcastFork(msg: any): Promise<void> {
+    async broadcast(msg: any): Promise<void> {
         if (this.channel !== undefined) {
             try {
                 this.channel.publish(this.clientExchange, `${this.dungeonID}.broadcast`, Buffer.from(JSON.stringify(msg)));

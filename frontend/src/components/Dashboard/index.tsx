@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Container } from 'react-bootstrap';
+import { Container, Nav } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { supervisor } from 'src/services/supervisor';
 import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
@@ -24,19 +24,25 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         supervisor.getMyDungeons(request, setMyDungeons, console.log);
     }, [])
 
-    const toggleView = () => {
-        if (dungeonView === "all") {
-            setDungeonView("my");
-        } else {
+    const handleSelect = (eventKey: string | null) => {
+        if (eventKey === "all") {
             setDungeonView("all");
+        } else {
+            setDungeonView("my");
         }
     }
 
     return (
         <Container>
-            <h1>Dashboard</h1>
-            <p>Hello {auth.user}</p>
-            <button onClick={toggleView}>{dungeonView == "all" ? "myDungeons" : "allDungeons"}</button>
+            <h2>Dashboard</h2>
+            <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
+                <Nav.Item>
+                    <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
+                </Nav.Item>
+            </Nav>
             {dungeonView === "all" && allDungeons ? <AllDungeons allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <AllDungeons allDungeons={myDungeons} /> : null}
         </Container>

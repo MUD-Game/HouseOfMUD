@@ -9,7 +9,6 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons }) => {
 
     return (
         <div>
-            <h1>All Dungeons</h1>
             {allDungeons.map((dungeon, index)=>{
                 return (
                     <AllDungeonLi key={index} isPrivate={false} {...dungeon}/>

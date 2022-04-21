@@ -4,7 +4,10 @@ import { useGame } from 'src/hooks/useGame'
 import Lama from '../../assets/Lama.png'
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
-import { GetCharactersRequest, GetCharactersResponse } from 'src/types/supervisor';
+import { GetCharactersRequest, GetCharactersResponse, GetDungeonDataResponse } from 'src/types/supervisor';
+import CreateNewCharacter from './CreateNewCharacter';
+import AvailableCharacters from './AvailableCharacters';
+import { Navigate } from 'react-router-dom';
 type CharacterCreatorProps = {}
 
 const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
@@ -13,19 +16,36 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     let auth = useAuth();
     let dungeon = game.dungeon;
     let user = auth.user;
-    const [character, setCharacter] = React.useState<GetCharactersResponse>([] as GetCharactersResponse);
+    const [characters, setCharacters] = React.useState<GetCharactersResponse>([] as GetCharactersResponse);
+    const [dungeonData, setDungeonData] = React.useState<GetDungeonDataResponse>({} as GetDungeonDataResponse);
     useEffect(() => {
+        if (!dungeon) return;
         let requestBody: GetCharactersRequest = {
             user: user,
             auth: auth.token,
             dungeon: dungeon
         }
-        supervisor.getCharacters(requestBody, setCharacter, console.log);
+        supervisor.getDungeonData(requestBody, setDungeonData, console.log);
+        supervisor.getCharacters(requestBody, setCharacters, console.log);
     }, []);
 
+
+    const fetchNewCharacters = () => {
+        let requestBody: GetCharactersRequest = {
+            user: user,
+            auth: auth.token,
+            dungeon: dungeon
+        }
+        supervisor.getCharacters(requestBody, setCharacters, console.log);
+    }
+
+    if (!dungeon) return <Navigate to="/dashboard" />;
     return (
         <div>
-            <img id="lama" src={Lama} alt="Lama" />
+            <h1>Charakter Configuratorinator 300</h1>
+            <h2>{dungeon}</h2>
+            {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter onCreate={fetchNewCharacters} {...dungeonData} /> : null}
+            {characters !== [] ? <AvailableCharacters characters={characters} /> : null}
         </div>
     )
 }

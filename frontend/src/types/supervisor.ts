@@ -145,7 +145,14 @@ export type GetCharactersResponse = GetCharactersResponseData[];
 export interface CreateCharacterRequest {
     user: string;
     auth: string;
-    character: any; //TODO: define Character
+    dungeon: string;
+    character: {
+        name: string;
+        fullname: string;
+        class: string;
+        species: string;
+        gender: string;
+    }; //TODO: define Character
 }
 
 export interface CreateCharacterResponse extends SupervisorResponse {}

@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Unit Tests" tests="3" failures="1" errors="0" time="12.577">
-  <testsuite name="backend\host\test\action-handling.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-04-21T15:00:03" time="8.557" tests="1">
-    <testcase classname="-test" name="-test" time="0.008">
+<testsuites name="Unit Tests" tests="3" failures="0" errors="0" time="11.215">
+  <testsuite name="backend\host\test\action-handling.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-04-21T15:11:58" time="8.295" tests="1">
+    <testcase classname="action-handling.test.ts" name="test" time="0.009">
     </testcase>
   </testsuite>
-  <testsuite name="jest.test.ts" errors="0" failures="1" skipped="0" timestamp="2022-04-21T15:00:03" time="8.954" tests="2">
-    <testcase classname="-test jenkins pipeline2" name="-test jenkins pipeline2" time="0.005">
+  <testsuite name="jest.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-04-21T15:11:58" time="8.79" tests="2">
+    <testcase classname="jest.test.ts" name="test jenkins pipeline2" time="0.004">
     </testcase>
-    <testcase classname="-test jenkins pipeline3" name="-test jenkins pipeline3" time="0.005">
-      <failure>Error: expect(received).toBe(expected) // Object.is equality
-
-Expected: 3
-Received: 4
-    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUD\HouseOfMUD\jest.test.ts:6:17)
-    at Promise.then.completed (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
-    at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
-    at _callCircusTest (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
-    at processTicksAndRejections (node:internal/process/task_queues:96:5)
-    at _runTest (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
-    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
-    at run (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
-    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)</failure>
+    <testcase classname="jest.test.ts" name="test jenkins pipeline3" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>

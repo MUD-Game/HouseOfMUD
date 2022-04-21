@@ -1,9 +1,21 @@
+/**
+ * @module AllDungeonLi
+ * @category React Components
+ * @description A list item for the AllDungeon-List
+ * @props {@linkcode AllDungeonLiProps}
+ * ```jsx
+ * ...
+ * ```
+ */
+
+
 import React from "react"
 import { useNavigate } from "react-router-dom";
 import { useGame } from "src/hooks/useGame";
 
 
-type AllDungeonLiProps = {
+
+export interface AllDungeonLiProps {
     id: string;
     name: string;
     description: string;

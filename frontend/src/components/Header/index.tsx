@@ -1,3 +1,11 @@
+/**
+ * @module Header
+ * @category React Components
+ * @description Header component
+ * ```jsx
+ *  <LogoutButton />
+ * ```
+ */
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -17,13 +25,13 @@ const Header: React.FC<HeaderProps> = (props) => {
             </Row>
             <Row className="mt-5">
                 <Col className="text-start">
-                    <p className="headline">Wilkommen: <b>{ auth.user }</b></p>
+                    <p className="headline">Wilkommen: <b>{auth.user}</b></p>
                 </Col>
                 <Col className="text-end">
-                    <button className="btn btn-danger" onClick={()=>{
-                        auth.logout(()=>{
+                    <button className="btn btn-danger" onClick={() => {
+                        auth.logout(() => {
                         });
-                        navigate("/login");                        
+                        navigate("/login");
                     }}>Logout</button>
                 </Col>
             </Row>

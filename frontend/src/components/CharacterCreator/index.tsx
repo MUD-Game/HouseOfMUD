@@ -1,3 +1,17 @@
+/**
+ * @module CharacterCreator
+ * @category React Components
+ * @description Component to handle Character-Creation and to join a dungeon.
+ * @children {@linkcode CreateNewCharacter}, {@linkcode AvailableCharacters}
+ * @props {@linkcode CharacterCreatorProps}
+ * ```jsx
+ * <>
+ *  <CreateNewCharacter />
+ *  <AvailableCharacters />
+ * </>
+ * ```
+ */
+
 import React from 'react'
 import { useEffect } from 'react'
 import { useGame } from 'src/hooks/useGame'
@@ -8,7 +22,8 @@ import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResp
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
-type CharacterCreatorProps = {}
+export interface CharacterCreatorProps { }
+
 
 const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
 

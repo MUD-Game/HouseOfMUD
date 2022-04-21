@@ -1,10 +1,18 @@
+
+/**
+ * @module CreateNewCharacter
+ * @category React Components
+ * @description Component to create a new character
+ * @props {@linkcode CreateNewCharacterProps}
+ */
+
 import React, { FormEvent } from 'react';
 import { supervisor } from 'src/services/supervisor';
-import { CreateCharacterRequest, GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { CreateCharacterRequest, GetCharacterAttributesResponse } from 'src/types/supervisor';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 
-interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
+export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
 }
 

@@ -34,6 +34,7 @@
   ],
   "typedocOptions": {
     "entryPoints": ["src/"],
+    "categorizeByGroup": true,
     "entryPointStrategy": "expand",
     "out": "../TypeDoc-Documentation/Frontend/",
     "name": "Frontend",

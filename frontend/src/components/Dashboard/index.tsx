@@ -1,3 +1,16 @@
+/**
+ * @module Dashboard
+ * @category React Components
+ * @description The dashboard is the main page of the application.
+ * @children {@linkcode AllDungeons}, {@linkcode MyDungeons}
+ * @props {@linkcode DashboardProps}
+ * ```jsx
+ * <>
+ *  <AllDungeons />
+ *  <MyDungeons />
+ * </>
+ * ```
+ */
 import React, { useEffect } from 'react'
 import { Container, Nav } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
@@ -5,7 +18,9 @@ import { supervisor } from 'src/services/supervisor';
 import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
 import AllDungeons from './AllDungeons';
 import "./index.css"
-type DashboardProps = {
+
+
+export type DashboardProps = {
 }
 
 const Dashboard: React.FC<DashboardProps> = (props) => {

@@ -1,3 +1,11 @@
+/**
+ * @module AvailableCharactersLi
+ * @category React Components
+ * @description List item for the AvailableCharacters-List
+ * @props {@linkcode AvailableCharactersLiProps}
+ */
+
+
 import React from 'react';
 import { GetCharactersResponseData, LoginRequest } from 'src/types/supervisor';
 import { supervisor } from 'src/services/supervisor';
@@ -5,7 +13,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
 
-interface AvailableCharactersLiProps {
+export interface AvailableCharactersLiProps {
     character: GetCharactersResponseData
 }
 

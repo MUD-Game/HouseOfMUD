@@ -1,3 +1,16 @@
+/**
+ * @module Login
+ * @category React Components
+ * @description Component to handle Login-In
+ * @hooks {@linkcode useAuth}
+ * ```jsx
+ * <>
+ *  <AvailableCharactersLi/>[]
+ * </>
+ * ```
+ */
+
+
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
@@ -20,7 +33,7 @@ const Login: React.FC<LoginProps> = (props) => {
         let password = formData.get("password") as string;
         auth.login(username, password, () => {
             navigate(from, { replace: true });
-        }, ()=>{
+        }, () => {
             alert("Login failed");
         });
     }

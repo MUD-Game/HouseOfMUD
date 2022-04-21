@@ -1,7 +1,14 @@
+/**
+ * @module Busy
+ * @category React Components
+ * @description Is displayed if data is loaded or the page is busy
+ * @props {@linkcode BusyProps}
+ */
+
 import React from 'react'
 import Lama from '../../assets/Lama.png'
 import "./index.css"
-type BusyProps = {}
+export interface BusyProps { }
 
 const Busy: React.FC<BusyProps> = (props) => {
     return (

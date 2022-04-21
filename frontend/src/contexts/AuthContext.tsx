@@ -3,7 +3,7 @@ import React from 'react';
 import { supervisor as authProvider } from 'src/services/supervisor';
 
 type AuthContextType = {
-  user: any;
+  user: string;
   token: string;
   isAuthenticated: () => Promise<boolean>;
   login: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
@@ -14,7 +14,7 @@ type AuthContextType = {
 let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  let [user, setUser] = React.useState<any>("DummyUser");
+  let [user, setUser] = React.useState<string>("DummyUser");
   let [token, setToken] = React.useState<string>('xxx');
   let isAuthenticated = async () => {
     return true;

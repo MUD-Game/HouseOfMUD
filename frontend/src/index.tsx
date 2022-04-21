@@ -12,9 +12,7 @@ const root = ReactDOM.createRoot(
 const LazyComponent = React.lazy(() => import('./routes/index'));
 
 root.render(
-  <React.StrictMode>
-    <React.Suspense fallback={<Busy />}>
-      <LazyComponent />
-    </React.Suspense>
-  </React.StrictMode>
+  <React.Suspense fallback={<Busy />}>
+    <LazyComponent />
+  </React.Suspense>
 );

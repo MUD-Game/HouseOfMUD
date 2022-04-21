@@ -9,6 +9,10 @@ import { AuthProvider } from "src/contexts/AuthContext";
 import { GameProvider } from "src/contexts/GameContext";
 import CharacterCreator from "src/components/CharacterCreator";
 import Game from "src/components/Game";
+import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
+
+
+
 const IndexRouter: React.FC = (): ReactElement => {
     return (
         <AuthProvider>
@@ -20,7 +24,11 @@ const IndexRouter: React.FC = (): ReactElement => {
                         <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                         <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
-                        <Route path="/game" element={<RequireAuth><Game /></RequireAuth>} />
+                        <Route path="/game" element={<RequireAuth>
+                            <RabbitMQProvider>
+                                <Game />
+                            </RabbitMQProvider>
+                        </RequireAuth>} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </GameProvider>

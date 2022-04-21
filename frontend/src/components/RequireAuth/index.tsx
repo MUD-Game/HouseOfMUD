@@ -6,7 +6,7 @@ type RequireAuthProps = {
     children: JSX.Element
 }
 
-const RequireAuth: React.FC<RequireAuthProps> = ({children}) => {
+const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     let auth = useAuth();
     let location = useLocation();
     if (!auth.isAuthenticated()) {

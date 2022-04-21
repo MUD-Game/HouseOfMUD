@@ -31,7 +31,6 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, play
     const navigate = useNavigate();
 
     let joinDungeon = () => {
-        console.log(`Joining ${id}`)
         game.setDungeon(id);
         navigate("/select-character");
 

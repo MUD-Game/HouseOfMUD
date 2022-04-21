@@ -82,7 +82,7 @@ export interface IActionElement {
     command: string,
     output: string,
     description: string,
-    events: Event[],
+    events: IEvent[],
     itemsneeded: IItem[]
 }
 
@@ -99,5 +99,46 @@ export interface IRoom {
     items: IItem[],
     connections: IConnectionInfo,
     actions: IActionElement[]
+}
+
+export class ActionElement implements IActionElement {
+    id: string;
+    command: string
+    output: string
+    description: string
+    events: IEvent[]
+    itemsneeded: IItem[]
+
+    constructor(id: string, command: string, output: string, description: string, events: IEvent[], itemsneeded: IItem[]) {
+        this.id = id,
+        this.command = command,
+        this.output = output,
+        this.description = description,
+        this.events = events,
+        this.itemsneeded = itemsneeded
+    }
+}
+
+export class Event implements IEvent {
+    eventType: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana"
+    value: number | IItem
+    
+    constructor(type: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", value: number | IItem) {
+        this.eventType = type;
+        this.value = value
+    }
+}
+
+export class Item implements IItem {
+    id: string
+    name: string
+    description: string
+
+    constructor(id: string, name: string, description: string) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
 }
 

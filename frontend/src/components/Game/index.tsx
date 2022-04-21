@@ -12,7 +12,9 @@
 import React from 'react'
 import Chat from './Chat';
 import HUD, { HUDProps } from './HUD';
+import Inventory from './Inventory';
 import Minimap from './Minimap';
+import { useEffect } from 'react';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
@@ -26,9 +28,12 @@ const Game: React.FC<GameProps> = ({ }) => {
         maxDamage: 100
     }
 
+
+
     return (
         <div>
             <Minimap mapData={null} />
+            <Inventory items={null} />
             <HUD {...hudMock} />
             <Chat />
         </div>

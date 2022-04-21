@@ -7,6 +7,8 @@ type GameContextType = {
   setCharacter: (characterId: string) => void,
   characterID: string, // CharacterID
   setCharacterID: (characterId: string) => void,
+  verifyToken: string, // CharacterID
+  setVerifyToken: (characterId: string) => void,
 }
 
 let GameContext = React.createContext<GameContextType>({} as GameContextType);
@@ -15,9 +17,10 @@ function GameProvider({ children }: { children: React.ReactNode }) {
   let [dungeon, setDungeon] = React.useState<string>('');
   let [character, setCharacter] = React.useState<string>('');
   let [characterID, setCharacterID] = React.useState<string>('');
+  let [verifyToken, setVerifyToken] = React.useState<string>('');
 
 
-  let value = { dungeon, setDungeon, character, setCharacter, characterID, setCharacterID };
+  let value = { dungeon, setDungeon, character, setCharacter, characterID, setCharacterID, verifyToken, setVerifyToken };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }

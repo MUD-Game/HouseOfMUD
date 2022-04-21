@@ -43,6 +43,17 @@ export class API {
             next();
         });
 
+        // platform registration
+        app.post('/register', (req, res) => {
+            let body: any = req.body;
+            if (body.user !== undefined && body.email !== undefined && body.password !== undefined) {
+                let user: string = body.user;
+                let email: string = body.email;
+                let password: string = body.password;
+                // TODO
+            }
+        });
+
         // platform authentication
         app.post('/auth', (req, res) => {
             let body: any = req.body;

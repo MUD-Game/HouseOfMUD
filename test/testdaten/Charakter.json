@@ -1,0 +1,44 @@
+{
+    "Character": [
+        {
+        "userid": "1",
+        "dungeonid": "1",
+        "name": "Charakter1",
+        "className":"Magier",
+        "species": "Hexer",
+        "gender": "Mann",
+        "maxStats": {
+            "hp": 100,
+            "dmg": 100,
+            "mana": 100
+           },
+        "currentStats": {
+            "hp": 100,
+            "dmg": 100,
+            "mana": 100
+        },
+        "position": "1",
+        "inventory": ["1","2","3","4"]
+        },
+        {
+            "userid": "2",
+            "dungeonid": "2",
+            "name": "Charakter2",
+            "className":"Kundschafter",
+            "species": "Elf",
+            "gender": "Frau",
+            "maxStats": {
+                "hp": 80,
+                "dmg": 80,
+                "mana": 200
+               },
+            "currentStats": {
+                "hp": 3,
+                "dmg": 4,
+                "mana": 5
+            },
+            "position": "2",
+            "inventory":  ["1","2","3","4"]
+            }
+        ]
+       }

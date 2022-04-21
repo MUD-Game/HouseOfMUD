@@ -4,7 +4,7 @@ import { useGame } from 'src/hooks/useGame'
 import Lama from '../../assets/Lama.png'
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
-import { GetCharactersRequest, GetCharactersResponse, GetDungeonDataResponse } from 'src/types/supervisor';
+import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
@@ -17,26 +17,24 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     let dungeon = game.dungeon;
     let user = auth.user;
     const [characters, setCharacters] = React.useState<GetCharactersResponse>([] as GetCharactersResponse);
-    const [dungeonData, setDungeonData] = React.useState<GetDungeonDataResponse>({} as GetDungeonDataResponse);
+    const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
         if (!dungeon) return;
         let requestBody: GetCharactersRequest = {
             user: user,
-            auth: auth.token,
-            dungeon: dungeon
+            auth: auth.token
         }
-        supervisor.getDungeonData(requestBody, setDungeonData, console.log);
-        supervisor.getCharacters(requestBody, setCharacters, console.log);
+        supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, console.log);
+        supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
     }, []);
 
 
     const fetchNewCharacters = () => {
         let requestBody: GetCharactersRequest = {
             user: user,
-            auth: auth.token,
-            dungeon: dungeon
+            auth: auth.token
         }
-        supervisor.getCharacters(requestBody, setCharacters, console.log);
+        supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
     }
 
     if (!dungeon) return <Navigate to="/dashboard" />;

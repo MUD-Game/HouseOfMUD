@@ -1,5 +1,5 @@
 import React from 'react';
-import { GetCharactersResponse, GetDungeonDataResponse } from 'src/types/supervisor';
+import { GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
 import AvailableCharactersLi from './AvailableCharactersLi';
 
 interface AvailableCharactersProps {

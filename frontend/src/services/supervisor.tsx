@@ -1,11 +1,28 @@
 import "src/types/supervisor";
-import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetDungeonDataRequest, GetDungeonDataResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse } from "src/types/supervisor";
+import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest } from "src/types/supervisor";
+import { GetDungeonResponse } from '../types/supervisor';
 
 
 const connectionString = process.env.REACT_APP_HOM_API;
 
 // TODO: connect supervisor to the real supervisor
 const supervisor = {
+    getDungeon(dungeonID: string, body: GetDungeonRequest, dataCallBack: (response: GetDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+        let data: GetDungeonResponse = {
+            id: "1",
+            name: "Test Dungeon",
+            description: "This is a test dungeon",
+            maxplayercount: 10,
+            playercount: 0,
+            status: "online"
+        };
+        dataCallBack(data);
+        return;
+        fetch(connectionString + "/dungeons/" + dungeonID, {
+            method: 'GET',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
     getDungeons(body: GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetDungeonsResponse = [
             {
@@ -48,7 +65,7 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getCharacters(body: GetCharactersRequest, dataCallBack: (data: GetCharactersResponse) => void, error: (error: ErrorResponse) => void) {
+    getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: GetCharactersResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetCharactersResponse = [
             {
                 character: "1",
@@ -59,13 +76,13 @@ const supervisor = {
             ;
         dataCallBack(data);
         return;
-        fetch(connectionString + '/getCharacters', {
+        fetch(connectionString + '/characters/' + dungeonID, {
             method: 'GET',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    getDungeonData(body: GetDungeonDataRequest, dataCallBack: (data: GetDungeonDataResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: GetDungeonDataResponse = {
+    getCharacterAttributes(dungeonID: string, body: GetCharacterAttributesRequest, dataCallBack: (data: GetCharacterAttributesResponse) => void, error: (error: ErrorResponse) => void) {
+        let data: GetCharacterAttributesResponse = {
             classes: [
                 {
                     id: "1",
@@ -90,7 +107,7 @@ const supervisor = {
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/dungeonData', {
+        fetch(connectionString + '/character/attribute/' + dungeonID, {
             method: 'GET',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
@@ -107,79 +124,80 @@ const supervisor = {
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    login(body: LoginRequest, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+    login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
         let data: LoginResponse = {
+            verifyToken: "xxx",
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/login', {
+        fetch(connectionString + '/login/' + dungeonID, {
             method: 'POST',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    startDungeon(body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+    startDungeon(dungeonID: string, body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: StartDungeonResponse = {
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/startDungeon', {
+        fetch(connectionString + '/startDungeon/' + dungeonID, {
             method: 'POST',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    stopDungeon(body: StopDungeonRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+    stopDungeon(dungeonID: string, body: StopDungeonRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: StopDungeonResponse = {
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/stopDungeon', {
+        fetch(connectionString + '/stopDungeon/' + dungeonID, {
             method: 'POST',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    createDungoen(body: CreateDungeonRequest, dataCallBack: (data: CreateDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+    createDungeon(body: CreateDungeonRequest, dataCallBack: (data: CreateDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: CreateDungeonResponse = {
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/createDungeon', {
+        fetch(connectionString + '/dungeon', {
             method: 'POST',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    editDungeon(body: EditDungeonRequest, dataCallBack: (data: EditDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+    editDungeon(dungeonID: string, body: EditDungeonRequest, dataCallBack: (data: EditDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: EditDungeonResponse = {
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/editDungeon', {
-            method: 'POST',
+        fetch(connectionString + '/dungeon/' + dungeonID, {
+            method: 'PATCH',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    deleteDungeon(body: DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+    deleteDungeon(dungeonID: string, body: DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         let data: DeleteDungeonResponse = {
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/deleteDungeon', {
-            method: 'POST',
+        fetch(connectionString + '/dungeon/' + dungeonID, {
+            method: 'DELETE',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
-    createCharacter(body: CreateCharacterRequest, dataCallBack: (data: CreateCharacterResponse) => void, error: (error: ErrorResponse) => void) {
+    createCharacter(dungeonID: string, body: CreateCharacterRequest, dataCallBack: (data: CreateCharacterResponse) => void, error: (error: ErrorResponse) => void) {
         let data: CreateCharacterResponse = {
             ok: 1
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/createCharacter', {
+        fetch(connectionString + '/createCharacter/' + dungeonID, {
             method: 'POST',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));

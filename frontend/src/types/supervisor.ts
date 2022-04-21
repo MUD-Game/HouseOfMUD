@@ -35,12 +35,12 @@ export interface ErrorResponse extends SupervisorResponse {
 }
 
 /**
- * Authenticates User via POST: /auth with either a token or password
+ * Authenticates User via POST: /auth with either a authToken or password
  */
 export interface AuthenticateRequest {
     user: string;
     password?: string;
-    token?: string;
+    authToken?: string;
 }
 
 export interface AuthenticateResponse extends SupervisorResponse {
@@ -53,32 +53,37 @@ export interface AuthenticateResponse extends SupervisorResponse {
 export interface LoginRequest {
     user: string;
     character: string;
-    auth: string;
+    authToken: string;
 }
 
-export interface LoginResponse extends SupervisorResponse {}
-
-interface DungeonActionRequest {
-    user: string;
-    dungeon: string;
-    auth: string;
+export interface LoginResponse extends SupervisorResponse {
+    verifyToken: string;
 }
+
 /**
- * Starts a dungeon via POST: /startDungeon
+ * Starts a dungeon via POST: /startDungeon/:dungeonId
  */
 export interface StartDungeonRequest {
     user: string;
-    dungeon: string;
-    auth: string;
+    authToken: string;
 }
 export interface StartDungeonResponse extends SupervisorResponse {}
 /**
  * Stops a dungeon via POST: /stopDungeon
  */
-export interface StopDungeonRequest extends DungeonActionRequest {}
+export interface StopDungeonRequest {
+    user: string;
+    authToken: string;
+}
+
 export interface StopDungeonResponse extends SupervisorResponse {}
 
 export interface GetDungeonsRequest {
+    user: string;
+    auth: string;
+}
+
+export interface GetDungeonRequest {
     user: string;
     auth: string;
 }
@@ -92,49 +97,38 @@ interface DungeonResponseData {
     status: 'online' | 'offline';
 }
 export type GetDungeonsResponse = DungeonResponseData[];
-
+export type GetDungeonResponse = DungeonResponseData;
 export interface GetMyDungeonsRequest extends GetDungeonsRequest {}
 export interface GetMyDungeonsResponse extends GetDungeonsResponse {}
 
 export interface CreateDungeonRequest {
     user: string;
-    auth: string;
+    authToken: string;
     dungeonData: any; //TODO: define Dungeon
 }
 
 export interface CreateDungeonResponse extends SupervisorResponse {}
 
-export interface EditDungeonRequest extends CreateDungeonRequest {
-    dungeon: string;
-}
+export interface EditDungeonRequest extends CreateDungeonRequest {}
 export interface EditDungeonResponse extends CreateDungeonResponse {}
 
 export interface DeleteDungeonRequest {
     user: string;
-    auth: string;
-    dungeon: string;
+    authToken: string;
 }
+
 export interface DeleteDungeonResponse extends SupervisorResponse {}
-
-export interface DungeonDataResponseData {
+export type GetCharacterAttributesRequest = {
     user: string;
     auth: string;
-    dungeon: string;
-}
-
-export type GetDungeonDataRequest = {
-    user: string;
-    auth: string;
-    dungeon: string;
 };
-
-export interface GetDungeonDataResponse {
-    classes: [{ id: string; name: string; description: string }]; // TODO: define class
-    species: [{ id: string; name: string; description: string }]; // TODO: define species
-    genders: [{ id: string; name: string; description: string }]; // TODO: define gender
+export interface GetCharacterAttributesResponse {
+    classes: [{ id: string; name: string; description: string }];
+    species: [{ id: string; name: string; description: string }];
+    genders: [{ id: string; name: string; description: string }];
 }
 
-export interface GetCharactersRequest extends GetDungeonDataRequest {}
+export interface GetCharactersRequest extends GetCharacterAttributesRequest {}
 export interface GetCharactersResponseData {
     character: string;
     name: string;
@@ -144,21 +138,14 @@ export type GetCharactersResponse = GetCharactersResponseData[];
 
 export interface CreateCharacterRequest {
     user: string;
-    auth: string;
-    dungeon: string;
-    character: {
+    authToken: string;
+    characterData: {
         name: string;
         fullname: string;
         class: string;
         species: string;
         gender: string;
-    }; //TODO: define Character
+    };
 }
 
 export interface CreateCharacterResponse extends SupervisorResponse {}
-
-export type GetDataType =
-    | 'dungeons'
-    | 'mydungeons'
-    | 'characters'
-    | 'dungeonData';

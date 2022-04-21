@@ -28,8 +28,8 @@
     "outputDirectory": ".",
     "outputName": "junit.xml",
     "uniqueOutputName": "false",
-    "classNameTemplate": "{classname}-{title}",
-    "titleTemplate": "{classname}-{title}",
+    "classNameTemplate": "Test - {classname}",
+    "titleTemplate": "{title}",
     "ancestorSeparator": " > ",
     "usePathForSuiteName": "true"
   },

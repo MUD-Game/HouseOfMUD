@@ -1,6 +1,6 @@
 import { Action } from "./action";
 
-export class MessageAction implements Action {
+export class PrivateMessageAction implements Action {
     trigger: string;
 
     constructor(trigger: string) {

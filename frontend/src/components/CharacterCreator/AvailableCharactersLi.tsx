@@ -12,6 +12,7 @@ import { supervisor } from 'src/services/supervisor';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
+import { Row } from 'react-bootstrap';
 
 export interface AvailableCharactersLiProps {
     character: GetCharactersResponseData
@@ -50,11 +51,26 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
     }
 
     return (
-        <div>
-            <p>{character.name} | {character.class}</p>
-            <button onClick={onJoin}>Join</button>
-            <button onClick={onDelete}>Delete</button>
-        </div>
+        <Row className="character-list align-items-center py-2">
+            <div className="col-2">
+                <b>{character.name}</b>
+            </div>
+            <div className="col-2">
+                {character.class}            
+            </div>
+            <div className="col-2">
+                GeschlechtX{/* {character.gender} */}
+            </div>
+            <div className="col-2">        
+                SpeziesY{/* {character.species} */}
+            </div>
+            <div className="col-2">                            
+                <button className="btn w-100 drawn-border btn-red" onClick={onDelete}>Löschen</button>
+            </div>
+            <div className="col-2">         
+                <button className="btn w-100 drawn-border btn-green" onClick={onJoin}>Beitreten</button>    
+            </div>           
+        </Row>
     )
 }
 

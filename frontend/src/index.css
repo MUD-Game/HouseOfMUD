@@ -7,6 +7,8 @@
   --accent0:rgba(107, 43, 0, 0);
   --lightgreen: #57c659;
   --green: #29872c;
+  --lightred: #fa8585;
+  --red: #ff1515;
 }
 
 html, body {
@@ -60,7 +62,31 @@ a:hover {
   border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
 }
 
+.input-standard {  
+  background-color: transparent;
+  color: var(--textcolor);
+  padding: .4em .7em;
+  width: 100%;
+}
+
+.select-standard {  
+  background-color: var(--bgcolor);
+  font-size: 1rem;
+  color: var(--textcolor);
+  padding: .4em .7em;
+  width: 100%;
+}
+.input-standard:focus-visible, .select-standard:focus-visible, .input-standard:focus, .select-standard:focus { 
+  border-color: var(--accent);
+  outline:inherit;
+  box-shadow:3px 3px 2px .05em #6b2b004b;
+}
+
 /* Buttons */
+.btn:focus {
+  box-shadow: none;
+}
+
 .btn-standard {
   width: 100%;
   color: var(--textcolor);
@@ -79,18 +105,20 @@ a:hover {
   background-color: var(--green);
 }
 
-.btn-login {
+.btn-red {
+  color: var(--textcolor);
+  background-color: var(--lightred);
+}
+.btn-red:hover {
+  color: white;
+  background-color: var(--red);
+}
+
+.btn-xpadding {
   padding: .4em 2em;
 }
 
 /* Login */
-.login-input {
-  background-color: transparent;
-  color: var(--textcolor);
-  padding: .4em .7em;
-  width: 100%;
-}
-
 .forgot-pw {
   font-size: 0.7em;
 }
@@ -124,7 +152,7 @@ a:hover {
   border-radius: 1% 98% 1% 99% /99% 2% 50% 1%;
 }
 
-.dashboard-list {
+.dashboard-list, .character-list {
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
   border-width: 0 0 3px;

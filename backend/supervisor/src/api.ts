@@ -2,15 +2,7 @@ import express from "express";
 import https from "https";
 import http from "http";
 import { HostLink } from "./host-link";
-
-export interface TLS {
-    use: boolean,
-    cert?: {
-        key: string,
-        cert: string,
-        ca: string
-    }
-}
+import { TLS } from "./types/tls";
 
 export class API {
 

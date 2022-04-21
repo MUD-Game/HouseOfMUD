@@ -22,7 +22,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
         if (!dungeon) return;
         let requestBody: GetCharactersRequest = {
             user: user,
-            auth: auth.token
+            authToken: auth.token
         }
         supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, console.log);
         supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
@@ -32,7 +32,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const fetchNewCharacters = () => {
         let requestBody: GetCharactersRequest = {
             user: user,
-            auth: auth.token
+            authToken: auth.token
         }
         supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
     }

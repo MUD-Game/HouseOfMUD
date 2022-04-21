@@ -187,6 +187,18 @@ export class API {
                 // TODO
             }
         });
+
+        // delete character
+        app.delete('/character/:dungeonID', (req, res) => {
+            let dungeonID: string = req.params.dungeonID;
+            let body: any = req.body;
+            if (body.user !== undefined && body.authToken !== undefined && body.character !== undefined) {
+                let user: string = body.user;
+                let authToken: string = body.authToken;
+                let characterID: any = body.character;
+                // TODO
+            }
+        });
     }
 
     private generateVerifyToken(): string {

@@ -1,6 +1,6 @@
-import { Action } from "./action";
+import { IAction } from "./action";
 
-export class DiscardAction implements Action {
+export class DiscardAction implements IAction {
     trigger: string;
 
     constructor(trigger: string) {

@@ -1,6 +1,6 @@
-import { Action } from "./action";
+import { IAction } from "./action";
 
-export class PrivateMessageAction implements Action {
+export class PrivateMessageAction implements IAction {
     trigger: string;
 
     constructor(trigger: string) {

@@ -3,8 +3,8 @@ import { IAction } from "./action";
 export class DiscardAction implements IAction {
     trigger: string;
 
-    constructor(trigger: string) {
-        this.trigger = trigger;
+    constructor() {
+        this.trigger = "ablegen";
     }
 
     performAction(user: string, args: string) {

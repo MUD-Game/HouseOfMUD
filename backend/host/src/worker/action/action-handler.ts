@@ -28,7 +28,7 @@ export class ActionHandler implements IActionHandler {
     unspecifiedAction: UnspecifiedAction;
 
     constructor(dungeonActionElements: IActionElement[]) {
-        this.actions = [new DiscardAction("ablegen"), new InspectAction("untersuche"), new InventoryAction("inv"), new LookAction("umschauen"), new MessageAction("sag"), new MoveAction("gehe"), new PickupAction("aufheben"), new PrivateMessageAction("fluester")]
+        this.actions = [new DiscardAction(), new InspectAction(), new InventoryAction(), new LookAction(), new MessageAction(), new MoveAction(), new PickupAction(), new PrivateMessageAction()]
         let dungeonActions: DungeonAction[] = [];
         dungeonActionElements.forEach(action => dungeonActions.push(new DungeonAction(action.command)))
         this.dungeonActions = dungeonActions; // TODO: hier für jede spezifische Aktion ein neues DungeonAction Objekt erstellen

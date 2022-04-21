@@ -8,19 +8,21 @@ import Header from "../components/Header";
 import { AuthProvider } from "src/contexts/AuthContext";
 import { GameProvider } from "src/contexts/GameContext";
 import CharacterCreator from "src/components/CharacterCreator";
+import Game from "src/components/Game";
 const IndexRouter: React.FC = (): ReactElement => {
     return (
         <AuthProvider>
             <BrowserRouter>
-            <Header/>
+                <Header />
                 <GameProvider>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/" element={<RequireAuth><Dashboard/></RequireAuth>} />
-                    <Route path="/dashboard" element={<RequireAuth><Dashboard/></RequireAuth>} />
-                    <Route path="/select-character" element={<RequireAuth><CharacterCreator/></RequireAuth>} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                        <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                        <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
+                        <Route path="/game" element={<RequireAuth><Game /></RequireAuth>} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
                 </GameProvider>
             </BrowserRouter>
         </AuthProvider>

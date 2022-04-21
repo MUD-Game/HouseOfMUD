@@ -1,5 +1,5 @@
-describe("test jenkins pipeline", () => {
-    test('test jenkins pipeline2', () => {
+describe("Jenkins Pipeline", () => {
+    test('Test jenkins pipeline', () => {
         expect(2+2).toBe(4);
     })
 })

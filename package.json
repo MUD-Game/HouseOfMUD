@@ -24,7 +24,13 @@
     ]
   },
   "jest-junit": {
-    "output": "output/coverage/junit/junit.xml",
+    "suiteName": "Unit Tests", 
+    "outputDirectory": ".",
+    "outputName": "junit.xml",
+    "uniqueOutputName": "false",
+    "classNameTemplate": "{classname}-{title}",
+    "titleTemplate": "{classname}-{title}",
+    "ancestorSeparator": " > ",
     "usePathForSuiteName": "true"
   },
   "repository": {

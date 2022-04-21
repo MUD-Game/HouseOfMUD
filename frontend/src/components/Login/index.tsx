@@ -12,6 +12,7 @@
 
 
 import React from 'react'
+import { Container, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
 type LoginProps = {}
@@ -39,18 +40,23 @@ const Login: React.FC<LoginProps> = (props) => {
     }
 
     return (
-        <div>
-
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Username: <input name="username" type="text" />
-                </label>{" "}
-                <label>
-                    Password: <input name="password" type="password" />
-                </label>{" "}
-                <button type="submit">Login</button>
-            </form>
-        </div>
+        <Container className="mt-5">
+            <Row className="justify-content-center">
+                <div className="col-lg-4 col-md-6 col-sm-8">
+                    <form onSubmit={handleSubmit}>
+                        <div className="input-group py-2">
+                            <input name="username" className="input-standard drawn-border" type="text" placeholder="Username" />
+                        </div>
+                        <div className="input-group pt-2">
+                            <input name="password" className="input-standard drawn-border" type="password" placeholder="Passwort" />
+                        </div>
+                        <span className="forgot-pw">Passwort vergessen? Klicke <a href="#">hier</a></span> <br />
+                        <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">Login</button> <br />
+                        <span>Noch keinen Account? <a href="#">Hier registrieren</a></span>
+                    </form>
+                </div>
+            </Row>
+        </Container>
     );
 }
 

@@ -48,7 +48,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     }
 
     return (
-        <Container>
+        <Container className="mb-5">
             <h2>Dashboard</h2>
             <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                 <Nav.Item>

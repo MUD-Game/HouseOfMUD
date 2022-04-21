@@ -1,11 +1,12 @@
 import React from 'react'
+import { Container } from 'react-bootstrap';
 type NotFoundProps = {}
 
 const NotFound: React.FC<NotFoundProps> = (props) => {
     return (
-        <div>
+        <Container>
             <h1>404 - Not Found!</h1>
-        </div>
+        </Container>
     )
 }
 

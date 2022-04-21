@@ -6,15 +6,18 @@
  */
 
 import React from 'react'
+import { Container } from 'react-bootstrap'
 import Lama from '../../assets/Lama.png'
 import "./index.css"
 export interface BusyProps { }
 
 const Busy: React.FC<BusyProps> = (props) => {
     return (
-        <div>
-            <img id="lama" src={Lama} alt="Lama" />
-        </div>
+        <Container className="text-center">
+            <div className="lama-wrapper">
+                <img id="lama" src={Lama} alt="Lama" />
+            </div>
+        </Container>
     )
 }
 

@@ -15,13 +15,13 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { useGame } from 'src/hooks/useGame'
-import Lama from '../../assets/Lama.png'
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
 import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
 export interface CharacterCreatorProps { }
 
 
@@ -54,12 +54,12 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
 
     if (!dungeon) return <Navigate to="/dashboard" />;
     return (
-        <div>
-            <h1>Charakter Configuratorinator 300</h1>
+        <Container className="mb-5">
             <h2>{dungeon}</h2>
             {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter onCreate={fetchNewCharacters} {...dungeonData} /> : null}
+            <br /><hr /><br />
             {characters !== [] ? <AvailableCharacters characters={characters} /> : null}
-        </div>
+        </Container>
     )
 }
 

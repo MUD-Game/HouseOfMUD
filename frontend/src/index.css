@@ -5,15 +5,21 @@
   --accentlight: #a7795b;
   --accent: #6b2a00;
   --accent0:rgba(107, 43, 0, 0);
+  --lightgreen: #57c659;
+  --green: #29872c;
+  --lightred: #fa8585;
+  --red: #ff1515;
 }
 
 html, body {
   background-color: var(--bgcolor);
   max-width: 100%;
+  min-height: 100vh;
   color: var(--textcolor);
   font: 20px/1.5 'Segoe UI', 'Calibri', Helvetica, sans-serif;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -54,6 +60,102 @@ a:hover {
   border: solid var(--accent);
   border-width: 3px 4px 3px 5px;
   border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
+}
+
+.input-standard {  
+  background-color: transparent;
+  color: var(--textcolor);
+  padding: .4em .7em;
+  width: 100%;
+}
+
+.select-standard {  
+  background-color: var(--bgcolor);
+  font-size: 1rem;
+  color: var(--textcolor);
+  padding: .4em .7em;
+  width: 100%;
+}
+.input-standard:focus-visible, .select-standard:focus-visible, .input-standard:focus, .select-standard:focus { 
+  border-color: var(--accent);
+  outline:inherit;
+  box-shadow:3px 3px 2px .05em #6b2b004b;
+}
+
+/* Buttons */
+.btn:focus {
+  box-shadow: none;
+}
+
+.btn-standard {
+  width: 100%;
+  color: var(--textcolor);
+}
+.btn-standard:hover {
+  color: var(--textcolor);
+  background-color: var(--accentlight);
+}
+
+.btn-green {
+  color: var(--textcolor);
+  background-color: var(--lightgreen);
+}
+.btn-green:hover {
+  color: white;
+  background-color: var(--green);
+}
+
+.btn-red {
+  color: var(--textcolor);
+  background-color: var(--lightred);
+}
+.btn-red:hover {
+  color: white;
+  background-color: var(--red);
+}
+
+.btn-xpadding {
+  padding: .4em 2em;
+}
+
+/* Login */
+.forgot-pw {
+  font-size: 0.7em;
+}
+
+/* Dashboard */
+.nav-tabs {
+  border-bottom: 2px solid var(--textcolor);
+}
+.nav-link {
+  background-color: transparent !important;
+  font-weight: 400;
+  color: var(--textcolor);
+}
+.nav-link:focus {
+  background-color: transparent !important;
+  color: var(--textcolor);
+  border-color: transparent !important;
+}
+.nav-link:hover {
+  background-color: transparent !important;
+  font-weight: 400;
+  color: var(--accentlight);
+  border-color: transparent !important;
+}
+.nav-link.active {
+  background-color: var(--accentlight) !important;
+  color: white !important;
+  border: solid var(--accent);
+  border-color: var(--textcolor) !important;
+  border-width: 3px 4px 0 5px;
+  border-radius: 1% 98% 1% 99% /99% 2% 50% 1%;
+}
+
+.dashboard-list, .character-list {
+  border: solid var(--accent);
+  border-radius: 0 0 2% 0/0 0 20% 0;
+  border-width: 0 0 3px;
 }
 
 code {

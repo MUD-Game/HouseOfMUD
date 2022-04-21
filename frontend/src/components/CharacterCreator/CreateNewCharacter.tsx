@@ -11,6 +11,7 @@ import { supervisor } from 'src/services/supervisor';
 import { CreateCharacterRequest, GetCharacterAttributesResponse } from 'src/types/supervisor';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
+import { Col, Row } from 'react-bootstrap';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
@@ -46,34 +47,56 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
 
     return (
         <form onSubmit={onCreateCharacter}>
-            <h1>Neuen Charakter anlegen</h1>
-            <input required type="text" name="name" placeholder="Name" />
-            <input required type="text" name="fullname" placeholder="Fullname" />
-            <label>
-                Class: <select name="class">
-                    {classes.map((cl, index) => {
-                        return (
-                            <option key={index} value={cl.id}>{cl.name}</option>
-                        )
-                    })}
-                </select>
-                Genders: <select name="gender">
+            <p className="headline">Neuen Charakter anlegen</p>
+            <Row className="py-3 g-4">
+                <div className="col-md-6">
+                    <label htmlFor="name"><b>Charaktername:</b></label>
+                    <input required className="drawn-border input-standard" type="text" name="name" placeholder="Charaktername wählen" />
+                </div>
+                {/* <div className="col-md-6">
+                    <label htmlFor="fullname"><b>Fullname:</b></label>
+                    <input required className="drawn-border input-standard" type="text" name="fullname" placeholder="Fullname wählen" />
+                </div> */}
+                <div className="col-md-6">
+                    <label htmlFor="class"><b>Klasse:</b></label>
+                    <select className="drawn-border select-standard" name="class">
+                        {classes.map((cl, index) => {
+                            return (
+                                <option key={index} value={cl.id}>{cl.name}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+                <div className="col-md-6">
+                    <label htmlFor="gender"><b>Geschlecht:</b></label>
+                    <select className="drawn-border select-standard" name="gender">
                     {genders.map((cl, index) => {
                         return (
                             <option key={index} value={cl.id}>{cl.name}</option>
                         )
                     })}
                 </select>
-                Species: <select name="species">
-                    {species.map((cl, index) => {
-                        return (
-                            <option key={index} value={cl.id}>{cl.name}</option>
-                        )
-                    })}
-                </select>
-            </label>
-            <button type="submit">Create and Join</button>
+                </div>
+                <div className="col-md-6">
+                    <label htmlFor="species"><b>Spezies:</b></label>
+                    <select className="drawn-border select-standard" name="species">
+                        {species.map((cl, index) => {
+                            return (
+                                <option key={index} value={cl.id}>{cl.name}</option>
+                            )
+                        })}
+                    </select>
+                </div>
+            </Row>
+
+            <Row className="text-end">
+                <Col>
+                    <button className="btn drawn-border btn-green btn-xpadding" type="submit">Erstellen und Beitreten</button>
+                </Col>
+            </Row>
+            
         </form>
+        
     )
 }
 

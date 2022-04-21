@@ -10,6 +10,11 @@
   }
 }
 
+.lama-wrapper {  
+  height: 40vh;
+}
+
 #lama{
-    animation: spin 1s infinite linear;
+  animation: spin 1.5s infinite linear;
+  height: 100%;
 }

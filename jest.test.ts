@@ -3,5 +3,5 @@ test('test jenkins pipeline2', () => {
 })
 
 test('test jenkins pipeline3', () => {
-    expect(2+2).toBe(4);
+    expect(2+2).toBe(3);
 })

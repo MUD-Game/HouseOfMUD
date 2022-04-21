@@ -147,5 +147,12 @@ export interface CreateCharacterRequest {
         gender: string;
     };
 }
-
 export interface CreateCharacterResponse extends SupervisorResponse {}
+
+export interface DeleteCharacterRequest {
+    user: string;
+    authToken: string;
+    character: string;
+}
+
+export interface DeleteCharacterResponse extends SupervisorResponse {}

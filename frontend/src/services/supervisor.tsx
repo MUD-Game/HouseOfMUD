@@ -1,5 +1,5 @@
 import "src/types/supervisor";
-import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest } from "src/types/supervisor";
+import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest } from "src/types/supervisor";
 import { GetDungeonResponse } from '../types/supervisor';
 
 
@@ -197,8 +197,19 @@ const supervisor = {
         }
         dataCallBack(data);
         return;
-        fetch(connectionString + '/createCharacter/' + dungeonID, {
+        fetch(connectionString + '/character/' + dungeonID, {
             method: 'POST',
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+    },
+    deleteCharacter(dungeonID: string, body: DeleteCharacterRequest, dataCallBack: (data: DeleteCharacterResponse) => void, error: (error: ErrorResponse) => void) {
+        let data: DeleteCharacterResponse = {
+            ok: 1
+        }
+        dataCallBack(data);
+        return;
+        fetch(connectionString + '/character/' + dungeonID, {
+            method: 'DELETE',
             body: JSON.stringify(body)
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     }

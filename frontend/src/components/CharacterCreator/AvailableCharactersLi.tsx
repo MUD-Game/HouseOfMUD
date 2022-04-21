@@ -14,6 +14,16 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
     const { user, token } = useAuth();
     const { dungeon, setCharacterID } = useGame();
     const navigate = useNavigate();
+
+    const onDelete = () => {
+        supervisor.deleteCharacter(dungeon, { user, authToken: token, character: character.character }, (data) => {
+            navigate("/characters");
+        }, (error) => {
+            // TODO: handle error in a better way
+            alert(error);
+        })
+    }
+
     const onJoin = () => {
 
         let body: LoginRequest = {
@@ -35,6 +45,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
         <div>
             <p>{character.name} | {character.class}</p>
             <button onClick={onJoin}>Join</button>
+            <button onClick={onDelete}>Delete</button>
         </div>
     )
 }

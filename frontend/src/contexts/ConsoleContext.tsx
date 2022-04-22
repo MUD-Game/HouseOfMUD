@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Toast, Col, Row, ToastContainer, ToastHeader, ToastProps } from 'react-bootstrap';
+import { Toast, ToastContainer, ToastProps } from 'react-bootstrap';
 import { ErrorResponse } from '../types/supervisor';
-import { useEffect } from 'react';
 
 type ConsoleContextType = {
   log: (message: string, location?: string) => void;

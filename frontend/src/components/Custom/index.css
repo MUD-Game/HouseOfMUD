@@ -1,0 +1,26 @@
+select {  
+  background-color: var(--bgcolor);
+  font-size: 1rem;
+  color: var(--textcolor);
+  padding: .4em .7em;
+  width: 100%;
+  border: solid var(--accent);
+  border-width: 3px 4px 3px 5px;
+  border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
+}
+
+input, textarea {
+  background-color: transparent;
+  color: var(--textcolor);
+  padding: .4em .7em;
+  width: 100%;
+  border: solid var(--accent);
+  border-width: 3px 4px 3px 5px;
+  border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
+}
+
+input:focus-visible, select:focus-visible, select:focus, input:focus { 
+  border-color: var(--accent);
+  outline:inherit;
+  box-shadow:3px 3px 2px .05em #6b2b004b;
+}

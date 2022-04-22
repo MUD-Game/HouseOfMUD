@@ -14,7 +14,7 @@ export interface ChatProps { }
 const Chat: React.FC<ChatProps> = ({ }) => {
     return (
         <div>
-            <ChatOutput messages={null!} />
+            <ChatOutput/>
             <ChatInput />
         </div>
     )

@@ -2,18 +2,21 @@
  * @module RabbitMQContext
  * @category React Contexts
  * @description Context for using RabbitMQ
+ * @contextMethods {@linkcode login}, {@linkcode logout}, {@linkcode sendMessage}, {@linkcode setChatSubscriber}
  */
 
 import React from 'react';
 import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
-import { Client, IMessage } from '@stomp/stompjs';
+import { Client, IFrame, IMessage } from '@stomp/stompjs';
+import { RabbitMQPayload } from 'src/types/rabbitMQ';
 
-type RabbitMQContextType = {
+export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
   sendMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
-  setSubscribeFunction: (subscriber: (message: IMessage) => void) => void;
+  setChatSubscriber: (subscriber: (message: string) => void) => void;
+  setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[])=>void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -25,9 +28,65 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
   const rabbit = new Client({
     brokerURL: process.env.REACT_APP_RABBITMQ
-  });
-  // Diese Funktion wird immer aufgerufen wenn eine Nachricht ankommt
-  let subscriberFunction: (message: IMessage) => void = () => { };
+});
+  let chatSubscriber: (message: string) => void = () => { };
+
+  /**
+   * 
+   * @param error 
+   * The errorSubscriber gets all async Error messages (mostly RabbitMQ)
+   */
+  let errorSubscriber: (error: string) => void = (error) => {};
+  // TODO: Implement subscriber functions
+  let inventorySubscriber: (message: any) => void = () => { };
+  let hudSubscriber: (message: any) => void = () => { };
+  let minimapSubscriber: (message: any) => void = () => { };
+
+  let payloadTemplate = {
+    user: '',
+    character: '',
+    verifyToken: ''
+  }
+
+  const processAction = (message: IMessage) =>{
+    try{
+      let jsonData = JSON.parse(message.body);
+      //TODO: Decide what type of message we received
+      if(jsonData['action'] === undefined) {
+        errorSubscriber("RabbitMQ-Message is missing a action-key");
+        return;
+      }else if(jsonData['body'] === undefined){
+        errorSubscriber("RabbitMQ-Message is missing a body");
+        return;
+      }
+      switch(jsonData.action){
+        case 'message':
+          chatSubscriber(jsonData.body); // atm only chats
+          break;
+        default:
+          errorSubscriber("RabbitMQ-Action not implemented yet: "+jsonData.action);
+        }
+      }catch(err){
+        if(err instanceof SyntaxError){
+          errorSubscriber("Message Received from RabbitMQ is not valid JSON!: "+message.body);
+        }
+      }
+
+  }
+
+  const setErrorSubscriber = (subscriber: (message: any, ...optionalParams: any[])=>void)=> {
+    errorSubscriber = subscriber;
+  }
+
+
+  const sendPayload = (payload: RabbitMQPayload)=>{
+    if(rabbit.connected){
+      rabbit.publish({
+        destination: `/exchange/ServerExchange/${dungeon}`,
+        body: JSON.stringify(payload)
+      });
+    }
+  }
 
   let login = (callback: VoidFunction, error: (error: string) => void) => {
 
@@ -36,22 +95,26 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    rabbit.activate();
-    let loginPayload = {
-      action: 'login',
-      user: user, //BUG: User weiß momentan nichts über die userid in der Designbeschreibung stehts aber
+    payloadTemplate = {
+      user: user,
       character: characterID,
       verifyToken: verifyToken,
-      data: {}
     }
+
+    rabbit.activate();
+    let loginPayload: RabbitMQPayload = {
+      action: 'login',
+      ...payloadTemplate,
+      data: {}
+    };
     rabbit.onConnect = () => {
-      rabbit.publish({
-        destination: `/exchange/ServerExchange/${dungeon}`,
-        body: JSON.stringify(loginPayload)
-      });
+      sendPayload(loginPayload);
       rabbit.subscribe(`/queue/${dungeon}-${characterID}`, (message: IMessage) => {
-        subscriberFunction(message);
+        processAction(message);
       });
+    }
+    rabbit.onStompError = (receipt: IFrame)=>{
+      errorSubscriber(receipt.body);
     }
     callback();
   }
@@ -61,45 +124,38 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       error('RabbitMQ is not connected');
       return;
     }
-    let logoutPayload = {
+    let logoutPayload:RabbitMQPayload = {
       action: 'logout',
-      user: user, //BUG: User weiß momentan nichts über die userid in der Designbeschreibung stehts aber
-      character: characterID,
-      verifyToken: verifyToken,
+      ...payloadTemplate,
       data: {}
     }
-    rabbit.publish({
-      destination: `/exchange/ServerExchange/${dungeon}`,
-      body: JSON.stringify(logoutPayload)
-    });
+    sendPayload(logoutPayload);
     rabbit.deactivate();
     callback();
   }
 
   let sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
-    let messagePayload = {
+    if(!rabbit.connected){
+      error("RabbitMQ is not connected");
+      return;
+    }
+    let messagePayload:RabbitMQPayload = {
       action: 'message',
-      user: user, //BUG: User weiß momentan nichts über die userid in der Designbeschreibung stehts aber
-      character: characterID,
-      verifyToken: verifyToken,
+      ...payloadTemplate,
       data: {
         message
       }
     }
-
-    rabbit.publish({
-      destination: `/exchange/ServerExchange/${dungeon}`,
-      body: JSON.stringify(messagePayload)
-    });
+    sendPayload(messagePayload);
     callback();
 
   }
 
-  function setSubscribeFunction(subscriber: (message: IMessage) => void) {
-    subscriberFunction = subscriber;
+  function setChatSubscriber(subscriber: (message: string) => void) {
+    chatSubscriber = subscriber;
   }
 
-  let value = { login, logout, sendMessage, setSubscribeFunction };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

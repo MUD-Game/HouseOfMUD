@@ -1,6 +1,8 @@
 import React from 'react'
 import { Container } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import MudInput from '../Custom/MudInupt';
+import './index.css'
 
 export interface DungeonConfiguratorProps { }
 
@@ -16,6 +18,9 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
 
         <Container>
             <h1>DungeonConfigurator</h1>
+            <MudInput colmd={9} type="text" name="name" placeholder="Name" />
+            <MudInput colmd={9} type="number" name="maxplayercount" placeholder="Maximale Spieleranzahl" />
+            <MudInput colmd={9} type="text" name="description" placeholder="Beschreibung" />
         </Container>
 
     )

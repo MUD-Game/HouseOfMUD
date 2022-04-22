@@ -21,7 +21,7 @@ export interface AvailableCharactersLiProps {
 const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character }) => {
 
     const { user, token } = useAuth();
-    const { dungeon, setCharacterID, setVerifyToken } = useGame();
+    const { dungeon, setCharacterID, setVerifyToken, setCharacter } = useGame();
     const navigate = useNavigate();
 
     const onDelete = () => {
@@ -43,6 +43,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
 
         supervisor.login(dungeon, body, (data) => {
             setCharacterID(character.character);
+            setCharacter(character.name);
             setVerifyToken(data.verifyToken);
             navigate("/game");
         }, (error) => {

@@ -7,39 +7,27 @@
  */
 
 import { IMessage } from '@stomp/stompjs';
-import React from 'react'
+import React, { useState } from 'react'
 import { useRabbitMQ } from '../../../hooks/useRabbitMQ';
 import { useEffect } from 'react';
-export interface ChatOutputProps {
-    messages: any; //TODO: define correct message type
-}
+export interface ChatOutputProps {}
 
-const ChatOutput: React.FC<ChatOutputProps> = ({ messages }) => {
+const ChatOutput: React.FC<ChatOutputProps> = ({ }) => {
 
-    const rabbit = useRabbitMQ();
+    const [messages, setMessages] = useState(["Mock-Message"]);
+    const {setChatSubscriber} = useRabbitMQ();
 
-
-    rabbit.setChatSubscriber((message: IMessage) => {
-        console.log(message.body);
+    setChatSubscriber((message:IMessage)=>{
+        setMessages([...messages, message.body])
     });
-
-    useEffect(() => {
-        rabbit.login(() => {
-            console.log('login success lulw');
-        }, (error: string) => {
-            console.log(error);
-        });
-        return () => {
-            rabbit.logout(() => { }, (error) => {
-                console.log(error);
-            });
-        }
-    }, [])
+    
     return (
-        <div>
+        <>
             <p>CHAT-OUTPUT</p>
-            {/* TODO:Do something with the messages that are passed in here */}
-        </div>
+            {messages.map((msg,index)=>{
+                <div key={index}>{msg}</div>
+            })}            
+        </>
     )
 }
 

@@ -17,10 +17,33 @@ import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
 import { Navigate } from 'react-router-dom';
+import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
+import { IMessage } from '@stomp/stompjs';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
-
+    
+    const rabbit = useRabbitMQ();
+    const {isAbleToJoinGame} = useGame();
+    alert(isAbleToJoinGame());
+    useEffect(() => {
+        if(isAbleToJoinGame()){
+            rabbit.login(() => {
+                console.log('login success lulw');
+            }, (error: string) => {
+                console.log(error);
+            });
+        }
+        return () => {
+            rabbit.logout(() => { }, (error) => {
+                console.log(error);
+            });
+        }
+    }, [])
+    
+    if (!isAbleToJoinGame()){
+        return <Navigate to="/" />
+    }
     const hudMock: HUDProps = {
         health: 100,
         maxHealth: 100,
@@ -29,13 +52,9 @@ const Game: React.FC<GameProps> = ({ }) => {
         damage: 100,
         maxDamage: 100
     }
+    
 
 
-
-    const {isAbleToJoinGame} = useGame();
-    if (!isAbleToJoinGame()){
-        return <Navigate to="/" />
-    }
     
     return (
         <div>

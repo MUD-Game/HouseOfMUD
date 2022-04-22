@@ -27,6 +27,7 @@ function GameProvider({ children }: { children: React.ReactNode }) {
   }
 
   const isAbleToJoinGame = ()=>{
+      console.log(character ,characterID, verifyToken)
     return (isAbleToPickCharacter() && character !== '' && characterID !== '' && verifyToken !== '')
   }
 

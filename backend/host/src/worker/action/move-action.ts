@@ -6,7 +6,7 @@ export class MoveAction implements Action {
     constructor() {
         this.trigger = "gehe";
     }
-    performAction(user: string, args: string) {
+    performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }
 

@@ -40,7 +40,7 @@ export class ActionHandler implements IActionHandler {
      * @param message Message data the user sent. Processes the data into arguments.
      */
     processAction(user: string, message: string) {
-        let splitMessageString: string[] =  message.split(" ", 2)
+        let splitMessageString: string[] =  message.split(" ")
         let commandString: string = splitMessageString[0];
         let action;
         action = this.actions.find(action => action.trigger === commandString)
@@ -50,8 +50,8 @@ export class ActionHandler implements IActionHandler {
                 action = this.unspecifiedAction;
             }
         }
-        let actionArguments: string = splitMessageString[1];
-        //action.performAction(user, actionArguments);
+        let actionArguments: string[] = splitMessageString.slice(1)
+        action.performAction(user, actionArguments);
         return action;
     }
 }

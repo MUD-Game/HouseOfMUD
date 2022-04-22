@@ -6,7 +6,7 @@ export class PickupAction implements Action {
     constructor() {
         this.trigger = "aufheben";
     }
-    performAction(user: string, args: string) {
+    performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }
 

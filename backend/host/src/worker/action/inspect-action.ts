@@ -6,7 +6,7 @@ export class InspectAction implements Action {
     constructor() {
         this.trigger = "untersuche";
     }
-    performAction(user: string, args: string) {
+    performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }
 

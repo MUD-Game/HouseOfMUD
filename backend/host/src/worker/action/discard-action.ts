@@ -7,7 +7,7 @@ export class DiscardAction implements Action {
         this.trigger = "ablegen";
     }
 
-    performAction(user: string, args: string) {
+    performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }
 

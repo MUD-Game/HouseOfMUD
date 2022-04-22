@@ -6,7 +6,7 @@ export class InventoryAction implements Action {
     constructor() {
         this.trigger = "inv";
     }
-    performAction(user: string, args: string) {
+    performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }
 

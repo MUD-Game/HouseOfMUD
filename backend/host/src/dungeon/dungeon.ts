@@ -1,3 +1,11 @@
+/**
+ * Interfaces and classes for Dungeon datasets.
+ */
+
+
+/**
+ * Dungeon interface containing all necessary data for dungeons.
+ */
 export interface Dungeon {
     id: string,
     name: string,
@@ -9,6 +17,7 @@ export interface Dungeon {
     species: CharacterSpecies[],
     classes: CharacterClass[],
     genders: CharacterGender[],
+    characters: Character[],
     rooms: Room[],
     blacklist: string[],
     actions: ActionElement[]
@@ -25,12 +34,13 @@ export class Dungeon implements Dungeon {
     species: CharacterSpecies[]
     classes: CharacterClass[]
     genders: CharacterGender[]
+    characters: Character[]
     rooms: Room[]
     blacklist: string[]
     actions: ActionElement[]
 
     constructor(id: string, name: string, description: string, creatorId: string, masterId: string, maxPlayers: number, currentPlayers: number, species: CharacterSpecies[], classes: CharacterClass[],
-        genders: CharacterGender[], rooms: Room[], blacklist: string[], actions: ActionElement[]) {
+        genders: CharacterGender[], characters: Character[], rooms: Room[], blacklist: string[], actions: ActionElement[]) {
         this.id = id
         this.name = name
         this.description = description
@@ -41,6 +51,7 @@ export class Dungeon implements Dungeon {
         this.species = species
         this.classes = classes
         this.genders = genders
+        this.characters = characters
         this.rooms = rooms
         this.blacklist = blacklist
         this.actions = actions
@@ -162,6 +173,7 @@ export class Item implements Item {
 }
 
 export interface Character {
+    id: string,
     userId: string,
     dungeonId: string,
     name: string,
@@ -175,6 +187,7 @@ export interface Character {
 }
 
 export class Character implements Character {
+    id: string
     userId: string
     dungeonId: string
     name: string
@@ -186,7 +199,8 @@ export class Character implements Character {
     position: Room
     inventory: Item[]
 
-    constructor(userId: string, dungeonId: string, name: string, className: string, species: CharacterSpecies, gender: CharacterGender, maxStats: CharacterStats, currentStats: CharacterStats, position: Room, inventory: Item[]) {
+    constructor(id: string, userId: string, dungeonId: string, name: string, className: string, species: CharacterSpecies, gender: CharacterGender, maxStats: CharacterStats, currentStats: CharacterStats, position: Room, inventory: Item[]) {
+        this.id = id
         this.userId = userId;
         this.dungeonId = dungeonId
         this.name = name
@@ -307,3 +321,16 @@ export class Room implements Room {
         this.actions = actions
     }
 }
+
+const TestSpecies: CharacterSpecies = new CharacterSpecies("1", "Hexer", "Hexiger Hexer")
+const TestStartStats: CharacterStats = new CharacterStats(100, 20, 100)
+const TestMaxStats: CharacterStats = new CharacterStats(100, 20, 100)
+const TestGender: CharacterGender = new CharacterGender("1", "Mann", "Maennlicher Mann")
+const TestClass: CharacterClass = new CharacterClass("1", "Magier", "Magischer Magier", TestMaxStats, TestStartStats)
+const TestNpc: Npc = new Npc("1", "Bernd", "Bernd liebt die Musik", "Barde")
+const TestItem: Item = new Item("1", "Apfel", "Apfliger Apfel")
+const TestConnections: ConnectionInfo = new ConnectionInfo("active", "active")
+const TestAction: ActionElement = new ActionElement("1", "essen", "gegessen", "essen aktion", [new Event("addhp", 10)], [new Item("1", "Apfel", "Eine Frucht")])
+const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc], [TestItem], TestConnections, [TestAction])
+const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
+export const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter], [TestRoom], ["abc"], [TestAction])

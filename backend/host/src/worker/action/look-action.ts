@@ -6,7 +6,7 @@ export class LookAction implements Action {
     constructor() {
         this.trigger = "umschauen";
     }
-    performAction(user: string, args: string) {
+    performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }
 

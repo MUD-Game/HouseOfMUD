@@ -11,6 +11,7 @@ import CharacterCreator from "src/components/CharacterCreator";
 import Game from "src/components/Game";
 import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
 import { ConsoleProvider } from "src/contexts/ConsoleContext";
+import DungeonConfigurator from '../components/DungeonConfigurator/index';
 
 
 
@@ -18,25 +19,26 @@ const IndexRouter: React.FC = (): ReactElement => {
     return (
         <ConsoleProvider>
 
-        <AuthProvider>
-            <BrowserRouter>
-                <Header />
-                <GameProvider>
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
-                        <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
-                        <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
-                        <Route path="/game" element={<RequireAuth>
-                            <RabbitMQProvider>
-                                <Game />
-                            </RabbitMQProvider>
-                        </RequireAuth>} />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </GameProvider>
-            </BrowserRouter>
-        </AuthProvider>
+            <AuthProvider>
+                <BrowserRouter>
+                    <Header />
+                    <GameProvider>
+                        <Routes>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                            <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+                            <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
+                            <Route path="/dungeon-configurator" element={<RequireAuth><DungeonConfigurator /></RequireAuth>} />
+                            <Route path="/game" element={<RequireAuth>
+                                <RabbitMQProvider>
+                                    <Game />
+                                </RabbitMQProvider>
+                            </RequireAuth>} />
+                            <Route path="*" element={<NotFound />} />
+                        </Routes>
+                    </GameProvider>
+                </BrowserRouter>
+            </AuthProvider>
         </ConsoleProvider>
     );
 };

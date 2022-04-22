@@ -15,6 +15,8 @@ import HUD, { HUDProps } from './HUD';
 import Inventory from './Inventory';
 import Minimap from './Minimap';
 import { useEffect } from 'react';
+import { useGame } from 'src/hooks/useGame';
+import { Navigate } from 'react-router-dom';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
@@ -28,8 +30,12 @@ const Game: React.FC<GameProps> = ({ }) => {
         maxDamage: 100
     }
 
+    const {verifyToken} = useGame();
 
-
+    if (verifyToken === ''){
+        return <Navigate to="/" />
+    }
+    
     return (
         <div>
             <Minimap mapData={null} />

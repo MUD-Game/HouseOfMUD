@@ -2,6 +2,7 @@
  * @module RabbitMQContext
  * @category React Contexts
  * @description Context for using RabbitMQ
+ * @contextMethods {@linkcode login}, {@linkcode logout}, {@linkcode sendMessage}, {@linkcode setChatSubscriber}
  */
 
 import React from 'react';
@@ -9,7 +10,15 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Client, IMessage } from '@stomp/stompjs';
 
-type RabbitMQContextType = {
+export interface RabbitMQPayload {
+  action: 'login' | 'logout' | 'message';
+  user: string;
+  character: string,
+  verifyToken: string,
+  data: any
+}
+
+export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
   sendMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
@@ -28,9 +37,16 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   });
   // Diese Funktion wird immer aufgerufen wenn eine Nachricht ankommt
   let chatSubscriber: (message: IMessage) => void = () => { };
+  // TODO: Implement subscriber functions
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
   let minimapSubscriber: (message: any) => void = () => { };
+
+  let payloadTemplate = {
+    user: '',
+    character: '',
+    verifyToken: ''
+  }
 
   const processAction = (message: IMessage) =>{
     //TODO: Decide what type of message we received
@@ -40,6 +56,14 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     chatSubscriber(message); // atm only chats
 
   }
+
+  const sendPayload = (payload: RabbitMQPayload)=>{
+    rabbit.publish({
+      destination: `/exchange/ServerExchange/${dungeon}`,
+      body: JSON.stringify(payload)
+    });
+  }
+
   let login = (callback: VoidFunction, error: (error: string) => void) => {
 
     if (rabbit.active) {
@@ -47,19 +71,20 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    rabbit.activate();
-    let loginPayload = {
-      action: 'login',
-      user: user, //BUG: User weiß momentan nichts über die userid in der Designbeschreibung stehts aber
+    payloadTemplate = {
+      user: user,
       character: characterID,
       verifyToken: verifyToken,
-      data: {}
     }
+
+    rabbit.activate();
+    let loginPayload: RabbitMQPayload = {
+      action: 'login',
+      ...payloadTemplate,
+      data: {}
+    };
     rabbit.onConnect = () => {
-      rabbit.publish({
-        destination: `/exchange/ServerExchange/${dungeon}`,
-        body: JSON.stringify(loginPayload)
-      });
+      sendPayload(loginPayload);
       rabbit.subscribe(`/queue/${dungeon}-${characterID}`, (message: IMessage) => {
         processAction(message);
       });
@@ -72,36 +97,25 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       error('RabbitMQ is not connected');
       return;
     }
-    let logoutPayload = {
+    let logoutPayload:RabbitMQPayload = {
       action: 'logout',
-      user: user, //BUG: User weiß momentan nichts über die userid in der Designbeschreibung stehts aber
-      character: characterID,
-      verifyToken: verifyToken,
+      ...payloadTemplate,
       data: {}
     }
-    rabbit.publish({
-      destination: `/exchange/ServerExchange/${dungeon}`,
-      body: JSON.stringify(logoutPayload)
-    });
+    sendPayload(logoutPayload);
     rabbit.deactivate();
     callback();
   }
 
   let sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
-    let messagePayload = {
+    let messagePayload:RabbitMQPayload = {
       action: 'message',
-      user: user, //BUG: User weiß momentan nichts über die userid in der Designbeschreibung stehts aber
-      character: characterID,
-      verifyToken: verifyToken,
+      ...payloadTemplate,
       data: {
         message
       }
     }
-
-    rabbit.publish({
-      destination: `/exchange/ServerExchange/${dungeon}`,
-      body: JSON.stringify(messagePayload)
-    });
+    sendPayload(messagePayload);
     callback();
 
   }

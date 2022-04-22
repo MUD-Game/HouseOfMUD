@@ -30,9 +30,10 @@ const Game: React.FC<GameProps> = ({ }) => {
         maxDamage: 100
     }
 
-    const {verifyToken} = useGame();
 
-    if (verifyToken === ''){
+
+    const {isAbleToJoinGame} = useGame();
+    if (!isAbleToJoinGame()){
         return <Navigate to="/" />
     }
     

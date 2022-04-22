@@ -52,7 +52,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
         supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
     }
 
-    if (!dungeon) return <Navigate to="/dashboard" />;
+    if (!game.isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
     return (
         <Container className="mb-5">
             <h2>{dungeon}</h2>

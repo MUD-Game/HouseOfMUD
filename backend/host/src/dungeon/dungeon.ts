@@ -39,6 +39,101 @@ export class Dungeon implements Dungeon {
     blacklist: string[]
     actions: ActionElement[]
 
+    getName(): string {
+        return this.name
+    }
+
+    getDescription(): string {
+        return this.description
+    }
+
+    getCreatorId(): string {
+        return this.creatorId
+    }
+
+    getMasterId(): string {
+        return this.masterId
+    }
+
+    getMaxPlayers(): number {
+        return this.maxPlayers
+    }
+
+    getCurrentPlayers(): number {
+        return this.currentPlayers
+    }
+
+    getSpecies(speciesName: string): CharacterSpecies {
+        let speciesIndex: number = this.species.findIndex(species => species.name === speciesName)
+        if (speciesIndex === -1) {
+            throw new Error("Species does not exist")
+        } else {
+            return this.species[speciesIndex]
+        }
+    }
+
+    getClass(className: string): CharacterClass {
+        let classIndex: number = this.classes.findIndex(characterClass => characterClass.name === className)
+        if (classIndex === -1) {
+            throw new Error("Class does not exist")
+        } else {
+            return this.classes[classIndex]
+        }
+    }
+
+    getGender(genderName: string): CharacterGender {
+        let genderIndex: number = this.genders.findIndex(gender => gender.name === genderName)
+        if (genderIndex === -1) {
+            throw new Error("Gender does not exist")
+        } else {
+            return this.classes[genderIndex]
+        }
+    }
+
+    getCharacter(characterId: string): Character {
+        let characterIndex: number = this.characters.findIndex(character => character.id === characterId)
+        if (characterIndex === -1) {
+            throw new Error("Character does not exist")
+        } else {
+            return this.characters[characterIndex]
+        }
+    }
+
+    getCharacterByName(characterName: string): Character {
+        let characterIndex: number = this.characters.findIndex(character => character.name === characterName)
+        if (characterIndex === -1) {
+            throw new Error("Character does not exist")
+        } else {
+            return this.characters[characterIndex]
+        }
+    }
+
+    getRoom(roomName: string): Room {
+        let roomIndex: number = this.rooms.findIndex(room => room.name === roomName)
+        if (roomIndex === -1) {
+            throw new Error("Room does not exist")
+        } else {
+            return this.rooms[roomIndex]
+        }
+    }
+
+    getBlacklist(): string[] {
+        return this.blacklist
+    }
+
+    getAction(actionCommand: string): ActionElement {
+        let actionIndex: number = this.actions.findIndex(action => action.command === actionCommand)
+        if (actionIndex === -1) {
+            throw new Error("Room does not exist")
+        } else {
+            return this.actions[actionIndex]
+        }
+    }
+
+    getActions(): ActionElement[] {
+        return this.actions
+    }
+
     constructor(id: string, name: string, description: string, creatorId: string, masterId: string, maxPlayers: number, currentPlayers: number, species: CharacterSpecies[], classes: CharacterClass[],
         genders: CharacterGender[], characters: Character[], rooms: Room[], blacklist: string[], actions: ActionElement[]) {
         this.id = id
@@ -55,6 +150,10 @@ export class Dungeon implements Dungeon {
         this.rooms = rooms
         this.blacklist = blacklist
         this.actions = actions
+    }
+
+    getId(): string {
+        return this.id
     }
 }
 
@@ -187,6 +286,9 @@ export interface Character {
 }
 
 export class Character implements Character {
+    getId(): string {
+        throw new Error("Method not implemented.")
+    }
     id: string
     userId: string
     dungeonId: string
@@ -211,6 +313,14 @@ export class Character implements Character {
         this.currentStats = currentStats
         this.position = position
         this.inventory = inventory
+    }
+
+    getName(): string {
+        return this.name
+    }
+
+    getPosition(): Room {
+        return this.position
     }
 }
 
@@ -320,17 +430,14 @@ export class Room implements Room {
         this.connections = connections
         this.actions = actions
     }
+
+    getId(): string {
+        return this.id
+    }
+
+    getName(): string {
+        return this.name
+    }
 }
 
-const TestSpecies: CharacterSpecies = new CharacterSpecies("1", "Hexer", "Hexiger Hexer")
-const TestStartStats: CharacterStats = new CharacterStats(100, 20, 100)
-const TestMaxStats: CharacterStats = new CharacterStats(100, 20, 100)
-const TestGender: CharacterGender = new CharacterGender("1", "Mann", "Maennlicher Mann")
-const TestClass: CharacterClass = new CharacterClass("1", "Magier", "Magischer Magier", TestMaxStats, TestStartStats)
-const TestNpc: Npc = new Npc("1", "Bernd", "Bernd liebt die Musik", "Barde")
-const TestItem: Item = new Item("1", "Apfel", "Apfliger Apfel")
-const TestConnections: ConnectionInfo = new ConnectionInfo("active", "active")
-const TestAction: ActionElement = new ActionElement("1", "essen", "gegessen", "essen aktion", [new Event("addhp", 10)], [new Item("1", "Apfel", "Eine Frucht")])
-const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc], [TestItem], TestConnections, [TestAction])
-const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
-export const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter], [TestRoom], ["abc"], [TestAction])
+

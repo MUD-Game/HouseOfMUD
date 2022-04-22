@@ -1,3 +1,5 @@
+import { Character, Dungeon } from "../../dungeon/dungeon";
+import { amqpAdapter } from "../dungeon-controller";
 import { Action } from "./action";
 
 /**
@@ -5,17 +7,20 @@ import { Action } from "./action";
  */
 export class MessageAction implements Action {
     trigger: string;
+    dungeon: Dungeon;
 
-    constructor() {
+    constructor(dungeon: Dungeon) {
         this.trigger = "sag";
+        this.dungeon = dungeon;
     }
     performAction(user: string, args: string[]) {
-        return {routingKey: "Raum-1", 
-        payload: {
-            action: "message", 
-            data: {
-                message: "[Raum-1] Jeff sagt Hallo zusammen!"}
-            }
-        }
+        let messageBody: string = args.join(' ')
+        let senderCharacter: Character = this.dungeon.getCharacter(user)
+        let senderCharacterName: string = senderCharacter.getName()
+        let roomName: string = senderCharacter.getPosition().getName()
+        let dungeonId: string = this.dungeon.getId()
+        let routingKey = `${dungeonId}.room.${roomName}`
+        let responseMessage: string = `[${roomName}] ${senderCharacterName} sagt ${messageBody}`
+        amqpAdapter.sendWithRouting(routingKey, {action: "message", data: {message: responseMessage}})
     }
 }

@@ -1,4 +1,4 @@
-import { ActionElement } from "../../dungeon/dungeon";
+import { ActionElement, Dungeon } from "../../dungeon/dungeon";
 import { Action } from "./action";
 import { DiscardAction } from "./discard-action";
 import { DungeonAction } from "./dungeon-action";
@@ -27,12 +27,13 @@ export class ActionHandler implements IActionHandler {
     dungeonActions: DungeonAction[];
     unspecifiedAction: UnspecifiedAction;
 
-    constructor(dungeonActionElements: ActionElement[]) {
-        this.actions = [new DiscardAction(), new InspectAction(), new InventoryAction(), new LookAction(), new MessageAction(), new MoveAction(), new PickupAction(), new PrivateMessageAction()]
+    constructor(dungeon: Dungeon) {
+        this.actions = [new DiscardAction(dungeon), new InspectAction(dungeon), new InventoryAction(dungeon), new LookAction(dungeon), new MessageAction(dungeon), new MoveAction(dungeon), new PickupAction(dungeon), new PrivateMessageAction(dungeon)]
         let dungeonActions: DungeonAction[] = [];
-        dungeonActionElements.forEach(action => dungeonActions.push(new DungeonAction(action.command)))
+        let dungeonActionElements = dungeon.getActions()
+        dungeonActionElements.forEach(action => dungeonActions.push(new DungeonAction(action.command, dungeon)))
         this.dungeonActions = dungeonActions; // TODO: hier für jede spezifische Aktion ein neues DungeonAction Objekt erstellen
-        this.unspecifiedAction = new UnspecifiedAction("unspecified")
+        this.unspecifiedAction = new UnspecifiedAction("unspecified", dungeon)
     }
     /**
      * Based on the received data in the message the ActionHandler performs the action on the corresponding action type. 
@@ -40,7 +41,7 @@ export class ActionHandler implements IActionHandler {
      * @param message Message data the user sent. Processes the data into arguments.
      */
     processAction(user: string, message: string) {
-        let splitMessageString: string[] =  message.split(" ")
+        let splitMessageString: string[] = message.split(" ")
         let commandString: string = splitMessageString[0];
         let action;
         action = this.actions.find(action => action.trigger === commandString)

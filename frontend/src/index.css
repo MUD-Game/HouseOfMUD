@@ -162,3 +162,33 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.toast{
+  font-size:12px;
+  font-weight: normal;
+}
+
+.toast.bg-danger .toast-header {
+  color:rgb(218, 54, 54);
+  background-color:#ffefef !important;
+}
+
+.toast.bg-warning .toast-header {
+  color:rgb(255, 149, 0);
+  background-color:rgb(255, 247, 217) !important;
+}
+
+.toast.bg-info .toast-header {
+  color:rgb(45, 136, 255);
+  background-color:rgb(218, 236, 255) !important;
+}
+
+.toast{
+  background-color: rgba(255, 255, 255, 0.944) !important;
+  color:rgb(29, 29, 29);
+  font-weight: lighter ;
+}
+
+.toast-header strong{
+  text-transform: capitalize;
+}

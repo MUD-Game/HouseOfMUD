@@ -10,11 +10,14 @@ import { GameProvider } from "src/contexts/GameContext";
 import CharacterCreator from "src/components/CharacterCreator";
 import Game from "src/components/Game";
 import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
+import { ConsoleProvider } from "src/contexts/ConsoleContext";
 
 
 
 const IndexRouter: React.FC = (): ReactElement => {
     return (
+        <ConsoleProvider>
+
         <AuthProvider>
             <BrowserRouter>
                 <Header />
@@ -34,6 +37,7 @@ const IndexRouter: React.FC = (): ReactElement => {
                 </GameProvider>
             </BrowserRouter>
         </AuthProvider>
+        </ConsoleProvider>
     );
 };
 

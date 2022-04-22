@@ -35,7 +35,6 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const rabbit = new Client({
     brokerURL: process.env.REACT_APP_RABBITMQ
   });
-  // Diese Funktion wird immer aufgerufen wenn eine Nachricht ankommt
   let chatSubscriber: (message: IMessage) => void = () => { };
   // TODO: Implement subscriber functions
   let inventorySubscriber: (message: any) => void = () => { };

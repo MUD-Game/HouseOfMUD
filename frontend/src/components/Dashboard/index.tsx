@@ -14,7 +14,7 @@
 import React, { useEffect } from 'react'
 import { Container, Nav } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
-import { useConsole } from 'src/hooks/useMudConsole';
+import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
 import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
 import AllDungeons from './AllDungeons';
@@ -26,7 +26,8 @@ export type DashboardProps = {
 
 const Dashboard: React.FC<DashboardProps> = (props) => {
 
-    let auth = useAuth();
+    const auth = useAuth();
+    const homsole = useMudConsole();
     let [allDungeons, setAllDungeons] = React.useState<GetDungeonsResponse>();
     let [myDungeons, setMyDungeons] = React.useState<GetMyDungeonsResponse>();
     let [dungeonView, setDungeonView] = React.useState<"all" | "my">("all");
@@ -36,8 +37,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             user: auth.user,
             authToken: auth.token,
         }
-        supervisor.getDungeons(request, setAllDungeons, console.log)
-        supervisor.getMyDungeons(request, setMyDungeons, console.log);
+        supervisor.getDungeons(request, setAllDungeons, homsole.supervisorerror)
+        supervisor.getMyDungeons(request, setMyDungeons, homsole.supervisorerror);
     }, [])
 
     const handleSelect = (eventKey: string | null) => {

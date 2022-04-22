@@ -7,21 +7,22 @@
  */
 
 import React, { FormEvent } from 'react'
-import {useRabbitMQ} from "src/hooks/useRabbitMQ";
+import { useRabbitMQ } from "src/hooks/useRabbitMQ";
+import { useMudConsole } from '../../../hooks/useMudConsole';
 export interface ChatInputProps { }
 
 const ChatInput: React.FC<ChatInputProps> = ({ }) => {
 
-    const {sendMessage} = useRabbitMQ();
-
+    const { sendMessage } = useRabbitMQ();
+    const homsole = useMudConsole();
     const sendInput = (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault()
         let formData = new FormData(evt.currentTarget);
         let message = formData.get('message') as string;
-        sendMessage(message, ()=>{
-            console.log("Send Message:", message);
-        }, (error)=>{
-            console.error(error);
+        sendMessage(message, () => {
+            homsole.log(message, "Message sent succesfully",);
+        }, (error) => {
+            homsole.error(error, "RabbitMQ");
         })
     }
 

@@ -18,32 +18,31 @@ import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
 import { Navigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
-import { IMessage } from '@stomp/stompjs';
-import { useConsole } from 'src/hooks/useMudConsole';
+import { useMudConsole } from 'src/hooks/useMudConsole';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
-    let con = useConsole();
-    
+    let homsole = useMudConsole();
+
     const rabbit = useRabbitMQ();
-    const {isAbleToJoinGame} = useGame();
+    const { isAbleToJoinGame } = useGame();
     useEffect(() => {
-        if(isAbleToJoinGame()){
+        if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.login(() => {
-                con.log("Successful login");
-            }, (error: string) => {
-                console.log(error);
+                homsole.log("Successful login");
+            }, (error) => {
+                homsole.error(error, "RabbitMQ");
             });
         }
         return () => {
             rabbit.logout(() => { }, (error) => {
-                console.log(error);
+                homsole.error(error, "RabbitMQ");
             });
         }
     }, [])
-    
-    if (!isAbleToJoinGame()){
+
+    if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
     }
     const hudMock: HUDProps = {
@@ -54,10 +53,10 @@ const Game: React.FC<GameProps> = ({ }) => {
         damage: 100,
         maxDamage: 100
     }
-    
 
 
-    
+
+
     return (
         <div>
             <Minimap mapData={null} />

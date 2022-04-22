@@ -9,8 +9,8 @@ type GameContextType = {
   setCharacterID: (characterId: string) => void,
   verifyToken: string, // CharacterID
   setVerifyToken: (characterId: string) => void,
-  isAbleToJoinGame: ()=>boolean;
-  isAbleToPickCharacter: ()=>boolean;
+  isAbleToJoinGame: () => boolean;
+  isAbleToPickCharacter: () => boolean;
 }
 
 let GameContext = React.createContext<GameContextType>({} as GameContextType);
@@ -22,16 +22,15 @@ function GameProvider({ children }: { children: React.ReactNode }) {
   let [verifyToken, setVerifyToken] = React.useState<string>('');
 
 
-  const isAbleToPickCharacter = ()=>{
+  const isAbleToPickCharacter = () => {
     return (dungeon !== '')
   }
 
-  const isAbleToJoinGame = ()=>{
-      console.log(character ,characterID, verifyToken)
+  const isAbleToJoinGame = () => {
     return (isAbleToPickCharacter() && character !== '' && characterID !== '' && verifyToken !== '')
   }
 
-  
+
 
   let value = { isAbleToPickCharacter, isAbleToJoinGame, dungeon, setDungeon, character, setCharacter, characterID, setCharacterID, verifyToken, setVerifyToken };
 

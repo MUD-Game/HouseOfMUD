@@ -2,7 +2,6 @@ import React from 'react';
 
 import { ConsoleContext } from 'src/contexts/ConsoleContext';
 
-
-export function useConsole() {
+export function useMudConsole() {
     return React.useContext(ConsoleContext);
 }

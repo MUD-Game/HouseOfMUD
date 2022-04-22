@@ -22,13 +22,16 @@ import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
+import { useMudConsole } from '../../hooks/useMudConsole';
+import { ErrorResponse } from '../../types/supervisor';
 export interface CharacterCreatorProps { }
 
 
 const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
 
-    let game = useGame();
-    let auth = useAuth();
+    const game = useGame();
+    const auth = useAuth();
+    const homsole = useMudConsole();
     let dungeon = game.dungeon;
     let user = auth.user;
     const [characters, setCharacters] = React.useState<GetCharactersResponse>([] as GetCharactersResponse);
@@ -39,8 +42,8 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
             user: user,
             authToken: auth.token
         }
-        supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, console.log);
-        supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
+        supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, homsole.supervisorerror);
+        supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
     }, []);
 
 
@@ -49,7 +52,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
             user: user,
             authToken: auth.token
         }
-        supervisor.getCharacters(dungeon, requestBody, setCharacters, console.log);
+        supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
     }
 
     if (!game.isAbleToPickCharacter()) return <Navigate to="/dashboard" />;

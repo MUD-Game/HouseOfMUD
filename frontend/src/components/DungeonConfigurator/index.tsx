@@ -32,8 +32,8 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <MudInput colmd={12} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="genders" placeholder='Geschlechter (gentrennt durch ein Komma)' />
                 <MudInput colmd={12} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="species" placeholder='Spezies (gentrennt durch ein Komma)' />
             </Row>
-            <DungeonObjectList onClick={(evt) => { }} title="Klassen" buttonText="neue Klasse anlegen" />
-            <DungeonObjectList onClick={(evt) => { }} title="Item" buttonText="neues Item anlegen" />
+            <DungeonObjectList onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={{ name: "Name", description: "Beschreibung" }} onAdd={dungeonConfig.addClass} title="Klassen" buttonText="neue Klasse anlegen" />
+
         </Container>
 
     )

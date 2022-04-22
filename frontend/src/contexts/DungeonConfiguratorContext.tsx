@@ -8,9 +8,11 @@ export interface DungeonConfiguratorContextMethods {
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setMaxPlayers: (maxPlayers: number) => void;
-  setNpcs: (npcs: MudNpc[]) => void;
 
   handleOnBlurInput: (event: React.FocusEvent<HTMLInputElement>) => void;
+  addClass: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  editClass: (key: number) => void;
+  deleteClass: (key: number) => void;
 }
 
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
@@ -84,6 +86,20 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     }
   }
 
+  const mockupClass: MudCharacterClass = {
+    name: "Mock-Name",
+    description: "Mock-Description"
+  } as MudCharacterClass;
+
+  const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setClasses([...classes, mockupClass]);
+  }
+  const editClass = (key: number) => {
+  }
+  const deleteClass = (key: number) => {
+    setClasses(classes.filter((_, index) => index !== key));
+  }
+
   const setCharacterDecorator = <T,>(decorator: string, setData: (data: T[]) => void) => {
     let data: T[] = [];
     let commaArray = decorator.split(",");
@@ -101,7 +117,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
   let methods: DungeonConfiguratorContextMethods = {
-    initializeDungeon, setName, setDescription, setMaxPlayers, setNpcs, handleOnBlurInput
+    initializeDungeon, setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass
   }
 
   let fields: MudDungeon = {

@@ -1,15 +1,16 @@
-import { ActionElement, Item } from "../src/dungeon/dungeon";
+import { ActionElement, CharacterGender, CharacterSpecies, Character, Item } from "../src/dungeon/dungeon";
 import { Event } from "../src/dungeon/dungeon";
 import { ActionHandler } from "../src/worker/action/action-handler";
 import { DiscardAction } from "../src/worker/action/discard-action";
 import { DungeonAction } from "../src/worker/action/dungeon-action";
 import { InspectAction } from "../src/worker/action/inspect-action";
 import { LookAction } from "../src/worker/action/look-action";
-import { MessageAction, MessageAction } from "../src/worker/action/message-action";
+import { MessageAction } from "../src/worker/action/message-action";
 import { MoveAction } from "../src/worker/action/move-action";
 import { PickupAction } from "../src/worker/action/pickup-action";
 import { PrivateMessageAction } from "../src/worker/action/private-message-action";
 import UnspecifiedAction from "../src/worker/action/unspecified-action";
+import characterDataset from "../../../test/testdaten/Charakter.json"
 
 beforeAll(() => {
     
@@ -48,7 +49,9 @@ describe("Action Handler", () => {
 
 describe("Actions", () => {
     const messageAction: MessageAction = new MessageAction();
+    //const character: Character = new Character("1", "1", "Jeff", "Magier", new CharacterSpecies("1", "Elf", "Elfiger Elf"), new CharacterGender())
+    const character = characterDataset.Character[0]
     test("MessageAction should return correct routing key and payload", () => {
-        messageAction.performAction("1", "Hallo zusammen!")
+        expect(messageAction.performAction(character.userId, "Hallo zusammen!")).toBe({routingKey: "Raum-1", payload: ""})
     })
 })

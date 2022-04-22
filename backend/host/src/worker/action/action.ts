@@ -1,4 +1,4 @@
-export interface IAction {
+export interface Action {
     trigger: string
     /**
      * Performs the action based on the given arguments. Overriden by action type.

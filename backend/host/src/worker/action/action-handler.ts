@@ -1,5 +1,5 @@
-import { IActionElement } from "../../dungeon/dungeon";
-import { IAction } from "./action";
+import { ActionElement } from "../../dungeon/dungeon";
+import { Action } from "./action";
 import { DiscardAction } from "./discard-action";
 import { DungeonAction } from "./dungeon-action";
 import { InspectAction } from "./inspect-action";
@@ -12,7 +12,7 @@ import { PrivateMessageAction } from "./private-message-action";
 import UnspecifiedAction from "./unspecified-action";
 
 export interface IActionHandler {
-    actions: IAction[];
+    actions: Action[];
     dungeonActions: DungeonAction[];
     unspecifiedAction: UnspecifiedAction;
     processAction(user: string, message: string): any;
@@ -23,11 +23,11 @@ export interface IActionHandler {
  * @category Action Handler
  */
 export class ActionHandler implements IActionHandler {
-    actions: IAction[]
+    actions: Action[]
     dungeonActions: DungeonAction[];
     unspecifiedAction: UnspecifiedAction;
 
-    constructor(dungeonActionElements: IActionElement[]) {
+    constructor(dungeonActionElements: ActionElement[]) {
         this.actions = [new DiscardAction(), new InspectAction(), new InventoryAction(), new LookAction(), new MessageAction(), new MoveAction(), new PickupAction(), new PrivateMessageAction()]
         let dungeonActions: DungeonAction[] = [];
         dungeonActionElements.forEach(action => dungeonActions.push(new DungeonAction(action.command)))

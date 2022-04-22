@@ -1,6 +1,4 @@
-import exp from "constants"
-
-export interface IDungeon {
+export interface Dungeon {
     id: string,
     name: string,
     description: string,
@@ -8,15 +6,15 @@ export interface IDungeon {
     masterId: string,
     maxPlayers: number,
     currentPlayers: number,
-    species: ICharacterSpecies[],
-    classes: ICharacterClass[],
-    genders: ICharacterGender[],
-    rooms: IRoom[],
+    species: CharacterSpecies[],
+    classes: CharacterClass[],
+    genders: CharacterGender[],
+    rooms: Room[],
     blacklist: string[],
-    actions: IActionElement[]
+    actions: ActionElement[]
 }
 
-export class Dungeon implements IDungeon {
+export class Dungeon implements Dungeon {
     id: string
     name: string
     description: string
@@ -24,15 +22,15 @@ export class Dungeon implements IDungeon {
     masterId: string
     maxPlayers: number
     currentPlayers: number
-    species: ICharacterSpecies[]
-    classes: ICharacterClass[]
-    genders: ICharacterGender[]
-    rooms: IRoom[]
+    species: CharacterSpecies[]
+    classes: CharacterClass[]
+    genders: CharacterGender[]
+    rooms: Room[]
     blacklist: string[]
-    actions: IActionElement[]
+    actions: ActionElement[]
 
-    constructor(id: string, name: string, description: string, creatorId: string, masterId: string, maxPlayers: number, currentPlayers: number, species: ICharacterSpecies[], classes: ICharacterClass[],
-        genders: ICharacterGender[], rooms: IRoom[], blacklist: string[], actions: IActionElement[]) {
+    constructor(id: string, name: string, description: string, creatorId: string, masterId: string, maxPlayers: number, currentPlayers: number, species: CharacterSpecies[], classes: CharacterClass[],
+        genders: CharacterGender[], rooms: Room[], blacklist: string[], actions: ActionElement[]) {
         this.id = id
         this.name = name
         this.description = description
@@ -47,16 +45,15 @@ export class Dungeon implements IDungeon {
         this.blacklist = blacklist
         this.actions = actions
     }
-
 }
 
-export interface IUser {
+export interface User {
     id: string,
     username: string,
     password: string
 }
 
-export class User implements IUser {
+export class User implements User {
     id: string
     username: string
     password: string
@@ -68,13 +65,13 @@ export class User implements IUser {
     }
 }
 
-export interface ICharacterStats {
+export interface CharacterStats {
     hp: number,
     dmg: number,
     mana: number
 }
 
-export class CharacterStats implements ICharacterStats {
+export class CharacterStats implements CharacterStats {
     hp: number
     dmg: number
     mana: number
@@ -86,13 +83,13 @@ export class CharacterStats implements ICharacterStats {
     }
 }
 
-export interface ICharacterSpecies {
+export interface CharacterSpecies {
     id: string,
     name: string,
     description: string
 }
 
-export class CharacterSpecies implements ICharacterSpecies {
+export class CharacterSpecies implements CharacterSpecies {
     id: string
     name: string
     description: string
@@ -104,22 +101,22 @@ export class CharacterSpecies implements ICharacterSpecies {
     }
 }
 
-export interface ICharacterClass {
+export interface CharacterClass {
     id: string,
     name: string,
     description: string,
-    maxStats: ICharacterStats,
-    startStats: ICharacterStats
+    maxStats: CharacterStats,
+    startStats: CharacterStats
 }
 
-export class CharacterClass implements ICharacterClass {
+export class CharacterClass implements CharacterClass {
     id: string
     name: string
     description: string
-    maxStats: ICharacterStats
-    startStats: ICharacterStats
+    maxStats: CharacterStats
+    startStats: CharacterStats
 
-    constructor(id: string, name: string, description: string, maxStats: ICharacterStats, startStats: ICharacterStats) {
+    constructor(id: string, name: string, description: string, maxStats: CharacterStats, startStats: CharacterStats) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -128,13 +125,13 @@ export class CharacterClass implements ICharacterClass {
     }
 }
 
-export interface ICharacterGender {
+export interface CharacterGender {
     id: string,
     name: string,
     description: string
 }
 
-export class CharacterGender implements ICharacterGender {
+export class CharacterGender implements CharacterGender {
     id: string
     name: string
     description: string
@@ -146,13 +143,13 @@ export class CharacterGender implements ICharacterGender {
     }
 }
 
-export interface IItem {
+export interface Item {
     id: string,
     name: string,
     description: string
 }
 
-export class Item implements IItem {
+export class Item implements Item {
     id: string
     name: string
     description: string
@@ -164,32 +161,32 @@ export class Item implements IItem {
     }
 }
 
-export interface ICharacter {
+export interface Character {
     userId: string,
     dungeonId: string,
     name: string,
     className: string,
-    species: ICharacterSpecies,
-    gender: ICharacterGender,
-    maxStats: ICharacterStats,
-    currentStats: ICharacterStats,
-    position: IRoom, //??????????
-    inventory: IItem[]
+    species: CharacterSpecies,
+    gender: CharacterGender,
+    maxStats: CharacterStats,
+    currentStats: CharacterStats,
+    position: Room, //??????????
+    inventory: Item[]
 }
 
-export class Character implements ICharacter {
+export class Character implements Character {
     userId: string
     dungeonId: string
     name: string
     className: string
-    species: ICharacterSpecies
-    gender: ICharacterGender
-    maxStats: ICharacterStats
-    currentStats: ICharacterStats
-    position: IRoom
-    inventory: IItem[]
+    species: CharacterSpecies
+    gender: CharacterGender
+    maxStats: CharacterStats
+    currentStats: CharacterStats
+    position: Room
+    inventory: Item[]
 
-    constructor(userId: string, dungeonId: string, name: string, className: string, species: ICharacterSpecies, gender: ICharacterGender, maxStats: ICharacterStats, currentStats: ICharacterStats, position: IRoom, inventory: IItem[]) {
+    constructor(userId: string, dungeonId: string, name: string, className: string, species: CharacterSpecies, gender: CharacterGender, maxStats: CharacterStats, currentStats: CharacterStats, position: Room, inventory: Item[]) {
         this.userId = userId;
         this.dungeonId = dungeonId
         this.name = name
@@ -205,27 +202,27 @@ export class Character implements ICharacter {
 
 export interface IEvent {
     eventType: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana",
-    value: IItem | number
+    value: Item | number
 }
 
 export class Event implements IEvent {
     eventType: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana"
-    value: number | IItem
+    value: number | Item
     
-    constructor(type: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", value: number | IItem) {
+    constructor(type: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", value: number | Item) {
         this.eventType = type;
         this.value = value
     }
 }
 
-export interface INpc {
+export interface Npc {
     id: string,
     name: string,
     description: string,
     species: string
 }
 
-export class Npc implements INpc {
+export class Npc implements Npc {
     id: string
     name: string
     description: string
@@ -239,24 +236,24 @@ export class Npc implements INpc {
     }
 }
 
-export interface IActionElement {
+export interface ActionElement {
     id: string,
     command: string,
     output: string,
     description: string,
-    events: IEvent[],
-    itemsneeded: IItem[]
+    events: Event[],
+    itemsneeded: Item[]
 }
 
-export class ActionElement implements IActionElement {
+export class ActionElement implements ActionElement {
     id: string;
     command: string
     output: string
     description: string
-    events: IEvent[]
-    itemsneeded: IItem[]
+    events: Event[]
+    itemsneeded: Item[]
 
-    constructor(id: string, command: string, output: string, description: string, events: IEvent[], itemsneeded: IItem[]) {
+    constructor(id: string, command: string, output: string, description: string, events: IEvent[], itemsneeded: Item[]) {
         this.id = id,
         this.command = command,
         this.output = output,
@@ -266,13 +263,13 @@ export class ActionElement implements IActionElement {
     }
 }
 
-export interface IConnectionInfo {
-    east: "active" | "inactive" | "closed",
+export interface ConnectionInfo {
+    east: "active" | "inactive" | "closed" ,
     south: "active" | "inactive" | "closed"
 }
 
-export class ConnectionInfo implements IConnectionInfo {
-    east: "active" | "inactive" | "closed"
+export class ConnectionInfo implements ConnectionInfo {
+    east: "active" | "inactive" | "closed" 
     south: "active" | "inactive" | "closed"
 
     constructor(east: "active" | "inactive" | "closed", south: "active" | "inactive" | "closed") {
@@ -281,26 +278,26 @@ export class ConnectionInfo implements IConnectionInfo {
     }
 }
 
-export interface IRoom {
+export interface Room {
     id: string,
     name: string,
     description: string,
-    npcs: INpc[],
-    items: IItem[],
-    connections: IConnectionInfo,
-    actions: IActionElement[]
+    npcs: Npc[],
+    items: Item[],
+    connections: ConnectionInfo,
+    actions: ActionElement[]
 }
 
-export class Room implements IRoom {
+export class Room implements Room {
     id: string
     name: string
     description: string
-    npcs: INpc[]
-    items: IItem[]
-    connections: IConnectionInfo
-    actions: IActionElement[]
+    npcs: Npc[]
+    items: Item[]
+    connections: ConnectionInfo
+    actions: ActionElement[]
 
-    constructor(id: string, name: string, description: string, npcs: INpc[], items: IItem[], connections: IConnectionInfo, actions: IActionElement[]) {
+    constructor(id: string, name: string, description: string, npcs: Npc[], items: Item[], connections: ConnectionInfo, actions: ActionElement[]) {
         this.id = id
         this.name = name
         this.description = description

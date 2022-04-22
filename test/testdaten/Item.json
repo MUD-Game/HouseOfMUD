@@ -8,7 +8,7 @@
         {
         "id": "2",
         "username": "Schlüssel",
-        "password": "Ob man damit Türen öffnen kann?"
+        "description": "Ob man damit Türen öffnen kann?"
         }
         ]
        }

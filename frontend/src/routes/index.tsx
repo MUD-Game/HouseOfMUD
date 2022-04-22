@@ -12,6 +12,7 @@ import Game from "src/components/Game";
 import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
 import { ConsoleProvider } from "src/contexts/ConsoleContext";
 import DungeonConfigurator from '../components/DungeonConfigurator/index';
+import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorContext";
 
 
 
@@ -28,7 +29,12 @@ const IndexRouter: React.FC = (): ReactElement => {
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
-                            <Route path="/dungeon-configurator" element={<RequireAuth><DungeonConfigurator /></RequireAuth>} />
+                            <Route path="/dungeon-configurator" element={
+                                <RequireAuth>
+                                    <DungeonConfiguratorProvider>
+                                        <DungeonConfigurator />
+                                    </DungeonConfiguratorProvider>
+                                </RequireAuth>} />
                             <Route path="/game" element={<RequireAuth>
                                 <RabbitMQProvider>
                                     <Game />

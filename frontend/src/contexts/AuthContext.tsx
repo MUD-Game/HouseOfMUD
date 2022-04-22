@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { supervisor as authProvider } from 'src/services/supervisor';
-
 type AuthContextType = {
   user: string;
   token: string;

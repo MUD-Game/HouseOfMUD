@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import MudInput from '../Custom/MudInupt';
 import './index.css'
@@ -17,10 +17,12 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
     return (
 
         <Container>
-            <h1>DungeonConfigurator</h1>
-            <MudInput colmd={9} type="text" name="name" placeholder="Name" />
-            <MudInput colmd={9} type="number" name="maxplayercount" placeholder="Maximale Spieleranzahl" />
-            <MudInput colmd={9} type="text" name="description" placeholder="Beschreibung" />
+            <Row className="my-3 g-3">
+                <h1>DungeonConfigurator</h1>
+                <MudInput colmd={9} type="text" name="name" placeholder="Name" />
+                <MudInput colmd={3} type="number" name="maxplayercount" placeholder="Maximale Spieleranzahl" />
+                <MudInput colmd={12} type="text" name="description" placeholder="Beschreibung" />
+            </Row>
         </Container>
 
     )

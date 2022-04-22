@@ -19,7 +19,7 @@ const ChatOutput: React.FC<ChatOutputProps> = ({ messages }) => {
     const rabbit = useRabbitMQ();
 
 
-    rabbit.setSubscribeFunction((message: IMessage) => {
+    rabbit.setChatSubscriber((message: IMessage) => {
         console.log(message.body);
     });
 

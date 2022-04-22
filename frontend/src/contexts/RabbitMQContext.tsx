@@ -13,7 +13,7 @@ type RabbitMQContextType = {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
   sendMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
-  setSubscribeFunction: (subscriber: (message: IMessage) => void) => void;
+  setChatSubscriber: (subscriber: (message: IMessage) => void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -27,8 +27,19 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     brokerURL: process.env.REACT_APP_RABBITMQ
   });
   // Diese Funktion wird immer aufgerufen wenn eine Nachricht ankommt
-  let subscriberFunction: (message: IMessage) => void = () => { };
+  let chatSubscriber: (message: IMessage) => void = () => { };
+  let inventorySubscriber: (message: any) => void = () => { };
+  let hudSubscriber: (message: any) => void = () => { };
+  let minimapSubscriber: (message: any) => void = () => { };
 
+  const processAction = (message: IMessage) =>{
+    //TODO: Decide what type of message we received
+    /**
+     * If the action is a chat-message => call chatSubscriber etc.
+     */
+    chatSubscriber(message); // atm only chats
+
+  }
   let login = (callback: VoidFunction, error: (error: string) => void) => {
 
     if (rabbit.active) {
@@ -50,7 +61,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify(loginPayload)
       });
       rabbit.subscribe(`/queue/${dungeon}-${characterID}`, (message: IMessage) => {
-        subscriberFunction(message);
+        processAction(message);
       });
     }
     callback();
@@ -95,11 +106,11 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
   }
 
-  function setSubscribeFunction(subscriber: (message: IMessage) => void) {
-    subscriberFunction = subscriber;
+  function setChatSubscriber(subscriber: (message: IMessage) => void) {
+    chatSubscriber = subscriber;
   }
 
-  let value = { login, logout, sendMessage, setSubscribeFunction };
+  let value = { login, logout, sendMessage, setChatSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

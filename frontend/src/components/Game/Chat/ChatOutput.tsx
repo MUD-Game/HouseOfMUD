@@ -14,19 +14,17 @@ export interface ChatOutputProps {}
 
 const ChatOutput: React.FC<ChatOutputProps> = ({ }) => {
 
-    const [messages, setMessages] = useState(["Mock-Message"]);
+    const [messages, setMessages] = useState("Mock");
     const {setChatSubscriber} = useRabbitMQ();
 
-    setChatSubscriber((message:IMessage)=>{
-        setMessages([...messages, message.body])
+    setChatSubscriber((message:string)=>{
+        setMessages(message)
     });
     
     return (
         <>
             <p>CHAT-OUTPUT</p>
-            {messages.map((msg,index)=>{
-                <div key={index}>{msg}</div>
-            })}            
+            <div>{messages}</div>      
         </>
     )
 }

@@ -25,11 +25,11 @@ const Game: React.FC<GameProps> = ({ }) => {
     
     const rabbit = useRabbitMQ();
     const {isAbleToJoinGame} = useGame();
-    alert(isAbleToJoinGame());
     useEffect(() => {
         if(isAbleToJoinGame()){
+            rabbit.setErrorSubscriber(console.error);
             rabbit.login(() => {
-                console.log('login success lulw');
+                console.log('Login succesful');
             }, (error: string) => {
                 console.log(error);
             });

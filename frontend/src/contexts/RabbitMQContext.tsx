@@ -8,21 +8,15 @@
 import React from 'react';
 import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
-import { Client, IMessage } from '@stomp/stompjs';
-
-export interface RabbitMQPayload {
-  action: 'login' | 'logout' | 'message';
-  user: string;
-  character: string,
-  verifyToken: string,
-  data: any
-}
+import { Client, IFrame, IMessage } from '@stomp/stompjs';
+import { RabbitMQPayload } from 'src/types/rabbitMQ';
 
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
   sendMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
-  setChatSubscriber: (subscriber: (message: IMessage) => void) => void;
+  setChatSubscriber: (subscriber: (message: string) => void) => void;
+  setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[])=>void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -34,8 +28,15 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
   const rabbit = new Client({
     brokerURL: process.env.REACT_APP_RABBITMQ
-  });
-  let chatSubscriber: (message: IMessage) => void = () => { };
+});
+  let chatSubscriber: (message: string) => void = () => { };
+
+  /**
+   * 
+   * @param error 
+   * The errorSubscriber gets all async Error messages (mostly RabbitMQ)
+   */
+  let errorSubscriber: (error: string) => void = (error) => {};
   // TODO: Implement subscriber functions
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
@@ -48,19 +49,43 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   const processAction = (message: IMessage) =>{
-    //TODO: Decide what type of message we received
-    /**
-     * If the action is a chat-message => call chatSubscriber etc.
-     */
-    chatSubscriber(message); // atm only chats
+    try{
+      let jsonData = JSON.parse(message.body);
+      //TODO: Decide what type of message we received
+      if(jsonData['action'] === undefined) {
+        errorSubscriber("RabbitMQ-Message is missing a action-key");
+        return;
+      }else if(jsonData['body'] === undefined){
+        errorSubscriber("RabbitMQ-Message is missing a body");
+        return;
+      }
+      switch(jsonData.action){
+        case 'message':
+          chatSubscriber(jsonData.body); // atm only chats
+          break;
+        default:
+          errorSubscriber("RabbitMQ-Action not implemented yet: "+jsonData.action);
+        }
+      }catch(err){
+        if(err instanceof SyntaxError){
+          errorSubscriber("Message Received from RabbitMQ is not valid JSON!: "+message.body);
+        }
+      }
 
   }
 
+  const setErrorSubscriber = (subscriber: (message: any, ...optionalParams: any[])=>void)=> {
+    errorSubscriber = subscriber;
+  }
+
+
   const sendPayload = (payload: RabbitMQPayload)=>{
-    rabbit.publish({
-      destination: `/exchange/ServerExchange/${dungeon}`,
-      body: JSON.stringify(payload)
-    });
+    if(rabbit.connected){
+      rabbit.publish({
+        destination: `/exchange/ServerExchange/${dungeon}`,
+        body: JSON.stringify(payload)
+      });
+    }
   }
 
   let login = (callback: VoidFunction, error: (error: string) => void) => {
@@ -88,6 +113,9 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
         processAction(message);
       });
     }
+    rabbit.onStompError = (receipt: IFrame)=>{
+      errorSubscriber(receipt.body);
+    }
     callback();
   }
 
@@ -107,6 +135,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   let sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+    if(!rabbit.connected){
+      error("RabbitMQ is not connected");
+      return;
+    }
     let messagePayload:RabbitMQPayload = {
       action: 'message',
       ...payloadTemplate,
@@ -119,11 +151,11 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
   }
 
-  function setChatSubscriber(subscriber: (message: IMessage) => void) {
+  function setChatSubscriber(subscriber: (message: string) => void) {
     chatSubscriber = subscriber;
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

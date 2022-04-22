@@ -19,17 +19,19 @@ import { useGame } from 'src/hooks/useGame';
 import { Navigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { IMessage } from '@stomp/stompjs';
+import { useConsole } from 'src/hooks/useMudConsole';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
+    let con = useConsole();
     
     const rabbit = useRabbitMQ();
     const {isAbleToJoinGame} = useGame();
-    alert(isAbleToJoinGame());
     useEffect(() => {
         if(isAbleToJoinGame()){
+            rabbit.setErrorSubscriber(console.error);
             rabbit.login(() => {
-                console.log('login success lulw');
+                con.log("Successful login");
             }, (error: string) => {
                 console.log(error);
             });

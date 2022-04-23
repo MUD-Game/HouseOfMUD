@@ -20,19 +20,49 @@ export interface AddActionModalProps {
 }
 
 const AddActionModal: React.FC<AddActionModalProps> = (props) => {
-    const [itemsNeeded, setItemsNeeded] = React.useState<Option[]>([]);
-    const [removeItems, setRemoveItems] = React.useState<Option[]>([]);
-    const [addItems, setAddItems] = React.useState<Option[]>([]);
-    const [selectedEvents, setSelectedEvents] = React.useState<Option[]>([]);
-    const [eventValues, setEventValues] = React.useState<{ [key: string]: any }>({});
+
+    const dconf = useDungeonConfigurator();
+
+
+    let initialItemsNeeded: Option[] = [];
+    let initialRemoveItems: Option[] = [];
+    let initialAddItems: Option[] = [];
+    let initialEvents: Option[] = [];
+    let initialEventValues: { [key: string]: number } = {};
+    const constructToModalData = () => {
+        // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
+        props.editData?.itemsneeded?.forEach((item: number) => {
+            initialItemsNeeded.push({ id: item, name: dconf.items[item].name, description: dconf.items[item].description });
+        });
+        props.editData?.events?.forEach((mudEvent: MudEvent) => {
+            initialEvents.push(mudEvent.eventType);
+            if (mudEvent.eventType === "removeitem") {
+                initialRemoveItems.push({ id: mudEvent.value, name: dconf.items[mudEvent.value].name, description: dconf.items[mudEvent.value].description });
+            } else if (mudEvent.eventType === "additem") {
+                initialAddItems.push({ id: mudEvent.value, name: dconf.items[mudEvent.value].name, description: dconf.items[mudEvent.value].description });
+            } else {
+                initialEventValues[mudEvent.eventType] = mudEvent.value;
+            }
+        });
+
+
+    }
+    constructToModalData();
+
+    const [itemsNeeded, setItemsNeeded] = React.useState<Option[]>(initialItemsNeeded);
+    const [removeItems, setRemoveItems] = React.useState<Option[]>(initialRemoveItems);
+    const [addItems, setAddItems] = React.useState<Option[]>(initialAddItems);
+    const [selectedEvents, setSelectedEvents] = React.useState<Option[]>(initialEvents);
+    const [eventValues, setEventValues] = React.useState<{ [key: string]: any }>(initialEventValues);
     const [command, setCommand] = React.useState<string>(props.editData?.command || "");
     const [output, setOutput] = React.useState<string>(props.editData?.output || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
     const homosole = useMudConsole();
 
-    const dconf = useDungeonConfigurator();
 
-    const constructToContextData = () => {
+
+
+    const deconstructToContextData = () => {
         let allEvents: MudEvent[] = [];
         // REFACTOR: Typing!!!
         selectedEvents.forEach((event) => {
@@ -78,10 +108,11 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
+        console.log(eventValues);
         if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output)) {
             homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
         } else {
-            let action = constructToContextData();
+            let action = deconstructToContextData();
             console.log(action);
             if (!action) homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
             props.onSendAction(action);

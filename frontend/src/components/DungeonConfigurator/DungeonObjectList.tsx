@@ -6,6 +6,7 @@ import { MudCharacterClass } from "src/types/dungeon";
 export interface DungeonObjectListProps {
     title: string;
     buttonText?: string;
+    identifier: string;
     onAdd?: (event: MouseEvent<HTMLButtonElement>) => void;
     onEditElement: (key: number) => void;
     onDeleteElement: (key: number) => void;
@@ -13,7 +14,7 @@ export interface DungeonObjectListProps {
     displayKeys: { [key: string]: string };
 }
 
-const DungeonObjectList: React.FC<DungeonObjectListProps> = ({ title, buttonText, data, displayKeys, onAdd, onEditElement, onDeleteElement }) => {
+const DungeonObjectList: React.FC<DungeonObjectListProps> = ({ title, buttonText, data, displayKeys, identifier, onAdd, onEditElement, onDeleteElement }) => {
     const keyColumns = Object.keys(displayKeys).length;
     const keyColumnSize = Math.floor(10 / keyColumns);
     return (
@@ -41,8 +42,8 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = ({ title, buttonText
                                 )
                             })}
                             <div className="col-md-2 text-end">
-                                <Trash data-key={index} onClick={() => onDeleteElement(index)} style={{ cursor: "pointer" }} />
-                                <Pencil data-key={index} onClick={() => onEditElement(index)} style={{ cursor: "pointer" }} />
+                                <Trash data-key={item[identifier]} onClick={() => onDeleteElement(item[identifier])} style={{ cursor: "pointer" }} />
+                                <Pencil data-key={item[identifier]} onClick={() => onEditElement(item[identifier])} style={{ cursor: "pointer" }} />
                             </div>
                         </Row>
                     )

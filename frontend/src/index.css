@@ -163,9 +163,17 @@ code {
     monospace;
 }
 
+.toast-container{
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+}
+
 .toast{
   font-family: 'Segoe UI', 'Calibri', Helvetica, sans-serif;
   font-size:0.75rem;
+  z-index:100 !important;
 }
 
 .toast.bg-danger .toast-header {
@@ -175,7 +183,7 @@ code {
 
 .toast.bg-warning .toast-header {
   color:rgb(255, 149, 0);
-  background-color:rgb(69, 60, 30) !important;
+  background-color:rgb(255, 245, 213) !important;
 }
 
 .toast.bg-info .toast-header {
@@ -184,7 +192,7 @@ code {
 }
 
 .toast{
-  background-color: rgba(255, 255, 255, 0.944) !important;
+  background-color: rgb(255, 255, 255) !important;
   color:rgb(29, 29, 29);
 }
 

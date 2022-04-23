@@ -15,7 +15,16 @@ const validator = {
             target.spellcheck = true;
             target.focus();
         }
+    },
+    isEmpty: (value: string, ...othervalues: string[]) => {
+        return value === '';
+
+    },
+    isZero: (value: number, ...otherValues: number[]) => {
+        return value === 0;
+
     }
+
 }
 
 

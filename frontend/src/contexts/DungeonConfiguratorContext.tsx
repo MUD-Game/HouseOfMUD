@@ -2,6 +2,8 @@ import React from 'react';
 import { MudActionElement, MudDungeon, MudNpc, MudRoom } from 'src/types/dungeon'
 import { MudCharacterSpecies, MudCharacterGender, MudCharacterClass } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
+import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
+import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 
 export interface DungeonConfiguratorContextMethods {
   initializeDungeon: (dungeon?: MudDungeon) => void;
@@ -31,6 +33,11 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   const [rooms, setRooms] = React.useState<MudRoom[]>([]);
   const [actions, setActions] = React.useState<MudActionElement[]>([]);
   const [npcs, setNpcs] = React.useState<MudNpc[]>([]);
+
+  const [editData, setEditData] = React.useState<any>();
+  const [showCharacterClassModal, setShowCharacterClassModal] = React.useState<boolean>(false);
+  const [characterClassKey, setCharacterClassKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+  const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
   const initializeDungeon = (dungeon?: MudDungeon) => {
     if (dungeon) {
       setName(dungeon.name);
@@ -86,18 +93,36 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     }
   }
 
+  const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
+    setShowConfirmationDialog({
+      show: true, message, title, onConfirm: () => {
+        onConfirm();
+        setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } });
+      }
+    });
+  }
+
   const mockupClass: MudCharacterClass = {
     name: "Mock-Name",
     description: "Mock-Description"
   } as MudCharacterClass;
 
   const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setClasses([...classes, mockupClass]);
+    setShowCharacterClassModal(true);
+    // setClasses([...classes, mockupClass]);
   }
   const editClass = (key: number) => {
+    setEditData(classes[key]);
+    setCharacterClassKey({ selected: key, nextKey: characterClassKey.nextKey });
+    setShowCharacterClassModal(true);
   }
   const deleteClass = (key: number) => {
-    setClasses(classes.filter((_, index) => index !== key));
+    showConfirmation("Delete Class", "Are you sure you want to delete this class?", () => {
+      let index = classes.findIndex(c => c.id === key + "");
+      let newClasses = classes;
+      newClasses.splice(index, 1);
+      setClasses(newClasses);
+    });
   }
 
   const setCharacterDecorator = <T,>(decorator: string, setData: (data: T[]) => void) => {
@@ -128,10 +153,33 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     classes,
     rooms,
     actions,
-    description
+    description,
   } as MudDungeon;
 
 
-  return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, npcs }}>{children}</DungeonConfiguratorContext.Provider>;
+  return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, npcs }}>
+    <AddClassModal editData={editData as MudCharacterClass} key={characterClassKey.selected} onSendCharacterClass={(cc) => {
+      if (characterClassKey.selected === characterClassKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
+        cc.id = characterClassKey.nextKey + "";
+        setClasses([...classes, cc]);
+        setShowCharacterClassModal(false);
+        setCharacterClassKey({ nextKey: characterClassKey.nextKey + 1, selected: characterClassKey.selected + 1 });
+      } else {
+        // User is editing
+        cc.id = characterClassKey.selected + "";
+        // Set the key to a new id
+        setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
+        let temp = classes;
+        let index = temp.findIndex((c) => c.id === cc.id);
+        temp[index] = cc;
+        setClasses(temp);
+      }
+    }} show={showCharacterClassModal} onHide={() => {
+      setShowCharacterClassModal(false);
+    }} />
+
+    <ConfirmationDialog onHide={() => { }} {...showConfirmationDialog} />
+    {children}
+  </DungeonConfiguratorContext.Provider>;
 }
 export { DungeonConfiguratorContext, DungeonConfiguratorProvider };

@@ -91,7 +91,7 @@ export class HostLink {
     public startDungeon(dungeonID: string): void {
         const host: string = this.getBestHost();
         if (this.hosts[host] !== undefined) {
-            this.hosts[host].socket.emit('start', dungeonID);
+            this.hosts[host].socket.emit('start', { dungeonID: dungeonID });
         }
     }
 

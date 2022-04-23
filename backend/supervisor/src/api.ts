@@ -85,10 +85,16 @@ export class API {
         app.post('/startDungeon/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
+            console.log(body);
             if (body.user !== undefined && body.dungeon !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
                 // TODO
+                this.hostLink.startDungeon(dungeonID);
+                res.json({ ok: 1 });
+            } else {
+                this.hostLink.startDungeon(dungeonID);
+                res.json({ ok: 0 });
             }
         });
 

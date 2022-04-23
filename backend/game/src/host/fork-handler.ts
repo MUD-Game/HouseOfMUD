@@ -1,5 +1,6 @@
 import { ChildProcess, fork, ForkOptions } from 'child_process';
 import path from 'path';
+import { AmqpAdapterConfig } from './types/config';
 
 const filePath: (file: string) => string = (file: string) => path.resolve(__dirname, file);
 
@@ -21,6 +22,12 @@ type DungeonAction = 'setCharacterToken' | 'stop';
  * A class that contains the logic to handle the Forks (Worker).
  */
 export class ForkHandler {
+
+    amqpConfig: AmqpAdapterConfig;
+
+    constructor (amqpConfig: AmqpAdapterConfig) {
+        this.amqpConfig = amqpConfig;
+    }
 
     /**
      * Dungeon worker process that processes incoming messages and sends messages.
@@ -64,9 +71,10 @@ export class ForkHandler {
      * Creates a new child process, initializes connections to exchanges and binds message handler to process
      * @param dungeon Name of the dungeon that shall be created.
      */
-    async createDungeon(dungeon: string): Promise<void> {
+    async startDungeon(dungeon: string): Promise<void> {
         if (!(dungeon in this.dungeonWorker)) {
-            let dungeonFork: ChildProcess = fork(filePath('../worker/worker-process.js'), [dungeon], forkOptions);
+            let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange];
+            let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
             dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
             dungeonFork.on('exit', (code: number): void => this.workerExitHandler(dungeon, code));
             this.dungeonWorker[dungeon] = {

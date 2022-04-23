@@ -65,6 +65,8 @@ export class AmqpAdapter {
     async close(): Promise<void> {
         if (this.isConnected()) {
             try {
+                await this.channel!.deleteQueue(this.dungeonID);
+
                 await this.channel!.deleteExchange(`${this.clientExchange}-${this.dungeonID}`);
 
                 await this.channel!.close();

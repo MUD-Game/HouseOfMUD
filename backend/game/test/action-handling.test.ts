@@ -33,7 +33,7 @@ const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", 
 const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
 const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth, [TestItem])
 const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction])
-const TestDungeonController: DungeonController = new DungeonController(amqpAdapter, TestDungeon)
+const TestDungeonController: DungeonController = new DungeonController("1", amqpAdapter, TestDungeon)
 
 beforeAll(() => {
     

@@ -1,0 +1,14 @@
+{
+    "Item": [
+        {
+        "id": "1",
+        "name": "Apfel",
+        "description": "Hmmm Lecker"
+        },
+        {
+        "id": "2",
+        "username": "Schlüssel",
+        "password": "Ob man damit Türen öffnen kann?"
+        }
+        ]
+       }

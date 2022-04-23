@@ -1,0 +1,16 @@
+{
+    "NPC": [
+       {
+       "id": "1",
+       "name": "Bernd, der Barde",
+       "description": "Bernd liebt die Musik",
+       "species": "Hexer"
+       },
+       {
+       "id": "2",
+       "name": "Efi, der Elf",
+       "description": "Efi kommt aus dem Wald der Feen",
+       "species": "Elf"
+       }
+       ]
+      }

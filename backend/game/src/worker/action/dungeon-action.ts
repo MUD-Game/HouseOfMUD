@@ -1,14 +1,16 @@
 import { Dungeon } from "../../dungeon/dungeon";
 import { Action } from "./action";
+import { DungeonController } from "../dungeon-controller"
 
 export class DungeonAction implements Action {
     trigger: string;
-    dungeon: Dungeon;
+    dungeonController: DungeonController
 
-    constructor(trigger: string, dungeon: Dungeon) {
+    constructor(trigger: string, dungeonController: DungeonController) {
         this.trigger = trigger;
-        this.dungeon = dungeon
+        this.dungeonController = dungeonController
     }
+
     performAction(user: string, args: string[]) {
         throw new Error("Method not implemented.");
     }

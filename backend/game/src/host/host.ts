@@ -2,13 +2,17 @@ import { Config } from './types/config';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import { SupervisorLink } from './supervisor-link';
+import { ForkHandler } from './fork-handler';
 
 async function main() {
     const config: Config | undefined = loadConfig();
 
     if (config !== undefined) {
-        const supervisorLink = new SupervisorLink(config.name, config.supervisorLink.host, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey);
+        const forkHandler = new ForkHandler(config.amqpAdapter);
+        const supervisorLink = new SupervisorLink(config.name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, forkHandler);
         supervisorLink.connect();
+    } else {
+        console.log("Cannot find Config");
     }
 }
 

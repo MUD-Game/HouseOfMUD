@@ -15,11 +15,15 @@
             "name": "Mann",
             "description": "Maennlicher Mann"
         },
+
         "maxStats": {
             "hp": 100,
             "dmg": 100,
             "mana": 100
+
         },
+=======
+           },
         "currentStats": {
             "hp": 100,
             "dmg": 100,
@@ -80,3 +84,4 @@
         }
     ]
 }
+

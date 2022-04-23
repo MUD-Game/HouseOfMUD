@@ -1,23 +1,26 @@
 import { Character, Dungeon, Room } from "../../dungeon/dungeon";
-import { amqpAdapter } from "../dungeon-controller";
+import { DungeonController } from "../dungeon-controller";
 import { Action } from "./action";
+import { AmqpAdapter } from "../amqp-adapter";
 
 export class MoveAction implements Action {
     trigger: string;
-    dungeon: Dungeon;
+    dungeonController: DungeonController;
 
-    constructor(dungeon: Dungeon) {
+    constructor(dungeonController: DungeonController) {
         this.trigger = "gehe";
-        this.dungeon = dungeon
+        this.dungeonController = dungeonController
     }
     performAction(user: string, args: string[]) {
-        let dungeonId: string = this.dungeon.getId()
+        let dungeon: Dungeon = this.dungeonController.getDungeon()
+        let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
+        let dungeonId: string = dungeon.getId()
         let direction: string = args[0]
-        let senderCharacter: Character = this.dungeon.getCharacter(user)
+        let senderCharacter: Character = dungeon.getCharacter(user)
         let senderCharacterName: string = senderCharacter.getName()
         let senderCharacterId: string = senderCharacter.getId()
-        let currentRoom: Room = senderCharacter.getPosition()
-        let currentRoomId: string = currentRoom.getId()
+        let currentRoomId: string = senderCharacter.getPosition()
+        let currentRoom: Room = dungeon.getRoom(currentRoomId)
         let destinationRoom: Room
         let destinationRoomId: string = "0"
         let destinationRoomName: string = ""
@@ -26,43 +29,43 @@ export class MoveAction implements Action {
         try {
             switch(direction) {
                 case "Norden":
-                    destinationRoom = this.dungeon.getNorthernRoom(currentRoom)
+                    destinationRoom = dungeon.getNorthernRoom(currentRoom)
                     if (destinationRoom.getSouthConnection() === "closed") {
                         closedPath = true
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom)
+                        senderCharacter.modifyPosition(destinationRoomId)
                     }
                     break;
                 case "Osten":
-                    destinationRoom = this.dungeon.getEasternRoom(currentRoom)
+                    destinationRoom = dungeon.getEasternRoom(currentRoom)
                     if (currentRoom.getEastConnection() === "closed") {
                         closedPath = true
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom)
+                        senderCharacter.modifyPosition(destinationRoomId)
                     }
                     break;
                 case "Sueden":
-                    destinationRoom = this.dungeon.getSouthernRoom(currentRoom)
+                    destinationRoom = dungeon.getSouthernRoom(currentRoom)
                     if (currentRoom.getSouthConnection() === "closed") {
                         closedPath = true
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom)
+                        senderCharacter.modifyPosition(destinationRoomId)
                     }
                     break;
                 case "Westen":
-                    destinationRoom = this.dungeon.getWesternRoom(currentRoom)
+                    destinationRoom = dungeon.getWesternRoom(currentRoom)
                     if (destinationRoom.getEastConnection() === "closed") {
                         closedPath = true
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom) 
+                        senderCharacter.modifyPosition(destinationRoomId) 
                     }
                     break;
             }

@@ -71,7 +71,7 @@ export class ForkHandler {
      * Creates a new child process, initializes connections to exchanges and binds message handler to process
      * @param dungeon Name of the dungeon that shall be created.
      */
-    async startDungeon(dungeon: string): Promise<void> {
+    startDungeon(dungeon: string): boolean {
         if (!(dungeon in this.dungeonWorker)) {
             let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange];
             let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
@@ -81,8 +81,20 @@ export class ForkHandler {
                 fork: dungeonFork,
                 currentPlayers: 0
             };
+            return true;
         }
+        return false;
         // else Dungeon already exists
+    }
+
+    stopDungeon(dungeon: string) {
+        if (dungeon in this.dungeonWorker) {
+            this.sendToWorker(dungeon, 'stop', {});
+            setTimeout(() => {
+                this.dungeonWorker[dungeon].fork.kill();
+                delete this.dungeonWorker[dungeon];
+            }, 1000 * 5);
+        }
     }
 
     /**
@@ -92,7 +104,7 @@ export class ForkHandler {
      * @param action Action that shall be performed by worker.
      * @param data Message data.
      */
-    async sendToWorker(dungeon: string, action: DungeonAction, data: any): Promise<void> {
+    sendToWorker(dungeon: string, action: DungeonAction, data: any): void {
         if (dungeon in this.dungeonWorker) {
             this.dungeonWorker[dungeon].fork.send({
                 action: action,

@@ -68,6 +68,8 @@ export class API {
                     let authToken: string = body.authToken;
                     // TODO
                 }
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -85,7 +87,11 @@ export class API {
                     let verifyToken: string = this.generateVerifyToken();
                     this.hostLink.setCharacterToken(dungeonID, user, character, verifyToken);
                     res.json({ ok: 1, verifyToken: verifyToken });
+                } else {
+                    res.json({ ok: 0, error: 'Dungeon does not exists' });
                 }
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -97,11 +103,11 @@ export class API {
             if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
-                // TODO
+                // TODO: Check permission
                 this.hostLink.startDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                res.json({ ok: 0 });
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -112,7 +118,11 @@ export class API {
             if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
-                // TODO
+                // TODO: Check permission
+                this.hostLink.stopDungeon(dungeonID);
+                res.json({ ok: 1 });
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -122,8 +132,8 @@ export class API {
             if (params.user !== undefined && params.authToken !== undefined) {
                 let user: string = params.user;
                 let authToken: string = params.authToken;
+                // TODO: Check permission
                 res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
-                // TODO
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }
@@ -134,8 +144,8 @@ export class API {
             if (params.user !== undefined && params.authToken !== undefined) {
                 let user: string = params.user;
                 let authToken: string = params.authToken;
+                // TODO: Check permission
                 res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
-                // TODO
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }
@@ -149,6 +159,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let dungeonData: any = body.dungeonData;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -159,6 +171,8 @@ export class API {
                 let user: string = params.user;
                 let authToken: string = params.authToken;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -171,6 +185,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let dungeonData: any = body.dungeonData;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -182,6 +198,8 @@ export class API {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -192,7 +210,12 @@ export class API {
             if (params.user !== undefined && params.authToken !== undefined) {
                 let user: string = params.user;
                 let authToken: string = params.authToken;
-                // TODO
+                res.json({
+                    ok: 1,
+                    ...mockresponse.getcharacterattributes
+                })
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -203,7 +226,10 @@ export class API {
             if (params.user !== undefined && params.authToken !== undefined) {
                 let user: string = params.user;
                 let authToken: string = params.authToken;
+                res.json({ ok: 1, characters: mockresponse.getcharacters });
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -216,6 +242,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let characterData: any = body.characterData;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -228,6 +256,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let characterID: any = body.character;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
     }

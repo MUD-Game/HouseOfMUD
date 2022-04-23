@@ -5,14 +5,19 @@ import {
     GetCharacterAttributesResponse,
     GetCharactersResponse,
     DungeonResponseData,
+    CharactersResponseData
 } from '../types/api';
 
 export interface MockResponse {
     getalldungeons: DungeonResponseData[];
     getdungeon: DungeonResponseData;
     getmydungeons: DungeonResponseData[];
-    getcharacterattributes: GetCharacterAttributesResponse;
-    getcharacters: GetCharactersResponse;
+    getcharacterattributes: {
+        classes: GetCharacterAttributesResponse['classes'];
+        genders: GetCharacterAttributesResponse['genders'];
+        species: GetCharacterAttributesResponse['species'];
+    };
+    getcharacters: CharactersResponseData[];
 }
 
 const mockresponse: MockResponse = {
@@ -60,8 +65,36 @@ const mockresponse: MockResponse = {
             status: 'offline',
         },
     ],
-    getcharacterattributes: {} as any,
-    getcharacters: {} as any,
+    getcharacterattributes:{
+         classes: [
+        {
+            id: "1",
+            name: "Test Class",
+            description: "This is a test class"
+        }
+    ],
+    species: [
+        {
+            id: "1",
+            name: "Test Species",
+            description: "This is a test species"
+        }
+    ],
+    genders: [
+        {
+            id: "2",
+            name: "Test gender",
+            description: "This is a test gender"
+        }
+    ]
+},
+    getcharacters: [
+            {
+                character: "1",
+                name: "Test Character",
+                class: "Goblin"
+            }
+        ]
 };
 
 export { mockresponse };

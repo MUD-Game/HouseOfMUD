@@ -1,5 +1,5 @@
 import "src/types/supervisor";
-import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData } from "src/types/supervisor";
+import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData } from "src/types/supervisor";
 
 let connectionString = "";
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -41,7 +41,6 @@ const supervisor = {
         }).catch(err => error(err));
     },
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        console.log("dd");
         fetch(connectionString + "/myDungeons" + this.getSearchParamas(body), {
             method: 'GET'
                 }).then(res => res.json()).then(data => {
@@ -53,60 +52,29 @@ const supervisor = {
             }
         }).catch(err => error(err));
     },
-    getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: GetCharactersResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: GetCharactersResponse = [
-            {
-                character: "1",
-                name: "Test Character",
-                class: "Goblin"
+    getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {
+        fetch(connectionString + '/characters/' + dungeonID + this.getSearchParamas(body) , {
+            method: 'GET'
+        }).then(res => res.json()).then((data: GetCharactersResponse | ErrorResponse) => {
+            console.log(data);
+            if (data.ok) {
+                dataCallBack((data as GetCharactersResponse).characters);
+            } else {
+                error((data as ErrorResponse));
             }
-        ]
-            ;
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/characters/' + dungeonID, {
-            method: 'GET',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        }).catch(err => error(err));
     },
     getCharacterAttributes(dungeonID: string, body: GetCharacterAttributesRequest, dataCallBack: (data: GetCharacterAttributesResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: GetCharacterAttributesResponse = {
-            classes: [
-                {
-                    id: "1",
-                    name: "Test Class",
-                    description: "This is a test class"
-                }
-            ],
-            species: [
-                {
-                    id: "1",
-                    name: "Test Species",
-                    description: "This is a test species"
-                }
-            ],
-            genders: [
-                {
-                    id: "2",
-                    name: "Test gender",
-                    description: "This is a test gender"
-                }
-            ]
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/character/attribute/' + dungeonID, {
-            method: 'GET',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        fetch(connectionString + '/character/attributes/' + dungeonID + this.getSearchParamas(body), {}).then(res => res.json()).then(data => {
+            console.log(data);
+            if (data.ok) {
+                dataCallBack(data);
+            } else {
+                error(data);
+            }
+        }).catch(err => error(err));
     },
     authenticate(body: AuthenticateRequest, dataCallBack: (data: AuthenticateResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: AuthenticateResponse = {
-            ok: 1,
-            authToken: "xxx"
-        }
-        dataCallBack(data);
-        return;
         fetch(connectionString + '/auth', {
             method: 'POST',
             body: JSON.stringify(body)

@@ -144,7 +144,21 @@ export class HostLink {
     public startDungeon(dungeonID: string): void {
         const host: string = this.getBestHost();
         if (this.hosts[host] !== undefined) {
-            this.hosts[host].socket.emit('start', { dungeonID: dungeonID });
+            this.hosts[host].socket.emit('start', { dungeonID: dungeonID }, (created: boolean) => {
+                if (created) {
+                    this.hosts[host].dungeons.push(dungeonID);
+                    this.dungeons[dungeonID].host = host;
+                    this.dungeons[dungeonID].status = 'online';
+                    this.dungeons[dungeonID].currentPlayers = 0;
+                }
+            });
+        }
+    }
+
+    public stopDungeon(dungeonID: string): void {
+        const host: Host | undefined = this.getHostFromDungeon(dungeonID);
+        if (host !== undefined) {
+            host.socket.emit('stop', { dungeonID: dungeonID });
         }
     }
 

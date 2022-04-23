@@ -36,9 +36,16 @@ export class SupervisorLink {
             
         });
 
-        socket.on('start', (data: any) => {
+        socket.on('start', (data: any, callback: (created: boolean) => {}) => {
             if (data.dungeonID !== undefined) {
-                this.forkHandler.startDungeon(data.dungeonID);
+                let created: boolean = this.forkHandler.startDungeon(data.dungeonID);
+                callback(created);
+            }
+        });
+
+        socket.on('stop', (data: any) => {
+            if (data.dungeonID !== undefined) {
+                this.forkHandler.stopDungeon(data.dungeonID);
             }
         });
 

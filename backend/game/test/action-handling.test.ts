@@ -10,8 +10,10 @@ import { MoveAction } from "../src/worker/action/move-action";
 import { PickupAction } from "../src/worker/action/pickup-action";
 import { PrivateMessageAction } from "../src/worker/action/private-message-action";
 import UnspecifiedAction from "../src/worker/action/unspecified-action";
-import { amqpAdapter } from "../src/worker/dungeon-controller";
+import { AmqpAdapter } from "../src/worker/amqp-adapter";
+import { DungeonController } from "../src/worker/dungeon-controller";
 
+const amqpAdapter: AmqpAdapter = new AmqpAdapter("test", "test", "test", "test", "test", "test", "test")
 const TestSpecies: CharacterSpecies = new CharacterSpecies("1", "Hexer", "Hexiger Hexer")
 const TestStartStats: CharacterStats = new CharacterStats(100, 20, 100)
 const TestMaxStats: CharacterStats = new CharacterStats(100, 20, 100)
@@ -31,20 +33,21 @@ const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", 
 const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
 const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth, [TestItem])
 const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction])
+const TestDungeonController: DungeonController = new DungeonController(amqpAdapter, TestDungeon)
 
 beforeAll(() => {
     
 })
 
 describe("ActionHandler", () => {
-    const actionHandler: ActionHandler = new ActionHandler(TestDungeon)
-    const messageAction: MessageAction = actionHandler.actions.find(action => action instanceof MessageAction)!
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions.find(action => action instanceof PrivateMessageAction)!
-    const discardAction: DiscardAction = actionHandler.actions.find(action => action instanceof DiscardAction)!
-    const inspectAction: InspectAction = actionHandler.actions.find(action => action instanceof InspectAction)!
-    const lookAction: LookAction = actionHandler.actions.find(action => action instanceof LookAction)!
-    const moveAction: MoveAction = actionHandler.actions.find(action => action instanceof MoveAction)!
-    const pickupAction: PickupAction = actionHandler.actions.find(action => action instanceof PickupAction)!
+    const actionHandler: ActionHandler = new ActionHandler(TestDungeonController)
+    const messageAction: MessageAction = actionHandler.actions['sag']
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester']
+    const discardAction: DiscardAction = actionHandler.actions['ablegen']
+    const inspectAction: InspectAction = actionHandler.actions['untersuche']
+    const lookAction: LookAction = actionHandler.actions['umschauen']
+    const moveAction: MoveAction = actionHandler.actions['gehe']
+    const pickupAction: PickupAction = actionHandler.actions['aufheben']
     const dungeonAction: DungeonAction = actionHandler.dungeonActions.find(action => action instanceof DungeonAction)!
     const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction
     messageAction.performAction = jest.fn()
@@ -98,14 +101,14 @@ describe("Actions", () => {
     beforeEach(() => {
         TestDungeon.characters[0].position = TestRoom
     })
-    const actionHandler: ActionHandler = new ActionHandler(TestDungeon)
-    const messageAction: MessageAction = actionHandler.actions.find(action => action instanceof MessageAction)!
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions.find(action => action instanceof PrivateMessageAction)!
-    const discardAction: DiscardAction = actionHandler.actions.find(action => action instanceof DiscardAction)!
-    const inspectAction: InspectAction = actionHandler.actions.find(action => action instanceof InspectAction)!
-    const lookAction: LookAction = actionHandler.actions.find(action => action instanceof LookAction)!
-    const moveAction: MoveAction = actionHandler.actions.find(action => action instanceof MoveAction)!
-    const pickupAction: PickupAction = actionHandler.actions.find(action => action instanceof PickupAction)!
+    const actionHandler: ActionHandler = new ActionHandler(TestDungeonController)
+    const messageAction: MessageAction = actionHandler.actions['sag']
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester']
+    const discardAction: DiscardAction = actionHandler.actions['ablegen']
+    const inspectAction: InspectAction = actionHandler.actions['untersuche']
+    const lookAction: LookAction = actionHandler.actions['umschauen']
+    const moveAction: MoveAction = actionHandler.actions['gehe']
+    const pickupAction: PickupAction = actionHandler.actions['aufheben']
     const dungeonAction: DungeonAction = actionHandler.dungeonActions.find(action => action instanceof DungeonAction)!
     const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction
     amqpAdapter.sendWithRouting = jest.fn()

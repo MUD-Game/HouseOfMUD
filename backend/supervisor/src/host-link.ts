@@ -28,7 +28,7 @@ export class HostLink {
 
     private port: number;
     private tls: TLS;
-    private authKey: any;
+    private authKey: string;
 
     public hosts: Hosts = {};
     public dungeons: Dungeons = {};

@@ -1,0 +1,7 @@
+
+name: Alpha
+supervisorLink:
+  host: localhost
+  port: 43211
+  tls: false
+  authKey: SuperSecretKey

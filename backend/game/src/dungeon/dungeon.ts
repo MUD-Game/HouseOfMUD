@@ -2,6 +2,8 @@
  * Interfaces and classes for Dungeon datasets.
  */
 
+import { __String } from "typescript"
+
 
 /**
  * Dungeon interface containing all necessary data for dungeons.
@@ -20,7 +22,8 @@ export interface Dungeon {
     characters: Character[],
     rooms: Room[],
     blacklist: string[],
-    actions: ActionElement[]
+    actions: ActionElement[],
+    items: Item[]
 }
 
 export class Dungeon implements Dungeon {
@@ -38,6 +41,7 @@ export class Dungeon implements Dungeon {
     rooms: Room[]
     blacklist: string[]
     actions: ActionElement[]
+    items: Item[]
 
     getName(): string {
         return this.name
@@ -160,7 +164,7 @@ export class Dungeon implements Dungeon {
     }
 
     constructor(id: string, name: string, description: string, creatorId: string, masterId: string, maxPlayers: number, currentPlayers: number, species: CharacterSpecies[], classes: CharacterClass[],
-        genders: CharacterGender[], characters: Character[], rooms: Room[], blacklist: string[], actions: ActionElement[]) {
+        genders: CharacterGender[], characters: Character[], rooms: Room[], blacklist: string[], actions: ActionElement[], items: Item[]) {
         this.dungeonId = id
         this.name = name
         this.description = description
@@ -175,6 +179,7 @@ export class Dungeon implements Dungeon {
         this.rooms = rooms
         this.blacklist = blacklist
         this.actions = actions
+        this.items = items
     }
 
     getId(): string {
@@ -306,8 +311,8 @@ export interface Character {
     gender: CharacterGender,
     maxStats: CharacterStats,
     currentStats: CharacterStats,
-    position: Room, //??????????
-    inventory: Item[]
+    position: string,
+    inventory: string[]
 }
 
 export class Character implements Character {
@@ -320,10 +325,10 @@ export class Character implements Character {
     gender: CharacterGender
     maxStats: CharacterStats
     currentStats: CharacterStats
-    position: Room
-    inventory: Item[]
+    position: string
+    inventory: string[]
 
-    constructor(id: string, userId: string, dungeonId: string, name: string, className: string, species: CharacterSpecies, gender: CharacterGender, maxStats: CharacterStats, currentStats: CharacterStats, position: Room, inventory: Item[]) {
+    constructor(id: string, userId: string, dungeonId: string, name: string, className: string, species: CharacterSpecies, gender: CharacterGender, maxStats: CharacterStats, currentStats: CharacterStats, position: string, inventory: string[]) {
         this.characterId = id
         this.userId = userId;
         this.dungeonId = dungeonId
@@ -345,25 +350,25 @@ export class Character implements Character {
         return this.name
     }
 
-    getPosition(): Room {
+    getPosition(): string {
         return this.position
     }
 
-    modifyPosition(destinationRoom: Room) {
+    modifyPosition(destinationRoom: string) {
         this.position = destinationRoom
     }
 }
 
-export interface IEvent {
+export interface Event {
     eventType: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana",
-    value: Item | number
+    value: string | number
 }
 
-export class Event implements IEvent {
+export class Event implements Event {
     eventType: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana"
-    value: number | Item
+    value: number | string
     
-    constructor(type: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", value: number | Item) {
+    constructor(type: "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", value: number | string) {
         this.eventType = type;
         this.value = value
     }
@@ -396,7 +401,7 @@ export interface ActionElement {
     output: string,
     description: string,
     events: Event[],
-    itemsneeded: Item[]
+    itemsneeded: string[]
 }
 
 export class ActionElement implements ActionElement {
@@ -405,9 +410,9 @@ export class ActionElement implements ActionElement {
     output: string
     description: string
     events: Event[]
-    itemsneeded: Item[]
+    itemsneeded: string[]
 
-    constructor(id: string, command: string, output: string, description: string, events: IEvent[], itemsneeded: Item[]) {
+    constructor(id: string, command: string, output: string, description: string, events: Event[], itemsneeded: string[]) {
         this.actionId = id,
         this.command = command,
         this.output = output,
@@ -436,10 +441,10 @@ export interface Room {
     roomId: string,
     name: string,
     description: string,
-    npcs: Npc[],
-    items: Item[],
+    npcs: string[],
+    items: string[],
     connections: ConnectionInfo,
-    actions: ActionElement[]
+    actions: string[]
     xCoordinate: number
     yCoordinate: number
 }
@@ -448,14 +453,14 @@ export class Room implements Room {
     roomId: string
     name: string
     description: string
-    npcs: Npc[]
-    items: Item[]
+    npcs: string[]
+    items: string[]
     connections: ConnectionInfo
-    actions: ActionElement[]
+    actions: string[]
     xCoordinate: number
     yCoordinate: number
 
-    constructor(id: string, name: string, description: string, npcs: Npc[], items: Item[], connections: ConnectionInfo, actions: ActionElement[], xCoordinate: number, yCoordinate: number) {
+    constructor(id: string, name: string, description: string, npcs: string[], items: string[], connections: ConnectionInfo, actions: string[], xCoordinate: number, yCoordinate: number) {
         this.roomId = id
         this.name = name
         this.description = description

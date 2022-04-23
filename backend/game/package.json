@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "npx tsc"
+  },
   "devDependencies": {
     "typescript": "^4.6.3"
   },

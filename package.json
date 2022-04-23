@@ -4,7 +4,7 @@
   "description": "MUD-Game provider",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --coverageDirectory=output/coverage/jest"
+    "test": "jest --coverage"
   },
   "jest": {
     "coverageReporters": [
@@ -24,7 +24,7 @@
     ]
   },
   "jest-junit": {
-    "suiteName": "Unit Tests", 
+    "suiteName": "Unit Tests",
     "outputDirectory": ".",
     "outputName": "junit.xml",
     "uniqueOutputName": "false",
@@ -50,8 +50,11 @@
     "@types/jest": "^27.4.1"
   },
   "dependencies": {
+    "@types/amqplib": "^0.8.2",
+    "amqplib": "^0.8.0",
     "jest": "^27.5.1",
     "jest-junit": "^13.1.0",
-    "ts-jest": "^27.1.4"
+    "ts-jest": "^27.1.4",
+    "typescript": "^4.6.3"
   }
 }

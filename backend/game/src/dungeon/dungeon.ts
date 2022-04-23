@@ -7,7 +7,7 @@
  * Dungeon interface containing all necessary data for dungeons.
  */
 export interface Dungeon {
-    id: string,
+    dungeonId: string,
     name: string,
     description: string,
     creatorId: string,
@@ -24,7 +24,7 @@ export interface Dungeon {
 }
 
 export class Dungeon implements Dungeon {
-    id: string
+    dungeonId: string
     name: string
     description: string
     creatorId: string
@@ -86,12 +86,12 @@ export class Dungeon implements Dungeon {
         if (genderIndex === -1) {
             throw new Error("Gender does not exist")
         } else {
-            return this.classes[genderIndex]
+            return this.genders[genderIndex]
         }
     }
 
     getCharacter(characterId: string): Character {
-        let characterIndex: number = this.characters.findIndex(character => character.id === characterId)
+        let characterIndex: number = this.characters.findIndex(character => character.characterId === characterId)
         if (characterIndex === -1) {
             throw new Error("Character does not exist")
         } else {
@@ -109,12 +109,37 @@ export class Dungeon implements Dungeon {
     }
 
     getRoom(roomId: string): Room {
-        let roomIndex: number = this.rooms.findIndex(room => room.id === roomId)
+        let roomIndex: number = this.rooms.findIndex(room => room.roomId === roomId)
         if (roomIndex === -1) {
             throw new Error("Room does not exist")
         } else {
             return this.rooms[roomIndex]
         }
+    }
+
+    getRoomByCoordinates(x: number, y: number): Room {
+        let roomIndex: number = this.rooms.findIndex(room => room.xCoordinate === x && room.yCoordinate === y)
+        if (roomIndex === -1) {
+            throw new Error("Room does not exist")
+        } else {
+            return this.rooms[roomIndex]
+        }
+    }
+
+    getNorthernRoom(initialRoom: Room): Room {
+        return this.getRoomByCoordinates(initialRoom.xCoordinate, initialRoom.yCoordinate + 1)
+    }
+
+    getEasternRoom(initialRoom: Room): Room {
+        return this.getRoomByCoordinates(initialRoom.xCoordinate + 1, initialRoom.yCoordinate)
+    }
+
+    getSouthernRoom(initialRoom: Room): Room {
+        return this.getRoomByCoordinates(initialRoom.xCoordinate, initialRoom.yCoordinate - 1)
+    }
+
+    getWesternRoom(initialRoom: Room): Room {
+        return this.getRoomByCoordinates(initialRoom.xCoordinate - 1, initialRoom.yCoordinate)
     }
 
     getBlacklist(): string[] {
@@ -136,7 +161,7 @@ export class Dungeon implements Dungeon {
 
     constructor(id: string, name: string, description: string, creatorId: string, masterId: string, maxPlayers: number, currentPlayers: number, species: CharacterSpecies[], classes: CharacterClass[],
         genders: CharacterGender[], characters: Character[], rooms: Room[], blacklist: string[], actions: ActionElement[]) {
-        this.id = id
+        this.dungeonId = id
         this.name = name
         this.description = description
         this.creatorId = creatorId
@@ -153,23 +178,23 @@ export class Dungeon implements Dungeon {
     }
 
     getId(): string {
-        return this.id
+        return this.dungeonId
     }
 }
 
 export interface User {
-    id: string,
+    userId: string,
     username: string,
     password: string
 }
 
 export class User implements User {
-    id: string
+    userId: string
     username: string
     password: string
 
     constructor(id: string, username: string, password: string) {
-        this.id = id
+        this.userId = id
         this.username = username
         this.password = password
     }
@@ -194,25 +219,25 @@ export class CharacterStats implements CharacterStats {
 }
 
 export interface CharacterSpecies {
-    id: string,
+    characterSpeciesId: string,
     name: string,
     description: string
 }
 
 export class CharacterSpecies implements CharacterSpecies {
-    id: string
+    characterSpeciesId: string
     name: string
     description: string
 
     constructor(id: string, name: string, description: string) {
-        this.id = id;
+        this.characterSpeciesId = id;
         this.name = name;
         this.description = description;
     }
 }
 
 export interface CharacterClass {
-    id: string,
+    characterClassId: string,
     name: string,
     description: string,
     maxStats: CharacterStats,
@@ -220,14 +245,14 @@ export interface CharacterClass {
 }
 
 export class CharacterClass implements CharacterClass {
-    id: string
+    characterClassId: string
     name: string
     description: string
     maxStats: CharacterStats
     startStats: CharacterStats
 
     constructor(id: string, name: string, description: string, maxStats: CharacterStats, startStats: CharacterStats) {
-        this.id = id;
+        this.characterClassId = id;
         this.name = name;
         this.description = description;
         this.maxStats = maxStats
@@ -236,43 +261,43 @@ export class CharacterClass implements CharacterClass {
 }
 
 export interface CharacterGender {
-    id: string,
+    characterGenderId: string,
     name: string,
     description: string
 }
 
 export class CharacterGender implements CharacterGender {
-    id: string
+    characterGenderId: string
     name: string
     description: string
 
     constructor(id: string, name: string, description: string) {
-        this.id = id;
+        this.characterGenderId = id;
         this.name = name;
         this.description = description;
     }
 }
 
 export interface Item {
-    id: string,
+    itemId: string,
     name: string,
     description: string
 }
 
 export class Item implements Item {
-    id: string
+    itemId: string
     name: string
     description: string
 
     constructor(id: string, name: string, description: string) {
-        this.id = id;
+        this.itemId = id;
         this.name = name;
         this.description = description;
     }
 }
 
 export interface Character {
-    id: string,
+    characterId: string,
     userId: string,
     dungeonId: string,
     name: string,
@@ -286,7 +311,7 @@ export interface Character {
 }
 
 export class Character implements Character {
-    id: string
+    characterId: string
     userId: string
     dungeonId: string
     name: string
@@ -299,7 +324,7 @@ export class Character implements Character {
     inventory: Item[]
 
     constructor(id: string, userId: string, dungeonId: string, name: string, className: string, species: CharacterSpecies, gender: CharacterGender, maxStats: CharacterStats, currentStats: CharacterStats, position: Room, inventory: Item[]) {
-        this.id = id
+        this.characterId = id
         this.userId = userId;
         this.dungeonId = dungeonId
         this.name = name
@@ -313,7 +338,7 @@ export class Character implements Character {
     }
 
     getId(): string {
-        return this.id
+        return this.characterId
     }
 
     getName(): string {
@@ -322,6 +347,10 @@ export class Character implements Character {
 
     getPosition(): Room {
         return this.position
+    }
+
+    modifyPosition(destinationRoom: Room) {
+        this.position = destinationRoom
     }
 }
 
@@ -341,20 +370,20 @@ export class Event implements IEvent {
 }
 
 export interface Npc {
-    id: string,
+    npcId: string,
     name: string,
     description: string,
     species: string
 }
 
 export class Npc implements Npc {
-    id: string
+    npcId: string
     name: string
     description: string
     species: string
 
     constructor(id: string, name: string, description: string, species: string) {
-        this.id = id;
+        this.npcId = id;
         this.name = name;
         this.description = description;
         this.species = species
@@ -362,7 +391,7 @@ export class Npc implements Npc {
 }
 
 export interface ActionElement {
-    id: string,
+    actionId: string,
     command: string,
     output: string,
     description: string,
@@ -371,7 +400,7 @@ export interface ActionElement {
 }
 
 export class ActionElement implements ActionElement {
-    id: string;
+    actionId: string;
     command: string
     output: string
     description: string
@@ -379,7 +408,7 @@ export class ActionElement implements ActionElement {
     itemsneeded: Item[]
 
     constructor(id: string, command: string, output: string, description: string, events: IEvent[], itemsneeded: Item[]) {
-        this.id = id,
+        this.actionId = id,
         this.command = command,
         this.output = output,
         this.description = description,
@@ -404,7 +433,7 @@ export class ConnectionInfo implements ConnectionInfo {
 }
 
 export interface Room {
-    id: string,
+    roomId: string,
     name: string,
     description: string,
     npcs: Npc[],
@@ -416,7 +445,7 @@ export interface Room {
 }
 
 export class Room implements Room {
-    id: string
+    roomId: string
     name: string
     description: string
     npcs: Npc[]
@@ -427,7 +456,7 @@ export class Room implements Room {
     yCoordinate: number
 
     constructor(id: string, name: string, description: string, npcs: Npc[], items: Item[], connections: ConnectionInfo, actions: ActionElement[], xCoordinate: number, yCoordinate: number) {
-        this.id = id
+        this.roomId = id
         this.name = name
         this.description = description
         this.npcs = npcs
@@ -439,11 +468,23 @@ export class Room implements Room {
     }
 
     getId(): string {
-        return this.id
+        return this.roomId
     }
 
     getName(): string {
         return this.name
+    }
+
+    getDescription(): string {
+        return this.description
+    }
+
+    getEastConnection(): "active" | "inactive" | "closed" {
+        return this.connections.east
+    }
+
+    getSouthConnection(): "active" | "inactive" | "closed" {
+        return this.connections.south
     }
 }
 

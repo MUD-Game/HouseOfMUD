@@ -5,11 +5,15 @@ import { validator } from 'src/utils/validator';
 import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import AddItemModal from 'src/components/Modals/CharacterClass/AddItemModal';
+import AddActionModal from 'src/components/Modals/CharacterClass/AddActionModal';
+type Option = string | { [key: string]: any };
 
 export interface DungeonConfiguratorContextMethods {
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setMaxPlayers: (maxPlayers: number) => void;
+  setGenders: (genders: Option[]) => void;
+  setSpecies: (species: Option[]) => void;
 
   handleOnBlurInput: (event: React.FocusEvent<HTMLInputElement>) => void;
   addClass: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -19,6 +23,10 @@ export interface DungeonConfiguratorContextMethods {
   addItem: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   editItem: (key: number) => void;
   deleteItem: (key: number) => void;
+
+  addAction: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  editAction: (key: number) => void;
+  deleteAction: (key: number) => void;
 }
 
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
@@ -32,8 +40,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   const [name, setName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   const [maxPlayers, setMaxPlayers] = React.useState<number>(2);
-  const [species, setSpecies] = React.useState<MudCharacterSpecies[]>([]);
-  const [genders, setGenders] = React.useState<MudCharacterGender[]>([]);
+  const [species, setSpecies] = React.useState<Option>([]);
+  const [genders, setGenders] = React.useState<Option>([]);
   const [classes, setClasses] = React.useState<MudCharacterClass[]>([]);
   const [items, setItems] = React.useState<MudItem[]>([]);
   const [actions, setActions] = React.useState<MudActionElement[]>([]);
@@ -42,17 +50,23 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
   const [editData, setEditData] = React.useState<any>();
+
   const [showCharacterClassModal, setShowCharacterClassModal] = React.useState<boolean>(false);
   const [characterClassKey, setCharacterClassKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
 
   const [showAddItemsModal, setShowAddItemsModal] = React.useState<boolean>(false);
   const [itemsKey, setItemsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+
+  const [showAddActionsModal, setShowAddActionsModal] = React.useState<boolean>(false);
+  const [actionsKey, setActionsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+
   const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
 
 
   const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
     // REFACTOR: make it prettier and more readable
     let target = event.target;
+    console.log(genders);
     const value = target.value;
     switch (target.name) {
       case "name":
@@ -133,6 +147,25 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     });
   }
 
+  const addAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setShowAddActionsModal(true);
+
+    // setClasses([...classes, mockupClass]);
+  }
+  const editAction = (key: number) => {
+    setEditData(actions[key]);
+    setActionsKey({ selected: key, nextKey: actionsKey.nextKey });
+    setShowAddActionsModal(true);
+  }
+  const deleteAction = (key: number) => {
+    showConfirmation("Delete Action", "Are you sure you want to delete this Action?", () => {
+      let index = actions.findIndex(c => c.id === key + "");
+      let newActions = actions;
+      newActions.splice(index, 1);
+      setActions(newActions);
+    });
+  }
+
   const setCharacterDecorator = <T,>(decorator: string, setData: (data: T[]) => void) => {
     let data: T[] = [];
     let commaArray = decorator.split(",");
@@ -150,7 +183,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
   let methods: DungeonConfiguratorContextMethods = {
-    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem
+    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies
   }
 
   let fields: MudDungeon = {
@@ -204,6 +237,26 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
       }
     }} show={showAddItemsModal} onHide={() => {
       setShowAddItemsModal(false);
+    }} />
+
+    <AddActionModal editData={editData as MudActionElement} key={"Action:" + actionsKey.selected} onSendAction={(cc) => {
+      if (actionsKey.selected === actionsKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
+        cc.id = actionsKey.nextKey + "";
+        setActions([...actions, cc]);
+        setShowAddActionsModal(false);
+        setActionsKey({ nextKey: actionsKey.nextKey + 1, selected: actionsKey.selected + 1 });
+      } else {
+        // User is editing
+        cc.id = actionsKey.selected + "";
+        // Set the key to a new id
+        setActionsKey({ ...actionsKey, selected: actionsKey.nextKey });
+        let temp = actions;
+        let index = temp.findIndex((c) => c.id === cc.id);
+        temp[index] = cc;
+        setActions(temp);
+      }
+    }} show={showAddActionsModal} onHide={() => {
+      setShowAddActionsModal(false);
     }} />
 
     <ConfirmationDialog onHide={() => { }} {...showConfirmationDialog} />

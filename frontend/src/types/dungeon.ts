@@ -75,7 +75,7 @@ export interface MudEvent {
         | 'removedmg'
         | 'addmana'
         | 'removemana';
-    value: MudItem | number;
+    value: number;
 }
 
 export interface MudNpc {
@@ -91,7 +91,7 @@ export interface MudActionElement {
     output: string;
     description: string;
     events: Event[];
-    itemsneeded: MudItem[];
+    itemsneeded: number[];
 }
 
 export interface MudConnectionInfo {

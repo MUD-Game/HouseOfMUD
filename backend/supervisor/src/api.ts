@@ -73,7 +73,7 @@ export class API {
         app.post('/login/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.character !== undefined && body.dungeon !== undefined && body.authToken !== undefined) {
+            if (body.user !== undefined && body.character !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let character: string = body.character;
                 let authToken: string = body.authToken;
@@ -86,7 +86,7 @@ export class API {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
             console.log(body);
-            if (body.user !== undefined && body.dungeon !== undefined && body.authToken !== undefined) {
+            if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
                 // TODO
@@ -102,7 +102,7 @@ export class API {
         app.post('/stopDungeon/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.dungeon !== undefined && body.authToken !== undefined) {
+            if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
                 // TODO

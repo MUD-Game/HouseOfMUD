@@ -17,8 +17,6 @@ const MudTypeahead: React.FC<MudTypeaheadProps> = (props) => {
         <div className={"col-md-" + props.colmd}>
             <Form.Label><b>{props.title}</b></Form.Label>
             <StyledTypeahead
-                newSelectionPrefix="Hinzufügen: "
-                flip={true}
                 {...props}
             />
         </div>

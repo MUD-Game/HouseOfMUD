@@ -27,6 +27,9 @@ export interface DungeonConfiguratorContextMethods {
   addAction: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   editAction: (key: number) => void;
   deleteAction: (key: number) => void;
+
+
+  save: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
@@ -97,10 +100,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
   const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
     setShowConfirmationDialog({
-      show: true, message, title, onConfirm: () => {
-        onConfirm();
-        setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } });
-      }
+      show: true, message, title, onConfirm
     });
   }
 
@@ -181,9 +181,13 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     setData(data);
   }
 
+  const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    // TODO: Implement save
+  }
+
 
   let methods: DungeonConfiguratorContextMethods = {
-    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies
+    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save
   }
 
   let fields: MudDungeon = {
@@ -259,7 +263,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
       setShowAddActionsModal(false);
     }} />
 
-    <ConfirmationDialog onHide={() => { }} {...showConfirmationDialog} />
+    <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
     {children}
   </DungeonConfiguratorContext.Provider>;
 }

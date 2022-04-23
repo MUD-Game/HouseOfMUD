@@ -23,7 +23,10 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onConfirm, onHi
                 <Button variant="secondary" onClick={onHide}>
                     Abbrechen
                 </Button>
-                <Button autoFocus variant="danger" onClick={onConfirm}>
+                <Button autoFocus variant="danger" onClick={(e) => {
+                    onConfirm();
+                    onHide();
+                }}>
                     O.K.
                 </Button>
             </Modal.Footer>

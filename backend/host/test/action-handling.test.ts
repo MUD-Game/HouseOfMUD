@@ -22,15 +22,20 @@ const TestItem: Item = new Item("1", "Apfel", "Apfliger Apfel")
 const TestConnections: ConnectionInfo = new ConnectionInfo("active", "active")
 const TestAction: ActionElement = new ActionElement("1", "essen", "gegessen", "essen aktion", [new Event("addhp", 10)], [new Item("1", "Apfel", "Eine Frucht")])
 const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc], [TestItem], TestConnections, [TestAction])
+const TestRoomNorth: Room = new Room("2", "Raum-N", "Der Raum im Norden", [TestNpc], [TestItem], new ConnectionInfo("closed", "active"), [TestAction])
+const TestRoomEast: Room = new Room("3", "Raum-O", "Der Raum im Osten", [TestNpc], [TestItem], new ConnectionInfo("closed", "closed"), [TestAction])
+const TestRoomSouth: Room = new Room("4", "Raum-S", "Der Raum im Sueden", [TestNpc], [TestItem], new ConnectionInfo("closed", "closed"), [TestAction])
+const TestRoomWest: Room = new Room("5", "Raum-W", "Der Raum im Westen", [TestNpc], [TestItem], new ConnectionInfo("active", "closed"), [TestAction])
 const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
-const TestCharacter2: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
-const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacter2], [TestRoom], ["abc"], [TestAction])
+const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
+const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth, [TestItem])
+const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest], ["abc"], [TestAction])
 
 beforeAll(() => {
     
 })
 
-describe("Action Handler", () => {
+describe("ActionHandler", () => {
     const actionHandler: ActionHandler = new ActionHandler(TestDungeon)
     const messageAction: MessageAction = actionHandler.actions.find(action => action instanceof MessageAction)!
     const privateMessageAction: PrivateMessageAction = actionHandler.actions.find(action => action instanceof PrivateMessageAction)!
@@ -88,28 +93,68 @@ describe("Action Handler", () => {
         expect(unspecifiedAction.performAction).toHaveBeenCalledWith("1", ["Monster"])
     })
 })
-
 describe("Actions", () => {
-    const messageAction: MessageAction = new MessageAction(TestDungeon);
-   
+    const actionHandler: ActionHandler = new ActionHandler(TestDungeon)
+    const messageAction: MessageAction = actionHandler.actions.find(action => action instanceof MessageAction)!
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions.find(action => action instanceof PrivateMessageAction)!
+    const discardAction: DiscardAction = actionHandler.actions.find(action => action instanceof DiscardAction)!
+    const inspectAction: InspectAction = actionHandler.actions.find(action => action instanceof InspectAction)!
+    const lookAction: LookAction = actionHandler.actions.find(action => action instanceof LookAction)!
+    const moveAction: MoveAction = actionHandler.actions.find(action => action instanceof MoveAction)!
+    const pickupAction: PickupAction = actionHandler.actions.find(action => action instanceof PickupAction)!
+    const dungeonAction: DungeonAction = actionHandler.dungeonActions.find(action => action instanceof DungeonAction)!
+    const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction
     amqpAdapter.sendWithRouting = jest.fn()
     amqpAdapter.sendToClient = jest.fn()
+    amqpAdapter.bindClientQueue = jest.fn()
+    amqpAdapter.unbindClientQueue = jest.fn()
     
     test("MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload", () => {
         messageAction.performAction(TestDungeon.characters[0].id, ["Hallo", "zusammen!"])
-        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith("1.room.Raum-1", {action: "message", data: {message: "[Raum-1] Jeff sagt Hallo zusammen!"}})
+        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith("1.room.1", {action: "message", data: {message: "[Raum-1] Jeff sagt Hallo zusammen!"}})
     })
 
     test("PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload", () => {
-        messageAction.performAction(TestDungeon.characters[0].id, ["Spieler", "Hallo"])
+        privateMessageAction.performAction(TestDungeon.characters[0].id, ["Spieler", "Hallo"])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "[privat] Jeff -> Spieler: Hallo"}})
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.2", {action: "message", data: {message: "[privat] Jeff -> Spieler: Hallo"}})
     })
 
-    test("PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist when trying to send a message to a character that is not in the same room", () => {
-        messageAction.performAction(TestDungeon.characters[0].id, ["Bob", "Hallo"])
+    test("PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room", () => {
+        privateMessageAction.performAction(TestDungeon.characters[0].id, ["Bob", "Hallo"])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Bob ist nicht in diesem Raum!"}})
     })
+
+    test("PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist", () => {
+        privateMessageAction.performAction(TestDungeon.characters[0].id, ["Held", "Hallo"])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Der Charakter Held existiert nicht in diesem Dungeon!"}})
+    })
+
+    test("MoveAction should modify the position, call the functions to bind the client queues and call sendWithRouting on the AmqpAdapter when user moves to another room", () => {
+        moveAction.performAction(TestDungeon.characters[0].id, ["Norden"])
+        expect(TestDungeon.characters[0].position).toBe(TestRoomNorth)
+        expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith("1", "1")
+        expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith("1", "2")
+        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith("1.room.2", {action: "message", data: {message: "Jeff ist Raum-N beigetreten!"}})
+    })
+
+    test("MoveAction should modify the position to the room in the East when user moves east", () => {
+        moveAction.performAction(TestDungeon.characters[0].id, ["Osten"])
+        expect(TestDungeon.characters[0].position).toBe(TestRoomEast)
+    })
+
+    test("MoveAction should modify the position to the room in the South when user moves south", () => {
+        moveAction.performAction(TestDungeon.characters[0].id, ["Sueden"])
+        expect(TestDungeon.characters[0].position).toBe(TestRoomSouth)
+    })
+
+    test("MoveAction should modify the position to the room in the West when user moves west", () => {
+        moveAction.performAction(TestDungeon.characters[0].id, ["Osten"])
+        expect(TestDungeon.characters[0].position).toBe(TestRoomWest)
+    })
+
+    test("MoveAction should ")
 })
+
         
 

@@ -108,8 +108,8 @@ export class Dungeon implements Dungeon {
         }
     }
 
-    getRoom(roomName: string): Room {
-        let roomIndex: number = this.rooms.findIndex(room => room.name === roomName)
+    getRoom(roomId: string): Room {
+        let roomIndex: number = this.rooms.findIndex(room => room.id === roomId)
         if (roomIndex === -1) {
             throw new Error("Room does not exist")
         } else {
@@ -286,9 +286,6 @@ export interface Character {
 }
 
 export class Character implements Character {
-    getId(): string {
-        throw new Error("Method not implemented.")
-    }
     id: string
     userId: string
     dungeonId: string
@@ -313,6 +310,10 @@ export class Character implements Character {
         this.currentStats = currentStats
         this.position = position
         this.inventory = inventory
+    }
+
+    getId(): string {
+        return this.id
     }
 
     getName(): string {

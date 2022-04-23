@@ -1,4 +1,5 @@
-import { Dungeon } from "../../dungeon/dungeon";
+import { Character, Dungeon, Room } from "../../dungeon/dungeon";
+import { amqpAdapter } from "../dungeon-controller";
 import { Action } from "./action";
 
 export class MoveAction implements Action {
@@ -10,7 +11,22 @@ export class MoveAction implements Action {
         this.dungeon = dungeon
     }
     performAction(user: string, args: string[]) {
-        throw new Error("Method not implemented.");
+        let direction: string = args[0]
+        switch(direction) {
+            case "Norden":
+                break;
+            case "Osten":
+                break;
+            case "Sueden":
+                break;
+            case "Westen":
+                break;
+        }
+        let senderCharacter: Character = this.dungeon.getCharacter(user)
+        let senderCharacterName: string = senderCharacter.getName()
+        let senderCharacterPreviousPosition: Room = senderCharacter.getPosition()
+        let previousRoomId: string = senderCharacterPreviousPosition.getId()
+        amqpAdapter.unbindClientQueue(user, previousRoomId)
     }
 
 }

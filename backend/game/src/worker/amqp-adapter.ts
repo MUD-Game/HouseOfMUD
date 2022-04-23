@@ -31,7 +31,7 @@ export class AmqpAdapter {
     }
 
     isConnected(): boolean {
-        return this.connection !== undefined;
+        return this.connection !== undefined && this.channel !== undefined;
     }
 
     /**
@@ -39,10 +39,19 @@ export class AmqpAdapter {
      */
     async connect(): Promise<void> {
         try {
+            // Create Connection
             this.connection = await amqplib.connect(`amqp://${this.user}:${this.password}@${this.url}:${this.port}`); 
             this.channel = await this.connection.createChannel();
             await this.channel.assertExchange(this.serverExchange, 'direct', { autoDelete: false });
             await this.channel.assertExchange(this.clientExchange, 'topic', { autoDelete: false });
+
+            // Assert Dungeon Queue
+            await this.channel.assertQueue(this.dungeonID, { autoDelete: true });
+            await this.channel.bindQueue(this.dungeonID, this.serverExchange, this.dungeonID);
+
+            // Assert Client Exchange
+            await this.channel.assertExchange(`${this.clientExchange}-${this.dungeonID}`, 'topic', { autoDelete: false, internal: true });
+            await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `${this.dungeonID}.#`);
         } catch (err) {
             this.channel?.close();
             this.channel = undefined;
@@ -53,49 +62,32 @@ export class AmqpAdapter {
         }
     }
 
-    /**
-     * Binds dungeon process to server exchange with new queue. Creates new dungeon specific client exchange for dungeon process and binds it to client exchange.
-     */
-    async initFork(): Promise<void> {
-        if (this.connection !== undefined && this.channel !== undefined) {
+    async close(): Promise<void> {
+        if (this.isConnected()) {
             try {
-                await this.channel.assertQueue(this.dungeonID, { autoDelete: true });
-                await this.channel.bindQueue(this.dungeonID, this.serverExchange, this.dungeonID);
+                await this.channel!.deleteExchange(`${this.clientExchange}-${this.dungeonID}`);
 
-                await this.channel.assertExchange(`${this.clientExchange}-${this.dungeonID}`, 'topic', { autoDelete: false, internal: true });
-                await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `${this.dungeonID}.#`);
+                await this.channel!.close();
+                this.channel = undefined;
+
+                await this.connection!.close();
+                this.connection = undefined;
             } catch (err) {
                 throw err;
             }
-        }
+        }   
     }
-
-    /**
-     * Removes binding from deleted child process.
-     * @param fork 
-     */
-    // async removeFork(): Promise<void> {
-    //     if (fork in this.channels) {
-    //         try {
-    //             // await this.channels[fork].server.deleteQueue(fork);
-    //             await this.channels[fork].server.close();
-    //             await this.channels[fork].client.close();
-    //         } finally {
-    //             delete this.channels[fork];
-    //         }
-    //     }
-    // }
 
     /**
      * Binds new queue with dungeon specific client exchange. Client subscribes to that queue to receive messages.
      * @param user User to connect.
      */
     async initClient(user: string): Promise<void> {
-        if (this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
-                await this.channel.assertQueue(`${this.dungeonID}-${user}`, { autoDelete: true });
-                await this.channel.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.user.${user}`);
-                await this.channel.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.broadcast`);
+                await this.channel!.assertQueue(`${this.dungeonID}-${user}`, { autoDelete: true });
+                await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.user.${user}`);
+                await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.broadcast`);
             } catch (err) {
                 throw err;
             }
@@ -108,9 +100,9 @@ export class AmqpAdapter {
      * @param pattern Key pattern.
      */
     async bindClientQueue(user: string, pattern: string): Promise<void> {
-        if (this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
-                await this.channel.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
+                await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
             } catch (err) {
                 throw err;
             }
@@ -123,9 +115,9 @@ export class AmqpAdapter {
      * @param pattern  Key pattern.
      */
     async unbindClientQueue(user: string, pattern: string): Promise<void> {
-        if (this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
-                await this.channel.unbindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
+                await this.channel!.unbindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
             } catch (err) {
                 throw err;
             }
@@ -138,10 +130,10 @@ export class AmqpAdapter {
      * @param msg Message to send.
      */
     async sendToClient(user: string, msg: any): Promise<void> {
-        if (this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
                 // this.clientChannel.publish(this.clientExchange, `${fork}.broadcast`, Buffer.from(msg));
-                this.channel.publish(this.clientExchange, `${this.dungeonID}.user.${user}`, Buffer.from(JSON.stringify(msg)));
+                this.channel!.publish(this.clientExchange, `${this.dungeonID}.user.${user}`, Buffer.from(JSON.stringify(msg)));
             } catch (err) {
                 throw err;
             }
@@ -153,9 +145,9 @@ export class AmqpAdapter {
      * @param msg Message to send.
      */
     async broadcast(msg: any): Promise<void> {
-        if (this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
-                this.channel.publish(this.clientExchange, `${this.dungeonID}.broadcast`, Buffer.from(JSON.stringify(msg)));
+                this.channel!.publish(this.clientExchange, `${this.dungeonID}.broadcast`, Buffer.from(JSON.stringify(msg)));
             } catch (err) {
                 throw err;
             }
@@ -168,9 +160,9 @@ export class AmqpAdapter {
      * @param msg Message to send.
      */
     async sendWithRouting(routingKey: string, msg: any): Promise<void> {
-        if (this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
-                this.channel.publish(this.clientExchange, `${this.dungeonID}.${routingKey}`, Buffer.from(JSON.stringify(msg)));
+                this.channel!.publish(this.clientExchange, `${this.dungeonID}.${routingKey}`, Buffer.from(JSON.stringify(msg)));
             } catch (err) {
                 throw err;
             }
@@ -182,9 +174,9 @@ export class AmqpAdapter {
      * @param onMessage Function that processes incoming messages.
      */
     async consume(onMessage: (msg: amqplib.ConsumeMessage) => void): Promise<void> {
-        if (this.isConnected() && this.channel !== undefined) {
+        if (this.isConnected()) {
             try {
-                this.channel.consume(this.dungeonID, (msg: amqplib.ConsumeMessage | null) => {
+                this.channel!.consume(this.dungeonID, (msg: amqplib.ConsumeMessage | null) => {
                     if (msg !== null) {
                         onMessage(msg);
                         this.channel?.ack(msg);

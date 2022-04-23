@@ -97,5 +97,13 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+  },
+  "typedocOptions": {
+    "entryPoints": ["src/"],
+    "entryPointStrategy": "expand",
+    "out": "../../TypeDoc-Documentation/Backend-Supervisor/",
+    "name": "Backend/Supervisor",
+    "readme": "readme-typedoc.md",
+    "media": "typedoc-media/"
   }
 }

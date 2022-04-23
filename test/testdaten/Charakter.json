@@ -1,0 +1,82 @@
+{
+    "Character": [
+        {
+        "userId": "1",
+        "dungeonId": "1",
+        "name": "Charakter1",
+        "className": "Magier",
+        "species": {
+            "id": "1",
+            "name": "Hexer",
+            "description": "Hexer besitzen besonder Zauberkräfte"
+        },
+        "gender": {
+            "id": "1",
+            "name": "Mann",
+            "description": "Maennlicher Mann"
+        },
+        "maxStats": {
+            "hp": 100,
+            "dmg": 100,
+            "mana": 100
+        },
+        "currentStats": {
+            "hp": 100,
+            "dmg": 100,
+            "mana": 100
+        },
+        "position": {
+            "id": "1",
+            "name": "Raum-1",
+            "description": "Raumiger Raum",
+            "npcs": [{
+                "id": "1",
+                "name": "Jeff",
+                "description": "Jeffiger Jeff",
+                "species": "Jeffchen"
+            }],
+            "items": [{
+                "id": "1",
+                "name": "Apfel",
+                "description": "Hmmm Lecker"
+                }],
+            "connections": {
+                "east": "active",
+                "south": "active"
+            },
+            "actions": [{
+                "id": "1",
+                "command": "craft Schwert",
+                "output": "Du erhältst ein Steinschwert",
+                "description":"test",
+                "events": [{
+                    "eventtype": "additem",
+                    "value": "1"
+                    },
+                    {
+                    "eventtype": "adddmg",
+                    "value": 2
+                    }
+                ],
+                "itemsneeded": [{
+                    "id": "1",
+                    "name": "Apfel",
+                    "description": "Hmmm Lecker"
+                    }
+                ]
+            }]
+        },
+        "inventory": [
+            {
+            "id": "1",
+            "name": "Apfel",
+            "description": "Hmmm Lecker"
+            },
+            {
+            "id": "2",
+            "name": "Schlüssel",
+            "description": "Ob man damit Türen öffnen kann?"
+            }]   
+        }
+    ]
+}

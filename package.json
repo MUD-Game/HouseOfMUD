@@ -1,0 +1,57 @@
+{
+  "name": "houseofmud",
+  "version": "1.0.0",
+  "description": "MUD-Game provider",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "coverageReporters": [
+      "text"
+    ],
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ]
+  },
+  "jest-junit": {
+    "suiteName": "Unit Tests", 
+    "outputDirectory": ".",
+    "outputName": "junit.xml",
+    "uniqueOutputName": "false",
+    "classNameTemplate": "Test - {classname}",
+    "titleTemplate": "{title}",
+    "ancestorSeparator": " > ",
+    "usePathForSuiteName": "true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MUD-Game/HouseOfMUD.git"
+  },
+  "keywords": [
+    "MUD"
+  ],
+  "author": "HouseOfMUD",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MUD-Game/HouseOfMUD/issues"
+  },
+  "homepage": "https://github.com/MUD-Game/HouseOfMUD#readme",
+  "devDependencies": {
+    "@types/jest": "^27.4.1"
+  },
+  "dependencies": {
+    "jest": "^27.5.1",
+    "jest-junit": "^13.1.0",
+    "ts-jest": "^27.1.4"
+  }
+}

@@ -1,0 +1,7 @@
+{
+    "CharacterStats":{
+            "hp": 100,
+            "dmg": 100,
+            "mana": 100
+           }
+    }

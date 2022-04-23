@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Unit Tests" tests="12" failures="1" errors="0" time="6.388">
+  <testsuite name="backend\host\test\action-handling.test.ts" errors="0" failures="1" skipped="11" timestamp="2022-04-23T06:51:13" time="5.917" tests="12">
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Action Handler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives a non specified action message" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0.006">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+Expected: &quot;1.character.1&quot;, {&quot;action&quot;: &quot;message&quot;, &quot;data&quot;: {&quot;message&quot;: &quot;[privat] Jeff -&gt; Spieler: Hallo&quot;}}
+
+Number of calls: 0
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUD\HouseOfMUD\backend\host\test\action-handling.test.ts:105:42)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at _runTest (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at TestRunner.runTests (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\jest-runner\build\index.js:101:12)
+    at TestScheduler.scheduleTests (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\@jest\core\build\TestScheduler.js:333:13)
+    at runJest (C:\Users\sperl\HouseOfMUD\HouseOfMUD\node_modules\@jest\core\build\runJest.js:404:19)</failure>
+    </testcase>
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist when trying to send a message to a character that is not in the same room" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+</testsuites>

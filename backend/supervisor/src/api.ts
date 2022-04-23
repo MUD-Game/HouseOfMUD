@@ -1,21 +1,23 @@
-import express from "express";
-import https from "https";
-import http from "http";
-import { HostLink } from "./host-link";
-import { TLS } from "./types/tls";
+import express from 'express';
+import https from 'https';
+import http from 'http';
+import { HostLink } from './host-link';
+import { TLS } from './types/tls';
+import * as comm from './types/api';
+import { GetDungeonResponse } from './types/api';
+import { mockresponse } from './mock/mockups';
 
 export class API {
-
     private port: number;
     private tls: TLS;
     private hostLink: HostLink;
     // private dba: DatabaseAdapter;
 
     constructor(port: number, tls: TLS, hostLink: HostLink) {
-        	this.port = port;
-            this.tls = tls;
-            this.hostLink = hostLink;
-            // this.dba = new DatabaseAdapter();
+        this.port = port;
+        this.tls = tls;
+        this.hostLink = hostLink;
+        // this.dba = new DatabaseAdapter();
     }
 
     public init() {
@@ -28,7 +30,7 @@ export class API {
             httpWebServer = http.createServer(app);
         }
         // const httpsWebServer = https.createServer(app);
-    
+
         httpWebServer.listen(this.port, () => {
             console.log(`Supervisor API listening to port ${this.port}`);
             this.registerRoutes(app);
@@ -66,6 +68,8 @@ export class API {
                     let authToken: string = body.authToken;
                     // TODO
                 }
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -77,10 +81,20 @@ export class API {
                 let user: string = body.user;
                 let character: string = body.character;
                 let authToken: string = body.authToken;
-                // TODO
+                // TODO: Check if user has permission
+
+                if (this.hostLink.dungeonExists(dungeonID)) {
+                    let verifyToken: string = this.generateVerifyToken();
+                    this.hostLink.setCharacterToken(dungeonID, user, character, verifyToken);
+                    res.json({ ok: 1, verifyToken: verifyToken });
+                } else {
+                    res.json({ ok: 0, error: 'Dungeon does not exists' });
+                }
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
-        
+
         // start dungeon
         app.post('/startDungeon/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
@@ -89,11 +103,11 @@ export class API {
             if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
-                // TODO
+                // TODO: Check permission
                 this.hostLink.startDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                res.json({ ok: 0 });
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -104,17 +118,36 @@ export class API {
             if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
-                // TODO
+                // TODO: Check permission
+                this.hostLink.stopDungeon(dungeonID);
+                res.json({ ok: 1 });
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
         // get dungeons
         app.get('/dungeons', (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
+                // TODO: Check permission
+                res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
+            }
+        });
+
+        app.get('/myDungeons', (req, res) => {
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
+                // TODO: Check permission
+                res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -126,16 +159,20 @@ export class API {
                 let authToken: string = body.authToken;
                 let dungeonData: any = body.dungeonData;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
         // get dungeon
-        app.post('/dungeon/:dungeonID', (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+        app.get('/dungeon/:dungeonID', (req, res) => {
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -148,6 +185,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let dungeonData: any = body.dungeonData;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -159,28 +198,38 @@ export class API {
                 let user: string = body.user;
                 let authToken: string = body.authToken;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
         // get character attributes for dungeon
         app.get('/character/attributes/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
+                res.json({
+                    ok: 1,
+                    ...mockresponse.getcharacterattributes
+                })
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
         // get user-characters for dungeon
         app.get('/characters/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
+                res.json({ ok: 1, characters: mockresponse.getcharacters });
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -193,6 +242,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let characterData: any = body.characterData;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -205,6 +256,8 @@ export class API {
                 let authToken: string = body.authToken;
                 let characterID: any = body.character;
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
     }
@@ -213,7 +266,9 @@ export class API {
         const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         let result: string = '';
         for (let i = 0; i < 32; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
+            result += characters.charAt(
+                Math.floor(Math.random() * characters.length)
+            );
         }
         return result;
     }

@@ -13,15 +13,15 @@
 
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import { GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { GetCharactersResponse, GetCharacterAttributesResponse, CharactersResponseData } from 'src/types/supervisor';
 import AvailableCharactersLi from './AvailableCharactersLi';
 
 export interface AvailableCharactersProps {
-    characters: GetCharactersResponse
+    characters: CharactersResponseData[];
 }
 
 const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters }) => {
-
+    console.log(characters);
     return (
         <>
             <p className="headline">Charakter auswählen</p>

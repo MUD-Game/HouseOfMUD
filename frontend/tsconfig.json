@@ -7,11 +7,15 @@
       "esnext",
       "es2017"
     ],
-    "baseUrl": "./",
+    "baseUrl": ".",
+    "sourceMap": true,
     "importHelpers": true,
     "noEmit": true,
     "typeRoots":
-      ["node_modules/@types","src/types/*"],
+      ["node_modules/@types"],
+      "paths":{
+        "@HOM/*":["../@types/*"]
+      },
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

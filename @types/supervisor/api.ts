@@ -236,3 +236,5 @@ export interface DeleteCharacterRequest extends SupervisorRequest {
  * @category Response
  */
 export interface DeleteCharacterResponse extends SupervisorResponse { }
+
+export default {}

@@ -24,6 +24,7 @@ import { Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useMudConsole } from '../../hooks/useMudConsole';
 import { ErrorResponse } from '../../types/supervisor';
+import { CharactersResponseData } from '../../../../backend/supervisor/src/types/api';
 export interface CharacterCreatorProps { }
 
 
@@ -34,7 +35,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const homsole = useMudConsole();
     let dungeon = game.dungeon;
     let user = auth.user;
-    const [characters, setCharacters] = React.useState<GetCharactersResponse>([] as GetCharactersResponse);
+    const [characters, setCharacters] = React.useState<CharactersResponseData[]>([] as CharactersResponseData[]);
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
         if (!dungeon) return;

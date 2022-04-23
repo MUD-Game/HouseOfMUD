@@ -4,7 +4,10 @@
   "description": "MUD-Game provider",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "startfrontend": "cd ./frontend && npm start",
+    "starthost": "cd ./backend/game && npm start",
+    "startsupervisor": "cd ./backend/supervisor && npm start"
   },
   "jest": {
     "coverageReporters": [

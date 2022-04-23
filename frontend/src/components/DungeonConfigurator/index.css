@@ -1,0 +1,17 @@
+#editIcon, #deleteIcon {
+    opacity: 0.2;
+    margin-left: 5px;
+    transition: opacity 0.05s ease-in;
+}
+
+
+
+td{
+    vertical-align: middle;
+}
+
+
+tr:hover #editIcon, tr:hover #deleteIcon {
+    opacity: 1;
+}
+

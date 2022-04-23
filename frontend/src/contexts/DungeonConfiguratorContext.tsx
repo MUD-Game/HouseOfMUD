@@ -6,6 +6,10 @@ import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import AddItemModal from 'src/components/Modals/CharacterClass/AddItemModal';
 import AddActionModal from 'src/components/Modals/CharacterClass/AddActionModal';
+import { supervisor } from 'src/services/supervisor';
+import { CreateDungeonRequest } from 'src/types/supervisor';
+import { useMudConsole } from 'src/hooks/useMudConsole';
+import { useNavigate } from 'react-router-dom';
 type Option = string | { [key: string]: any };
 
 export interface DungeonConfiguratorContextMethods {
@@ -42,7 +46,7 @@ let DungeonConfiguratorContext = React.createContext<DungeonConfiguratorContextT
 function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }) {
   const [name, setName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
-  const [maxPlayers, setMaxPlayers] = React.useState<number>(2);
+  const [maxPlayers, setMaxPlayers] = React.useState<number>(0);
   const [species, setSpecies] = React.useState<Option>([]);
   const [genders, setGenders] = React.useState<Option>([]);
   const [classes, setClasses] = React.useState<MudCharacterClass[]>([]);
@@ -65,6 +69,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
   const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
 
+  const homosole = useMudConsole();
+  const navigate = useNavigate();
 
   const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
     // REFACTOR: make it prettier and more readable
@@ -185,8 +191,54 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     setData(data);
   }
 
+  const validateData = () => {
+    let errorString = "";
+    let valid = true;
+    if (name === "") {
+      valid = false;
+      errorString += " Name,";
+    }
+    if (description === "") {
+      valid = false;
+      errorString += " Beschreibung,";
+
+    }
+    if (maxPlayers === 0) {
+      valid = false;
+      errorString += " Maximale Spieleranzahl,";
+    }
+    if (species.length === 0) {
+      valid = false;
+      errorString += " Spezies,";
+    }
+    if (genders.length === 0) {
+      valid = false;
+      errorString += " Geschlechter,"
+    }
+    if (classes.length === 0) {
+      valid = false;
+      errorString += " Klassen,"
+    }
+
+
+
+    homosole.warn(`Bitte Fülle alle Felder aus:\n${errorString.substring(0, errorString.length - 1)
+      }`, "Dungeon-Editor");
+    return valid;
+  }
+
   const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    // TODO: Implement save
+    if (validateData()) {
+      let createBody: CreateDungeonRequest = {} as CreateDungeonRequest;
+      supervisor.createDungeon(createBody, (data) => {
+        homosole.log("Dungeon Successfully created");
+        navigate("/");
+      }, (error) => {
+        homosole.log(error.error, "Dungeon-Configurator");
+      });
+    } else {
+      // homosole.warn("Bitte füll alle Felder aus!", "Dungeon-Configurator");
+    }
   }
 
 
@@ -216,7 +268,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
       } else {
         // User is editing
         cc.id = characterClassKey.selected + "";
-        // Set the key to a new id
+        // Set the key to a new id 
         setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
         let temp = classes;
         let index = temp.findIndex((c) => c.id === cc.id);

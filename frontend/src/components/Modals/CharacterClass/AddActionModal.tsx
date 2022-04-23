@@ -32,21 +32,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const dconf = useDungeonConfigurator();
 
-    const eventTypes = [
-        "additem",
-        "removeitem",
-        "addhp",
-        "removehp",
-        "adddmg",
-        "removedmg",
-        "addmana",
-        "removemana"
-    ]
-
-    const onSubmit = () => {
-        if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output) || itemsNeeded.length === 0) {
-            homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
-        }
+    const constructToContextData = () => {
         let allEvents: MudEvent[] = [];
         // REFACTOR: Typing!!!
         selectedEvents.forEach((event) => {
@@ -58,11 +44,13 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             } else {
                 value = parseInt(eventValues[event as MudEvent["eventType"]]);
             }
-            let currEvent: MudEvent = {
-                eventType: event as MudEvent["eventType"],
-                value
+            if (!isNaN(value)) {
+                let currEvent: MudEvent = {
+                    eventType: event as MudEvent["eventType"],
+                    value
+                }
+                allEvents.push(currEvent);
             }
-            allEvents.push(currEvent);
         });
         let itemsneedednumbers: number[] = [];
         itemsNeeded.forEach((item) => {
@@ -75,9 +63,30 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             itemsneeded: itemsneedednumbers as number[],
             events: allEvents
         } as MudActionElement;
-        props.onSendAction(characterAction);
-        props.onHide();
+        return characterAction;
+    }
 
+    const eventTypes = [
+        "additem",
+        "removeitem",
+        "addhp",
+        "removehp",
+        "adddmg",
+        "removedmg",
+        "addmana",
+        "removemana"
+    ]
+
+    const onSubmit = () => {
+        if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output)) {
+            homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
+        } else {
+            let action = constructToContextData();
+            console.log(action);
+            if (!action) homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
+            props.onSendAction(action);
+            props.onHide();
+        }
     }
 
 

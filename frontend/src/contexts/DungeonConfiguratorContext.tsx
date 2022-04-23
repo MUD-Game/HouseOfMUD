@@ -1,12 +1,12 @@
 import React from 'react';
-import { MudActionElement, MudDungeon, MudNpc, MudRoom } from 'src/types/dungeon'
+import { MudActionElement, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
 import { MudCharacterSpecies, MudCharacterGender, MudCharacterClass } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
 import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
+import AddItemModal from 'src/components/Modals/CharacterClass/AddItemModal';
 
 export interface DungeonConfiguratorContextMethods {
-  initializeDungeon: (dungeon?: MudDungeon) => void;
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setMaxPlayers: (maxPlayers: number) => void;
@@ -15,10 +15,15 @@ export interface DungeonConfiguratorContextMethods {
   addClass: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   editClass: (key: number) => void;
   deleteClass: (key: number) => void;
+
+  addItem: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  editItem: (key: number) => void;
+  deleteItem: (key: number) => void;
 }
 
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
   npcs: MudNpc[];
+  items: MudItem[];
 }
 
 let DungeonConfiguratorContext = React.createContext<DungeonConfiguratorContextType>({} as DungeonConfiguratorContextType);
@@ -30,36 +35,19 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   const [species, setSpecies] = React.useState<MudCharacterSpecies[]>([]);
   const [genders, setGenders] = React.useState<MudCharacterGender[]>([]);
   const [classes, setClasses] = React.useState<MudCharacterClass[]>([]);
-  const [rooms, setRooms] = React.useState<MudRoom[]>([]);
+  const [items, setItems] = React.useState<MudItem[]>([]);
   const [actions, setActions] = React.useState<MudActionElement[]>([]);
+  const [rooms, setRooms] = React.useState<MudRoom[]>([]);
   const [npcs, setNpcs] = React.useState<MudNpc[]>([]);
+
 
   const [editData, setEditData] = React.useState<any>();
   const [showCharacterClassModal, setShowCharacterClassModal] = React.useState<boolean>(false);
   const [characterClassKey, setCharacterClassKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-  const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
-  const initializeDungeon = (dungeon?: MudDungeon) => {
-    if (dungeon) {
-      setName(dungeon.name);
-      setDescription(dungeon.description);
-      setMaxPlayers(dungeon.maxPlayers);
-      setSpecies(dungeon.species);
-      setGenders(dungeon.genders);
-      setClasses(dungeon.classes);
-      setRooms(dungeon.rooms);
-      setActions(dungeon.actions);
-    } else {
-      setName("");
-      setDescription("");
-      setMaxPlayers(0);
-      setSpecies([]);
-      setGenders([]);
-      setClasses([]);
-      setRooms([]);
-      setActions([]);
-    }
-  }
 
+  const [showAddItemsModal, setShowAddItemsModal] = React.useState<boolean>(false);
+  const [itemsKey, setItemsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+  const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
 
 
   const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -107,9 +95,11 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     description: "Mock-Description"
   } as MudCharacterClass;
 
+
+  // REFACTOR: Redunant code/methods
+
   const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setShowCharacterClassModal(true);
-    // setClasses([...classes, mockupClass]);
   }
   const editClass = (key: number) => {
     setEditData(classes[key]);
@@ -122,6 +112,24 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
       let newClasses = classes;
       newClasses.splice(index, 1);
       setClasses(newClasses);
+    });
+  }
+
+  const addItem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setShowAddItemsModal(true);
+    // setClasses([...classes, mockupClass]);
+  }
+  const editItem = (key: number) => {
+    setEditData(items[key]);
+    setItemsKey({ selected: key, nextKey: itemsKey.nextKey });
+    setShowAddItemsModal(true);
+  }
+  const deleteItem = (key: number) => {
+    showConfirmation("Delete Item", "Are you sure you want to delete this Item?", () => {
+      let index = items.findIndex(c => c.id === key + "");
+      let newItems = items;
+      newItems.splice(index, 1);
+      setItems(newItems);
     });
   }
 
@@ -142,7 +150,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
   let methods: DungeonConfiguratorContextMethods = {
-    initializeDungeon, setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass
+    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem
   }
 
   let fields: MudDungeon = {
@@ -157,8 +165,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   } as MudDungeon;
 
 
-  return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, npcs }}>
-    <AddClassModal editData={editData as MudCharacterClass} key={characterClassKey.selected} onSendCharacterClass={(cc) => {
+  return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, npcs, items }}>
+    <AddClassModal editData={editData as MudCharacterClass} key={"Class-" + characterClassKey.selected} onSendCharacterClass={(cc) => {
       if (characterClassKey.selected === characterClassKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
         cc.id = characterClassKey.nextKey + "";
         setClasses([...classes, cc]);
@@ -176,6 +184,26 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
       }
     }} show={showCharacterClassModal} onHide={() => {
       setShowCharacterClassModal(false);
+    }} />
+
+    <AddItemModal editData={editData as MudItem} key={"Item:" + itemsKey.selected} onSendItem={(cc) => {
+      if (itemsKey.selected === itemsKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
+        cc.id = itemsKey.nextKey + "";
+        setItems([...items, cc]);
+        setShowAddItemsModal(false);
+        setItemsKey({ nextKey: itemsKey.nextKey + 1, selected: itemsKey.selected + 1 });
+      } else {
+        // User is editing
+        cc.id = itemsKey.selected + "";
+        // Set the key to a new id
+        setItemsKey({ ...itemsKey, selected: itemsKey.nextKey });
+        let temp = items;
+        let index = temp.findIndex((c) => c.id === cc.id);
+        temp[index] = cc;
+        setItems(temp);
+      }
+    }} show={showAddItemsModal} onHide={() => {
+      setShowAddItemsModal(false);
     }} />
 
     <ConfirmationDialog onHide={() => { }} {...showConfirmationDialog} />

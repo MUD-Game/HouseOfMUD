@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes, DetailedHTMLProps, MouseEvent } from "react";
 import { Row } from 'react-bootstrap';
 import { Pencil, Trash } from "react-bootstrap-icons";
-import { MudCharacterClass } from "src/types/dungeon";
+import { MudCharacterClass, MudItem } from "src/types/dungeon";
 
 export interface DungeonObjectListProps {
     title: string;
@@ -10,7 +10,7 @@ export interface DungeonObjectListProps {
     onAdd?: (event: MouseEvent<HTMLButtonElement>) => void;
     onEditElement: (key: number) => void;
     onDeleteElement: (key: number) => void;
-    data: MudCharacterClass[]; //TODO: Change to the right objects
+    data: MudCharacterClass[] | MudItem[]; //TODO: Change to the right objects
     displayKeys: { [key: string]: string };
 }
 

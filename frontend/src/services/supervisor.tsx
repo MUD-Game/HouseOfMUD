@@ -1,12 +1,20 @@
 import "src/types/supervisor";
-import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse } from "src/types/supervisor";
+import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData } from "src/types/supervisor";
 
-const connectionString = process.env.REACT_APP_HOM_API || "https://mud-ga.me:43210";
-
+let connectionString = "";
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    connectionString = "http://localhost:43210"
+} else {
+    connectionString = process.env.REACT_APP_HOM_API || "https://mud-ga.me:43210";
+}
 // TODO: connect supervisor to the real supervisor
+// REFACTOR: Make it generic
 const supervisor = {
+    getSearchParamas: (params:any) => {
+        return `?${Object.keys(params).map(key => key + '=' + params[key]).join('&')}`;
+    },
     getDungeon(dungeonID: string, body: GetDungeonRequest, dataCallBack: (response: GetDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: GetDungeonResponse = {
+        let data: DungeonResponseData = {
             id: "1",
             name: "Test Dungeon",
             description: "This is a test dungeon",
@@ -14,7 +22,7 @@ const supervisor = {
             playercount: 0,
             status: "online"
         };
-        dataCallBack(data);
+        dataCallBack({ ok: 1, dungeon: data });
         return;
         fetch(connectionString + "/dungeons/" + dungeonID, {
             method: 'GET',
@@ -22,46 +30,28 @@ const supervisor = {
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
     getDungeons(body: GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: GetDungeonsResponse = [
-            {
-                id: "1",
-                name: "Test Dungeon",
-                description: "This is a test dungeon",
-                maxplayercount: 10,
-                playercount: 0,
-                status: "online"
-            },
-            {
-                id: "2",
-                name: "Test Dungeon 2",
-                description: "This is a test dungeon",
-                maxplayercount: 10,
-                playercount: 0,
-                status: "offline"
-            }];
-        dataCallBack(data);
-        return;
-        fetch(connectionString + "/dungeons", {
-            method: 'GET',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        fetch(connectionString + "/dungeons" + this.getSearchParamas(body), {
+            method: 'GET'
+        }).then(res => res.json()).then(data => {
+            if (data.ok) {
+                dataCallBack(data);
+            } else {
+                error(data);
+            }
+        }).catch(err => error(err));
     },
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: GetMyDungeonsResponse = [
-            {
-                id: "1",
-                name: "Test My Dungeon ",
-                description: "This is a test dungeon",
-                maxplayercount: 10,
-                playercount: 0,
-                status: "online"
-            }];
-        dataCallBack(data);
-        return;
-        fetch(connectionString + "/myDungeons", {
-            method: 'GET',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        console.log("dd");
+        fetch(connectionString + "/myDungeons" + this.getSearchParamas(body), {
+            method: 'GET'
+                }).then(res => res.json()).then(data => {
+            console.log(data);
+            if (data.ok) {
+                dataCallBack(data);
+            } else {
+                error(data);
+            }
+        }).catch(err => error(err));
     },
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: GetCharactersResponse) => void, error: (error: ErrorResponse) => void) {
         let data: GetCharactersResponse = [

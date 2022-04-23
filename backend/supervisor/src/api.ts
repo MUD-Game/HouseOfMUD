@@ -1,21 +1,23 @@
-import express from "express";
-import https from "https";
-import http from "http";
-import { HostLink } from "./host-link";
-import { TLS } from "./types/tls";
+import express from 'express';
+import https from 'https';
+import http from 'http';
+import { HostLink } from './host-link';
+import { TLS } from './types/tls';
+import * as comm from './types/api';
+import { GetDungeonResponse } from './types/api';
+import { mockresponse } from './mock/mockups';
 
 export class API {
-
     private port: number;
     private tls: TLS;
     private hostLink: HostLink;
     // private dba: DatabaseAdapter;
 
     constructor(port: number, tls: TLS, hostLink: HostLink) {
-        	this.port = port;
-            this.tls = tls;
-            this.hostLink = hostLink;
-            // this.dba = new DatabaseAdapter();
+        this.port = port;
+        this.tls = tls;
+        this.hostLink = hostLink;
+        // this.dba = new DatabaseAdapter();
     }
 
     public init() {
@@ -28,7 +30,7 @@ export class API {
             httpWebServer = http.createServer(app);
         }
         // const httpsWebServer = https.createServer(app);
-    
+
         httpWebServer.listen(this.port, () => {
             console.log(`Supervisor API listening to port ${this.port}`);
             this.registerRoutes(app);
@@ -77,10 +79,16 @@ export class API {
                 let user: string = body.user;
                 let character: string = body.character;
                 let authToken: string = body.authToken;
-                // TODO
+                // TODO: Check if user has permission
+
+                if (this.hostLink.dungeonExists(dungeonID)) {
+                    let verifyToken: string = this.generateVerifyToken();
+                    this.hostLink.setCharacterToken(dungeonID, user, character, verifyToken);
+                    res.json({ ok: 1, verifyToken: verifyToken });
+                }
             }
         });
-        
+
         // start dungeon
         app.post('/startDungeon/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
@@ -110,11 +118,26 @@ export class API {
 
         // get dungeons
         app.get('/dungeons', (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
+                res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
                 // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
+            }
+        });
+
+        app.get('/myDungeons', (req, res) => {
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
+                res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
+                // TODO
+            } else {
+                res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
@@ -130,11 +153,11 @@ export class API {
         });
 
         // get dungeon
-        app.post('/dungeon/:dungeonID', (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+        app.get('/dungeon/:dungeonID', (req, res) => {
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
                 // TODO
             }
         });
@@ -165,10 +188,10 @@ export class API {
         // get character attributes for dungeon
         app.get('/character/attributes/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
                 // TODO
             }
         });
@@ -176,10 +199,10 @@ export class API {
         // get user-characters for dungeon
         app.get('/characters/:dungeonID', (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            let params: any = req.query;
+            if (params.user !== undefined && params.authToken !== undefined) {
+                let user: string = params.user;
+                let authToken: string = params.authToken;
                 // TODO
             }
         });
@@ -213,7 +236,9 @@ export class API {
         const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         let result: string = '';
         for (let i = 0; i < 32; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
+            result += characters.charAt(
+                Math.floor(Math.random() * characters.length)
+            );
         }
         return result;
     }

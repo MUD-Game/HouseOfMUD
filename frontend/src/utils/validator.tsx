@@ -1,4 +1,3 @@
-
 // TODO: connect supervisor to the real supervisor
 const validator = {
     maxPlayers: (maxPlayersString: string) => {
@@ -8,6 +7,8 @@ const validator = {
         return Math.max(2, Math.min(maxPlayers, 1000000));
     },
     string(target: EventTarget & HTMLInputElement, onvalid: (value: string) => void) {
+        // Disable next line, because it thinks the regex is escaping uselessly 
+        //eslint-disable-next-line
         if (target.value === '' || /^[a-z0-9-\'_\.,:\(\)&\[\]\/+=\?#@ \xC0-\xFF]+$/i.test(target.value)) {
             onvalid(target.value);
             target.spellcheck = false;

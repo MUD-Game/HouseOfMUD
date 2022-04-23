@@ -34,6 +34,8 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
             </Row>
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={{ name: "Name", description: "Beschreibung" }} onAdd={dungeonConfig.addClass} title="Klassen" buttonText="neue Klasse anlegen" />
 
+            <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={{ name: "Name", description: "Beschreibung" }} onAdd={dungeonConfig.addItem} title="Items" buttonText="neues Item anlegen" />
+
         </Container>
 
     )

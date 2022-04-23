@@ -44,33 +44,36 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
-        console.log(eventValues);
         if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output) || itemsNeeded.length === 0) {
             homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
         }
         let allEvents: MudEvent[] = [];
         // REFACTOR: Typing!!!
         selectedEvents.forEach((event) => {
-            let value;
+            let value: number;
             if (event === "additem" && addItems.length > 0) {
-                value = (addItems[0] as any).id;
+                value = parseInt((addItems[0] as any).id);
             } else if (event === "removeitem" && removeItems.length > 0) {
-                value = (removeItems[0] as any).id;
+                value = parseInt((removeItems[0] as any).id);
             } else {
-                value = eventValues[event as MudEvent["eventType"]];
+                value = parseInt(eventValues[event as MudEvent["eventType"]]);
             }
-            console.log(value);
             let currEvent: MudEvent = {
                 eventType: event as MudEvent["eventType"],
                 value
             }
             allEvents.push(currEvent);
         });
-        console.log(allEvents);
+        let itemsneedednumbers: number[] = [];
+        itemsNeeded.forEach((item) => {
+            itemsneedednumbers.push(parseInt((item as any).id));
+        });
         const characterAction: MudActionElement = {
-            command: "mock command",
-            output: "mock output",
+            command,
+            output,
             description,
+            itemsneeded: itemsneedednumbers as number[],
+            events: allEvents
         } as MudActionElement;
         props.onSendAction(characterAction);
         props.onHide();

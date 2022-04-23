@@ -69,7 +69,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
     // REFACTOR: make it prettier and more readable
     let target = event.target;
-    console.log(genders);
     const value = target.value;
     switch (target.name) {
       case "name":
@@ -113,6 +112,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   // REFACTOR: Redunant code/methods
 
   const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setEditData(null);
+    setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
     setShowCharacterClassModal(true);
   }
   const editClass = (key: number) => {
@@ -130,8 +131,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   }
 
   const addItem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setEditData(null);
+    setItemsKey({ ...itemsKey, selected: itemsKey.nextKey })
     setShowAddItemsModal(true);
-    // setClasses([...classes, mockupClass]);
   }
   const editItem = (key: number) => {
     setEditData(items[key]);
@@ -148,6 +150,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   }
 
   const addAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setEditData(null);
+    setActionsKey({ ...actionsKey, selected: actionsKey.nextKey })
     setShowAddActionsModal(true);
 
     // setClasses([...classes, mockupClass]);

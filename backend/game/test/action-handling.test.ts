@@ -4,6 +4,7 @@ import { ActionHandler } from "../src/worker/action/action-handler";
 import { DiscardAction } from "../src/worker/action/discard-action";
 import { DungeonAction } from "../src/worker/action/dungeon-action";
 import { InspectAction } from "../src/worker/action/inspect-action";
+import { InventoryAction } from "../src/worker/action/inventory-action";
 import { LookAction } from "../src/worker/action/look-action";
 import { MessageAction } from "../src/worker/action/message-action";
 import { MoveAction } from "../src/worker/action/move-action";
@@ -22,7 +23,7 @@ const TestClass: CharacterClass = new CharacterClass("1", "Magier", "Magischer M
 const TestNpc: Npc = new Npc("1", "Bernd", "Bernd liebt die Musik", "Barde")
 const TestItem: Item = new Item("1", "Apfel", "Apfliger Apfel")
 const TestConnections: ConnectionInfo = new ConnectionInfo("active", "active")
-const TestAction: ActionElement = new ActionElement("1", "essen", "gegessen", "essen aktion", [new Event("addhp", 10)], ["1"])
+const TestAction: ActionElement = new ActionElement("1", "essen Apfel", "gegessen", "essen aktion", [new Event("addhp", 10)], ["1"])
 const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc.npcId], [TestItem.itemId], TestConnections, [TestAction.actionId], 2, 2)
 const TestRoomNorth: Room = new Room("2", "Raum-N", "Der Raum im Norden", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("inactive", "active"), [TestAction.actionId], 2, 3)
 const TestRoomEast: Room = new Room("3", "Raum-O", "Der Raum im Osten", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("inactive", "inactive"), [TestAction.actionId], 3, 2)
@@ -32,7 +33,7 @@ const TestRoomNorthNorth: Room = new Room("6", "Raum-NN", "Der Raum im Norden, N
 const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.roomId, [TestItem.itemId])
 const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.roomId, [TestItem.itemId])
 const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth.roomId, [TestItem.itemId])
-const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction])
+const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction], [TestItem], [TestNpc])
 const TestDungeonController: DungeonController = new DungeonController("1", amqpAdapter, TestDungeon)
 
 beforeAll(() => {
@@ -45,6 +46,7 @@ describe("ActionHandler", () => {
     const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester']
     const discardAction: DiscardAction = actionHandler.actions['ablegen']
     const inspectAction: InspectAction = actionHandler.actions['untersuche']
+    const inventoryAction: InventoryAction = actionHandler.actions['inv']
     const lookAction: LookAction = actionHandler.actions['umschauen']
     const moveAction: MoveAction = actionHandler.actions['gehe']
     const pickupAction: PickupAction = actionHandler.actions['aufheben']
@@ -54,6 +56,7 @@ describe("ActionHandler", () => {
     privateMessageAction.performAction = jest.fn()
     discardAction.performAction = jest.fn()
     inspectAction.performAction = jest.fn()
+    inventoryAction.performAction = jest.fn()
     lookAction.performAction = jest.fn()
     moveAction.performAction = jest.fn()
     pickupAction.performAction = jest.fn()
@@ -75,6 +78,10 @@ describe("ActionHandler", () => {
     test('ActionHandler should call performAction on InspectAction with the correct parameters when it receives a "untersuche" action message', () => {
         actionHandler.processAction("1", "untersuche Apfel")
         expect(inspectAction.performAction).toHaveBeenCalledWith("1", ["Apfel"])
+    })
+    test('ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a "inv" action message', () => {
+        actionHandler.processAction("1", "inv")
+        expect(inventoryAction.performAction).toHaveBeenCalledWith("1", [])
     })
     test('ActionHandler should call performAction on LookAction with the correct parameters when it receives a "umschauen" action message', () => {
         actionHandler.processAction("1", "umschauen")
@@ -106,6 +113,7 @@ describe("Actions", () => {
     const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester']
     const discardAction: DiscardAction = actionHandler.actions['ablegen']
     const inspectAction: InspectAction = actionHandler.actions['untersuche']
+    const inventoryAction: InventoryAction = actionHandler.actions['inv']
     const lookAction: LookAction = actionHandler.actions['umschauen']
     const moveAction: MoveAction = actionHandler.actions['gehe']
     const pickupAction: PickupAction = actionHandler.actions['aufheben']
@@ -166,16 +174,37 @@ describe("Actions", () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "In diese Richtung existiert kein Raum!"}})
     })
 
+    test("MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction", () => {
+        TestDungeon.characters[0].position = TestRoomNorth.roomId
+        moveAction.performAction(TestDungeon.characters[0].characterId, ["Nord-Sueden"])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Diese Richtung existiert nicht!"}})
+    })
+
     test("MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed", () => {
         TestDungeon.characters[0].position = TestRoomNorth.roomId
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Norden"])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "In diese Richtung ist der Raum geschlossen!"}})
     })
 
-    // test("LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload", () => {
-    //     lookAction.performAction(TestDungeon.characters[0].characterId, [])
-    //     expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel. Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W."}})
-    // })
+    test("LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload", () => {
+        lookAction.performAction(TestDungeon.characters[0].characterId, [])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel. Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. Du kannst in diesem Raum folgende Aktionen ausfuehren: essen Apfel. "}})
+    })
+
+    test("InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload", () => {
+        inventoryAction.performAction(TestDungeon.characters[0].characterId, [])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Du hast folgende Items im Inventar: Apfel"}})
+    })
+
+    test("InspectAction should call sendToClient on AmqpAdapter with the correct routingKey and payload", () => {
+        inspectAction.performAction(TestDungeon.characters[0].characterId, ["Apfel"])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Du untersuchst Apfel: Apfliger Apfel"}})
+    })
+
+    test("InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item", () => {
+        inspectAction.performAction(TestDungeon.characters[0].characterId, ["Birne"])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Du besitzt dieses Item nicht!"}})
+    })
 })
 
         

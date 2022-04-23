@@ -20,6 +20,8 @@ export interface Dungeon {
   rooms: Room[];
   blacklist: string[];
   actions: ActionElement[];
+  items: Item[];
+  npcs: Npc[];
 }
 
 export class Dungeon implements Dungeon {
@@ -37,6 +39,8 @@ export class Dungeon implements Dungeon {
   rooms: Room[];
   blacklist: string[];
   actions: ActionElement[];
+  items: Item[];
+  npcs: Npc[];
 
   getName(): string {
     return this.name;
@@ -171,9 +175,9 @@ export class Dungeon implements Dungeon {
     return this.blacklist;
   }
 
-  getAction(actionCommand: string): ActionElement {
+  getAction(actionId: string): ActionElement {
     let actionIndex: number = this.actions.findIndex(
-      (action) => action.command === actionCommand
+      (action) => action.actionId === actionId
     );
     if (actionIndex === -1) {
       throw new Error("Room does not exist");
@@ -184,6 +188,28 @@ export class Dungeon implements Dungeon {
 
   getActions(): ActionElement[] {
     return this.actions;
+  }
+
+  getItem(itemId: string): Item {
+    let itemIndex: number = this.items.findIndex(
+        (item) => item.itemId === itemId
+      );
+      if (itemIndex === -1) {
+        throw new Error("Room does not exist");
+      } else {
+        return this.items[itemIndex];
+      }
+  }
+
+  getNpc(npcId: string): Npc {
+    let npcIndex: number = this.npcs.findIndex(
+        (npc) => npc.npcId === npcId
+      );
+      if (npcIndex === -1) {
+        throw new Error("Room does not exist");
+      } else {
+        return this.npcs[npcIndex];
+      }
   }
 
   constructor(
@@ -200,7 +226,9 @@ export class Dungeon implements Dungeon {
     characters: Character[],
     rooms: Room[],
     blacklist: string[],
-    actions: ActionElement[]
+    actions: ActionElement[],
+    items: Item[],
+    npcs: Npc[]
   ) {
     this.dungeonId = id;
     this.name = name;
@@ -216,6 +244,8 @@ export class Dungeon implements Dungeon {
     this.rooms = rooms;
     this.blacklist = blacklist;
     this.actions = actions;
+    this.items = items
+    this.npcs = npcs
   }
 
   getId(): string {
@@ -341,6 +371,14 @@ export class Item implements Item {
     this.name = name;
     this.description = description;
   }
+
+  getName(): string {
+      return this.name
+  }
+
+  getDescription(): string {
+      return this.description
+  }
 }
 
 export interface Character {
@@ -411,6 +449,10 @@ export class Character implements Character {
   modifyPosition(destinationRoom: string) {
     this.position = destinationRoom;
   }
+
+  getInventory(): string[] {
+      return this.inventory
+  }
 }
 
 export interface IEvent {
@@ -474,6 +516,10 @@ export class Npc implements Npc {
     this.description = description;
     this.species = species;
   }
+
+  getName(): string {
+      return this.name
+  }
 }
 
 export interface ActionElement {
@@ -507,6 +553,10 @@ export class ActionElement implements ActionElement {
       (this.description = description),
       (this.events = events),
       (this.itemsneeded = itemsneeded);
+  }
+
+  getCommand(): string {
+      return this.command
   }
 }
 
@@ -591,5 +641,17 @@ export class Room implements Room {
 
   getSouthConnection(): "active" | "inactive" | "closed" {
     return this.connections.south;
+  }
+
+  getItems(): string[] {
+      return this.items
+  }
+
+  getNpcs(): string[] {
+      return this.npcs
+  }
+
+  getActions(): string[] {
+      return this.actions
   }
 }

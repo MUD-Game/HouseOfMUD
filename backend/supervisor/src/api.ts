@@ -93,7 +93,6 @@ export class API {
                 this.hostLink.startDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                this.hostLink.startDungeon(dungeonID);
                 res.json({ ok: 0 });
             }
         });

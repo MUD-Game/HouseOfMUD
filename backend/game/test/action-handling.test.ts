@@ -22,16 +22,16 @@ const TestClass: CharacterClass = new CharacterClass("1", "Magier", "Magischer M
 const TestNpc: Npc = new Npc("1", "Bernd", "Bernd liebt die Musik", "Barde")
 const TestItem: Item = new Item("1", "Apfel", "Apfliger Apfel")
 const TestConnections: ConnectionInfo = new ConnectionInfo("active", "active")
-const TestAction: ActionElement = new ActionElement("1", "essen", "gegessen", "essen aktion", [new Event("addhp", 10)], [new Item("1", "Apfel", "Eine Frucht")])
-const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc], [TestItem], TestConnections, [TestAction], 2, 2)
-const TestRoomNorth: Room = new Room("2", "Raum-N", "Der Raum im Norden", [TestNpc], [TestItem], new ConnectionInfo("inactive", "active"), [TestAction], 2, 3)
-const TestRoomEast: Room = new Room("3", "Raum-O", "Der Raum im Osten", [TestNpc], [TestItem], new ConnectionInfo("inactive", "inactive"), [TestAction], 3, 2)
-const TestRoomSouth: Room = new Room("4", "Raum-S", "Der Raum im Sueden", [TestNpc], [TestItem], new ConnectionInfo("inactive", "inactive"), [TestAction], 2, 1)
-const TestRoomWest: Room = new Room("5", "Raum-W", "Der Raum im Westen", [TestNpc], [TestItem], new ConnectionInfo("active", "inactive"), [TestAction], 1, 2)
-const TestRoomNorthNorth: Room = new Room("6", "Raum-NN", "Der Raum im Norden, Norden", [TestNpc], [TestItem], new ConnectionInfo("inactive", "closed"), [TestAction], 2, 4)
-const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
-const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom, [TestItem])
-const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth, [TestItem])
+const TestAction: ActionElement = new ActionElement("1", "essen", "gegessen", "essen aktion", [new Event("addhp", 10)], ["1"])
+const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc.npcId], [TestItem.itemId], TestConnections, [TestAction.actionId], 2, 2)
+const TestRoomNorth: Room = new Room("2", "Raum-N", "Der Raum im Norden", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("inactive", "active"), [TestAction.actionId], 2, 3)
+const TestRoomEast: Room = new Room("3", "Raum-O", "Der Raum im Osten", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("inactive", "inactive"), [TestAction.actionId], 3, 2)
+const TestRoomSouth: Room = new Room("4", "Raum-S", "Der Raum im Sueden", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("inactive", "inactive"), [TestAction.actionId], 2, 1)
+const TestRoomWest: Room = new Room("5", "Raum-W", "Der Raum im Westen", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("active", "inactive"), [TestAction.actionId], 1, 2)
+const TestRoomNorthNorth: Room = new Room("6", "Raum-NN", "Der Raum im Norden, Norden", [TestNpc.npcId], [TestItem.itemId], new ConnectionInfo("inactive", "closed"), [TestAction.actionId], 2, 4)
+const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.roomId, [TestItem.itemId])
+const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.roomId, [TestItem.itemId])
+const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth.roomId, [TestItem.itemId])
 const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction])
 const TestDungeonController: DungeonController = new DungeonController("1", amqpAdapter, TestDungeon)
 
@@ -99,7 +99,7 @@ describe("ActionHandler", () => {
 })
 describe("Actions", () => {
     beforeEach(() => {
-        TestDungeon.characters[0].position = TestRoom
+        TestDungeon.characters[0].position = TestRoom.roomId
     })
     const actionHandler: ActionHandler = new ActionHandler(TestDungeonController)
     const messageAction: MessageAction = actionHandler.actions['sag']
@@ -139,7 +139,7 @@ describe("Actions", () => {
 
     test("MoveAction should modify the position, call the functions to bind the client queues and call sendWithRouting on the AmqpAdapter when user moves to another room", () => {
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Norden"])
-        expect(TestDungeon.characters[0].position).toBe(TestRoomNorth)
+        expect(TestDungeon.characters[0].position).toBe(TestRoomNorth.roomId)
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith("1", "room.1")
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith("1", "room.2")
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith("1.room.2", {action: "message", data: {message: "Jeff ist Raum-N beigetreten!"}})
@@ -147,27 +147,27 @@ describe("Actions", () => {
 
     test("MoveAction should modify the position to the room in the East when user moves east", () => {
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Osten"])
-        expect(TestDungeon.characters[0].position).toBe(TestRoomEast)
+        expect(TestDungeon.characters[0].position).toBe(TestRoomEast.roomId)
     })
 
     test("MoveAction should modify the position to the room in the South when user moves south", () => {
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Sueden"])
-        expect(TestDungeon.characters[0].position).toBe(TestRoomSouth)
+        expect(TestDungeon.characters[0].position).toBe(TestRoomSouth.roomId)
     })
 
     test("MoveAction should modify the position to the room in the West when user moves west", () => {
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Westen"])
-        expect(TestDungeon.characters[0].position).toBe(TestRoomWest)
+        expect(TestDungeon.characters[0].position).toBe(TestRoomWest.roomId)
     })
 
     test("MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist", () => {
-        TestDungeon.characters[0].position = TestRoomNorth
+        TestDungeon.characters[0].position = TestRoomNorth.roomId
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Osten"])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "In diese Richtung existiert kein Raum!"}})
     })
 
     test("MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed", () => {
-        TestDungeon.characters[0].position = TestRoomNorth
+        TestDungeon.characters[0].position = TestRoomNorth.roomId
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Norden"])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "In diese Richtung ist der Raum geschlossen!"}})
     })

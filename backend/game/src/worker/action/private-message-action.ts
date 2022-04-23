@@ -22,15 +22,16 @@ export class PrivateMessageAction implements Action {
         let senderCharacterName: string = senderCharacter.getName()
         let senderCharacterId: string = senderCharacter.getId()
         let dungeonId: string = dungeon.getId()
-        let room: Room = senderCharacter.getPosition()
+        let roomId: string = senderCharacter.getPosition()
+        let room: Room = dungeon.getRoom(roomId)
         let routingKeySender = `${dungeonId}.character.${senderCharacterId}`
         let recipientCharacterName: string = args[0]
         try {
             let recipientCharacter: Character = dungeon.getCharacterByName(recipientCharacterName)
-            let recipientCharacterPosition: Room = recipientCharacter.getPosition()
+            let recipientCharacterRoomId: string = recipientCharacter.getPosition()
             let recipientCharacterId: string = recipientCharacter.getId()
             let routingKeyRecipient = `${dungeonId}.character.${recipientCharacterId}`
-            if (recipientCharacterPosition.getId() === room.getId()) {
+            if (recipientCharacterRoomId === room.getId()) {
                 args.shift()
                 let messageBody: string = args.join(' ')
                 let responseMessage: string = `[privat] ${senderCharacterName} -> ${recipientCharacterName}: ${messageBody}`

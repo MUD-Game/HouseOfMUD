@@ -19,8 +19,8 @@ export class MoveAction implements Action {
         let senderCharacter: Character = dungeon.getCharacter(user)
         let senderCharacterName: string = senderCharacter.getName()
         let senderCharacterId: string = senderCharacter.getId()
-        let currentRoom: Room = senderCharacter.getPosition()
-        let currentRoomId: string = currentRoom.getId()
+        let currentRoomId: string = senderCharacter.getPosition()
+        let currentRoom: Room = dungeon.getRoom(currentRoomId)
         let destinationRoom: Room
         let destinationRoomId: string = "0"
         let destinationRoomName: string = ""
@@ -35,7 +35,7 @@ export class MoveAction implements Action {
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom)
+                        senderCharacter.modifyPosition(destinationRoomId)
                     }
                     break;
                 case "Osten":
@@ -45,7 +45,7 @@ export class MoveAction implements Action {
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom)
+                        senderCharacter.modifyPosition(destinationRoomId)
                     }
                     break;
                 case "Sueden":
@@ -55,7 +55,7 @@ export class MoveAction implements Action {
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom)
+                        senderCharacter.modifyPosition(destinationRoomId)
                     }
                     break;
                 case "Westen":
@@ -65,7 +65,7 @@ export class MoveAction implements Action {
                     } else {
                         destinationRoomId = destinationRoom.getId()
                         destinationRoomName = destinationRoom.getName()
-                        senderCharacter.modifyPosition(destinationRoom) 
+                        senderCharacter.modifyPosition(destinationRoomId) 
                     }
                     break;
             }

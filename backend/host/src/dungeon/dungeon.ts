@@ -411,6 +411,8 @@ export interface Room {
     items: Item[],
     connections: ConnectionInfo,
     actions: ActionElement[]
+    xCoordinate: number
+    yCoordinate: number
 }
 
 export class Room implements Room {
@@ -421,8 +423,10 @@ export class Room implements Room {
     items: Item[]
     connections: ConnectionInfo
     actions: ActionElement[]
+    xCoordinate: number
+    yCoordinate: number
 
-    constructor(id: string, name: string, description: string, npcs: Npc[], items: Item[], connections: ConnectionInfo, actions: ActionElement[]) {
+    constructor(id: string, name: string, description: string, npcs: Npc[], items: Item[], connections: ConnectionInfo, actions: ActionElement[], xCoordinate: number, yCoordinate: number) {
         this.id = id
         this.name = name
         this.description = description
@@ -430,6 +434,8 @@ export class Room implements Room {
         this.items = items
         this.connections = connections
         this.actions = actions
+        this.xCoordinate = xCoordinate
+        this.yCoordinate = yCoordinate
     }
 
     getId(): string {

@@ -17,9 +17,9 @@ export class MessageAction implements Action {
         let messageBody: string = args.join(' ')
         let senderCharacter: Character = this.dungeonController.getDungeon().getCharacter(user)
         let senderCharacterName: string = senderCharacter.getName()
-        let room: Room = senderCharacter.getPosition()
+        let roomId: string = senderCharacter.getPosition()
+        let room: Room = this.dungeonController.getDungeon().getRoom(roomId)
         let roomName: string = room.getName()
-        let roomId: string = room.getId()
         let dungeonId: string = this.dungeonController.getDungeon().getId()
         let routingKey = `${dungeonId}.room.${roomId}`
         let responseMessage: string = `[${roomName}] ${senderCharacterName} sagt ${messageBody}`

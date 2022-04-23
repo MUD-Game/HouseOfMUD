@@ -1,15 +1,13 @@
-import {Schema, model} from "mongoose";
+import { Schema } from "mongoose";
 
-export interface CharacterGender{
-    id: string,
-    name: string,
-    description: string
+export interface CharacterGender {
+  characterGenderId: string;
+  name: string;
+  description: string;
 }
 
-const characterGenderSchema = new Schema<CharacterGender>({
-    name: {type: String, maxLength: 50},
-    description: {type: String, maxLength: 500}
+export const characterGenderSchema = new Schema<CharacterGender>({
+  characterGenderId: { type: String, required: true, unique: true },
+  name: { type: String },
+  description: { type: String },
 });
-
-const characterGender = model<CharacterGender>('CharacterGender', characterGenderSchema);
-export default characterGender;

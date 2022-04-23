@@ -1,15 +1,13 @@
-import {Schema, model} from "mongoose";
+import { Schema } from "mongoose";
 
-export interface Item{
-    id: string,
-    name: string,
-    description: string
+export interface Item {
+  itemId: string;
+  name: string;
+  description: string;
 }
 
 export const itemSchema = new Schema<Item>({
-    name: {type: String, maxLength: 50},
-    description: {type: String, maxLength: 500}
+  itemId: { type: String, required: true, unique: true },
+  name: { type: String },
+  description: { type: String },
 });
-
-const item = model<Item>('Item', itemSchema);
-export default item;

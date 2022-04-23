@@ -1,15 +1,13 @@
-import {Schema, model} from "mongoose";
+import { Schema } from "mongoose";
 
-export interface CharacterSpecies{
-    id: string,
-    name: string,
-    description: string
+export interface CharacterSpecies {
+  characterSpeciesId: string;
+  name: string;
+  description: string;
 }
 
-const characterSpeciesSchema = new Schema<CharacterSpecies>({
-    name: {type: String, maxLength: 50},
-    description: {type: String, maxLength: 500}
+export const characterSpeciesSchema = new Schema<CharacterSpecies>({
+  characterSpeciesId: { type: String, required: true, unique: true },
+  name: { type: String },
+  description: { type: String },
 });
-
-const characterSpezies = model<CharacterSpecies>('CharacterSpecies', characterSpeciesSchema);
-export default characterSpezies;

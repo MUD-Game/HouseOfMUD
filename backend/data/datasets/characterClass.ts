@@ -1,20 +1,18 @@
-import {Schema, model} from "mongoose";
+import { Schema } from "mongoose";
 import { CharacterStats } from "./charcterStats";
 
-export interface CharacterClass{
-    id: string,
-    name: string,
-    description: string,
-    maxStats: CharacterStats,
-    startStats: CharacterStats
+export interface CharacterClass {
+  characterClassId: string;
+  name: string;
+  description: string;
+  maxStats: CharacterStats;
+  startStats: CharacterStats;
 }
 
-const characterClassSchema = new Schema<CharacterClass>({
-    name: {type: String, maxLength: 50},
-    description: {type: String, maxLength: 500},
-    maxStats: {type: Schema.Types.Mixed},
-    startStats: {type: Schema.Types.Mixed}
+export const characterClassSchema = new Schema<CharacterClass>({
+  characterClassId: { type: String, required: true, unique: true },
+  name: { type: String },
+  description: { type: String },
+  maxStats: { type: Schema.Types.Mixed },
+  startStats: { type: Schema.Types.Mixed },
 });
-
-const characterClass = model<CharacterClass>('CharacterClass', characterClassSchema);
-export default characterClass;

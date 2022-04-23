@@ -1,30 +1,30 @@
-import {Schema, model} from "mongoose";
+import { Schema } from "mongoose";
 import { CharacterStats } from "./charcterStats";
 
-export interface Character{
-    id: string,
-    name: string,
-    dungeon: Schema.Types.ObjectId,
-    characterClass: Schema.Types.ObjectId,
-    characterSpezies: Schema.Types.ObjectId,
-    characterGender: Schema.Types.ObjectId,
-    maxStats: CharacterStats,
-    currentStats: CharacterStats,
-    position: Schema.Types.ObjectId,
-    inventory: Schema.Types.ObjectId[]
+export interface Character {
+  characterId: string;
+  name: string;
+  userId: string;
+  dungeonId: string;
+  characterClass: string;
+  characterSpezies: string;
+  characterGender: string;
+  maxStats: CharacterStats;
+  currentStats: CharacterStats;
+  position: string;
+  inventory: string[];
 }
 
-const characterSchema = new Schema<Character>({
-    name: {type: String, maxLength: 50},
-    dungeon: {type: Schema.Types.ObjectId},
-    characterClass: {type: Schema.Types.ObjectId},
-    characterSpezies: {type: Schema.Types.ObjectId},
-    characterGender: {type: Schema.Types.ObjectId},
-    maxStats: {type: Schema.Types.Mixed},
-    currentStats: {type: Schema.Types.Mixed},
-    position: {type: Schema.Types.ObjectId},
-    inventory: {type: [Schema.Types.ObjectId]}
+export const characterSchema = new Schema<Character>({
+  characterId: { type: String, required: true, unique: true },
+  name: { type: String },
+  userId: { type: String },
+  dungeonId: { type: String },
+  characterClass: { type: String },
+  characterSpezies: { type: String },
+  characterGender: { type: String },
+  maxStats: { type: Schema.Types.Mixed },
+  currentStats: { type: Schema.Types.Mixed },
+  position: { type: String },
+  inventory: [{ type: String }],
 });
-
-const character = model<Character>('Character', characterSchema);
-export default character;

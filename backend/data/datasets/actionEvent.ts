@@ -1,15 +1,9 @@
-import {Schema, model} from "mongoose";
+export class ActionEvent {
+  eventType: string;
+  value: string;
 
-export interface ActionEvent{
-    id: string,
-    eventType: string,
-    value: string
+  constructor(eventType: string, value: string) {
+    this.eventType = eventType;
+    this.value = value;
+  }
 }
-
-export const actionEventSchema = new Schema<ActionEvent>({
-    eventType: {type: String, required: true}, //TODO enum hinzufügen
-    value: {type: String, required: true}
-});
-
-const actionEvent = model<ActionEvent>('ActionEvent', actionEventSchema);
-export default actionEvent;

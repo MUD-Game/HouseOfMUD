@@ -475,6 +475,10 @@ export class Room implements Room {
         return this.name
     }
 
+    getDescription(): string {
+        return this.description
+    }
+
     getEastConnection(): "active" | "inactive" | "closed" {
         return this.connections.east
     }

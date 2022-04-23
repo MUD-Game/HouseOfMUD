@@ -168,6 +168,11 @@ describe("Actions", () => {
         moveAction.performAction(TestDungeon.characters[0].characterId, ["Norden"])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "In diese Richtung ist der Raum geschlossen!"}})
     })
+
+    // test("LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload", () => {
+    //     lookAction.performAction(TestDungeon.characters[0].characterId, [])
+    //     expect(amqpAdapter.sendToClient).toHaveBeenCalledWith("1.character.1", {action: "message", data: {message: "Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel. Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W."}})
+    // })
 })
 
         

@@ -27,6 +27,9 @@ export interface DungeonConfiguratorContextMethods {
   addAction: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   editAction: (key: number) => void;
   deleteAction: (key: number) => void;
+
+
+  save: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
@@ -66,7 +69,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
     // REFACTOR: make it prettier and more readable
     let target = event.target;
-    console.log(genders);
     const value = target.value;
     switch (target.name) {
       case "name":
@@ -97,10 +99,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
   const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
     setShowConfirmationDialog({
-      show: true, message, title, onConfirm: () => {
-        onConfirm();
-        setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } });
-      }
+      show: true, message, title, onConfirm
     });
   }
 
@@ -113,6 +112,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   // REFACTOR: Redunant code/methods
 
   const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setEditData(null);
+    setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
     setShowCharacterClassModal(true);
   }
   const editClass = (key: number) => {
@@ -130,8 +131,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   }
 
   const addItem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setEditData(null);
+    setItemsKey({ ...itemsKey, selected: itemsKey.nextKey })
     setShowAddItemsModal(true);
-    // setClasses([...classes, mockupClass]);
   }
   const editItem = (key: number) => {
     setEditData(items[key]);
@@ -148,6 +150,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
   }
 
   const addAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setEditData(null);
+    setActionsKey({ ...actionsKey, selected: actionsKey.nextKey })
     setShowAddActionsModal(true);
 
     // setClasses([...classes, mockupClass]);
@@ -181,9 +185,13 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     setData(data);
   }
 
+  const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    // TODO: Implement save
+  }
+
 
   let methods: DungeonConfiguratorContextMethods = {
-    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies
+    setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save
   }
 
   let fields: MudDungeon = {
@@ -259,7 +267,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
       setShowAddActionsModal(false);
     }} />
 
-    <ConfirmationDialog onHide={() => { }} {...showConfirmationDialog} />
+    <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
     {children}
   </DungeonConfiguratorContext.Provider>;
 }

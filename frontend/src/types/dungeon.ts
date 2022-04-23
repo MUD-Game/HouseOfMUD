@@ -68,7 +68,7 @@ export interface MudCharacter {
 export interface MudEvent {
     eventType:
         | 'additem'
-        | 'removeItem'
+        | 'removeitem'
         | 'addhp'
         | 'removehp'
         | 'adddmg'
@@ -90,7 +90,7 @@ export interface MudActionElement {
     command: string;
     output: string;
     description: string;
-    events: Event[];
+    events: MudEvent[];
     itemsneeded: number[];
 }
 

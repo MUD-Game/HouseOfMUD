@@ -41,7 +41,7 @@ export const dungeonSchema = new Schema<Dungeon>({
   characterGender: [{ type: Schema.Types.ObjectId, ref: "CharacterGender" }],
   rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
   items: [{ type: Schema.Types.ObjectId, ref: "Item" }],
-  npcs: [{ type: Schema.Types.ObjectId, ref: "Npcs" }],
+  npcs: [{ type: Schema.Types.ObjectId, ref: "Npc" }],
   blacklist: [{ type: String }],
   actions: [{ type: Schema.Types.ObjectId, ref: "Action" }],
 });

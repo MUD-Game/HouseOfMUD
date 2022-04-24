@@ -21,8 +21,8 @@ export class MessageAction implements Action {
         let room: Room = this.dungeonController.getDungeon().getRoom(roomId)
         let roomName: string = room.getName()
         let dungeonId: string = this.dungeonController.getDungeon().getId()
-        let routingKey = `${dungeonId}.room.${roomId}`
         let responseMessage: string = `[${roomName}] ${senderCharacterName} sagt ${messageBody}`
+        let routingKey = `${dungeonId}.room.${roomId}`
         this.dungeonController.getAmqpAdapter().sendWithRouting(routingKey, {action: "message", data: {message: responseMessage}})
     }
 }

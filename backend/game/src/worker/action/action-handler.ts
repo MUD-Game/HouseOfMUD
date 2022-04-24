@@ -52,7 +52,7 @@ export class ActionHandler implements ActionHandler {
         if (commandString in this.actions) {
             action = this.actions[commandString];
         } else {
-            action = this.dungeonActions.find(action => action.trigger === commandString)
+            action = this.dungeonActions.find(action => action.trigger === message)
             if (action === undefined) {
                 action = this.unspecifiedAction;
             }

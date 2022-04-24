@@ -23,7 +23,7 @@ export interface ActionHandler {
  * Processes Actions received by the dungeon controller.
  * @category Action Handler
  */
-export class ActionHandler implements ActionHandler {
+export class ActionHandlerImpl implements ActionHandler {
     actions: { [trigger: string]: Action } = {};
     dungeonActions: DungeonAction[];
     unspecifiedAction: UnspecifiedAction;

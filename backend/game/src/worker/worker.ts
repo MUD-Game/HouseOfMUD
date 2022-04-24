@@ -1,20 +1,9 @@
+
+import { ActionElement, ActionElementImpl, Character, CharacterClass, CharacterClassImpl, CharacterGender, CharacterGenderImpl, CharacterImpl, CharacterSpecies, CharacterSpeciesImpl, CharacterStats, CharacterStatsImpl, ConnectionInfo, ConnectionInfoImpl, Dungeon, DungeonImpl, Event, EventImpl, Item, ItemImpl, Npc, NpcImpl, Room, RoomImpl } from "../dungeon/dungeon";
+import { AmqpAdapter } from "./amqp-adapter";
+import { DungeonController } from "./dungeon-controller";
 import { exit } from 'process';
-import {
-    ActionElement,
-    Character,
-    CharacterClass,
-    CharacterGender,
-    CharacterSpecies,
-    CharacterStats,
-    ConnectionInfo,
-    Dungeon,
-    Event,
-    Item,
-    Npc,
-    Room,
-} from '../dungeon/dungeon';
-import { AmqpAdapter } from './amqp-adapter';
-import { DungeonController } from './dungeon-controller';
+
 
 const dungeonID = process.argv[2];
 
@@ -90,45 +79,45 @@ function getAmqpAdapterConfig() {
 }
 
 function getDungeon(dungeonID: string): Dungeon {
-    const TestSpecies: CharacterSpecies = new CharacterSpecies(
+    const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(
         '1',
         'Hexer',
         'Hexiger Hexer'
     );
-    const TestStartStats: CharacterStats = new CharacterStats(100, 20, 100);
-    const TestMaxStats: CharacterStats = new CharacterStats(100, 20, 100);
-    const TestGender: CharacterGender = new CharacterGender(
+    const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
+    const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
+    const TestGender: CharacterGender = new CharacterGenderImpl(
         '1',
         'Mann',
         'Maennlicher Mann'
     );
-    const TestClass: CharacterClass = new CharacterClass(
+    const TestClass: CharacterClass = new CharacterClassImpl(
         '1',
         'Magier',
         'Magischer Magier',
         TestMaxStats,
         TestStartStats
     );
-    const TestNpc: Npc = new Npc(
+    const TestNpc: Npc = new NpcImpl(
         '1',
         'Bernd',
         'Bernd liebt die Musik',
         'Barde'
     );
-    const TestItem: Item = new Item('1', 'Apfel', 'Apfliger Apfel');
-    const TestConnections: ConnectionInfo = new ConnectionInfo(
+    const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
+    const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
         'active',
         'active'
     );
-    const TestAction: ActionElement = new ActionElement(
+    const TestAction: ActionElement = new ActionElementImpl(
         '1',
         'essen',
         'gegessen',
         'essen aktion',
-        [new Event('addhp', 10)],
+        [new EventImpl('addhp', 10)],
         ['1']
     );
-    const TestRoom: Room = new Room(
+    const TestRoom: Room = new RoomImpl(
         '1',
         'Raum-1',
         'Der Raum in dem alles begann',
@@ -139,62 +128,62 @@ function getDungeon(dungeonID: string): Dungeon {
         2,
         2
     );
-    const TestRoomNorth: Room = new Room(
+    const TestRoomNorth: Room = new RoomImpl(
         '2',
         'Raum-N',
         'Der Raum im Norden',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfo('inactive', 'active'),
+        new ConnectionInfoImpl('inactive', 'active'),
         [TestAction.id],
         2,
         3
     );
-    const TestRoomEast: Room = new Room(
+    const TestRoomEast: Room = new RoomImpl(
         '3',
         'Raum-O',
         'Der Raum im Osten',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfo('inactive', 'inactive'),
+        new ConnectionInfoImpl('inactive', 'inactive'),
         [TestAction.id],
         3,
         2
     );
-    const TestRoomSouth: Room = new Room(
+    const TestRoomSouth: Room = new RoomImpl(
         '4',
         'Raum-S',
         'Der Raum im Sueden',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfo('inactive', 'inactive'),
+        new ConnectionInfoImpl('inactive', 'inactive'),
         [TestAction.id],
         2,
         1
     );
-    const TestRoomWest: Room = new Room(
+    const TestRoomWest: Room = new RoomImpl(
         '5',
         'Raum-W',
         'Der Raum im Westen',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfo('active', 'inactive'),
+        new ConnectionInfoImpl('active', 'inactive'),
         [TestAction.id],
         1,
         2
     );
-    const TestRoomNorthNorth: Room = new Room(
+    const TestRoomNorthNorth: Room = new RoomImpl(
         '6',
         'Raum-NN',
         'Der Raum im Norden, Norden',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfo('inactive', 'closed'),
+        new ConnectionInfoImpl('inactive', 'closed'),
         [TestAction.id],
         2,
         4
     );
-    const TestCharacter: Character = new Character(
+    const TestCharacter: Character = new CharacterImpl(
         '1',
         '1',
         '1',
@@ -207,7 +196,7 @@ function getDungeon(dungeonID: string): Dungeon {
         TestRoom.id,
         [TestItem.id]
     );
-    const TestCharacterSameRoom: Character = new Character(
+    const TestCharacterSameRoom: Character = new CharacterImpl(
         '2',
         '2',
         '1',
@@ -220,7 +209,7 @@ function getDungeon(dungeonID: string): Dungeon {
         TestRoom.id,
         [TestItem.id]
     );
-    const TestCharacterNotSameRoom: Character = new Character(
+    const TestCharacterNotSameRoom: Character = new CharacterImpl(
         '3',
         '3',
         '1',
@@ -233,7 +222,7 @@ function getDungeon(dungeonID: string): Dungeon {
         TestRoomNorth.id,
         [TestItem.id]
     );
-    const testDungeon: Dungeon = new Dungeon(
+    const testDungeon: Dungeon = new DungeonImpl(
         dungeonID,
         'TestDungeon1',
         'Test',

@@ -22,9 +22,34 @@ export interface Dungeon {
   actions: ActionElement[];
   items: Item[];
   npcs: Npc[];
+
+  getId(): string
+  getName(): string
+  getDescription(): string
+  getCreatorId(): string
+  getMasterId(): string
+  getMaxPlayers(): number
+  getCurrentPlayers(): number
+  getSpecies(speciesName: string): CharacterSpecies
+  getClass(className: string): CharacterClass
+  getGender(genderName: string): CharacterGender
+  getCharacter(characterId: string): Character
+  getCharacterByName(characterName: string): Character
+  getRoom(roomId: string): Room
+  getRoomByCoordinates(x: number, y: number): Room
+  getNorthernRoom(initialRoom: Room): Room
+  getEasternRoom(initialRoom: Room): Room
+  getSouthernRoom(initialRoom: Room): Room
+  getWesternRoom(initialRoom: Room): Room
+  getBlacklist(): string[]
+  getAction(actionId: string): ActionElement
+  getActions(): ActionElement[]
+  getItem(itemId: string): Item
+  getNpc(npcId: string): Npc
+
 }
 
-export class Dungeon implements Dungeon {
+export class DungeonImpl implements Dungeon {
   id: string;
   name: string;
   description: string;
@@ -41,6 +66,10 @@ export class Dungeon implements Dungeon {
   actions: ActionElement[];
   items: Item[];
   npcs: Npc[];
+
+  getId(): string {
+    return this.id;
+  }
 
   getName(): string {
     return this.name;
@@ -248,9 +277,7 @@ export class Dungeon implements Dungeon {
     this.npcs = npcs
   }
 
-  getId(): string {
-    return this.id;
-  }
+  
 }
 
 export interface User {
@@ -259,7 +286,7 @@ export interface User {
   password: string;
 }
 
-export class User implements User {
+export class UserImpl implements User {
   id: string;
   username: string;
   password: string;
@@ -277,7 +304,7 @@ export interface CharacterStats {
   mana: number;
 }
 
-export class CharacterStats implements CharacterStats {
+export class CharacterStatsImpl implements CharacterStats {
   hp: number;
   dmg: number;
   mana: number;
@@ -295,7 +322,7 @@ export interface CharacterSpecies {
   description: string;
 }
 
-export class CharacterSpecies implements CharacterSpecies {
+export class CharacterSpeciesImpl implements CharacterSpecies {
   id: string;
   name: string;
   description: string;
@@ -315,7 +342,7 @@ export interface CharacterClass {
   startStats: CharacterStats;
 }
 
-export class CharacterClass implements CharacterClass {
+export class CharacterClassImpl implements CharacterClass {
  id: string;
   name: string;
   description: string;
@@ -343,7 +370,7 @@ export interface CharacterGender {
   description: string;
 }
 
-export class CharacterGender implements CharacterGender {
+export class CharacterGenderImpl implements CharacterGender {
   id: string;
   name: string;
   description: string;
@@ -359,9 +386,12 @@ export interface Item {
   id: string;
   name: string;
   description: string;
+
+  getName(): string
+  getDescription(): string
 }
 
-export class Item implements Item {
+export class ItemImpl implements Item {
   id: string;
   name: string;
   description: string;
@@ -393,9 +423,16 @@ export interface Character {
   currentStats: CharacterStats;
   position: string;
   inventory: string[];
+
+  getId(): string
+  getName(): string
+  getPosition(): string
+  modifyPosition(destinationRoom: string): any
+  getInventory(): string[]
+
 }
 
-export class Character implements Character {
+export class CharacterImpl implements Character {
   id: string;
   userId: string;
   dungeonId: string;
@@ -446,7 +483,7 @@ export class Character implements Character {
     return this.position;
   }
 
-  modifyPosition(destinationRoom: string) {
+  modifyPosition(destinationRoom: string): any {
     this.position = destinationRoom;
   }
 
@@ -455,7 +492,7 @@ export class Character implements Character {
   }
 }
 
-export interface IEvent {
+export interface Event {
   eventType:
     | "additem"
     | "removeItem"
@@ -468,7 +505,7 @@ export interface IEvent {
   value: Item | number;
 }
 
-export class Event implements IEvent {
+export class EventImpl implements Event {
   eventType:
     | "additem"
     | "removeItem"
@@ -502,9 +539,11 @@ export interface Npc {
   name: string;
   description: string;
   species: string;
+
+  getName(): string
 }
 
-export class Npc implements Npc {
+export class NpcImpl implements Npc {
   id: string;
   name: string;
   description: string;
@@ -529,9 +568,11 @@ export interface ActionElement {
   description: string;
   events: Event[];
   itemsneeded: string[];
+
+  getCommand(): string
 }
 
-export class ActionElement implements ActionElement {
+export class ActionElementImpl implements ActionElement {
   id: string;
   command: string;
   output: string;
@@ -544,7 +585,7 @@ export class ActionElement implements ActionElement {
     command: string,
     output: string,
     description: string,
-    events: IEvent[],
+    events: Event[],
     itemsneeded: string[]
   ) {
     (this.id = id),
@@ -565,7 +606,7 @@ export interface ConnectionInfo {
   south: "active" | "inactive" | "closed";
 }
 
-export class ConnectionInfo implements ConnectionInfo {
+export class ConnectionInfoImpl implements ConnectionInfo {
   east: "active" | "inactive" | "closed";
   south: "active" | "inactive" | "closed";
 
@@ -588,9 +629,18 @@ export interface Room {
   actions: string[];
   xCoordinate: number;
   yCoordinate: number;
+
+  getId(): string
+  getName(): string
+  getDescription(): string
+  getEastConnection(): "active" | "inactive" | "closed"
+  getSouthConnection(): "active" | "inactive" | "closed"
+  getItems(): string[]
+  getNpcs(): string[]
+  getActions(): string[]
 }
 
-export class Room implements Room {
+export class RoomImpl implements Room {
   id: string;
   name: string;
   description: string;

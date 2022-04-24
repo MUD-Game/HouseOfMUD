@@ -7,7 +7,8 @@
     "test": "jest --coverage",
     "startfrontend": "cd ./frontend && npm start",
     "starthost": "cd ./backend/game && npm start",
-    "startsupervisor": "cd ./backend/supervisor && npm start"
+    "startsupervisor": "cd ./backend/supervisor && npm start",
+    "buildsupervisor": "cd ./backend/supervisor && npm run build"
   },
   "jest": {
     "coverageReporters": [

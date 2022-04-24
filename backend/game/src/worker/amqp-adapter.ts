@@ -53,26 +53,26 @@ export class AmqpAdapter {
             await this.channel.assertExchange(`${this.clientExchange}-${this.dungeonID}`, 'topic', { autoDelete: false, internal: true });
             await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `${this.dungeonID}.#`);
         } catch (err) {
-            this.channel?.close();
+            await this.channel?.close();
             this.channel = undefined;
 
-            this.connection?.close();
+            await this.connection?.close();
             this.connection = undefined;
-            throw err;
+            console.error(err);
         }
     }
 
     async close(): Promise<void> {
         if (this.isConnected()) {
             try {
-                await this.channel!.deleteQueue(this.dungeonID);
+                await this.channel?.deleteQueue(this.dungeonID);
 
-                await this.channel!.deleteExchange(`${this.clientExchange}-${this.dungeonID}`);
+                await this.channel?.deleteExchange(`${this.clientExchange}-${this.dungeonID}`);
 
-                await this.channel!.close();
+                await this.channel?.close();
                 this.channel = undefined;
 
-                await this.connection!.close();
+                await this.connection?.close();
                 this.connection = undefined;
             } catch (err) {
                 throw err;

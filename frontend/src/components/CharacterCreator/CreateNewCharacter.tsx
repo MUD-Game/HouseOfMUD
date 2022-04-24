@@ -14,13 +14,11 @@ import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';
 import MudInput from '../Custom/MudInupt';
 import MudSelect from '../Custom/MudSelect';
-import MudButton from '../Custom/MudButton';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
 }
 
-interface PropValues { id: string; name: string; description: string }
 const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, genders, species, onCreate }) => {
 
     const auth = useAuth();

@@ -109,10 +109,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     });
   }
 
-  const mockupClass: MudCharacterClass = {
-    name: "Mock-Name",
-    description: "Mock-Description"
-  } as MudCharacterClass;
 
 
   // REFACTOR: Redunant code/methods

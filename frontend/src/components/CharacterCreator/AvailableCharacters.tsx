@@ -13,7 +13,7 @@
 
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import { GetCharactersResponse, GetCharacterAttributesResponse, CharactersResponseData } from '@supervisor/api';
+import {  CharactersResponseData } from '@supervisor/api';
 import AvailableCharactersLi from './AvailableCharactersLi';
 
 export interface AvailableCharactersProps {

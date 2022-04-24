@@ -17,7 +17,7 @@ import { useEffect } from 'react'
 import { useGame } from 'src/hooks/useGame'
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
-import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResponse } from '@supervisor/api';
+import { GetCharactersRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';

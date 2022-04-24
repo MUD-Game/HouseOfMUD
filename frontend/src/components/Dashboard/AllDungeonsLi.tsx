@@ -34,8 +34,8 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
 
     let joinDungeon = () => {
         game.setDungeon(id);
+        game.setDungeonName(name);
         navigate("/select-character");
-
     }
 
     return (

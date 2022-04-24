@@ -41,7 +41,8 @@ const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: 
 }
 
 const genericRequest = (path:string, method: string, body: {}, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
-    $.ajax(connectionString + path + getSearchParamas(params), {
+    let par = params ? getSearchParamas(params) : "";
+    $.ajax(connectionString + path + par, {
         method: method,
         dataType: 'json',
         data: JSON.stringify(body),
@@ -96,7 +97,7 @@ const supervisor = {
     },
 
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
-        genericRequest(`/login${dungeonID}`, "POST", body, {}, dataCallBack, error, "verifyToken");
+        genericRequest(`/login/${dungeonID}`, "POST", body, {}, dataCallBack, error, "verifyToken");
     },
 
     startDungeon(dungeonID: string, body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {

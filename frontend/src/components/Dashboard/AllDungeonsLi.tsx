@@ -20,13 +20,13 @@ export interface AllDungeonLiProps {
     id: string;
     name: string;
     description: string;
-    maxplayercount: number;
-    playercount: number;
+    maxPlayers: number;
+    currentPlayers: number;
     status: "online" | "offline";
     isPrivate: boolean;
 }
 
-const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, playercount, maxplayercount, isPrivate, status }) => {
+const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status }) => {
 
     const game = useGame();
     const navigate = useNavigate();
@@ -46,7 +46,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, play
                 {description}            
             </div>
             <div className="col-1">
-                {playercount}/{maxplayercount}          
+                {currentPlayers}/{maxPlayers}          
             </div>
             <div className="col-1 text-center">        
                 {isPrivate ? '' : '🔒'}

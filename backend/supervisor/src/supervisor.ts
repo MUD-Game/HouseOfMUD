@@ -20,8 +20,8 @@ function main() {
         }
         const mongoConnString: string = `mongodb://${config.mongodb.user}:${encodeURIComponent(config.mongodb.password)}@${config.mongodb.host}:${config.mongodb.port}`;
         console.log(mongoConnString);
-        const hostLink = new HostLink(config.hostLink.port, { use: config.tls.use, cert: cert }, config.hostLink.hostAuthKey);
         const databaseAdapter = new DatabaseAdapter(mongoConnString);
+        const hostLink = new HostLink(config.hostLink.port, { use: config.tls.use, cert: cert }, config.hostLink.hostAuthKey, databaseAdapter);
         const api = new API(config.api.port, { use: config.tls.use, cert: cert }, hostLink, databaseAdapter);
         hostLink.init();
         api.init(); 

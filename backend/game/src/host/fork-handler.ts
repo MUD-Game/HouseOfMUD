@@ -36,15 +36,15 @@ export class ForkHandler {
      */
     private dungeonWorker: { [dungeon: string]: {
         fork: ChildProcess,
-        playerCount: number,
+        currentPlayers: number,
         killTimeout?: NodeJS.Timeout
     }} = {};
 
     /**
      * @returns List of running dungeons.
      */
-    public getDungeons(): { dungeonID: string; playerCount: number; }[] {
-        return Object.keys(this.dungeonWorker).map((dungeon: string) => { return { dungeonID: dungeon, playerCount: this.dungeonWorker[dungeon].playerCount }});
+    public getDungeons(): { dungeonID: string; currentPlayers: number; }[] {
+        return Object.keys(this.dungeonWorker).map((dungeon: string) => { return { dungeonID: dungeon, currentPlayers: this.dungeonWorker[dungeon].currentPlayers }});
     }
 
     public setCharacterToken(dungeon: string, userID: string, characterID: string, verifyToken: string): void {
@@ -92,7 +92,7 @@ export class ForkHandler {
             dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));
             this.dungeonWorker[dungeon] = {
                 fork: dungeonFork,
-                playerCount: 0
+                currentPlayers: 0
             };
             return true;
         }

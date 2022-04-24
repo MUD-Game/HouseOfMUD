@@ -133,7 +133,7 @@ export class API {
 
         // get dungeons
         app.get('/dungeons', auth, (req, res) => {
-            res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
+            res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
         });
 
         app.get('/myDungeons', auth, (req, res) => {

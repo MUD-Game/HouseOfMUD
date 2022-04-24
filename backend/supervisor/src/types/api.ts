@@ -109,8 +109,8 @@ export interface DungeonResponseData {
     id: string;
     name: string;
     description: string;
-    maxplayercount: number;
-    playercount: number;
+    maxPlayers: number;
+    currentPlayers: number;
     status: 'online' | 'offline';
 }
 /**

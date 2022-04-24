@@ -24,6 +24,7 @@ export class MoveAction implements Action {
         let destinationRoom: Room
         let destinationRoomId: string = "0"
         let destinationRoomName: string = ""
+        let invalidDirection: boolean = false;
         let closedPath: boolean = false;
         let routingKeySender = `${dungeonId}.character.${senderCharacterId}`
         try {
@@ -68,8 +69,13 @@ export class MoveAction implements Action {
                         senderCharacter.modifyPosition(destinationRoomId) 
                     }
                     break;
+                default:
+                    invalidDirection = true;
+                    break;
             }
-            if (closedPath) {
+            if (invalidDirection) {
+                amqpAdapter.sendToClient(routingKeySender, {action: "message", data: {message: `Diese Richtung existiert nicht!`}})
+            } else if (closedPath) {
                 amqpAdapter.sendToClient(routingKeySender, {action: "message", data: {message: `In diese Richtung ist der Raum geschlossen!`}})
             } else {
                 let routingKey: string = `${dungeonId}.room.${destinationRoomId}`

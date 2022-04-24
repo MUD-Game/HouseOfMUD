@@ -6,7 +6,7 @@
  * Dungeon interface containing all necessary data for dungeons.
  */
 export interface Dungeon {
-  dungeonId: string;
+  id: string;
   name: string;
   description: string;
   creatorId: string;
@@ -20,10 +20,12 @@ export interface Dungeon {
   rooms: Room[];
   blacklist: string[];
   actions: ActionElement[];
+  items: Item[];
+  npcs: Npc[];
 }
 
 export class Dungeon implements Dungeon {
-  dungeonId: string;
+  id: string;
   name: string;
   description: string;
   creatorId: string;
@@ -37,6 +39,8 @@ export class Dungeon implements Dungeon {
   rooms: Room[];
   blacklist: string[];
   actions: ActionElement[];
+  items: Item[];
+  npcs: Npc[];
 
   getName(): string {
     return this.name;
@@ -97,7 +101,7 @@ export class Dungeon implements Dungeon {
 
   getCharacter(characterId: string): Character {
     let characterIndex: number = this.characters.findIndex(
-      (character) => character.characterId === characterId
+      (character) => character.id === characterId
     );
     if (characterIndex === -1) {
       throw new Error("Character does not exist");
@@ -119,7 +123,7 @@ export class Dungeon implements Dungeon {
 
   getRoom(roomId: string): Room {
     let roomIndex: number = this.rooms.findIndex(
-      (room) => room.roomId === roomId
+      (room) => room.id === roomId
     );
     if (roomIndex === -1) {
       throw new Error("Room does not exist");
@@ -171,9 +175,9 @@ export class Dungeon implements Dungeon {
     return this.blacklist;
   }
 
-  getAction(actionCommand: string): ActionElement {
+  getAction(actionId: string): ActionElement {
     let actionIndex: number = this.actions.findIndex(
-      (action) => action.command === actionCommand
+      (action) => action.id === actionId
     );
     if (actionIndex === -1) {
       throw new Error("Room does not exist");
@@ -184,6 +188,28 @@ export class Dungeon implements Dungeon {
 
   getActions(): ActionElement[] {
     return this.actions;
+  }
+
+  getItem(itemId: string): Item {
+    let itemIndex: number = this.items.findIndex(
+        (item) => item.id === itemId
+      );
+      if (itemIndex === -1) {
+        throw new Error("Room does not exist");
+      } else {
+        return this.items[itemIndex];
+      }
+  }
+
+  getNpc(npcId: string): Npc {
+    let npcIndex: number = this.npcs.findIndex(
+        (npc) => npc.id === npcId
+      );
+      if (npcIndex === -1) {
+        throw new Error("Room does not exist");
+      } else {
+        return this.npcs[npcIndex];
+      }
   }
 
   constructor(
@@ -200,9 +226,11 @@ export class Dungeon implements Dungeon {
     characters: Character[],
     rooms: Room[],
     blacklist: string[],
-    actions: ActionElement[]
+    actions: ActionElement[],
+    items: Item[],
+    npcs: Npc[]
   ) {
-    this.dungeonId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
     this.creatorId = creatorId;
@@ -216,26 +244,28 @@ export class Dungeon implements Dungeon {
     this.rooms = rooms;
     this.blacklist = blacklist;
     this.actions = actions;
+    this.items = items
+    this.npcs = npcs
   }
 
   getId(): string {
-    return this.dungeonId;
+    return this.id;
   }
 }
 
 export interface User {
-  userId: string;
+  id: string;
   username: string;
   password: string;
 }
 
 export class User implements User {
-  userId: string;
+  id: string;
   username: string;
   password: string;
 
   constructor(id: string, username: string, password: string) {
-    this.userId = id;
+    this.id = id;
     this.username = username;
     this.password = password;
   }
@@ -260,25 +290,25 @@ export class CharacterStats implements CharacterStats {
 }
 
 export interface CharacterSpecies {
-  characterSpeciesId: string;
+  id: string;
   name: string;
   description: string;
 }
 
 export class CharacterSpecies implements CharacterSpecies {
-  characterSpeciesId: string;
+  id: string;
   name: string;
   description: string;
 
   constructor(id: string, name: string, description: string) {
-    this.characterSpeciesId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
   }
 }
 
 export interface CharacterClass {
-  characterClassId: string;
+  id: string;
   name: string;
   description: string;
   maxStats: CharacterStats;
@@ -286,7 +316,7 @@ export interface CharacterClass {
 }
 
 export class CharacterClass implements CharacterClass {
-  characterClassId: string;
+ id: string;
   name: string;
   description: string;
   maxStats: CharacterStats;
@@ -299,7 +329,7 @@ export class CharacterClass implements CharacterClass {
     maxStats: CharacterStats,
     startStats: CharacterStats
   ) {
-    this.characterClassId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
     this.maxStats = maxStats;
@@ -308,43 +338,51 @@ export class CharacterClass implements CharacterClass {
 }
 
 export interface CharacterGender {
-  characterGenderId: string;
+  id: string;
   name: string;
   description: string;
 }
 
 export class CharacterGender implements CharacterGender {
-  characterGenderId: string;
+  id: string;
   name: string;
   description: string;
 
   constructor(id: string, name: string, description: string) {
-    this.characterGenderId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
   }
 }
 
 export interface Item {
-  itemId: string;
+  id: string;
   name: string;
   description: string;
 }
 
 export class Item implements Item {
-  itemId: string;
+  id: string;
   name: string;
   description: string;
 
   constructor(id: string, name: string, description: string) {
-    this.itemId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
+  }
+
+  getName(): string {
+      return this.name
+  }
+
+  getDescription(): string {
+      return this.description
   }
 }
 
 export interface Character {
-  characterId: string;
+  id: string;
   userId: string;
   dungeonId: string;
   name: string;
@@ -358,7 +396,7 @@ export interface Character {
 }
 
 export class Character implements Character {
-  characterId: string;
+  id: string;
   userId: string;
   dungeonId: string;
   name: string;
@@ -383,7 +421,7 @@ export class Character implements Character {
     position: string,
     inventory: string[]
   ) {
-    this.characterId = id;
+    this.id = id;
     this.userId = userId;
     this.dungeonId = dungeonId;
     this.name = name;
@@ -397,7 +435,7 @@ export class Character implements Character {
   }
 
   getId(): string {
-    return this.characterId;
+    return this.id;
   }
 
   getName(): string {
@@ -410,6 +448,10 @@ export class Character implements Character {
 
   modifyPosition(destinationRoom: string) {
     this.position = destinationRoom;
+  }
+
+  getInventory(): string[] {
+      return this.inventory
   }
 }
 
@@ -456,28 +498,32 @@ export class Event implements IEvent {
 }
 
 export interface Npc {
-  npcId: string;
+  id: string;
   name: string;
   description: string;
   species: string;
 }
 
 export class Npc implements Npc {
-  npcId: string;
+  id: string;
   name: string;
   description: string;
   species: string;
 
   constructor(id: string, name: string, description: string, species: string) {
-    this.npcId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
     this.species = species;
   }
+
+  getName(): string {
+      return this.name
+  }
 }
 
 export interface ActionElement {
-  actionId: string;
+  id: string;
   command: string;
   output: string;
   description: string;
@@ -486,7 +532,7 @@ export interface ActionElement {
 }
 
 export class ActionElement implements ActionElement {
-  actionId: string;
+  id: string;
   command: string;
   output: string;
   description: string;
@@ -501,12 +547,16 @@ export class ActionElement implements ActionElement {
     events: IEvent[],
     itemsneeded: string[]
   ) {
-    (this.actionId = id),
+    (this.id = id),
       (this.command = command),
       (this.output = output),
       (this.description = description),
       (this.events = events),
       (this.itemsneeded = itemsneeded);
+  }
+
+  getCommand(): string {
+      return this.command
   }
 }
 
@@ -529,7 +579,7 @@ export class ConnectionInfo implements ConnectionInfo {
 }
 
 export interface Room {
-  roomId: string;
+  id: string;
   name: string;
   description: string;
   npcs: string[];
@@ -541,7 +591,7 @@ export interface Room {
 }
 
 export class Room implements Room {
-  roomId: string;
+  id: string;
   name: string;
   description: string;
   npcs: string[];
@@ -562,7 +612,7 @@ export class Room implements Room {
     xCoordinate: number,
     yCoordinate: number
   ) {
-    this.roomId = id;
+    this.id = id;
     this.name = name;
     this.description = description;
     this.npcs = npcs;
@@ -574,7 +624,7 @@ export class Room implements Room {
   }
 
   getId(): string {
-    return this.roomId;
+    return this.id;
   }
 
   getName(): string {
@@ -591,5 +641,17 @@ export class Room implements Room {
 
   getSouthConnection(): "active" | "inactive" | "closed" {
     return this.connections.south;
+  }
+
+  getItems(): string[] {
+      return this.items
+  }
+
+  getNpcs(): string[] {
+      return this.npcs
+  }
+
+  getActions(): string[] {
+      return this.actions
   }
 }

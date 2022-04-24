@@ -9,4 +9,11 @@ export interface Config {
         port: number,
     }
     tls: TLS
+
+    mongodb: {
+        url: string,
+        port: number,
+        user: string,
+        password: string,
+    }
 }

@@ -2,6 +2,7 @@ import { Cert, TLS } from "./tls"
 
 export interface Config {
     api: {
+        origin: string;
         port: number;
     }
     hostLink: {

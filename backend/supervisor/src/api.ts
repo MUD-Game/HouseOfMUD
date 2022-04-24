@@ -18,6 +18,9 @@ import { Dungeon } from './services/databaseadapter/datasets/dungeon';
  * client http-API
  */
 export class API {
+
+    private origin: string;
+
     private port: number;
     private tls: TLS;
     private hostLink: HostLink;
@@ -29,7 +32,9 @@ export class API {
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter) {
+        this.origin = origin;
+
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
@@ -65,7 +70,7 @@ export class API {
         app.use((req, res, next) => {
             // res.header('Access-Control-Allow-Origin', 'https://mud-ga.me');
             // IMPORTANT: this is a CORS-preflight request need to change that ASAP!!!.
-            res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+            res.header('Access-Control-Allow-Origin', this.origin);
             res.header('Content-Type', 'application/json');
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
             res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');

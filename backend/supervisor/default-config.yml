@@ -1,5 +1,6 @@
 
 api:
+  origin: http://127.0.0.1 
   port: 43210
 
 hostLink:

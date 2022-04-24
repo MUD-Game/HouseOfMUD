@@ -22,7 +22,7 @@ function main() {
         console.log(mongoConnString);
         const databaseAdapter = new DatabaseAdapter(mongoConnString);
         const hostLink = new HostLink(config.hostLink.port, { use: config.tls.use, cert: cert }, config.hostLink.hostAuthKey, databaseAdapter);
-        const api = new API(config.api.port, { use: config.tls.use, cert: cert }, hostLink, databaseAdapter);
+        const api = new API(config.api.origin, config.api.port, { use: config.tls.use, cert: cert }, hostLink, databaseAdapter);
         hostLink.init();
         api.init(); 
     }

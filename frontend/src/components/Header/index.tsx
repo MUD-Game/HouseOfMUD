@@ -30,8 +30,8 @@ const Header: React.FC<HeaderProps> = (props) => {
                 <Col className="text-end">
                     <button className="btn btn-danger" onClick={() => {
                         auth.logout(() => {
+                            navigate("/login");
                         });
-                        navigate("/login");
                     }}>Logout</button>
                 </Col>
             </Row>

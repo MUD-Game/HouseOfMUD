@@ -35,7 +35,6 @@ const Login: React.FC<LoginProps> = (props) => {
         auth.login(username, password, () => {
             navigate(from, { replace: true });
         }, () => {
-            alert("Login failed");
         });
     }
 
@@ -43,6 +42,7 @@ const Login: React.FC<LoginProps> = (props) => {
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
+                    <h3 className="danger">Unsichere Seite, GEBEN SIE KEINE ECHTEN DATEN EIN!</h3>
                     <form onSubmit={handleSubmit}>
                         <div className="input-group py-2">
                             <input name="username" className="input-standard drawn-border" type="text" placeholder="Username" />

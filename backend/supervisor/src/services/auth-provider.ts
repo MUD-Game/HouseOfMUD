@@ -3,7 +3,7 @@ import { mockauth } from "../mock/api";
 const authProvider = {
     validateToken: async (user:string, authToken: string) => {
         // Fake wait
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 10));
         return mockauth.authToken === authToken && mockauth.user === user;
     },
     validatePassword: async (user:string, password: string) => {

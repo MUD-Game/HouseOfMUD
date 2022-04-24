@@ -5,7 +5,6 @@ import authProvider from '../services/auth-provider';
 const auth = async (req: Request , res: Response, next: NextFunction) => {
     try {
         let body: any = req.body || {};
-        console.log(body);
         let authToken = req.cookies?.authToken;
         let user = req.cookies?.user;
         let authStatus, backToken;

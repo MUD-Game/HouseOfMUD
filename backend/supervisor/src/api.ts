@@ -42,6 +42,7 @@ export class API {
     private registerRoutes(app: express.Application) {
         app.use((req, res, next) => {
             // res.header('Access-Control-Allow-Origin', 'https://mud-ga.me');
+            // IMPORTANT: this is a CORS-preflight request need to change that ASAP!!!.
             res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
             res.header('Content-Type', 'application/json');
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -59,7 +60,6 @@ export class API {
         });
         // Needed for Browser Cors stuff
         app.options('*', (req, res) => {
-            console.log("option");
             res.sendStatus(200);
         });
 
@@ -106,7 +106,6 @@ export class API {
         app.post('/startDungeon/:dungeonID', auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            console.log(body);
             if (body.user !== undefined && body.authToken !== undefined) {
                 let user: string = body.user;
                 let authToken: string = body.authToken;

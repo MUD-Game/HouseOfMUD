@@ -157,6 +157,16 @@ export class HostLink {
         }
     }
 
+    public addDungeon(id: string, dungeonData: Dungeon) {
+        this.dungeons[id] = {
+            name: dungeonData.name,
+            description: dungeonData.description,
+            maxPlayers: dungeonData.maxPlayers,
+            currentPlayers: 0,
+            status: 'offline'
+        };
+    }
+
     public getDungeons(): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {

@@ -9,7 +9,7 @@ import { Npc } from "./npc";
 import { Room } from "./room";
 
 export interface Dungeon {
-  dungeonId: string;
+  id: string;
   name: string;
   description: string;
   creatorId: string;
@@ -28,7 +28,7 @@ export interface Dungeon {
 }
 
 export const dungeonSchema = new Schema<Dungeon>({
-  dungeonId: { type: String, required: true, unique: true },
+  id: { type: String, required: true, unique: true },
   name: { type: String, maxLength: 50 },
   description: { type: String },
   creatorId: { type: String },

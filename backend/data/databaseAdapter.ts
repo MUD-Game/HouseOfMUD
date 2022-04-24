@@ -46,7 +46,7 @@ export class DatabaseAdapter {
      */
     async storeDungeon(dungeonToStore:Dungeon) {
         this.dungeon.create({
-            dungeonId: dungeonToStore.dungeonId,
+            id: dungeonToStore.id,
             name: dungeonToStore.name,
             description: dungeonToStore.description,
             creatorId: dungeonToStore.creatorId, 
@@ -71,9 +71,9 @@ export class DatabaseAdapter {
      * @returns complete dungeon dataset with all sub objects
      */
     async getDungeon(id: string){
-        const foundDungeon = await this.dungeon.findOne({dungeonId: id})
+        const foundDungeon = await this.dungeon.findOne({id: id})
         return {
-            dungeonId : foundDungeon.dungeonId,
+            id : foundDungeon.id,
             name: foundDungeon.name,
             description: foundDungeon.description,
             creatorId: foundDungeon.description,
@@ -98,8 +98,8 @@ export class DatabaseAdapter {
      * @returns the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
      */
     async getDungeonInfo(id: string){
-        return (await this.dungeon.findOne({dungeonId: id}, 
-            'dungeonId name description creatorId masterId maxPlayers currentPlayers'))
+        return (await this.dungeon.findOne({id: id}, 
+            'id name description creatorId masterId maxPlayers currentPlayers'))
     }
 
     /**
@@ -108,15 +108,15 @@ export class DatabaseAdapter {
      */
     async getAllDungeonInfos(){
         return (await this.dungeon.find({}, 
-            'dungeonId name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description creatorId masterId maxPlayers currentPlayers'))
     }
 
 
-    
+
     //TODO: get dungeon info für alle existierenden dungeons
     //TODO: get dungeon info (name, desc, maxplayer, currentplayer, creator, master) für Supervisor
     //TODO: get dungeon (alle infos ohne characters)
-    //TODO: get characters from dungeonid
+    //TODO: get characters from dungeon id
     //TODO: store characters for dungeon
     //TODO: editierten Raum speichern
     //TODO: editierten Character speichern

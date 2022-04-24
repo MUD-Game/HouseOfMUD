@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import { ConnectionInfo } from "./connectionInfo";
 
 export interface Room {
-  roomId: string;
+  id: string;
   name: string;
   description: string;
   npcs: string[];
@@ -14,7 +14,7 @@ export interface Room {
 }
 
 export const roomSchema = new Schema<Room>({
-  roomId: { type: String, required: true, unique: true },
+  id: { type: String, required: true, unique: true },
   name: { type: String },
   description: { type: String },
   npcs: [{ type: String }],

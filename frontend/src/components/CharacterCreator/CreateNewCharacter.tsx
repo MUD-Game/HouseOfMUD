@@ -19,6 +19,7 @@ export interface CreateNewCharacterProps extends GetCharacterAttributesResponse 
     onCreate: () => void
 }
 
+interface PropValues { id: string; name: string; description: string }
 const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, genders, species, onCreate }) => {
 
     const auth = useAuth();
@@ -29,7 +30,6 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
         let formData = new FormData(evt.currentTarget);
         let bodyData: CreateCharacterRequest = {
             user: auth.user,
-            authToken: auth.token,
             characterData: {
                 name: formData.get("name") as string,
                 fullname: formData.get("fullname") as string,

@@ -13,6 +13,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
 import { Row } from 'react-bootstrap';
+import { useMudConsole } from 'src/hooks/useMudConsole';
 
 export interface AvailableCharactersLiProps {
     character: CharactersResponseData
@@ -24,12 +25,14 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
     const { dungeon, setCharacterID, setVerifyToken, setCharacter } = useGame();
     const navigate = useNavigate();
 
+    const homosole = useMudConsole();
+
     const onDelete = () => {
-        supervisor.deleteCharacter(dungeon, { user, authToken: token, character: character.character }, (data) => {
+        supervisor.deleteCharacter(dungeon, { user, character: character.character }, (data) => {
             navigate("/characters");
         }, (error) => {
-            // TODO: handle error in a better way
-            alert(error);
+            homosole.error(error.error);
+
         })
     }
 
@@ -38,7 +41,6 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
         let body: LoginRequest = {
             user: user,
             character: character.character,
-            authToken: token
         }
 
         supervisor.login(dungeon, body, (data) => {
@@ -48,7 +50,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
             navigate("/game");
         }, (error) => {
             // TODO: handle error in a better way
-            alert(error);
+            homosole.error(error.error);
         });
     }
 

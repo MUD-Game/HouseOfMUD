@@ -1,4 +1,6 @@
 import React from 'react';
+import { useMudConsole } from 'src/hooks/useMudConsole';
+import { supervisor } from 'src/services/supervisor';
 
 type AuthContextType = {
   user: string;
@@ -14,7 +16,11 @@ let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 function AuthProvider({ children }: { children: React.ReactNode }) {
   let [user, setUser] = React.useState<string>("DummyUser");
   let [token, setToken] = React.useState<string>('xxx');
+  const homosole = useMudConsole();
   let isAuthenticated = async () => {
+    supervisor.authenticate({user:"mockuser", password:"mockpassword"}, ()=>{
+      // console.log("authenticated");
+    }, homosole.supervisorerror)
     return true;
   }
 

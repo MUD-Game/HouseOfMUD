@@ -40,7 +40,6 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
         if (!dungeon) return;
         let requestBody: GetCharactersRequest = {
             user: user,
-            authToken: auth.token
         }
         supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, homsole.supervisorerror);
         supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
@@ -50,7 +49,6 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const fetchNewCharacters = () => {
         let requestBody: GetCharactersRequest = {
             user: user,
-            authToken: auth.token
         }
         supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
     }

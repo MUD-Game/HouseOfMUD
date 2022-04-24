@@ -52,7 +52,7 @@ function ConsoleProvider({ children }: { children: React.ReactNode }) {
   }
 
   const supervisorerror = (err: ErrorResponse) => {
-    addToast('info', err.error, "Supervisor");
+    addToast('danger', err.error, "Supervisor");
   }
 
   const error = (message: string, location?: string) => {

@@ -37,7 +37,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     useEffect(() => {
         let request: GetDungeonsRequest = {
             user: auth.user,
-            authToken: auth.token,
         }
         supervisor.getDungeons(request, setAllDungeons, homsole.supervisorerror)
         supervisor.getMyDungeons(request, setMyDungeons, homsole.supervisorerror);

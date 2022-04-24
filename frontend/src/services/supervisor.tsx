@@ -1,4 +1,5 @@
 import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData } from "@supervisor/api"; 
+import $ from "jquery";
 
 let connectionString = "";
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -29,27 +30,42 @@ const supervisor = {
         }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
     },
     getDungeons(body: GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        fetch(connectionString + "/dungeons" + this.getSearchParamas(body), {
-            method: 'GET'
-        }).then(res => res.json()).then(data => {
-            if (data.ok) {
-                dataCallBack(data);
-            } else {
-                error(data);
-            }
-        }).catch(err => error(err));
+        $.ajax(connectionString + "/dungeons" + this.getSearchParamas(body), {
+            method: 'GET',
+            dataType: 'json',
+            contentType: "text/plain",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: (data: GetDungeonsResponse) => {
+                if (data.ok) {
+                    dataCallBack(data);
+                } else {
+                    error(data as unknown as ErrorResponse);
+                }
+            },
+            error: console.error
+        });
     },
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        fetch(connectionString + "/myDungeons" + this.getSearchParamas(body), {
-            method: 'GET'
-                }).then(res => res.json()).then(data => {
-            console.log(data);
-            if (data.ok) {
-                dataCallBack(data);
-            } else {
-                error(data);
+        $.ajax(connectionString + "/mydungeons" + this.getSearchParamas(body) ,{
+            method: 'GET',
+            dataType: 'json',
+            contentType: 'application/json',
+            xhrFields: {
+                withCredentials: true
+            },
+            success: (data:GetMyDungeonsResponse) => {
+                if (data.ok) {
+                    dataCallBack(data);
+                } else {
+                    error(data as unknown as ErrorResponse);
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+
             }
-        }).catch(err => error(err));
+        });
     },
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {
         fetch(connectionString + '/characters/' + dungeonID + this.getSearchParamas(body) , {
@@ -74,10 +90,23 @@ const supervisor = {
         }).catch(err => error(err));
     },
     authenticate(body: AuthenticateRequest, dataCallBack: (data: AuthenticateResponse) => void, error: (error: ErrorResponse) => void) {
-        fetch(connectionString + '/auth', {
+        $.ajax(connectionString + "/auth", {
             method: 'POST',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+            dataType: 'json',
+            data: this.getSearchParamas(body).substring(1),
+            contentType: "application/x-www-form-urlencoded",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: (data: AuthenticateResponse) => {
+                if (data.ok) {
+                    dataCallBack(data);
+                } else {
+                    error(data as unknown as ErrorResponse);
+                }
+            },
+            error: console.error
+        });
     },
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
         let data: LoginResponse = {

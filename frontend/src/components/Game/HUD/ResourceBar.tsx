@@ -13,10 +13,8 @@ export interface ResourceBarProps extends ProgressBarProps {
 
 const ResourceBar: React.FC<ResourceBarProps> = ({ variant, now, max, label }) => {
     return (
-        <div>
-            <>
-                <ProgressBar variant={variant} now={now} max={max} label={`${now}/${max} ${label}`} />
-            </>
+        <div className="my-1" >
+                <ProgressBar animated variant={variant} now={now} max={max} label={`${now}/${max} ${label}`} />
         </div>
     )
 }

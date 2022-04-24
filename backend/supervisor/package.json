@@ -15,7 +15,8 @@
     "body-parser": "^1.20.0",
     "express": "^4.17.3",
     "js-yaml": "^4.1.0",
-    "mongoose": "^6.3.1",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "typedoc-umlclass": "^0.6.0",
+    "mongoose": "^6.3.1"
   }
 }

@@ -10,6 +10,7 @@ import { IMessage } from '@stomp/stompjs';
 import React, { useState } from 'react'
 import { useRabbitMQ } from '../../../hooks/useRabbitMQ';
 import { useEffect } from 'react';
+import { Row } from 'react-bootstrap';
 export interface ChatOutputProps {}
 
 const ChatOutput: React.FC<ChatOutputProps> = ({ }) => {
@@ -22,10 +23,12 @@ const ChatOutput: React.FC<ChatOutputProps> = ({ }) => {
     });
     
     return (
-        <>
-            <p>CHAT-OUTPUT</p>
-            <div>{messages}</div>      
-        </>
+        <Row>
+            <div className="col">
+                <span>CHAT-OUTPUT</span>
+                <div className="mock-placeholder chat drawn-border p-2">{messages}</div>      
+            </div>
+        </Row>
     )
 }
 

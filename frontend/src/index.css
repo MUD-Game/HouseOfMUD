@@ -9,6 +9,10 @@
   --lightgreen: rgb(37, 147, 95);
   --red: rgb(187, 45, 59);
   --lightred: rgb(228, 61, 78);
+
+  --health: #ff0000;
+  --mana: #a600ff;
+  --damage: #bbbbbb;
 }
 
 html, body {
@@ -165,44 +169,74 @@ a:hover {
   border-width: 0 0 3px;
 }
 
+/* Game */
+.mock-placeholder.minimap {
+  width: 100%;
+  aspect-ratio: 1 / .7;
+}
+.mock-placeholder.inventory {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+.mock-placeholder.chat {
+  width: 100%;
+  aspect-ratio: 1 / .6;
+}
+
+.progress {  
+  height: auto;
+  border: solid var(--accent);
+  border-width: 3px 4px 3px 5px;
+  border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
+  background-color: transparent;
+}
+.progress-bar {
+  font-size: .6rem;
+}
+.bg-health {
+  background-color: var(--health);
+}
+.bg-mana {
+  background-color: var(--mana);
+}
+.bg-damage {
+  background-color: var(--damage);
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
+/* Toasts */
 .toast-container{
   position: fixed;
   top: 0;
   right: 0;
   z-index: 9999;
 }
-
 .toast{
   font-family: 'Segoe UI', 'Calibri', Helvetica, sans-serif;
   font-size:0.75rem;
   z-index:100 !important;
 }
-
 .toast.bg-danger .toast-header {
   color:rgb(218, 54, 54);
   background-color:#ffefef !important;
 }
-
 .toast.bg-warning .toast-header {
   color:rgb(255, 149, 0);
   background-color:rgb(255, 245, 213) !important;
 }
-
 .toast.bg-info .toast-header {
   color:rgb(45, 136, 255);
   background-color:rgb(218, 236, 255) !important;
 }
-
 .toast{
   background-color: rgb(255, 255, 255) !important;
   color:rgb(29, 29, 29);
 }
-
 .toast-header strong{
   text-transform: capitalize;
 }
+/* Toasts END */

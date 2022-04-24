@@ -19,6 +19,7 @@ import { useGame } from 'src/hooks/useGame';
 import { Navigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useMudConsole } from 'src/hooks/useMudConsole';
+import { Container, Row } from 'react-bootstrap';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
@@ -46,11 +47,11 @@ const Game: React.FC<GameProps> = ({ }) => {
         return <Navigate to="/" />
     }
     const hudMock: HUDProps = {
-        health: 100,
+        health: 50,
         maxHealth: 100,
         mana: 100,
         maxMana: 100,
-        damage: 100,
+        damage: 10,
         maxDamage: 100
     }
 
@@ -58,12 +59,18 @@ const Game: React.FC<GameProps> = ({ }) => {
 
 
     return (
-        <div>
-            <Minimap mapData={null} />
-            <Inventory items={null} />
-            <HUD {...hudMock} />
-            <Chat />
-        </div>
+        <Container className="mb-5">
+            <Row>
+                <div className="col-3">
+                    <Minimap mapData={null} />
+                    <Inventory items={null} />
+                    <HUD {...hudMock} />
+                </div>
+                <div className="col-9">
+                    <Chat />
+                </div>
+            </Row>
+        </Container>
     )
 }
 

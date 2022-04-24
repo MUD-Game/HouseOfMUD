@@ -104,6 +104,13 @@
     "out": "../../TypeDoc-Documentation/Backend-Game/",
     "name": "Backend/Game",
     "readme": "readme-typedoc.md",
-    "media": "typedoc-media/"
+    "media": "typedoc-media/",
+    "umlClassDiagram": {
+      "type": "detailed",
+      "location": "remote",
+      "format": "svg",
+      "createPlantUmlFiles": true,
+      "verboseOutput": true
+    }
   }
 }

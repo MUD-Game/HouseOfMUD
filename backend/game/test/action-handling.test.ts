@@ -1,6 +1,6 @@
-import { ActionElement, CharacterGender, CharacterSpecies, Character, Item, CharacterStats, CharacterClass, Npc, ConnectionInfo, Room, Dungeon} from "../src/dungeon/dungeon";
+import { ActionElement, CharacterGender, CharacterSpecies, Character, Item, CharacterStats, CharacterClass, Npc, ConnectionInfo, Room, Dungeon, CharacterSpeciesImpl, CharacterStatsImpl, CharacterGenderImpl, CharacterClassImpl, NpcImpl, ItemImpl, RoomImpl, ConnectionInfoImpl, ActionElementImpl, CharacterImpl, DungeonImpl, EventImpl} from "../src/dungeon/dungeon";
 import { Event } from "../src/dungeon/dungeon";
-import { ActionHandler } from "../src/worker/action/action-handler";
+import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
 import { DiscardAction } from "../src/worker/action/discard-action";
 import { DungeonAction } from "../src/worker/action/dungeon-action";
 import { InspectAction } from "../src/worker/action/inspect-action";
@@ -15,25 +15,25 @@ import { AmqpAdapter } from "../src/worker/amqp-adapter";
 import { DungeonController } from "../src/worker/dungeon-controller";
 
 const amqpAdapter: AmqpAdapter = new AmqpAdapter("test", "test", "test", "test", "test", "test", "test")
-const TestSpecies: CharacterSpecies = new CharacterSpecies("1", "Hexer", "Hexiger Hexer")
-const TestStartStats: CharacterStats = new CharacterStats(100, 20, 100)
-const TestMaxStats: CharacterStats = new CharacterStats(100, 20, 100)
-const TestGender: CharacterGender = new CharacterGender("1", "Mann", "Maennlicher Mann")
-const TestClass: CharacterClass = new CharacterClass("1", "Magier", "Magischer Magier", TestMaxStats, TestStartStats)
-const TestNpc: Npc = new Npc("1", "Bernd", "Bernd liebt die Musik", "Barde")
-const TestItem: Item = new Item("1", "Apfel", "Apfliger Apfel")
-const TestConnections: ConnectionInfo = new ConnectionInfo("active", "active")
-const TestAction: ActionElement = new ActionElement("1", "essen Apfel", "gegessen", "essen aktion", [new Event("addhp", 10)], ["1"])
-const TestRoom: Room = new Room("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc.id], [TestItem.id], TestConnections, [TestAction.id], 2, 2)
-const TestRoomNorth: Room = new Room("2", "Raum-N", "Der Raum im Norden", [TestNpc.id], [TestItem.id], new ConnectionInfo("inactive", "active"), [TestAction.id], 2, 3)
-const TestRoomEast: Room = new Room("3", "Raum-O", "Der Raum im Osten", [TestNpc.id], [TestItem.id], new ConnectionInfo("inactive", "inactive"), [TestAction.id], 3, 2)
-const TestRoomSouth: Room = new Room("4", "Raum-S", "Der Raum im Sueden", [TestNpc.id], [TestItem.id], new ConnectionInfo("inactive", "inactive"), [TestAction.id], 2, 1)
-const TestRoomWest: Room = new Room("5", "Raum-W", "Der Raum im Westen", [TestNpc.id], [TestItem.id], new ConnectionInfo("active", "inactive"), [TestAction.id], 1, 2)
-const TestRoomNorthNorth: Room = new Room("6", "Raum-NN", "Der Raum im Norden, Norden", [TestNpc.id], [TestItem.id], new ConnectionInfo("inactive", "closed"), [TestAction.id], 2, 4)
-const TestCharacter: Character = new Character("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.id, [TestItem.id])
-const TestCharacterSameRoom: Character = new Character("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.id, [TestItem.id])
-const TestCharacterNotSameRoom: Character = new Character("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth.id, [TestItem.id])
-const TestDungeon: Dungeon = new Dungeon("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction], [TestItem], [TestNpc])
+const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl("1", "Hexer", "Hexiger Hexer")
+const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100)
+const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100)
+const TestGender: CharacterGender = new CharacterGenderImpl("1", "Mann", "Maennlicher Mann")
+const TestClass: CharacterClass = new CharacterClassImpl("1", "Magier", "Magischer Magier", TestMaxStats, TestStartStats)
+const TestNpc: Npc = new NpcImpl("1", "Bernd", "Bernd liebt die Musik", "Barde")
+const TestItem: Item = new ItemImpl("1", "Apfel", "Apfliger Apfel")
+const TestConnections: ConnectionInfo = new ConnectionInfoImpl("active", "active")
+const TestAction: ActionElement = new ActionElementImpl("1", "essen Apfel", "gegessen", "essen aktion", [new EventImpl("addhp", 10)], ["1"])
+const TestRoom: Room = new RoomImpl("1", "Raum-1", "Der Raum in dem alles begann", [TestNpc.id], [TestItem.id], TestConnections, [TestAction.id], 2, 2)
+const TestRoomNorth: Room = new RoomImpl("2", "Raum-N", "Der Raum im Norden", [TestNpc.id], [TestItem.id], new ConnectionInfoImpl("inactive", "active"), [TestAction.id], 2, 3)
+const TestRoomEast: Room = new RoomImpl("3", "Raum-O", "Der Raum im Osten", [TestNpc.id], [TestItem.id], new ConnectionInfoImpl("inactive", "inactive"), [TestAction.id], 3, 2)
+const TestRoomSouth: Room = new RoomImpl("4", "Raum-S", "Der Raum im Sueden", [TestNpc.id], [TestItem.id], new ConnectionInfoImpl("inactive", "inactive"), [TestAction.id], 2, 1)
+const TestRoomWest: Room = new RoomImpl("5", "Raum-W", "Der Raum im Westen", [TestNpc.id], [TestItem.id], new ConnectionInfoImpl("active", "inactive"), [TestAction.id], 1, 2)
+const TestRoomNorthNorth: Room = new RoomImpl("6", "Raum-NN", "Der Raum im Norden, Norden", [TestNpc.id], [TestItem.id], new ConnectionInfoImpl("inactive", "closed"), [TestAction.id], 2, 4)
+const TestCharacter: Character = new CharacterImpl("1", "1", "1", "Jeff", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.id, [TestItem.id])
+const TestCharacterSameRoom: Character = new CharacterImpl("2", "2", "1", "Spieler", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoom.id, [TestItem.id])
+const TestCharacterNotSameRoom: Character = new CharacterImpl("3", "3", "1", "Bob", "Magier", TestSpecies, TestGender, TestMaxStats, TestStartStats, TestRoomNorth.id, [TestItem.id])
+const TestDungeon: Dungeon = new DungeonImpl("1", "TestDungeon1", "Test", "1", "1", 2, 1, [TestSpecies], [TestClass], [TestGender], [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom], [TestRoom,TestRoomNorth, TestRoomEast, TestRoomSouth, TestRoomWest, TestRoomNorthNorth], ["abc"], [TestAction], [TestItem], [TestNpc])
 const TestDungeonController: DungeonController = new DungeonController("1", amqpAdapter, TestDungeon)
 
 beforeAll(() => {
@@ -41,7 +41,7 @@ beforeAll(() => {
 })
 
 describe("ActionHandler", () => {
-    const actionHandler: ActionHandler = new ActionHandler(TestDungeonController)
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController)
     const messageAction: MessageAction = actionHandler.actions['sag']
     const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester']
     const discardAction: DiscardAction = actionHandler.actions['ablegen']
@@ -108,7 +108,7 @@ describe("Actions", () => {
     beforeEach(() => {
         TestDungeon.characters[0].position = TestRoom.id
     })
-    const actionHandler: ActionHandler = new ActionHandler(TestDungeonController)
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController)
     const messageAction: MessageAction = actionHandler.actions['sag']
     const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester']
     const discardAction: DiscardAction = actionHandler.actions['ablegen']

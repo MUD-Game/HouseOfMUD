@@ -1,7 +1,7 @@
 import { AmqpAdapter } from "./amqp-adapter";
 import { Dungeon } from "../dungeon/dungeon"
 import { ConsumeMessage } from "amqplib";
-import { ActionHandler } from "./action/action-handler";
+import { ActionHandlerImpl, ActionHandler } from "./action/action-handler";
 
 
 export class DungeonController {
@@ -16,7 +16,7 @@ export class DungeonController {
         this.amqpAdapter = amqpAdapter;
         this.dungeon = dungeon;
 
-        this.actionHandler = new ActionHandler(this);
+        this.actionHandler = new ActionHandlerImpl(this);
     }
 
     init() {

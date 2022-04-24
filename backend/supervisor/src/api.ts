@@ -137,7 +137,8 @@ export class API {
             res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
         });
 
-        app.get('/myDungeons', auth, (req, res) => {   
+        app.get('/myDungeons', auth, (req, res) => {
+            let user = req.cookies.user; // TODO: get myDungeons based on user   
             res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
         });
 
@@ -196,31 +197,19 @@ export class API {
         // get character attributes for dungeon
         app.get('/character/attributes/:dungeonID', auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                res.json({
-                    ok: 1,
-                    ...mockresponse.getcharacterattributes
-                })
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
+            let user = req.cookies.user!; // Cant be undefined because of auth middleware
+            res.json({
+                ok: 1,
+                ...mockresponse.getcharacterattributes
+            })
         });
 
         // get user-characters for dungeon
         app.get('/characters/:dungeonID', auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                res.json({ ok: 1, characters: mockresponse.getcharacters });
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
+            let user = req.cookies.user!; // Cant be undefined because of auth middleware
+            //TODO: Get user-characters for dungeon
+            res.json({ ok: 1, characters: mockresponse.getcharacters });
         });
 
         // create character

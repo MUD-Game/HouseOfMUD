@@ -50,11 +50,16 @@ export interface LoginRequest extends SupervisorRequest {
 }
 
 /**
- * @category Response
+ * @category Response Data
  */
-export interface LoginResponse extends SupervisorResponse {
+export interface LoginResponseData {
     verifyToken: string;
 }
+
+/**
+ * @category Response
+ */
+export interface LoginResponse extends SupervisorResponse , LoginResponseData {}
 
 /**
  * Starts a dungeon via POST: /startDungeon/:dungeonId
@@ -136,7 +141,6 @@ export interface GetMyDungeonsResponse extends GetDungeonsResponse { }
  * @category Request
  */
 export interface CreateDungeonRequest extends SupervisorRequest {
-    user: string;
     dungeonData: any; //TODO: define Dungeon
 }
 

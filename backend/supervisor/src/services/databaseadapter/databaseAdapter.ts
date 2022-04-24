@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { Action, actionSchema } from "./datasets/action";
 import { Character, characterSchema } from "./datasets/character";
 import { CharacterClass, characterClassSchema } from "./datasets/characterClass";
@@ -13,6 +13,9 @@ import { User, userSchema } from "./datasets/user";
 /**
  * encapsulation of the mongoose API
  */
+
+
+
 export class DatabaseAdapter {
     connection: mongoose.Connection;
     item: mongoose.Model<Item>
@@ -27,7 +30,7 @@ export class DatabaseAdapter {
     user: mongoose.Model<User>
 
     constructor(connectionString: string){
-        this.connection = mongoose.createConnection(connectionString)
+        this.connection = mongoose.createConnection(connectionString);
         this.item = this.connection.model<Item>('Item', itemSchema)
         this.action = this.connection.model<Action>('Action', actionSchema)
         this.character = this.connection.model<Character>('Character', characterSchema)

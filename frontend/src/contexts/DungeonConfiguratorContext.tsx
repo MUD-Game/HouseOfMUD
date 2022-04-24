@@ -1,5 +1,5 @@
 import React from 'react';
-import { MudActionElement, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
+import { MudActionElement, MudCharacterGender, MudCharacterSpecies, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
 import { MudCharacterClass } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
 import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
@@ -249,17 +249,26 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         console.log(processToSend(species));
         if (true || validateData()) {
             let createBody: CreateDungeonRequest['dungeonData'] = {
-                 name,
-                 description,
-                 maxPlayers,
-                 species: processToSend(species),
-                 genders: processToSend(genders),
-                 actions,
-                 classes,
-                 items,
-                 rooms,
-                 npcs
-            };
+                    id: "76",
+                    name,
+                    description,
+                    creatorId: "99987",
+                    masterId: "08098",
+                    currentPlayers: 0,
+                    maxPlayers,
+                    species: processToSend(species),
+                    genders: processToSend(genders),
+                    characters: [],
+                    characterSpecies: processToSend(species) as MudCharacterSpecies[],
+                    characterGender: processToSend(genders) as MudCharacterGender[],
+                    actions,
+                    classes,
+                    characterClasses: classes,
+                    items,
+                    rooms,
+                    npcs,
+                    blacklist: []
+                };
             console.log(createBody);
             supervisor.createDungeon({ dungeonData: createBody }, (data) => {
                 if (data.ok) {

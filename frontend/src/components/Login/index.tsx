@@ -13,6 +13,7 @@
 
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
 type LoginProps = {}
@@ -42,7 +43,7 @@ const Login: React.FC<LoginProps> = (props) => {
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
-                    <h3 className="danger">Unsichere Seite, GEBEN SIE KEINE ECHTEN DATEN EIN!</h3>
+                    <h4>Registrierung momentan nicht möglich</h4>
                     <form onSubmit={handleSubmit}>
                         <div className="input-group py-2">
                             <input name="username" className="input-standard drawn-border" type="text" placeholder="Username" />
@@ -50,9 +51,9 @@ const Login: React.FC<LoginProps> = (props) => {
                         <div className="input-group pt-2">
                             <input name="password" className="input-standard drawn-border" type="password" placeholder="Passwort" />
                         </div>
-                        <span className="forgot-pw">Passwort vergessen? Klicke <a href="#">hier</a></span> <br />
+                        <span className="forgot-pw">Passwort vergessen? Klicke <Link to="/login">hier</Link></span> <br />
                         <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">Login</button> <br />
-                        <span>Noch keinen Account? <a href="#">Hier registrieren</a></span>
+                        <span>Noch keinen Account? <Link to="/login">Hier registrieren</Link></span>
                     </form>
                 </div>
             </Row>

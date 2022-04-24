@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 COPY ./ ./
+COPY ../backend/ ../backend/
 RUN npm install --legacy-peer-deps
 RUN npm i serve --global
 RUN npm run build

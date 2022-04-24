@@ -33,6 +33,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const auth = useAuth();
     const homsole = useMudConsole();
     let dungeon = game.dungeon;
+    let dungeonName = game.dungeonName;
     let user = auth.user;
     const [characters, setCharacters] = React.useState<CharactersResponseData[]>([] as CharactersResponseData[]);
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
@@ -56,7 +57,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     if (!game.isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
     return (
         <Container className="mb-5">
-            <h2>{dungeon}</h2>
+            <h2>{dungeonName}</h2>
             {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter onCreate={fetchNewCharacters} {...dungeonData} /> : null}
             <br /><hr /><br />
             {characters !== [] ? <AvailableCharacters characters={characters} /> : null}

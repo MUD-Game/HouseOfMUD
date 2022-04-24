@@ -23,6 +23,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   let isAuthenticated = (success:VoidFunction, error:VoidFunction) => {
     supervisor.authenticate({ user: user, password: token }, (data:any)=>{
         if(data.ok){
+          let c = new Cookies();
+          setUser(c.get('user'));
           success();
         }else{
           error();

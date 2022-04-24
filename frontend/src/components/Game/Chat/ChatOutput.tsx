@@ -8,7 +8,7 @@
 
 import { IMessage } from '@stomp/stompjs';
 import React, { useState } from 'react'
-import { useRabbitMQ } from '../../../hooks/useRabbitMQ';
+import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import { Row } from 'react-bootstrap';
 export interface ChatOutputProps {}

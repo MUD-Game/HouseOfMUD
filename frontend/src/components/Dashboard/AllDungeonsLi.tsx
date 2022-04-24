@@ -53,9 +53,8 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
                 {isPrivate ? '' : ''}                
                 <Lock size={25} className="mx-1" />
                 {/* <Unlock size={25} className="mx-1" /> */}
-                {status === "online" ? '' : ''}                
-                <CloudSlash size={25} style={{color: "red"}} className="mx-1" />
-                {/* <CloudCheck size={25} style={{color: "green"}} className="mx-1" /> */}
+                {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}                
+                
             </div>
             <div className="col-2">         
                 {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>}

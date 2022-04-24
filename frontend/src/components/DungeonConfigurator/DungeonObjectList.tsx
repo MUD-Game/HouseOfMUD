@@ -23,37 +23,32 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
 
     return (
         <>
-            <Row>
-                <h1 className="col-md-10">{props.title}</h1>
-                <button className="btn drawn-border col-md-2" onClick={props.onAdd}>{props.buttonText}</button>
+            <Row className="mt-5">
+                <hr />
+                <div className="col-md-9">
+                    <span className="headline">{props.title}</span>
+                </div>
+                <div className="col-md-3">
+                    <button className="btn drawn-border btn-standard col-md-2" onClick={props.onAdd}>{props.buttonText}</button>
+                </div>
             </Row>
-            <Table responsive hover variant="mud">
-                <thead>
-                    <tr>
-
-                        {Object.keys(props.displayKeys).map((key, index) => {
+            <Row className="py-2">
+                {Object.keys(props.displayKeys).map((key, index) => {
                             return (
-                                <th key={index}>
-                                    {props.displayKeys[key]}
-                                </th>
+                                <div className="col" key={index}>
+                                    <b><u>{props.displayKeys[key]}</u></b>
+                                </div>
                             )
                         })}
-                        <th>
+                <div className="col"></div>
+            </Row>
 
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
+            {props.data.length > 0 && props.data.map((item: any, index) => {
+                return (
+                    <DungeonObjectListElement key={index} item={props.data[item.id]} {...props} />
+                )
+            })}
 
-                    {props.data.length > 0 && props.data.map((item: any, index) => {
-                        return (
-                            <DungeonObjectListElement key={index} item={props.data[item.id]} {...props} />
-                        )
-                    })}
-
-
-                </tbody>
-            </Table>
         </>
     )
 }

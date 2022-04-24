@@ -1,10 +1,10 @@
 export interface TLS {
-    use: boolean,
-    cert?: Cert
+    use: boolean;
+    cert?: Cert;
 }
 
 export interface Cert {
-    key: string,
-    cert: string,
-    ca: string
+    key: string;
+    cert: string;
+    ca: string;
 }

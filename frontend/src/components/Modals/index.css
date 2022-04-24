@@ -1,0 +1,11 @@
+.modal-content {
+    background-color: var(--bgcolor);
+    border: solid var(--accent);
+    border-width: 4px 4px 3px 5px;
+    border-radius: 1% 20% 1% 20% /99% 2% 98% 1%;
+}
+
+.modal-footer, .modal-header {
+    border-color: var(--accent);
+    border-width: 2px;
+}

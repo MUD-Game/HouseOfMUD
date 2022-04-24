@@ -17,13 +17,13 @@ import { useEffect } from 'react'
 import { useGame } from 'src/hooks/useGame'
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
-import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { GetCharactersRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useMudConsole } from '../../hooks/useMudConsole';
-import { ErrorResponse } from '../../types/supervisor';
+import { CharactersResponseData } from '@supervisor/api';
 export interface CharacterCreatorProps { }
 
 
@@ -34,13 +34,12 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const homsole = useMudConsole();
     let dungeon = game.dungeon;
     let user = auth.user;
-    const [characters, setCharacters] = React.useState<GetCharactersResponse>([] as GetCharactersResponse);
+    const [characters, setCharacters] = React.useState<CharactersResponseData[]>([] as CharactersResponseData[]);
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
         if (!dungeon) return;
         let requestBody: GetCharactersRequest = {
             user: user,
-            authToken: auth.token
         }
         supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, homsole.supervisorerror);
         supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
@@ -50,7 +49,6 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const fetchNewCharacters = () => {
         let requestBody: GetCharactersRequest = {
             user: user,
-            authToken: auth.token
         }
         supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
     }

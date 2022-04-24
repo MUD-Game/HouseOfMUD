@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, Button, ModalProps } from 'react-bootstrap';
+import { Modal, Button, ModalProps, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/MudInupt';
 import { validator } from 'src/utils/validator';
 import { MudCharacterClass, MudCharacterStats } from '../../../types/dungeon';
 import { useMudConsole } from '../../../hooks/useMudConsole';
+import '../index.css'
 
 export interface AddClassModalProps {
     show: boolean;
@@ -50,22 +51,28 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
             size="lg"
             centered
         >
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    Neue Klasse anlegen
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className='row px-4 g-3'>
-                <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                <MudInput placeholder='Max-HP' colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
-                <MudInput placeholder='Max-Mana' colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
-                <MudInput placeholder='Max-DMG' colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
-            </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={props.onHide} className="btn-danger">Abbrechen</Button>
-                <Button onClick={onSubmit} className="btn-success">Anlegen</Button>
-            </Modal.Footer>
+            <Container>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        Neue Klasse anlegen
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='row px-4 g-3'>
+                    <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
+                    <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput placeholder='Max-HP' colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
+                    <MudInput placeholder='Max-Mana' colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
+                    <MudInput placeholder='Max-DMG' colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
+                </Modal.Body>
+                <Modal.Footer className="justify-content-between">
+                    <div className="col-3">
+                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">Abbrechen</Button>
+                    </div>
+                    <div className="col-6">
+                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">Anlegen</Button>
+                    </div>
+                </Modal.Footer>
+            </Container>
         </Modal>
     );
 }

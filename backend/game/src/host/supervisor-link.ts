@@ -32,15 +32,28 @@ export class SupervisorLink {
             console.log(`Connected to Supervisor`);
         });
 
-        socket.on('init', (callback: (forkID: string) => void) => {
-            
+        socket.on('init', (callback: (data: { dungeonID: string; currentPlayers: number; }[]) => void) => {
+            callback(this.forkHandler.getDungeons());
         });
 
-        socket.on('start', (data: any) => {
+        socket.on('start', (data: any, callback: (created: boolean) => {}) => {
             if (data.dungeonID !== undefined) {
-                this.forkHandler.startDungeon(data.dungeonID);
+                let created: boolean = this.forkHandler.startDungeon(data.dungeonID);
+                callback(created);
             }
         });
+
+        socket.on('stop', (data: any) => {
+            if (data.dungeonID !== undefined) {
+                this.forkHandler.stopDungeon(data.dungeonID);
+            }
+        });
+
+        this.forkHandler.workerExitCallback = (dungeon: string) => {
+            socket.emit('exit', {
+                dungeonID: dungeon
+            });   
+        };
 
         socket.on('setCharacterToken', (data: any) => {
             if (data.user !== undefined && data.dungeon !== undefined && data.character !== undefined && data.verifyToken !== undefined) {
@@ -51,10 +64,6 @@ export class SupervisorLink {
 
                 this.forkHandler.setCharacterToken(userID, dungeonID, characterID, verifyToken);
             }
-        });
-
-        socket.on('stop', () => {
-            // TODO
         });
 
         socket.on('disconnect', () => {

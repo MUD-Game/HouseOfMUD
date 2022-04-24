@@ -16,7 +16,7 @@ import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
-import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
+import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
 import AllDungeons from './AllDungeons';
 import "./index.css"
 import { useNavigate } from 'react-router-dom';
@@ -30,14 +30,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     const auth = useAuth();
     const homsole = useMudConsole();
     const navigate = useNavigate();
-    let [allDungeons, setAllDungeons] = React.useState<GetDungeonsResponse>();
-    let [myDungeons, setMyDungeons] = React.useState<GetMyDungeonsResponse>();
+    let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
+    let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
     let [dungeonView, setDungeonView] = React.useState<"all" | "my">("all");
 
     useEffect(() => {
         let request: GetDungeonsRequest = {
             user: auth.user,
-            authToken: auth.token,
         }
         supervisor.getDungeons(request, setAllDungeons, homsole.supervisorerror)
         supervisor.getMyDungeons(request, setMyDungeons, homsole.supervisorerror);
@@ -53,13 +52,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
     return (
         <Container className="mb-5">
-            <h2>Dashboard</h2>
-            <Row>
-
-                <button onClick={() => {
-                    navigate("/dungeon-configurator", { state: { action: "new" } });
-                }}>Neuen Dungeon erstellen</button>
-
+            <Row className="align-items-center mb-3">
+                <div className="col-8">
+                    <h2 className='my-3'>Dashboard</h2>
+                </div>
+                <div className="col-4">
+                    <button className="btn drawn-border btn-standard" onClick={() => {
+                        navigate("/dungeon-configurator", { state: { action: "new" } });
+                    }}>Neuen Dungeon erstellen</button>
+                </div>
             </Row>
             <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                 <Nav.Item>

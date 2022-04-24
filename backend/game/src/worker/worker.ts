@@ -1,35 +1,53 @@
+
 import { ActionElement, ActionElementImpl, Character, CharacterClass, CharacterClassImpl, CharacterGender, CharacterGenderImpl, CharacterImpl, CharacterSpecies, CharacterSpeciesImpl, CharacterStats, CharacterStatsImpl, ConnectionInfo, ConnectionInfoImpl, Dungeon, DungeonImpl, Event, EventImpl, Item, ItemImpl, Npc, NpcImpl, Room, RoomImpl } from "../dungeon/dungeon";
 import { AmqpAdapter } from "./amqp-adapter";
 import { DungeonController } from "./dungeon-controller";
+import { exit } from 'process';
+import { AmqpAdapter } from './amqp-adapter';
+import { DungeonController } from './dungeon-controller';
+
 
 const dungeonID = process.argv[2];
 
 interface Tokens {
     [userID: string]: {
-        [characterID: string]: string
-    }
+        [characterID: string]: string;
+    };
 }
 
 const userTokens: Tokens = {};
 
 async function main() {
-    handleHostMessages();
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
     let dungeon: Dungeon = getDungeon(dungeonID);
 
     let amqpConfig = getAmqpAdapterConfig();
-    let amqpAdapter: AmqpAdapter = new AmqpAdapter(dungeonID, amqpConfig.url, amqpConfig.port, amqpConfig.user, amqpConfig.password, amqpConfig.serverExchange, amqpConfig.clientExchange);
+    let amqpAdapter: AmqpAdapter = new AmqpAdapter(
+        dungeonID,
+        amqpConfig.url,
+        amqpConfig.port,
+        amqpConfig.user,
+        amqpConfig.password,
+        amqpConfig.serverExchange,
+        amqpConfig.clientExchange
+    );
     await amqpAdapter.connect();
-    let dungeonController: DungeonController = new DungeonController(dungeonID, amqpAdapter, dungeon);
+    let dungeonController: DungeonController = new DungeonController(
+        dungeonID,
+        amqpAdapter,
+        dungeon
+    );
     dungeonController.init();
+
+    handleHostMessages(dungeonController);
 }
 
-async function handleHostMessages() {
-    process.on('message', (msg: any) => {
+function handleHostMessages(dungeonController: DungeonController) {
+    process.on('message', async (msg: any) => {
         let action = msg.action;
         let data = msg.data;
-        
+
         switch (action) {
             case 'setCharacterToken':
                 let userID = data.user;
@@ -44,6 +62,8 @@ async function handleHostMessages() {
                 break;
             case 'stop':
                 // TODO: save Dungeon to database and stop process
+                await dungeonController.getAmqpAdapter().close();
+                exit(0);
                 break;
         }
     });
@@ -57,7 +77,7 @@ function getAmqpAdapterConfig() {
         password: process.argv[6],
         serverExchange: process.argv[7],
         clientExchange: process.argv[8],
-    }
+    };
 }
 
 function getDungeon(dungeonID: string): Dungeon {

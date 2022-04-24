@@ -13,7 +13,10 @@ export interface MinimapProps {
 const Minimap: React.FC<MinimapProps> = ({ mapData }) => {
     return (
         <div>
-            <p>MINIMAP</p>
+            <span>MINIMAP</span>
+            <div className="mock-placeholder minimap drawn-border mb-3">
+                <p className='text-center p-5'>MINIMAP</p>
+            </div>
         </div>
     )
 }

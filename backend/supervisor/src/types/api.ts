@@ -11,7 +11,7 @@ export interface SupervisorResponse {
  * @category Request
  */
 export interface SupervisorRequest {
-    authToken: string;
+    
 }
 
 /**
@@ -28,9 +28,9 @@ export interface ErrorResponse extends SupervisorResponse {
  */
 export interface AuthenticateRequest {
     user: string;
-    password?: string;
-    authToken?: string;
+    password: string;
 }
+
 
 /**
  * Auth-Response is a authToken if the user authenticated with a password
@@ -50,11 +50,16 @@ export interface LoginRequest extends SupervisorRequest {
 }
 
 /**
- * @category Response
+ * @category Response Data
  */
-export interface LoginResponse extends SupervisorResponse {
+export interface LoginResponseData {
     verifyToken: string;
 }
+
+/**
+ * @category Response
+ */
+export interface LoginResponse extends SupervisorResponse , LoginResponseData {}
 
 /**
  * Starts a dungeon via POST: /startDungeon/:dungeonId
@@ -67,7 +72,7 @@ export interface StartDungeonRequest extends SupervisorRequest {
 /**
  * @category Response
  */
-export interface StartDungeonResponse extends SupervisorResponse {}
+export interface StartDungeonResponse extends SupervisorResponse { }
 
 /**
  * Stops a dungeon via POST: /stopDungeon
@@ -81,7 +86,7 @@ export interface StopDungeonRequest {
 /**
  * @category Response
  */
-export interface StopDungeonResponse extends SupervisorResponse {}
+export interface StopDungeonResponse extends SupervisorResponse { }
 
 /**
  * @category Request
@@ -100,56 +105,59 @@ export interface GetDungeonRequest extends SupervisorRequest {
 /**
  * @category Response
  */
-interface DungeonResponseData {
+export interface DungeonResponseData {
     id: string;
     name: string;
     description: string;
-    maxplayercount: number;
-    playercount: number;
+    maxPlayers: number;
+    currentPlayers: number;
     status: 'online' | 'offline';
 }
 /**
  * @category Response
  */
-export type GetDungeonsResponse = DungeonResponseData[];
+export interface GetDungeonsResponse extends SupervisorResponse {
+    dungeons: DungeonResponseData[];
+}
 
 /**
  * @category Response
  */
-export type GetDungeonResponse = DungeonResponseData;
+export interface GetDungeonResponse extends SupervisorResponse {
+    dungeon: DungeonResponseData;
+}
 
 /**
  * @category Request
  */
-export interface GetMyDungeonsRequest extends GetDungeonsRequest {}
+export interface GetMyDungeonsRequest extends GetDungeonsRequest { }
 
 /**
  * @category Response
  */
-export interface GetMyDungeonsResponse extends GetDungeonsResponse {}
+export interface GetMyDungeonsResponse extends GetDungeonsResponse { }
 
 /**
  * @category Request
  */
 export interface CreateDungeonRequest extends SupervisorRequest {
-    user: string;
     dungeonData: any; //TODO: define Dungeon
 }
 
 /**
  * @category Response
  */
-export interface CreateDungeonResponse extends SupervisorResponse {}
+export interface CreateDungeonResponse extends SupervisorResponse { }
 
 /**
  * @category Request
  */
-export interface EditDungeonRequest extends CreateDungeonRequest {}
+export interface EditDungeonRequest extends CreateDungeonRequest { }
 
 /**
  * @category Response
  */
-export interface EditDungeonResponse extends CreateDungeonResponse {}
+export interface EditDungeonResponse extends CreateDungeonResponse { }
 
 /**
  * @category Request
@@ -161,7 +169,7 @@ export interface DeleteDungeonRequest extends SupervisorRequest {
 /**
  * @category Response
  */
-export interface DeleteDungeonResponse extends SupervisorResponse {}
+export interface DeleteDungeonResponse extends SupervisorResponse { }
 
 /**
  * @category Request
@@ -170,10 +178,11 @@ export interface GetCharacterAttributesRequest extends SupervisorRequest {
     user: string;
 }
 
+
 /**
  * @category Response
  */
-export interface GetCharacterAttributesResponse {
+export interface GetCharacterAttributesResponse extends SupervisorResponse {
     classes: [{ id: string; name: string; description: string }];
     species: [{ id: string; name: string; description: string }];
     genders: [{ id: string; name: string; description: string }];
@@ -182,8 +191,12 @@ export interface GetCharacterAttributesResponse {
 /**
  * @category Request
  */
-export interface GetCharactersRequest extends GetCharacterAttributesRequest {}
-export interface GetCharactersResponseData {
+export interface GetCharactersRequest extends GetCharacterAttributesRequest { }
+
+/**
+ * @category Response Data
+ */
+export interface CharactersResponseData {
     character: string;
     name: string;
     class: string;
@@ -192,7 +205,9 @@ export interface GetCharactersResponseData {
 /**
  * @category Response
  */
-export type GetCharactersResponse = GetCharactersResponseData[];
+export interface GetCharactersResponse extends SupervisorResponse {
+    characters: CharactersResponseData[];
+}
 
 /**
  * @category Request
@@ -211,7 +226,7 @@ export interface CreateCharacterRequest extends SupervisorRequest {
 /**
  * @category Response
  */
-export interface CreateCharacterResponse extends SupervisorResponse {}
+export interface CreateCharacterResponse extends SupervisorResponse { }
 
 /**
  * @category Request
@@ -224,4 +239,4 @@ export interface DeleteCharacterRequest extends SupervisorRequest {
 /**
  * @category Response
  */
-export interface DeleteCharacterResponse extends SupervisorResponse {}
+export interface DeleteCharacterResponse extends SupervisorResponse { }

@@ -1,6 +1,6 @@
 
 select {  
-  background-color: transparent;
+  background-color: var(--bgcolor);
   font-size: 1rem;
   color: var(--textcolor);
   padding: .4em .7em;
@@ -11,7 +11,7 @@ select {
 }
 
 input, textarea {
-  background-color: transparent;
+  background-color: var(--bgcolor);
   color: var(--textcolor);
   padding: .4em .7em;
   width: 100%;

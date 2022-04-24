@@ -4,6 +4,7 @@ import fs from 'fs';
 import { Cert, TLS } from './types/tls';
 import yaml from 'js-yaml';
 import { Config } from './types/config';
+import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 
 function main() {
     const config: Config | undefined = loadConfig();
@@ -18,8 +19,11 @@ function main() {
             }
         }
 
+        const mongoConnString: string = `mongodb://${config.mongodb.user}:${config.mongodb.password}@${config.mongodb.host}:${config.mongodb.port}/test`;
+
         const hostLink = new HostLink(config.hostLink.port, { use: config.tls.use, cert: cert }, config.hostLink.hostAuthKey);
-        const api = new API(config.api.port, { use: config.tls.use, cert: cert }, hostLink);
+        const databaseAdapter = new DatabaseAdapter(mongoConnString);
+        const api = new API(config.api.port, { use: config.tls.use, cert: cert }, hostLink, databaseAdapter);
         hostLink.init();
         api.init(); 
     }

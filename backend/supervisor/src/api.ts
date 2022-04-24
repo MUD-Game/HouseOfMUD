@@ -9,8 +9,9 @@ import { mockauth, mockresponse } from './mock/api';
 import authProvider from './services/auth-provider';
 import auth from './middlewares/auth';
 import bodyParser from 'body-parser';
+import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 
-import {DatabaseAdapter} from '@database/databaseAdapter';
+// import {DatabaseAdapter} from '@database/databaseAdapter';
 
 export class API {
     private port: number;
@@ -147,9 +148,11 @@ export class API {
             // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
             console.log(JSON.stringify(dungeonData));
             if(dungeonData){
-                
-                res.json({ ok: 1 });
-
+                this.dba.storeDungeon(dungeonData).then(dungeonID => {
+                    res.json({ ok: 1, dungeonID: dungeonID });
+                }).catch(err => {
+                    res.json({ ok: 0, error: err });
+                });
             }else{
                 res.json({ok : 0});
             }

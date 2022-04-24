@@ -11,7 +11,7 @@ export interface Config {
     tls: TLS
 
     mongodb: {
-        url: string,
+        host: string,
         port: number,
         user: string,
         password: string,

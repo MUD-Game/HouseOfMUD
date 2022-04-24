@@ -82,7 +82,7 @@ const supervisor = {
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
        genericGet('/mydungeons', body, dataCallBack, error, "dungeons");
     },
-
+    
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {
         genericGet(`/characters/${dungeonID}`, body, dataCallBack, error, "characters"); 
     },

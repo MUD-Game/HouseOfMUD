@@ -247,9 +247,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         console.log(species);
         console.log(processToSend(species));
-        if (true || validateData()) {
+        if (validateData()) {
             let createBody: CreateDungeonRequest['dungeonData'] = {
-                    id: "76",
+                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     name,
                     description,
                     creatorId: "99987",
@@ -262,7 +262,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                     characterSpecies: processToSend(species) as MudCharacterSpecies[],
                     characterGender: processToSend(genders) as MudCharacterGender[],
                     actions,
-                    classes,
                     characterClasses: classes,
                     items,
                     rooms,

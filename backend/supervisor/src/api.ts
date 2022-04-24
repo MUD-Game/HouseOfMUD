@@ -46,7 +46,7 @@ export class API {
             res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
             res.header('Content-Type', 'application/json');
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-            res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
             res.header('Access-Control-Allow-Credentials', 'true');
             var cookies = req.headers.cookie;
             if (cookies) {
@@ -103,32 +103,26 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', auth, (req, res) => {
+        app.post('/startDungeon/:dungeonID', /*auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO: Check permission
+            // TODO: Check permission
+            if (this.hostLink.dungeonExists(dungeonID)) {
                 this.hostLink.startDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.json({ ok: 0, error: 'Dungeon does not exists' });
             }
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', auth, (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO: Check permission
+            // TODO: Check permission
+            if (this.hostLink.dungeonExists(dungeonID)) {
                 this.hostLink.stopDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.json({ ok: 0, error: 'Dungeon does not exists' });
             }
         });
 

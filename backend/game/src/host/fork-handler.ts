@@ -23,7 +23,9 @@ type DungeonAction = 'setCharacterToken' | 'stop';
  */
 export class ForkHandler {
 
-    amqpConfig: AmqpAdapterConfig;
+    public workerExitCallback: ((dungeon: string) => void) | undefined;
+    
+    private amqpConfig: AmqpAdapterConfig;
 
     constructor (amqpConfig: AmqpAdapterConfig) {
         this.amqpConfig = amqpConfig;
@@ -34,14 +36,15 @@ export class ForkHandler {
      */
     private dungeonWorker: { [dungeon: string]: {
         fork: ChildProcess,
-        currentPlayers: number 
+        playerCount: number,
+        killTimeout?: NodeJS.Timeout
     }} = {};
 
     /**
      * @returns List of running dungeons.
      */
-    public getDungeons(): string[] {
-        return Object.keys(this.dungeonWorker);
+    public getDungeons(): { dungeonID: string; playerCount: number; }[] {
+        return Object.keys(this.dungeonWorker).map((dungeon: string) => { return { dungeonID: dungeon, playerCount: this.dungeonWorker[dungeon].playerCount }});
     }
 
     public setCharacterToken(dungeon: string, userID: string, characterID: string, verifyToken: string): void {
@@ -61,8 +64,18 @@ export class ForkHandler {
 
     }
 
-    private workerExitHandler(dungeon: string, code: number): void {
-        delete this.dungeonWorker[dungeon];
+    private workerExitHandler(dungeon: string, code: number | null): void {
+        if (dungeon in this.dungeonWorker) {
+            let killTimeout = this.dungeonWorker[dungeon].killTimeout!;
+            if (killTimeout !== undefined) {
+                console.log('clear timeout');
+                clearTimeout(killTimeout);
+            }
+            delete this.dungeonWorker[dungeon];
+        }
+        if (this.workerExitCallback !== undefined) {
+            this.workerExitCallback(dungeon);
+        }
         console.error(`Dungeon ${dungeon} exited with code ${code}`);
     }
 
@@ -76,10 +89,10 @@ export class ForkHandler {
             let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange];
             let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
             dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
-            dungeonFork.on('exit', (code: number): void => this.workerExitHandler(dungeon, code));
+            dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));
             this.dungeonWorker[dungeon] = {
                 fork: dungeonFork,
-                currentPlayers: 0
+                playerCount: 0
             };
             return true;
         }
@@ -90,9 +103,11 @@ export class ForkHandler {
     stopDungeon(dungeon: string) {
         if (dungeon in this.dungeonWorker) {
             this.sendToWorker(dungeon, 'stop', {});
-            setTimeout(() => {
-                this.dungeonWorker[dungeon].fork.kill();
-                delete this.dungeonWorker[dungeon];
+            this.dungeonWorker[dungeon].killTimeout = setTimeout(() => {
+                if (dungeon in this.dungeonWorker) {
+                    console.log('kill');
+                    this.dungeonWorker[dungeon].fork.kill();
+                }
             }, 1000 * 5);
         }
     }

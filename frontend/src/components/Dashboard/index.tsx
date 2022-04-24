@@ -53,13 +53,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
     return (
         <Container className="mb-5">
-            <h2>Dashboard</h2>
-            <Row>
-
-                <button onClick={() => {
-                    navigate("/dungeon-configurator", { state: { action: "new" } });
-                }}>Neuen Dungeon erstellen</button>
-
+            <Row className="align-items-center mb-3">
+                <div className="col-8">
+                    <h2 className='my-3'>Dashboard</h2>
+                </div>
+                <div className="col-4">
+                    <button className="btn drawn-border btn-standard" onClick={() => {
+                        navigate("/dungeon-configurator", { state: { action: "new" } });
+                    }}>Neuen Dungeon erstellen</button>
+                </div>
             </Row>
             <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                 <Nav.Item>

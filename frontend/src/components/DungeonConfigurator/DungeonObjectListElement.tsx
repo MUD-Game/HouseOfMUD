@@ -16,19 +16,19 @@ const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ ite
 
     console.log(item);
     return (
-        <tr>
+        <Row className="mb-2 py-1 configurator-item">
             {Object.keys(displayKeys).map((key: string, iindex) => {
                 return (
-                    <td key={iindex}>
+                    <div className="col" key={iindex}>
                         {(item as any)[key]}
-                    </td>
+                    </div>
                 )
             })}
-            <td className="text-end">
-                <Pencil size={30} id="editIcon" style={{ cursor: "pointer" }} onClick={() => onEditElement(parseInt(item.id))} />
-                <Trash size={30} id="deleteIcon" onClick={() => onDeleteElement(parseInt(item.id))} style={{ cursor: "pointer", color: "red" }} />
-            </td>
-        </tr>
+            <div className="col text-end">
+                <Pencil size={30} id="editIcon" className="mx-1" style={{ cursor: "pointer" }} onClick={() => onEditElement(parseInt(item.id))} />
+                <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} style={{ cursor: "pointer", color: "red" }} />
+            </div>
+        </Row>
     )
 }
 

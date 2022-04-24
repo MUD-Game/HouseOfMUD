@@ -1,7 +1,7 @@
 import "src/types/supervisor";
 import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse } from "src/types/supervisor";
 
-const connectionString = process.env.REACT_APP_HOM_API;
+const connectionString = process.env.REACT_APP_HOM_API || "https://mud-ga.me:43210";
 
 // TODO: connect supervisor to the real supervisor
 const supervisor = {

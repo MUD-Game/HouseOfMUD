@@ -1,4 +1,4 @@
-import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData } from "@supervisor/api"; 
+import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData } from "@supervisor/api"; 
 import $ from "jquery";
 
 let connectionString = "";
@@ -9,193 +9,118 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 }
 // TODO: connect supervisor to the real supervisor
 // REFACTOR: Make it generic
-const supervisor = {
-    getSearchParamas: (params:any) => {
-        return `?${Object.keys(params).map(key => key + '=' + params[key]).join('&')}`;
-    },
-    getDungeon(dungeonID: string, body: GetDungeonRequest, dataCallBack: (response: GetDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: DungeonResponseData = {
-            id: "1",
-            name: "Test Dungeon",
-            description: "This is a test dungeon",
-            maxplayercount: 10,
-            playercount: 0,
-            status: "online"
-        };
-        dataCallBack({ ok: 1, dungeon: data });
-        return;
-        fetch(connectionString + "/dungeons/" + dungeonID, {
-            method: 'GET',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
-    },
-    getDungeons(body: GetDungeonsRequest, dataCallBack: (data: GetDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        $.ajax(connectionString + "/dungeons" + this.getSearchParamas(body), {
-            method: 'GET',
-            dataType: 'json',
-            contentType: "text/plain",
-            xhrFields: {
-                withCredentials: true
-            },
-            success: (data: GetDungeonsResponse) => {
-                if (data.ok) {
-                    dataCallBack(data);
-                } else {
-                    error(data as unknown as ErrorResponse);
-                }
-            },
-            error: console.error
-        });
-    },
-    getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: GetMyDungeonsResponse) => void, error: (error: ErrorResponse) => void) {
-        $.ajax(connectionString + "/mydungeons" + this.getSearchParamas(body) ,{
-            method: 'GET',
-            dataType: 'json',
-            contentType: 'application/json',
-            xhrFields: {
-                withCredentials: true
-            },
-            success: (data:GetMyDungeonsResponse) => {
-                if (data.ok) {
-                    dataCallBack(data);
-                } else {
-                    error(data as unknown as ErrorResponse);
-                }
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
 
+/**
+ * 
+ * @param path Path to the leading resource, starting after the connection string (e.g. /api/dungeons)
+ * @param params Params in key-value pairs
+ * @param dataCallBack Callback function to handle the data
+ * @param error Callback function to handle the error
+ * @param unpackKey Object key, if the data is packed object (e.g. {data:..., ok:0}) you can specify the key of the data to retrieve it in dataCallBack
+ */
+const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
+    $.ajax(connectionString + path  + getSearchParamas(params), {
+        method: 'GET',
+        dataType: 'json',
+        contentType: "text/plain",
+        xhrFields: {
+            withCredentials: true
+        },
+        success: (data: any) => {
+            if (data.ok) {
+                unpackKey || dataCallBack(data);
+                unpackKey && dataCallBack(data[unpackKey]);
+            } else {
+                error(data as unknown as ErrorResponse);
             }
-        });
+        },
+        error: (xhr, errorText, errorThrown) => {
+            error({ok:0, error: errorText});
+        }
+    });
+}
+
+const genericRequest = (path:string, method: string, body: {}, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
+    $.ajax(connectionString + path + getSearchParamas(params), {
+        method: method,
+        dataType: 'json',
+        data: JSON.stringify(body),
+        contentType: "application/json",
+        xhrFields: {
+            withCredentials: true
+        },
+        success: (data: any) => {
+            if (data.ok) {
+                unpackKey || dataCallBack(data);
+                unpackKey && dataCallBack(data[unpackKey]);
+            } else {
+                error(data as unknown as ErrorResponse);
+            }
+        },
+        error: (xhr, errorText, errorThrown) => {
+            error({ ok: 0, error: errorText });
+        }
+    });
+}
+
+
+const getSearchParamas = (params:any) => {
+    return `?${Object.keys(params).map(key => key + '=' + params[key]).join('&')}`;
+}
+
+
+const supervisor = {
+    getDungeon(dungeonID: string, body: GetDungeonRequest, dataCallBack: (response: GetDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+        genericGet(`/dungeon{dungeonID}`, body, dataCallBack, error, "dungeon");
     },
+
+    getDungeons(body: GetDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
+        genericGet("/dungeons", body, dataCallBack, error, "dungeons");
+    },
+
+    getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
+       genericGet('/mydungeons', body, dataCallBack, error, "dungeons");
+    },
+
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {
-        fetch(connectionString + '/characters/' + dungeonID + this.getSearchParamas(body) , {
-            method: 'GET'
-        }).then(res => res.json()).then((data: GetCharactersResponse | ErrorResponse) => {
-            console.log(data);
-            if (data.ok) {
-                dataCallBack((data as GetCharactersResponse).characters);
-            } else {
-                error((data as ErrorResponse));
-            }
-        }).catch(err => error(err));
+        genericGet(`/characters/${dungeonID}`, body, dataCallBack, error, "characters"); 
     },
+
     getCharacterAttributes(dungeonID: string, body: GetCharacterAttributesRequest, dataCallBack: (data: GetCharacterAttributesResponse) => void, error: (error: ErrorResponse) => void) {
-        fetch(connectionString + '/character/attributes/' + dungeonID + this.getSearchParamas(body), {}).then(res => res.json()).then(data => {
-            console.log(data);
-            if (data.ok) {
-                dataCallBack(data);
-            } else {
-                error(data);
-            }
-        }).catch(err => error(err));
+        genericGet(`/character/attributes/${dungeonID}`, body, dataCallBack, error);
     },
+
     authenticate(body: AuthenticateRequest, dataCallBack: (data: AuthenticateResponse) => void, error: (error: ErrorResponse) => void) {
-        $.ajax(connectionString + "/auth", {
-            method: 'POST',
-            dataType: 'json',
-            data: this.getSearchParamas(body).substring(1),
-            contentType: "application/x-www-form-urlencoded",
-            xhrFields: {
-                withCredentials: true
-            },
-            success: (data: AuthenticateResponse) => {
-                if (data.ok) {
-                    dataCallBack(data);
-                } else {
-                    error(data as unknown as ErrorResponse);
-                }
-            },
-            error: console.error
-        });
+        genericRequest("/auth", "POST", body, {}, dataCallBack, error);
     },
-    login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: LoginResponse = {
-            verifyToken: "xxx",
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/login/' + dungeonID, {
-            method: 'POST',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+
+    login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
+        genericRequest(`/login${dungeonID}`, "POST", body, {}, dataCallBack, error, "verifyToken");
     },
+
     startDungeon(dungeonID: string, body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: StartDungeonResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/startDungeon/' + dungeonID, {
-            method: 'POST',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/start/${dungeonID}`, "POST", body, {}, dataCallBack, error);
     },
+
     stopDungeon(dungeonID: string, body: StopDungeonRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: StopDungeonResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/stopDungeon/' + dungeonID, {
-            method: 'POST',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/stopDungeon/${dungeonID}`, "POST", body, {}, dataCallBack, error);
     },
+
     createDungeon(body: CreateDungeonRequest, dataCallBack: (data: CreateDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: CreateDungeonResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/dungeon', {
-            method: 'POST',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/dungeon`, "POST", body, {}, dataCallBack, error);
     },
     editDungeon(dungeonID: string, body: EditDungeonRequest, dataCallBack: (data: EditDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: EditDungeonResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/dungeon/' + dungeonID, {
-            method: 'PATCH',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/dungeon`, "PATCH", body, {}, dataCallBack, error);
     },
     deleteDungeon(dungeonID: string, body: DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: DeleteDungeonResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/dungeon/' + dungeonID, {
-            method: 'DELETE',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/dungeon/${dungeonID}`, "DELETE", body, {}, dataCallBack, error);
+
     },
     createCharacter(dungeonID: string, body: CreateCharacterRequest, dataCallBack: (data: CreateCharacterResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: CreateCharacterResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/character/' + dungeonID, {
-            method: 'POST',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/character/${dungeonID}`, "POST", body, {}, dataCallBack, error);
     },
     deleteCharacter(dungeonID: string, body: DeleteCharacterRequest, dataCallBack: (data: DeleteCharacterResponse) => void, error: (error: ErrorResponse) => void) {
-        let data: DeleteCharacterResponse = {
-            ok: 1
-        }
-        dataCallBack(data);
-        return;
-        fetch(connectionString + '/character/' + dungeonID, {
-            method: 'DELETE',
-            body: JSON.stringify(body)
-        }).then(res => res.json()).then(data => dataCallBack(data)).catch(err => error(err));
+        genericRequest(`/character/${dungeonID}`, "DELETE", body, {}, dataCallBack, error);
     }
 }
 

@@ -32,7 +32,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   let login = (user: string, password: string, success: VoidFunction, error: (error: string) => void) => {
     supervisor.authenticate({ user, password }, (data: any) => {
-      console.log(data);
       if (data.ok) {
         setUser(user);
         let c = new Cookies();

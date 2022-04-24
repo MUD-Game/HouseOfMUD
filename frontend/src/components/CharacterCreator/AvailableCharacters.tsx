@@ -21,7 +21,6 @@ export interface AvailableCharactersProps {
 }
 
 const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters }) => {
-    console.log(characters);
     return (
         <>
             <p className="headline">Charakter auswählen</p>

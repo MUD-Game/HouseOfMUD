@@ -8,6 +8,7 @@ import { GetDungeonResponse } from './types/api';
 import { mockauth, mockresponse } from './mock/api';
 import authProvider from './services/auth-provider';
 import auth from './middlewares/auth';
+import bodyParser from 'body-parser';
 
 export class API {
     private port: number;
@@ -24,7 +25,8 @@ export class API {
 
     public init() {
         const app = express();
-        app.use(express.urlencoded({ extended: true }));
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
         var httpWebServer;
         if (this.tls.use && this.tls.cert !== undefined) {
             httpWebServer = https.createServer(this.tls.cert, app);
@@ -46,7 +48,7 @@ export class API {
             res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
             res.header('Content-Type', 'application/json');
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-            res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
             res.header('Access-Control-Allow-Credentials', 'true');
             var cookies = req.headers.cookie;
             if (cookies) {
@@ -103,32 +105,26 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', auth, (req, res) => {
+        app.post('/startDungeon/:dungeonID', /*auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO: Check permission
+            // TODO: Check permission
+            if (this.hostLink.dungeonExists(dungeonID)) {
                 this.hostLink.startDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.json({ ok: 0, error: 'Dungeon does not exists' });
             }
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', auth, (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO: Check permission
+            // TODO: Check permission
+            if (this.hostLink.dungeonExists(dungeonID)) {
                 this.hostLink.stopDungeon(dungeonID);
                 res.json({ ok: 1 });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.json({ ok: 0, error: 'Dungeon does not exists' });
             }
         });
 
@@ -137,21 +133,19 @@ export class API {
             res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
         });
 
-        app.get('/myDungeons', auth, (req, res) => {   
+        app.get('/myDungeons', auth, (req, res) => {
+            let user = req.cookies.user; // TODO: get myDungeons based on user   
             res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
         });
 
         // create dungeon
         app.post('/dungeon', auth,  (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.dungeonData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                let dungeonData: any = body.dungeonData;
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
+            let dungeonData: any = req.body?.dungeonData;
+            let user = req.cookies.user; // TODO: get myDungeons based on user
+            // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
+            console.log(JSON.stringify(dungeonData));
+            dungeonData && res.json({ ok: 1 });
+            dungeonData || res.json({ok : 0});
         });
 
         // get dungeon
@@ -196,31 +190,19 @@ export class API {
         // get character attributes for dungeon
         app.get('/character/attributes/:dungeonID', auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                res.json({
-                    ok: 1,
-                    ...mockresponse.getcharacterattributes
-                })
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
+            let user = req.cookies.user!; // Cant be undefined because of auth middleware
+            res.json({
+                ok: 1,
+                ...mockresponse.getcharacterattributes
+            })
         });
 
         // get user-characters for dungeon
         app.get('/characters/:dungeonID', auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                res.json({ ok: 1, characters: mockresponse.getcharacters });
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
+            let user = req.cookies.user!; // Cant be undefined because of auth middleware
+            //TODO: Get user-characters for dungeon
+            res.json({ ok: 1, characters: mockresponse.getcharacters });
         });
 
         // create character

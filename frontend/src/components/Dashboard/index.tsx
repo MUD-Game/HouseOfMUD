@@ -16,7 +16,7 @@ import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
-import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
 import AllDungeons from './AllDungeons';
 import "./index.css"
 import { useNavigate } from 'react-router-dom';
@@ -30,8 +30,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     const auth = useAuth();
     const homsole = useMudConsole();
     const navigate = useNavigate();
-    let [allDungeons, setAllDungeons] = React.useState<GetDungeonsResponse>();
-    let [myDungeons, setMyDungeons] = React.useState<GetMyDungeonsResponse>();
+    let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
+    let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
     let [dungeonView, setDungeonView] = React.useState<"all" | "my">("all");
 
     useEffect(() => {

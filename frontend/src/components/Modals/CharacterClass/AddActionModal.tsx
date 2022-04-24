@@ -108,12 +108,10 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
-        console.log(eventValues);
         if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output)) {
             homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
         } else {
             let action = deconstructToContextData();
-            console.log(action);
             if (!action) homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
             props.onSendAction(action);
             props.onHide();

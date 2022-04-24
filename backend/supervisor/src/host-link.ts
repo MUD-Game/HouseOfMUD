@@ -19,7 +19,7 @@ interface Dungeons {
         host?: string;
         description: string;
         maxPlayers: number;
-        currentPlayers: number;
+        playerCount: number;
         status: Status;
     };
 }
@@ -72,12 +72,14 @@ export class HostLink {
 
                     console.log(`Host '${name}' connected`);
 
-                    socket.emit('init', (data: any): void => {
+                    socket.emit('init', (data: { dungeonID: string; playerCount: number; }[]): void => {
                         for (let dungeonStats of data) {
                             if (dungeonStats.dungeonID in this.dungeons) {
+                                console.log(`init ${dungeonStats.dungeonID}`);
                                 this.hosts[name].dungeons.push(dungeonStats.dungeonID);
                                 this.dungeons[dungeonStats.dungeonID].status = 'online';
-                                this.dungeons[dungeonStats.dungeonID].currentPlayers = dungeonStats.currentPlayers;
+                                this.dungeons[dungeonStats.dungeonID].playerCount = dungeonStats.playerCount;
+                                this.dungeons[dungeonStats.dungeonID].host = name;
                             }
                         }
                     });
@@ -85,9 +87,27 @@ export class HostLink {
                     socket.on('dungeonState', (data: any): void => {
                         for (let dungeonStats of data) {
                             if (dungeonStats.dungeonID in this.dungeons) {
-                                this.dungeons[
-                                    dungeonStats.dungeonID
-                                ].currentPlayers = data.currentPlayers;
+                                this.dungeons[dungeonStats.dungeonID].status = 'online';
+                                this.dungeons[dungeonStats.dungeonID].playerCount = data.playerCount;
+                            }
+                        }
+                    });
+
+                    socket.on('exit', (data: any): void => {
+                        if (data.dungeonID !== undefined) {
+                            const dungeonID: string = data.dungeonID;
+                            if (this.dungeons[dungeonID] !== undefined) {
+                                this.dungeons[dungeonID].playerCount = 0;
+                                this.dungeons[dungeonID].status = 'offline';
+
+                                const host: Host | undefined = this.getHostFromDungeon(dungeonID);
+                                if (host !== undefined) {
+                                    const index = host.dungeons.indexOf(dungeonID);
+                                    if (index > -1) {
+                                        host.dungeons.splice(index, 1); // remove dungeon from host
+                                    }
+                                }
+                                delete this.dungeons[dungeonID].host;
                             }
                         }
                     });
@@ -95,7 +115,7 @@ export class HostLink {
                     socket.on('disconnect', () => {
                         for (let dungeon of this.hosts[name].dungeons) {
                             delete this.dungeons[dungeon].host;
-                            this.dungeons[dungeon].currentPlayers = 0;
+                            this.dungeons[dungeon].playerCount = 0;
                             this.dungeons[dungeon].status = 'offline';
                         }
                         delete this.hosts[name];
@@ -122,11 +142,18 @@ export class HostLink {
         //         host: dungeon.host,
         //         description: dungeon.description,
         //         maxPlayers: dungeon.maxPlayers,
-        //         currentPlayers: 0,
+        //         playerCount: 0,
         //         status: 'offline'
         //     };
         // });
         // dba.disconnect();
+
+        this.dungeons['1'] = {
+            description: 'Test Dungeon',
+            maxPlayers: 4,
+            playerCount: 0,
+            status: 'offline'
+        };
     }
 
     public setCharacterToken(dungeonID: string, user: string, character: string, verifyToken: string): void {
@@ -142,16 +169,18 @@ export class HostLink {
     }
 
     public startDungeon(dungeonID: string): void {
-        const host: string = this.getBestHost();
-        if (this.hosts[host] !== undefined) {
-            this.hosts[host].socket.emit('start', { dungeonID: dungeonID }, (created: boolean) => {
-                if (created) {
-                    this.hosts[host].dungeons.push(dungeonID);
-                    this.dungeons[dungeonID].host = host;
-                    this.dungeons[dungeonID].status = 'online';
-                    this.dungeons[dungeonID].currentPlayers = 0;
-                }
-            });
+        if (this.dungeonExists(dungeonID)) {
+            const host: string = this.getBestHost();
+            if (this.hosts[host] !== undefined) {
+                this.hosts[host].socket.emit('start', { dungeonID: dungeonID }, (created: boolean) => {
+                    if (created) {
+                        this.hosts[host].dungeons.push(dungeonID);
+                        this.dungeons[dungeonID].host = host;
+                        this.dungeons[dungeonID].status = 'online';
+                        this.dungeons[dungeonID].playerCount = 0;
+                    }
+                });
+            }
         }
     }
 

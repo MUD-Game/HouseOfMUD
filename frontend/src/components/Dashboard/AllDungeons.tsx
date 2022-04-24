@@ -13,10 +13,10 @@
 
 import React from 'react';
 import AllDungeonLi from './AllDungeonsLi';
-import { GetDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData, GetDungeonsResponse } from '@supervisor/api';
 import { Row } from 'react-bootstrap';
 export type AllDungeonProps = {
-    allDungeons: GetDungeonsResponse;
+    allDungeons: DungeonResponseData[];
 }
 
 const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons }) => {
@@ -39,7 +39,7 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons }) => {
                 <div className="col-2"></div>
             </Row>
 
-            {allDungeons.dungeons.map((dungeon, index) => {
+            {allDungeons.map((dungeon, index) => {
                 return (
                     <AllDungeonLi key={index} isPrivate={false} {...dungeon} />
                 )

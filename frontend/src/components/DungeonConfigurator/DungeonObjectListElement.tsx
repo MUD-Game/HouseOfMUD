@@ -14,7 +14,6 @@ export interface DungeonObjectListElementProps {
 
 const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ item, onEditElement, onDeleteElement, displayKeys }) => {
 
-    console.log(item);
     return (
         <tr>
             {Object.keys(displayKeys).map((key: string, iindex) => {

@@ -1,3 +1,4 @@
+import { exit } from 'process';
 import {
     ActionElement,
     Character,
@@ -26,7 +27,6 @@ interface Tokens {
 const userTokens: Tokens = {};
 
 async function main() {
-    handleHostMessages();
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
     let dungeon: Dungeon = getDungeon(dungeonID);
@@ -48,10 +48,12 @@ async function main() {
         dungeon
     );
     dungeonController.init();
+
+    handleHostMessages(dungeonController);
 }
 
-async function handleHostMessages() {
-    process.on('message', (msg: any) => {
+function handleHostMessages(dungeonController: DungeonController) {
+    process.on('message', async (msg: any) => {
         let action = msg.action;
         let data = msg.data;
 
@@ -69,6 +71,8 @@ async function handleHostMessages() {
                 break;
             case 'stop':
                 // TODO: save Dungeon to database and stop process
+                await dungeonController.getAmqpAdapter().close();
+                exit(0);
                 break;
         }
     });

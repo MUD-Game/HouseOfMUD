@@ -10,6 +10,7 @@ import authProvider from './services/auth-provider';
 import auth from './middlewares/auth';
 import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
+import { Dungeon } from './services/databaseadapter/datasets/dungeon';
 
 // import {DatabaseAdapter} from '@database/databaseAdapter';
 
@@ -148,6 +149,7 @@ export class API {
             // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
             console.log(JSON.stringify(dungeonData));
             if(dungeonData){
+                this.hostLink.addDungeon(dungeonData.id, dungeonData);
                 this.dba.storeDungeon(dungeonData).then(dungeonID => {
                     res.json({ ok: 1, dungeonID: dungeonID });
                 }).catch(err => {

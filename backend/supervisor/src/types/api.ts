@@ -32,6 +32,7 @@ export interface AuthenticateRequest {
     authToken?: string;
 }
 
+
 /**
  * Auth-Response is a authToken if the user authenticated with a password
  * @category Response

@@ -5,7 +5,8 @@ import { HostLink } from './host-link';
 import { TLS } from './types/tls';
 import * as comm from './types/api';
 import { GetDungeonResponse } from './types/api';
-import { mockresponse } from './mock/mockups';
+import { mockauth, mockresponse } from './mock/api';
+import authProvider from './services/auth-provider';
 
 export class API {
     private port: number;
@@ -42,6 +43,14 @@ export class API {
             // res.header('Access-Control-Allow-Origin', 'https://mud-ga.me');
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Content-Type', 'application/json');
+            var cookies = req.headers.cookie;
+            if (cookies) {
+                req.cookies = cookies.split(";").reduce((obj: any, c) => {
+                    var n = c.split("=");
+                    obj[n[0].trim()] = n[1].trim();
+                    return obj
+                }, {})
+            }
             next();
         });
 
@@ -56,21 +65,23 @@ export class API {
             }
         });
 
+        // TODO: Create actual authentication
         // platform authentication
-        app.post('/auth', (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined) {
+        app.post('/auth', async (req, res) => {
+            let body: any = req.body || {};
+            let authToken = req.cookies?.authToken;
+            let authStatus;
+            if (authToken) {
+                authStatus = await authProvider.validateToken(body.user || "", authToken);
+            } else if (body.user !== undefined) {
                 let user: string = body.user;
                 if (body.password !== undefined) {
                     let password: string = body.password;
-                    // TODO
-                } else if (body.authToken !== undefined) {
-                    let authToken: string = body.authToken;
-                    // TODO
+                    authStatus = await authProvider.validatePassword(user, password);
                 }
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
             }
+            res.cookie('authToken', mockauth.authToken, { maxAge: authStatus ? 3600 * 1000 : 0 });
+            res.json(authStatus ? {ok:1} : { ok: 0, error: 'Invalid parameters' });
         });
 
         // login to dungeon

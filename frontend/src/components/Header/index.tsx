@@ -8,6 +8,7 @@
  */
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
 import Logo from '../../assets/LogoHOM.png';
@@ -19,13 +20,13 @@ const Header: React.FC<HeaderProps> = (props) => {
     return (
         <Container className="text-center">
             <Row>
-                <a href="/">
+                <Link to="/">
                     <img id="header-logo" src={Logo} alt="Logo HouseOfMUD" />
-                </a>
+                </Link>
             </Row>
             <Row className="mt-5 align-items-center">
                 <Col className="text-start">
-                    <p className="headline">Wilkommen: <b>{auth.user}</b></p>
+                    <p className="headline">{auth.user? "Willkommen: ": "Anmelden"}<b>{auth.user}</b></p>
                 </Col>
                 <Col className="text-end">
                     <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {

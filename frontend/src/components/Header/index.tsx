@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                     <p className="headline">Wilkommen: <b>{auth.user}</b></p>
                 </Col>
                 <Col className="text-end">
-                    <button className="btn btn-danger" onClick={() => {
+                    <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {
                         auth.logout(() => {
                             navigate("/login");
                         });

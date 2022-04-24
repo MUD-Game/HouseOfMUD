@@ -11,6 +11,7 @@
 
 import React from "react"
 import { Row } from "react-bootstrap";
+import { CloudCheck, CloudSlash, Lock, Unlock } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "src/hooks/useGame";
 
@@ -49,8 +50,12 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, play
                 {playercount}/{maxplayercount}          
             </div>
             <div className="col-1 text-center">        
-                {isPrivate ? '' : '🔒'}
-                {status === "online" ? '🟢' : '🔴'}
+                {isPrivate ? '' : ''}                
+                <Lock size={25} className="mx-1" />
+                {/* <Unlock size={25} className="mx-1" /> */}
+                {status === "online" ? '' : ''}                
+                <CloudSlash size={25} style={{color: "red"}} className="mx-1" />
+                {/* <CloudCheck size={25} style={{color: "green"}} className="mx-1" /> */}
             </div>
             <div className="col-2">         
                 {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MudActionElement, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
+import { MudActionElement, MudCharacterGender, MudCharacterSpecies, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
 import { MudCharacterClass } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
 import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
@@ -60,51 +60,6 @@ export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfi
     items: MudItem[];
 }
 
-// const testdungeon = {
-//   dungeonId: "dungeon1",
-//   name: "Dungeon",
-//   description: "this is the best dungeon ever",
-//   creatorId: "user1",
-//   masterId: "user1",
-//   maxPlayers: 0,
-//   currentPlayers: 0,
-//   characters: [],
-//   characterClasses: [],
-//   characterSpecies: [],
-//   characterGender: [],
-//   rooms: [],
-//   items: [
-//     {
-//       itemId: "item1",
-//       name: "Schwert",
-//       description: "desc"
-//     },
-//     {
-//       itemId: "item2",
-//       name: "Schild",
-//       description: "desc"
-//     }
-//   ],
-//   npcs: [],
-//   blacklist: [],
-//   actions: [
-//     {
-//       actionId: "action1",
-//       command: "eat apple",
-//       output: "mmmmmmmmmh lecker lecker lecker",
-//       description: "friss du sau",
-//       events: [
-//         {
-//           eventType: "addhp",
-//           value: "10"
-//         }
-//       ],
-//       itemsneeded: [
-//         "item1"
-//       ]
-//     }
-//   ]
-// }
 
 let DungeonConfiguratorContext = React.createContext<DungeonConfiguratorContextType>({} as DungeonConfiguratorContextType);
 
@@ -292,19 +247,27 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         console.log(species);
         console.log(processToSend(species));
-        if (true || validateData()) {
+        if (validateData()) {
             let createBody: CreateDungeonRequest['dungeonData'] = {
-                 name,
-                 description,
-                 maxPlayers,
-                 species: processToSend(species),
-                 genders: processToSend(genders),
-                 actions,
-                 classes,
-                 items,
-                 rooms,
-                 npcs
-            };
+                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+                    name,
+                    description,
+                    creatorId: "99987",
+                    masterId: "08098",
+                    currentPlayers: 0,
+                    maxPlayers,
+                    species: processToSend(species),
+                    genders: processToSend(genders),
+                    characters: [],
+                    characterSpecies: processToSend(species) as MudCharacterSpecies[],
+                    characterGender: processToSend(genders) as MudCharacterGender[],
+                    actions,
+                    characterClasses: classes,
+                    items,
+                    rooms,
+                    npcs,
+                    blacklist: []
+                };
             console.log(createBody);
             supervisor.createDungeon({ dungeonData: createBody }, (data) => {
                 if (data.ok) {

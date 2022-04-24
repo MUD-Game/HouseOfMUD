@@ -50,7 +50,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             withCredentials: true
         },
         success: (data: any) => {
-            if (data.ok) {
+        if (data.ok) {
                 unpackKey || dataCallBack(data);
                 unpackKey && dataCallBack(data[unpackKey]);
             } else {
@@ -58,7 +58,8 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            error({ ok: 0, error: errorText });
+            console.log(xhr,errorText,errorThrown);
+            // error({ ok: 0, error: errorText });
         }
     });
 }
@@ -81,7 +82,7 @@ const supervisor = {
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
        genericGet('/mydungeons', body, dataCallBack, error, "dungeons");
     },
-
+    
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {
         genericGet(`/characters/${dungeonID}`, body, dataCallBack, error, "characters"); 
     },

@@ -2,11 +2,18 @@ import { Cert, TLS } from "./tls"
 
 export interface Config {
     api: {
-        port: number,
+        port: number;
     }
     hostLink: {
-        hostAuthKey: string,
-        port: number,
+        hostAuthKey: string;
+        port: number;
     }
-    tls: TLS
+    tls: TLS;
+
+    mongodb: {
+        host: string;
+        port: number;
+        user: string;
+        password: string;
+    }
 }

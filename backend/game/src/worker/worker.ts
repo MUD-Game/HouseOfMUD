@@ -132,10 +132,10 @@ function getDungeon(dungeonID: string): Dungeon {
         '1',
         'Raum-1',
         'Der Raum in dem alles begann',
-        [TestNpc.npcId],
-        [TestItem.itemId],
+        [TestNpc.id],
+        [TestItem.id],
         TestConnections,
-        [TestAction.actionId],
+        [TestAction.id],
         2,
         2
     );
@@ -143,10 +143,10 @@ function getDungeon(dungeonID: string): Dungeon {
         '2',
         'Raum-N',
         'Der Raum im Norden',
-        [TestNpc.npcId],
-        [TestItem.itemId],
+        [TestNpc.id],
+        [TestItem.id],
         new ConnectionInfo('inactive', 'active'),
-        [TestAction.actionId],
+        [TestAction.id],
         2,
         3
     );
@@ -154,10 +154,10 @@ function getDungeon(dungeonID: string): Dungeon {
         '3',
         'Raum-O',
         'Der Raum im Osten',
-        [TestNpc.npcId],
-        [TestItem.itemId],
+        [TestNpc.id],
+        [TestItem.id],
         new ConnectionInfo('inactive', 'inactive'),
-        [TestAction.actionId],
+        [TestAction.id],
         3,
         2
     );
@@ -165,10 +165,10 @@ function getDungeon(dungeonID: string): Dungeon {
         '4',
         'Raum-S',
         'Der Raum im Sueden',
-        [TestNpc.npcId],
-        [TestItem.itemId],
+        [TestNpc.id],
+        [TestItem.id],
         new ConnectionInfo('inactive', 'inactive'),
-        [TestAction.actionId],
+        [TestAction.id],
         2,
         1
     );
@@ -176,10 +176,10 @@ function getDungeon(dungeonID: string): Dungeon {
         '5',
         'Raum-W',
         'Der Raum im Westen',
-        [TestNpc.npcId],
-        [TestItem.itemId],
+        [TestNpc.id],
+        [TestItem.id],
         new ConnectionInfo('active', 'inactive'),
-        [TestAction.actionId],
+        [TestAction.id],
         1,
         2
     );
@@ -187,10 +187,10 @@ function getDungeon(dungeonID: string): Dungeon {
         '6',
         'Raum-NN',
         'Der Raum im Norden, Norden',
-        [TestNpc.npcId],
-        [TestItem.itemId],
+        [TestNpc.id],
+        [TestItem.id],
         new ConnectionInfo('inactive', 'closed'),
-        [TestAction.actionId],
+        [TestAction.id],
         2,
         4
     );
@@ -204,8 +204,8 @@ function getDungeon(dungeonID: string): Dungeon {
         TestGender,
         TestMaxStats,
         TestStartStats,
-        TestRoom.roomId,
-        [TestItem.itemId]
+        TestRoom.id,
+        [TestItem.id]
     );
     const TestCharacterSameRoom: Character = new Character(
         '2',
@@ -217,8 +217,8 @@ function getDungeon(dungeonID: string): Dungeon {
         TestGender,
         TestMaxStats,
         TestStartStats,
-        TestRoom.roomId,
-        [TestItem.itemId]
+        TestRoom.id,
+        [TestItem.id]
     );
     const TestCharacterNotSameRoom: Character = new Character(
         '3',
@@ -230,33 +230,10 @@ function getDungeon(dungeonID: string): Dungeon {
         TestGender,
         TestMaxStats,
         TestStartStats,
-        TestRoomNorth.roomId,
-        [TestItem.itemId]
+        TestRoomNorth.id,
+        [TestItem.id]
     );
-    const TestDungeon: Dungeon = new Dungeon(
-        '1',
-        'TestDungeon1',
-        'Test',
-        '1',
-        '1',
-        2,
-        1,
-        [TestSpecies],
-        [TestClass],
-        [TestGender],
-        [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
-        [
-            TestRoom,
-            TestRoomNorth,
-            TestRoomEast,
-            TestRoomSouth,
-            TestRoomWest,
-            TestRoomNorthNorth,
-        ],
-        ['abc'],
-        [TestAction]
-    );
-    return new Dungeon(
+    const testDungeon: Dungeon = new Dungeon(
         dungeonID,
         'TestDungeon1',
         'Test',
@@ -277,9 +254,11 @@ function getDungeon(dungeonID: string): Dungeon {
             TestRoomNorthNorth,
         ],
         ['abc'],
-        [TestAction]
+        [TestAction],
+        [TestItem],
+        [TestNpc]
     );
-
+    return testDungeon;
 }
 
 main();

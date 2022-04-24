@@ -12,3 +12,9 @@ tls:
     key: /etc/letsencrypt/live/privkey.pem
     cert: /etc/letsencrypt/live/fullchain.pem
     ca: /etc/letsencrypt/live/chain.pem
+
+mongodb:
+  host: 127.0.0.1
+  port: 27017
+  user: root
+  password: root

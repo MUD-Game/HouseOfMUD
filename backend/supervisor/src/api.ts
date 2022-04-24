@@ -9,18 +9,21 @@ import { mockauth, mockresponse } from './mock/api';
 import authProvider from './services/auth-provider';
 import auth from './middlewares/auth';
 import bodyParser from 'body-parser';
+import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
+
+// import {DatabaseAdapter} from '@database/databaseAdapter';
 
 export class API {
     private port: number;
     private tls: TLS;
     private hostLink: HostLink;
-    // private dba: DatabaseAdapter;
+    private dba: DatabaseAdapter;
 
-    constructor(port: number, tls: TLS, hostLink: HostLink) {
+    constructor(port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter) {
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
-        // this.dba = new DatabaseAdapter();
+        this.dba = dba;
     }
 
     public init() {
@@ -130,7 +133,7 @@ export class API {
 
         // get dungeons
         app.get('/dungeons', auth, (req, res) => {
-            res.json({ ok: 1, dungeons: mockresponse.getalldungeons });
+            res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
         });
 
         app.get('/myDungeons', auth, (req, res) => {
@@ -144,8 +147,15 @@ export class API {
             let user = req.cookies.user; // TODO: get myDungeons based on user
             // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
             console.log(JSON.stringify(dungeonData));
-            dungeonData && res.json({ ok: 1 });
-            dungeonData || res.json({ok : 0});
+            if(dungeonData){
+                this.dba.storeDungeon(dungeonData).then(dungeonID => {
+                    res.json({ ok: 1, dungeonID: dungeonID });
+                }).catch(err => {
+                    res.json({ ok: 0, error: err });
+                });
+            }else{
+                res.json({ok : 0});
+            }
         });
 
         // get dungeon

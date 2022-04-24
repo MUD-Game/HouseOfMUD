@@ -8,6 +8,7 @@ import { GetDungeonResponse } from './types/api';
 import { mockauth, mockresponse } from './mock/api';
 import authProvider from './services/auth-provider';
 import auth from './middlewares/auth';
+import bodyParser from 'body-parser';
 
 export class API {
     private port: number;
@@ -24,7 +25,8 @@ export class API {
 
     public init() {
         const app = express();
-        app.use(express.urlencoded({ extended: true }));
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
         var httpWebServer;
         if (this.tls.use && this.tls.cert !== undefined) {
             httpWebServer = https.createServer(this.tls.cert, app);
@@ -138,15 +140,12 @@ export class API {
 
         // create dungeon
         app.post('/dungeon', auth,  (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.dungeonData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                let dungeonData: any = body.dungeonData;
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
+            let dungeonData: any = req.body?.dungeonData;
+            let user = req.cookies.user; // TODO: get myDungeons based on user
+            // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
+            console.log(JSON.stringify(dungeonData));
+            dungeonData && res.json({ ok: 1 });
+            dungeonData || res.json({ok : 0});
         });
 
         // get dungeon

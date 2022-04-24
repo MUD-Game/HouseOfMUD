@@ -18,7 +18,6 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
             setIsAuthenticated(true);
             setIsAuthenticating(false);
         }, () => {
-            console.log("0")
             setIsAuthenticated(false);
             setIsAuthenticating(false);
         });
@@ -31,7 +30,6 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
     if(isAuthenticating){
         return <Busy/>
     } else if (!isAuthenticated){
-        console.log("kfj")
         return <Navigate to="/login" state={{ from: location }} replace />;
     }else{
         return children;

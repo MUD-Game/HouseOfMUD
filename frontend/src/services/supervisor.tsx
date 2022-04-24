@@ -44,8 +44,8 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
     $.ajax(connectionString + path + getSearchParamas(params), {
         method: method,
         dataType: 'json',
-        data: getSearchParamas(body).substring(1),
-        contentType: "application/x-www-form-urlencoded",
+        data: JSON.stringify(body),
+        contentType: "application/json",
         xhrFields: {
             withCredentials: true
         },

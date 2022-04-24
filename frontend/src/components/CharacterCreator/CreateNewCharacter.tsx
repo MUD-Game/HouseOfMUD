@@ -8,13 +8,12 @@
 
 import React, { FormEvent } from 'react';
 import { supervisor } from 'src/services/supervisor';
-import { CreateCharacterRequest, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { CreateCharacterRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';
 import MudInput from '../Custom/MudInupt';
 import MudSelect from '../Custom/MudSelect';
-import MudButton from '../Custom/MudButton';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
@@ -31,7 +30,6 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
         let formData = new FormData(evt.currentTarget);
         let bodyData: CreateCharacterRequest = {
             user: auth.user,
-            authToken: auth.token,
             characterData: {
                 name: formData.get("name") as string,
                 fullname: formData.get("fullname") as string,

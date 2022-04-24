@@ -11,7 +11,7 @@ export interface SupervisorResponse {
  * @category Request
  */
 export interface SupervisorRequest {
-    authToken: string;
+    
 }
 
 /**
@@ -28,9 +28,9 @@ export interface ErrorResponse extends SupervisorResponse {
  */
 export interface AuthenticateRequest {
     user: string;
-    password?: string;
-    authToken?: string;
+    password: string;
 }
+
 
 /**
  * Auth-Response is a authToken if the user authenticated with a password

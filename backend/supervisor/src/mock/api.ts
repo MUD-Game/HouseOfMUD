@@ -5,7 +5,10 @@ import {
     GetCharacterAttributesResponse,
     GetCharactersResponse,
     DungeonResponseData,
-    CharactersResponseData
+    CharactersResponseData,
+    LoginRequest,
+    AuthenticateResponse,
+    AuthenticateRequest
 } from '../types/api';
 
 export interface MockResponse {
@@ -19,6 +22,13 @@ export interface MockResponse {
     };
     getcharacters: CharactersResponseData[];
 }
+
+export interface MockAuth {
+    authToken: AuthenticateResponse['authToken'];
+    user: AuthenticateRequest['user'];
+    password: AuthenticateRequest['password'];
+}
+
 
 const mockresponse: MockResponse = {
     getalldungeons: [
@@ -97,4 +107,10 @@ const mockresponse: MockResponse = {
         ]
 };
 
-export { mockresponse };
+const mockauth: MockAuth = {
+    authToken: "2037205720857",
+    user: "mockuser",
+    password: "mockpassword"
+}
+
+export { mockresponse, mockauth };

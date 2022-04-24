@@ -1,4 +1,9 @@
 {
+    "references":[
+      {
+        "path": "../backend/supervisor"
+       }
+    ],
   "compilerOptions": {
     "target": "es6",
     "lib": [
@@ -7,6 +12,7 @@
       "esnext",
       "es2017"
     ],
+    "disableReferencedProjectLoad": true,
     "baseUrl": ".",
     "sourceMap": true,
     "importHelpers": true,
@@ -14,7 +20,9 @@
     "typeRoots":
       ["node_modules/@types"],
       "paths":{
-        "@HOM/*":["../@types/*"]
+        "@HOM/*":["../@types/*"],
+        "@supervisor/*":["../backend/supervisor/src/types/*"],
+        "@host/*":["../backend/game/host/types/*"]
       },
     "allowJs": true,
     "skipLibCheck": true,
@@ -27,7 +35,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react"
+    "jsx": "react",
   },
   "include": [
     "src"

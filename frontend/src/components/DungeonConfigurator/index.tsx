@@ -31,8 +31,8 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <MudInput maxLength={50} colmd={9} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="name" placeholder="Name" />
                 <MudInput colmd={3} onBlur={dungeonConfig.handleOnBlurInput} type="number" name="maxPlayers" placeholder="Maximale Spieleranzahl" />
                 <MudInput maxLength={50} colmd={12} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="description" placeholder="Beschreibung" />
-                <MudTypeahead title="Geschlechter" options={[]} allowNew colmd={12} multiple id='gender-typeahead' emptyLabel="Neues Geschlecht eingeben..." onChange={dungeonConfig.setGenders as unknown as (a: Option[]) => void} selected={dungeonConfig.genders} />
-                <MudTypeahead title="Spezies" options={[]} allowNew colmd={12} multiple id='species-typeahead' emptyLabel="Neue Spezies eingeben..." onChange={dungeonConfig.setSpecies as unknown as (a: Option[]) => void} selected={dungeonConfig.species} />
+                <MudTypeahead title="Geschlechter" options={[]} allowNew colmd={12} multiple id='gender-typeahead' placeholder="Geschlechter" emptyLabel="Neues Geschlecht eingeben..." onChange={dungeonConfig.setGenders as unknown as (a: Option[]) => void} selected={dungeonConfig.genders} />
+                <MudTypeahead title="Spezies" options={[]} allowNew colmd={12} multiple id='species-typeahead' placeholder="Spezies" emptyLabel="Neue Spezies eingeben..." onChange={dungeonConfig.setSpecies as unknown as (a: Option[]) => void} selected={dungeonConfig.species} />
             </Row>
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={{ name: "Name", description: "Beschreibung" }} onAdd={dungeonConfig.addClass} title="Klassen" buttonText="neue Klasse anlegen" />

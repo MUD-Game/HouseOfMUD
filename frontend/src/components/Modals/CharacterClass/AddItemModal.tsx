@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, Button, ModalProps } from 'react-bootstrap';
+import { Modal, Button, ModalProps, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/MudInupt';
 import { MudItem } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import { useMudConsole } from '../../../hooks/useMudConsole';
+import '../index.css'
 //REFACTOR: Redunant Modal, make generic pls
 export interface AddItemModalProps {
     show: boolean;
@@ -40,19 +41,25 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
             size="lg"
             centered
         >
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    Neues Item anlegen
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className='row px-4 g-3'>
-                <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-            </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={props.onHide} className="btn-danger">Abbrechen</Button>
-                <Button onClick={onSubmit} className="btn-success">Anlegen</Button>
-            </Modal.Footer>
+            <Container>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        Neues Item anlegen
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='row px-4 g-3'>
+                    <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
+                    <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                </Modal.Body>
+                <Modal.Footer className="justify-content-between">
+                    <div className="col-3">
+                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">Abbrechen</Button>
+                    </div>
+                    <div className="col-6">
+                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">Anlegen</Button>
+                    </div>
+                </Modal.Footer>
+            </Container>
         </Modal>
     );
 }

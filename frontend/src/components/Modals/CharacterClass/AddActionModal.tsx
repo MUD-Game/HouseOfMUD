@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, ModalProps, Form } from 'react-bootstrap';
+import { Modal, Button, ModalProps, Form, Container } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import MudInput from 'src/components/Custom/MudInupt';
 import { MudActionElement } from 'src/types/dungeon';
@@ -9,6 +9,7 @@ import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 import { MudItem, MudEvent } from '../../../types/dungeon';
 import MudTypeahead from '../../Custom/MudTypeahead';
 import MudSelect from 'src/components/Custom/MudSelect';
+import '../index.css'
 type Option = string | { [key: string]: any };
 
 //REFACTOR: Redunant Modal, make generic pls
@@ -128,63 +129,69 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             size="lg"
             centered
         >
-            <Modal.Header closeButton>
-                <Modal.Title>
-                    Neue Aktion anlegen
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className='row px-4 g-3'>
-                <MudInput placeholder='Befehl' colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
-                <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                <MudInput placeholder='Ausgabe' colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
-                <MudTypeahead
-                    colmd={12}
-                    title={'benötigte Items'}
-                    id={"typeahead-items-needed"}
-                    labelKey={(option: any) => `${option.name} (${option.description})`}
-                    options={dconf.items}
-                    multiple
-                    onChange={setItemsNeeded}
-                    placeholder="Items auswählen"
-                    selected={itemsNeeded}
-                />
-                <MudTypeahead
-                    colmd={12}
-                    title="Events"
-                    id="typeahead-events"
-                    labelKey="events"
-                    multiple
-                    options={eventTypes}
-                    onChange={setSelectedEvents}
-                    placeholder="Items auswählen"
-                    selected={selectedEvents}
-                />
-                {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {
-                    if (mudEvent as string === 'additem' || mudEvent as string === 'removeitem') {
+            <Container>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        Neue Aktion anlegen
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className='row px-4 g-3'>
+                    <MudInput placeholder='Befehl' colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
+                    <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput placeholder='Ausgabe' colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
+                    <MudTypeahead
+                        colmd={12}
+                        title={'Benötigte Items'}
+                        id={"typeahead-items-needed"}
+                        labelKey={(option: any) => `${option.name} (${option.description})`}
+                        options={dconf.items}
+                        multiple
+                        onChange={setItemsNeeded}
+                        placeholder="Items auswählen"
+                        selected={itemsNeeded}
+                    />
+                    <MudTypeahead
+                        colmd={12}
+                        title="Events"
+                        id="typeahead-events"
+                        labelKey="events"
+                        multiple
+                        options={eventTypes}
+                        onChange={setSelectedEvents}
+                        placeholder="Items auswählen"
+                        selected={selectedEvents}
+                    />
+                    {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {
+                        if (mudEvent as string === 'additem' || mudEvent as string === 'removeitem') {
+                            return (
+                                <MudTypeahead
+                                    colmd={12}
+                                    key={mudEvent as string}
+                                    title={mudEvent as string}
+                                    id={"typeahead" + mudEvent as string}
+                                    labelKey={(option: any) => `${option.name} (${option.description})`}
+                                    options={dconf.items}
+                                    onChange={(mudEvent as string === 'additem') ? setAddItems : (a) => { setRemoveItems(a); setItemsNeeded(a) }}
+                                    placeholder="Items auswählen"
+                                    selected={(mudEvent as string === 'additem') ? addItems : removeItems}
+                                />
+                            )
+                        }
                         return (
-                            <MudTypeahead
-                                colmd={12}
-                                key={mudEvent as string}
-                                title={mudEvent as string}
-                                id={"typeahead" + mudEvent as string}
-                                labelKey={(option: any) => `${option.name} (${option.description})`}
-                                options={dconf.items}
-                                onChange={(mudEvent as string === 'additem') ? setAddItems : (a) => { setRemoveItems(a); setItemsNeeded(a) }}
-                                placeholder="Items auswählen"
-                                selected={(mudEvent as string === 'additem') ? addItems : removeItems}
-                            />
+                            <MudInput type="number" required key={mudEvent as string} placeholder={mudEvent as string} colmd={12} value={eventValues[mudEvent as string] || ""} onChange={(event) => setEventValues({ ...eventValues, [mudEvent as string]: event.target.value })} />
                         )
-                    }
-                    return (
-                        <MudInput type="number" required key={mudEvent as string} placeholder={mudEvent as string} colmd={12} value={eventValues[mudEvent as string] || ""} onChange={(event) => setEventValues({ ...eventValues, [mudEvent as string]: event.target.value })} />
-                    )
-                })}
+                    })}
 
-            </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={props.onHide} className="btn-danger">Abbrechen</Button>
-                <Button onClick={onSubmit} className="btn-success">Anlegen</Button>
-            </Modal.Footer>
+                </Modal.Body>
+                <Modal.Footer className="justify-content-between">
+                    <div className="col-3">
+                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">Abbrechen</Button>
+                    </div>
+                    <div className="col-6">
+                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">Anlegen</Button>
+                    </div>
+                </Modal.Footer>
+            </Container>
         </Modal>
     );
 }

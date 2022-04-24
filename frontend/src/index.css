@@ -5,10 +5,10 @@
   --accentlight: #a7795b;
   --accent: #6b2a00;
   --accent0:rgba(107, 43, 0, 0);
-  --lightgreen: #57c659;
-  --green: #29872c;
-  --lightred: #fa8585;
-  --red: #ff1515;
+  --green: rgb(21, 115, 71);
+  --lightgreen: rgb(37, 147, 95);
+  --red: rgb(187, 45, 59);
+  --lightred: rgb(228, 61, 78);
 }
 
 html, body {
@@ -87,6 +87,13 @@ a:hover {
   box-shadow: none;
 }
 
+.btn {
+  border-color: var(--accent);
+}
+.btn:hover {
+  border-color: var(--accent);
+}
+
 .btn-standard {
   width: 100%;
   color: var(--textcolor);
@@ -97,7 +104,7 @@ a:hover {
 }
 
 .btn-green {
-  color: var(--textcolor);
+  color: white;
   background-color: var(--lightgreen);
 }
 .btn-green:hover {
@@ -106,7 +113,7 @@ a:hover {
 }
 
 .btn-red {
-  color: var(--textcolor);
+  color: white;
   background-color: var(--lightred);
 }
 .btn-red:hover {

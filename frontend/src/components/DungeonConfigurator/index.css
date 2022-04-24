@@ -1,0 +1,23 @@
+#editIcon, #deleteIcon {
+    opacity: 0.2;
+    margin-left: 5px;
+    transition: opacity .1s ease-in, transform .05s ease-in;
+}
+
+.row:hover #editIcon, .row:hover #deleteIcon {
+    opacity: 1;
+}
+
+#editIcon:hover, #deleteIcon:hover {
+    transform: scale(1.2);
+}
+
+.configurator-item {
+    border-radius: .3em;
+    transition: background-color .1s ease-in;
+}
+
+.configurator-item:hover {
+    background-color: rgb(146, 144, 141);
+    box-shadow: 0em 0em .3em rgb(146, 144, 141);
+}

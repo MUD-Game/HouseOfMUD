@@ -1,0 +1,56 @@
+{
+    "references":[
+      {
+        "path": "../backend/supervisor"
+       }
+    ],
+  "compilerOptions": {
+    "target": "es6",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "es2017"
+    ],
+    "disableReferencedProjectLoad": true,
+    "baseUrl": ".",
+    "sourceMap": true,
+    "importHelpers": true,
+    "noEmit": true,
+    "typeRoots":
+      ["node_modules/@types"],
+      "paths":{
+        "@HOM/*":["../@types/*"],
+        "@supervisor/*":["../backend/supervisor/src/types/*"],
+        "@host/*":["../backend/game/host/types/*"]
+      },
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react",
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "typedocOptions": {
+    "entryPoints": ["src/"],
+    "categorizeByGroup": true,
+    "entryPointStrategy": "expand",
+    "out": "../TypeDoc-Documentation/Frontend/",
+    "name": "Frontend",
+    "readme": "readme-typedoc.md",
+    "media": "typedoc-media/"
+  }
+}

@@ -1,0 +1,20 @@
+@keyframes spin {
+  0% {
+    transform: rotate(360deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(0.5);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.lama-wrapper {  
+  height: 40vh;
+}
+
+#lama{
+  animation: spin 1.5s infinite linear;
+  height: 100%;
+}

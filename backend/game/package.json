@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "start": "npx tsc && node ./dist/src/host/host.js",
+    "build": "npx tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@types/amqplib": "^0.8.2",
+    "@types/js-yaml": "^4.0.5",
+    "@types/node": "^17.0.25",
+    "@types/socket.io-client": "^3.0.0",
+    "amqplib": "^0.8.0",
+    "js-yaml": "^4.1.0",
+    "socket.io-client": "^4.4.1",
+    "typedoc": "^0.22.15",
+    "typedoc-umlclass": "^0.6.0"
+  }
+}

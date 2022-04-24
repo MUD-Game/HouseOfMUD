@@ -18,8 +18,8 @@ const auth = async (req: Request , res: Response, next: NextFunction) => {
             if (authStatus) backToken = mockauth.authToken;
         }
        
-            res.cookie('authToken', backToken || "", { maxAge: authStatus ? 3600 * 1000 : 0, secure: true });
-            res.cookie('user', user || "", {  maxAge: authStatus ? 3600 * 1000 : 0, secure: true });
+            res.cookie('authToken', backToken || "", { maxAge: authStatus ? 3600 * 1000 : 0, httpOnly: true, secure: true });
+            res.cookie('user', user || "", {  maxAge: authStatus ? 3600 * 1000 : 0, httpOnly: true, secure: true });
             authStatus || res.json({ ok: 0, error: 'Not Authorized' }) ;
             authStatus && next(); // Only go to the next one if the user is authenticated
     } catch (error){

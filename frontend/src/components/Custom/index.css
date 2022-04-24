@@ -34,8 +34,6 @@ input:focus-visible, select:focus-visible, select:focus, input:focus {
 /**
  * Menu
  */
-.rbt-menu {
-}
 .rbt-menu > .dropdown-item {
   overflow: hidden;
   text-overflow: ellipsis;

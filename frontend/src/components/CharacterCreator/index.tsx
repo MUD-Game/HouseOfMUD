@@ -17,14 +17,13 @@ import { useEffect } from 'react'
 import { useGame } from 'src/hooks/useGame'
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
-import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesResponse } from '@supervisor/api';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useMudConsole } from '../../hooks/useMudConsole';
-import { ErrorResponse } from '../../types/supervisor';
-import { CharactersResponseData } from '../../../../backend/supervisor/src/types/api';
+import { CharactersResponseData } from '@supervisor/api';
 export interface CharacterCreatorProps { }
 
 

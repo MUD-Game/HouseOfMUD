@@ -1,13 +1,13 @@
 import React from 'react';
 import { MudActionElement, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
-import { MudCharacterSpecies, MudCharacterGender, MudCharacterClass } from '../types/dungeon';
+import { MudCharacterClass } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
 import AddClassModal from 'src/components/Modals/CharacterClass/AddClassModal';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import AddItemModal from 'src/components/Modals/CharacterClass/AddItemModal';
 import AddActionModal from 'src/components/Modals/CharacterClass/AddActionModal';
 import { supervisor } from 'src/services/supervisor';
-import { CreateDungeonRequest } from 'src/types/supervisor';
+import { CreateDungeonRequest } from '@supervisor/api';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { useNavigate } from 'react-router-dom';
 type Option = string | { [key: string]: any };

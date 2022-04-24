@@ -13,7 +13,7 @@
 
 import React from 'react';
 import AllDungeonLi from './AllDungeonsLi';
-import { GetDungeonsResponse } from 'src/types/supervisor';
+import { GetDungeonsResponse } from '@supervisor/api';
 import { Row } from 'react-bootstrap';
 export type AllDungeonProps = {
     allDungeons: GetDungeonsResponse;

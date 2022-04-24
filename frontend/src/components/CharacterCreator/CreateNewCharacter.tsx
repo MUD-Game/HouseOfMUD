@@ -8,7 +8,7 @@
 
 import React, { FormEvent } from 'react';
 import { supervisor } from 'src/services/supervisor';
-import { CreateCharacterRequest, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { CreateCharacterRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';

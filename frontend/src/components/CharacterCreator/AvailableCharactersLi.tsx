@@ -7,7 +7,7 @@
 
 
 import React from 'react';
-import { CharactersResponseData, LoginRequest } from 'src/types/supervisor';
+import { CharactersResponseData, LoginRequest } from '@supervisor/api';
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';

@@ -16,7 +16,7 @@ import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
-import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
+import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
 import AllDungeons from './AllDungeons';
 import "./index.css"
 import { useNavigate } from 'react-router-dom';

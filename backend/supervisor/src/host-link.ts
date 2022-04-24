@@ -17,6 +17,7 @@ type Status = 'offline' | 'online';
 
 interface Dungeon {
     host?: string;
+    name: string;
     description: string;
     maxPlayers: number;
     currentPlayers: number;
@@ -147,6 +148,7 @@ export class HostLink {
 
         for (let dungeon of dungeons) {
             this.dungeons[dungeon.id] = {
+                name: dungeon.name,
                 description: dungeon.description,
                 maxPlayers: dungeon.maxPlayers,
                 currentPlayers: 0,

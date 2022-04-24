@@ -14,12 +14,21 @@ import { Dungeon } from './services/databaseadapter/datasets/dungeon';
 
 // import {DatabaseAdapter} from '@database/databaseAdapter';
 
+/**
+ * client http-API
+ */
 export class API {
     private port: number;
     private tls: TLS;
     private hostLink: HostLink;
     private dba: DatabaseAdapter;
 
+    /**
+     * @param port api port 
+     * @param tls TLS object
+     * @param hostLink host link object
+     * @param dba databaseAdapter object
+     */
     constructor(port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter) {
         this.port = port;
         this.tls = tls;
@@ -27,6 +36,9 @@ export class API {
         this.dba = dba;
     }
 
+    /**
+     * init the api
+     */
     public init() {
         const app = express();
         app.use(bodyParser.json());
@@ -45,6 +57,10 @@ export class API {
         });
     }
 
+    /**
+     * register api routes with their code
+     * @param app express app
+     */
     private registerRoutes(app: express.Application) {
         app.use((req, res, next) => {
             // res.header('Access-Control-Allow-Origin', 'https://mud-ga.me');
@@ -137,6 +153,7 @@ export class API {
             res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
         });
 
+        // get my dungeons
         app.get('/myDungeons', auth, (req, res) => {
             let user = req.cookies.user; // TODO: get myDungeons based on user   
             res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
@@ -246,6 +263,9 @@ export class API {
         });
     }
 
+    /**
+     * @returns random verifyToken 
+     */
     private generateVerifyToken(): string {
         const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
         let result: string = '';

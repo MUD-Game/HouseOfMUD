@@ -28,6 +28,9 @@ interface Dungeons {
     [dungeon: string]: Dungeon;
 }
 
+/**
+ * responsable for handling the communication between the supervisor and the host
+ */
 export class HostLink {
     private port: number;
     private tls: TLS;
@@ -64,6 +67,10 @@ export class HostLink {
         });
     }
 
+    /**
+     * register events from host
+     * @param serverSocket host socket
+     */
     private registerEvents(serverSocket: Server) {
         serverSocket.on('error', console.error);
 
@@ -138,10 +145,16 @@ export class HostLink {
         });
     }
 
+    /**
+     * @returns best available host
+     */
     private getBestHost(): string {
         return Object.keys(this.hosts)[0];
     }
 
+    /**
+     * loads all available dungeons from database
+     */
     private async loadAvailableDungeons(): Promise<void> {
 
         let dungeons = await this.databaseAdapter.getAllDungeonInfos();
@@ -157,7 +170,12 @@ export class HostLink {
         }
     }
 
-    public addDungeon(id: string, dungeonData: Dungeon) {
+    /**
+     * adds a new dungeon to the list
+     * @param id dungeon id
+     * @param dungeonData dungeon data from client
+     */
+    public addDungeon(id: string, dungeonData: any) {
         this.dungeons[id] = {
             name: dungeonData.name,
             description: dungeonData.description,
@@ -167,6 +185,9 @@ export class HostLink {
         };
     }
 
+    /**
+     * @returns dungeon informations for dashboard
+     */
     public getDungeons(): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
@@ -178,6 +199,13 @@ export class HostLink {
         return dungeons;
     }
 
+    /**
+     * sends the verify token to specific host
+     * @param dungeonID dungeon id
+     * @param user user id
+     * @param character character id
+     * @param verifyToken verify token
+     */
     public setCharacterToken(dungeonID: string, user: string, character: string, verifyToken: string): void {
         const host: Host | undefined = this.getHostFromDungeon(dungeonID);
         if (host !== undefined) {
@@ -190,6 +218,10 @@ export class HostLink {
         }
     }
 
+    /**
+     * send a dungeon start event to a host
+     * @param dungeonID dungeon id
+     */
     public startDungeon(dungeonID: string): void {
         if (this.dungeonExists(dungeonID)) {
             const host: string = this.getBestHost();
@@ -206,6 +238,10 @@ export class HostLink {
         }
     }
 
+    /**
+     * sends a dungeon stop event to a host
+     * @param dungeonID dungeon id
+     */
     public stopDungeon(dungeonID: string): void {
         const host: Host | undefined = this.getHostFromDungeon(dungeonID);
         if (host !== undefined) {
@@ -213,17 +249,18 @@ export class HostLink {
         }
     }
 
-    public stopDungoen(dungeonID: string): void {
-        const host: Host | undefined = this.getHostFromDungeon(dungeonID);
-        if (host !== undefined) {
-            host.socket.emit('stop', dungeonID);
-        }
-    }
-
+    /**
+     * @param dungeon dungeon id
+     * @returns if dungeon exitsts
+     */
     public dungeonExists(dungeon: string): boolean {
         return dungeon in this.dungeons;
     }
 
+    /**
+     * @param dungeon dungeon id
+     * @returns the Host object of the dungeon
+     */
     private getHostFromDungeon(dungeon: string): Host | undefined {
         if (this.dungeonExists(dungeon)) {
             if (this.dungeons[dungeon].host !== undefined) {

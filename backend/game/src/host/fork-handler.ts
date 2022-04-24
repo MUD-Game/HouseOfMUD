@@ -61,9 +61,14 @@ export class ForkHandler {
      * @param message Message from dungeon worker.
      */
     private workerMessageHandler(dungeon: string, message: any): void {
-
+        // TODO: currentPlayers update
     }
 
+    /**
+     * notify the supervisor that the worker has exited
+     * @param dungeon Dungeon that belongs to the fork.
+     * @param code exit code
+     */
     private workerExitHandler(dungeon: string, code: number | null): void {
         if (dungeon in this.dungeonWorker) {
             let killTimeout = this.dungeonWorker[dungeon].killTimeout!;
@@ -100,6 +105,11 @@ export class ForkHandler {
         // else Dungeon already exists
     }
 
+    /**
+     * sends a stop signal to dungeon.
+     * after a timeout the process is killed if it's still running.
+     * @param dungeon Dungeon that belongs to the fork.
+     */
     stopDungeon(dungeon: string) {
         if (dungeon in this.dungeonWorker) {
             this.sendToWorker(dungeon, 'stop', {});
@@ -115,7 +125,6 @@ export class ForkHandler {
     /**
      * Sends message received from amqp handler to worker. ANPASSEN
      * @param dungeon Dungeon that belongs to the fork.
-     * @param user Message sender.
      * @param action Action that shall be performed by worker.
      * @param data Message data.
      */

@@ -1,6 +1,9 @@
 import { io } from 'socket.io-client';
 import { ForkHandler } from './fork-handler';
 
+/**
+ * responsable for handling the communication between the host and the supervisor
+ */
 export class SupervisorLink {
 
     private name: string;
@@ -11,6 +14,14 @@ export class SupervisorLink {
 
     private forkHandler: ForkHandler;
 
+    /**
+     * @param name the name of the host
+     * @param url supervisor url
+     * @param port supervisor port
+     * @param tls use tls
+     * @param authKey supervisor authentication
+     * @param forkHandler object that handles the forks
+     */
     constructor(name: string, url: string, port: number, tls: boolean, authKey: string, forkHandler: ForkHandler) {
         this.name = name;
         this.url = url;
@@ -21,6 +32,9 @@ export class SupervisorLink {
         this.forkHandler = forkHandler;
     }
 
+    /**
+     * connect to the supervisor and register events
+     */
     public connect() {
         const protocol: string = this.tls ? 'wss' : 'ws';
         const url: string = `${protocol}://${this.url}:${this.port}?name=${this.name}&key=${this.authKey}`;

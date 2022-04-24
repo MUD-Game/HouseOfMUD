@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Toast, ToastContainer, ToastProps } from 'react-bootstrap';
-import { ErrorResponse } from '../types/supervisor';
+import { ErrorResponse } from '@supervisor/api';
 
 type ConsoleContextType = {
   log: (message: string, location?: string) => void;
@@ -52,7 +52,7 @@ function ConsoleProvider({ children }: { children: React.ReactNode }) {
   }
 
   const supervisorerror = (err: ErrorResponse) => {
-    addToast('info', err.error, "Supervisor");
+    addToast('danger', err.error, "Supervisor");
   }
 
   const error = (message: string, location?: string) => {

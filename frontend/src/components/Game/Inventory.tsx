@@ -14,8 +14,10 @@ export interface InventoryProps {
 const Inventory: React.FC<InventoryProps> = ({ items }) => {
     return (
         <div>
-            <p>INVENTORY</p>
-            {/* TODO: List the items here */}
+            <span>INVENTORY</span>
+            <div className="mock-placeholder inventory drawn-border">
+                <p className='text-center p-5'>Inventory</p>
+            </div>
         </div>
     )
 }

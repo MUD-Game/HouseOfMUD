@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "npx tsc && node ./dist/src/host/host.js",
+    "build": "npx tsc"
+  },
   "devDependencies": {
     "typescript": "^4.6.3"
   },

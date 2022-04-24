@@ -20,8 +20,8 @@ const IndexRouter: React.FC = (): ReactElement => {
     return (
         <ConsoleProvider>
 
-            <AuthProvider>
                 <BrowserRouter>
+            <AuthProvider>
                     <Header />
                     <GameProvider>
                         <Routes>
@@ -43,8 +43,8 @@ const IndexRouter: React.FC = (): ReactElement => {
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </GameProvider>
+                </AuthProvider>
                 </BrowserRouter>
-            </AuthProvider>
         </ConsoleProvider>
     );
 };

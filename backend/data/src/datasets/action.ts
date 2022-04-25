@@ -11,8 +11,8 @@ export interface Action {
 }
 
 export const actionSchema = new Schema<Action>({
-  id: { type: String, required: true, unique: true },
-  command: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
+  command: { type: String, required: true },
   output: { type: String },
   description: { type: String },
   events: [{ type: Schema.Types.Mixed }],

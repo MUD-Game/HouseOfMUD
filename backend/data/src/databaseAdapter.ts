@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import { Action, actionSchema } from "./datasets/action";
 import { Character, characterSchema } from "./datasets/character";
 import { CharacterClass, characterClassSchema } from "./datasets/characterClass";
@@ -13,6 +13,9 @@ import { User, userSchema } from "./datasets/user";
 /**
  * encapsulation of the mongoose API
  */
+
+
+
 export class DatabaseAdapter {
     connection: mongoose.Connection;
     item: mongoose.Model<Item>
@@ -27,7 +30,7 @@ export class DatabaseAdapter {
     user: mongoose.Model<User>
 
     constructor(connectionString: string){
-        this.connection = mongoose.createConnection(connectionString)
+        this.connection = mongoose.createConnection(connectionString);
         this.item = this.connection.model<Item>('Item', itemSchema)
         this.action = this.connection.model<Action>('Action', actionSchema)
         this.character = this.connection.model<Character>('Character', characterSchema)
@@ -45,14 +48,12 @@ export class DatabaseAdapter {
      * @param dungeonToStore the 'Dungeon' dataset that contains all information of the dungeon
      */
     async storeDungeon(dungeonToStore:Dungeon) {
-        this.dungeon.create({
-            id: dungeonToStore.id,
+        return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
             creatorId: dungeonToStore.creatorId, 
             masterId: dungeonToStore.masterId,
             maxPlayers: dungeonToStore.maxPlayers,
-            currentPlayers: dungeonToStore.currentPlayers,
             blacklist: dungeonToStore.blacklist,
             characters: await this.character.insertMany(dungeonToStore.characters),
             characterClasses: await this.characterClass.insertMany(dungeonToStore.characterClasses),
@@ -71,24 +72,23 @@ export class DatabaseAdapter {
      * @returns complete dungeon dataset with all sub objects
      */
     async getDungeon(id: string){
-        const foundDungeon = await this.dungeon.findOne({id: id})
+        const foundDungeon = await this.dungeon.findOne({_id: new mongoose.Types.ObjectId(id)})
         return {
-            id : foundDungeon.id,
-            name: foundDungeon.name,
-            description: foundDungeon.description,
-            creatorId: foundDungeon.description,
-            masterId: foundDungeon.masterId,
-            maxPlayers: foundDungeon.maxPlayers,
-            currentPlayers: foundDungeon.currentPlayers,
-            blacklist: foundDungeon.blacklist,
-            characters: (await foundDungeon.populate('characters')).characters,
-            characterClasses: (await foundDungeon.populate('characterClasses')).characterClasses,
-            characterSpecies: (await foundDungeon.populate('characterSpecies')).characterSpecies,
-            characterGender: (await foundDungeon.populate('characterGender')).characterGender,
-            rooms: (await foundDungeon.populate('rooms')).rooms,
-            items: (await foundDungeon.populate('items')).items,
-            npcs: (await foundDungeon.populate('npcs')).npcs,
-            actions: (await foundDungeon.populate('actions')).actions
+            _id : foundDungeon!.id,
+            name: foundDungeon!.name,
+            description: foundDungeon!.description,
+            creatorId: foundDungeon!.description,
+            masterId: foundDungeon!.masterId,
+            maxPlayers: foundDungeon!.maxPlayers,
+            blacklist: foundDungeon!.blacklist,
+            characters: (await foundDungeon!.populate('characters')).characters,
+            characterClasses: (await foundDungeon!.populate('characterClasses')).characterClasses,
+            characterSpecies: (await foundDungeon!.populate('characterSpecies')).characterSpecies,
+            characterGender: (await foundDungeon!.populate('characterGender')).characterGender,
+            rooms: (await foundDungeon!.populate('rooms')).rooms,
+            items: (await foundDungeon!.populate('items')).items,
+            npcs: (await foundDungeon!.populate('npcs')).npcs,
+            actions: (await foundDungeon!.populate('actions')).actions
         }
     }
 
@@ -98,7 +98,7 @@ export class DatabaseAdapter {
      * @returns the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
      */
     async getDungeonInfo(id: string){
-        return (await this.dungeon.findOne({id: id}, 
+        return (this.dungeon.findOne({id: id}, 
             'id name description creatorId masterId maxPlayers currentPlayers'))
     }
 
@@ -107,18 +107,53 @@ export class DatabaseAdapter {
      * @returns an array of the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
      */
     async getAllDungeonInfos(){
-        return (await this.dungeon.find({}, 
+        return (this.dungeon.find({}, 
             'id name description creatorId masterId maxPlayers currentPlayers'))
     }
 
+    /**
+     * gets a list of all character datasets inside a dungeon
+     * @param id the id of the dungeon to get the characters from
+     * @returns an array of Characters (Promisses)
+     */
+    async getAllCharactersFromDungeon(id: string){
+        const foundDungeon = await this.dungeon.findOne({_id: new mongoose.Types.ObjectId(id)})
+        return (await foundDungeon!.populate('characters')).characters
+    }
+    
+    /**
+     * checks if a specified character exists inside of a dungeon
+     * @param characterId the id of the dungeon to search for
+     * @param dungeonId the id of the dungeon dungeon in which the character should exist
+     * @returns true if the character could be found inside the dungeon, false if not
+     */
+    async characterExistsInDungeon(characterId: string, dungeonId: string){
+        var foundFlag = false
+        const foundDungeon = await this.dungeon.findOne({_id: new mongoose.Types.ObjectId(dungeonId)})
+        const foundCharacters =  (await foundDungeon!.populate('characters')).characters
+        foundCharacters.forEach(char => {
+            if (char.id == characterId){
+                foundFlag = true
+            }            
+        })
+        return foundFlag
+    }
+
+    /**
+     * creates a new character inside the characters collection and references it from the specified dungeon
+     * @param newCharacter the character to store
+     * @param dungeonId the id of the dungeon to reference the character from
+     * @returns the query response (information about the performed database action)
+     */
+    async storeCharacterInDungeon(newCharacter: Character, dungeonId: string){
+        return this.dungeon.updateOne({_id: dungeonId}, {$push: {characters: await this.character.create(newCharacter)}})
+    }
 
 
-    //TODO: get dungeon info für alle existierenden dungeons
-    //TODO: get dungeon info (name, desc, maxplayer, currentplayer, creator, master) für Supervisor
     //TODO: get dungeon (alle infos ohne characters)
-    //TODO: get characters from dungeon id
-    //TODO: store characters for dungeon
     //TODO: editierten Raum speichern
     //TODO: editierten Character speichern
+    //TODO: character aus dungeon löschen
     //TODO: editierten Dungeon speichern
+    //TODO: dungeon löschen
 }

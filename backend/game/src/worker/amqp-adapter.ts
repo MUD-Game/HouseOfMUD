@@ -87,6 +87,7 @@ export class AmqpAdapter {
     async initClient(user: string): Promise<void> {
         if (this.isConnected()) {
             try {
+                console.log('asdasd');
                 await this.channel!.assertQueue(`${this.dungeonID}-${user}`, { autoDelete: true });
                 await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.user.${user}`);
                 await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.broadcast`);

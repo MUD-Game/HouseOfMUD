@@ -30,7 +30,7 @@ export class DatabaseAdapter {
     user: mongoose.Model<User>
 
     constructor(connectionString: string){
-        this.connection = mongoose.createConnection(connectionString);
+        this.connection = mongoose.createConnection(connectionString, { dbName: 'test' });
         this.item = this.connection.model<Item>('Item', itemSchema)
         this.action = this.connection.model<Action>('Action', actionSchema)
         this.character = this.connection.model<Character>('Character', characterSchema)

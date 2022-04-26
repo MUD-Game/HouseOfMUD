@@ -22,8 +22,17 @@ export class DungeonController {
     init() {
         this.amqpAdapter.consume((consumeMessage: ConsumeMessage) => {
             let data = JSON.parse(consumeMessage.content.toString());
+            console.log(data);
+            switch (data.action) {
+                case 'login':
+                    this.amqpAdapter.initClient(data.character);
+                    break;
+                case 'message':
+                    this.actionHandler.processAction(data.character, data.data.message);
+                    break;
+            }
             // TODO: check verifyToken
-            this.actionHandler.processAction(data.character, data.data.message);
+            // this.actionHandler.processAction(data.character, data.data.message);
         });
     }
 

@@ -66,7 +66,7 @@ export interface LoginResponse extends SupervisorResponse , LoginResponseData {}
  * @category Request
  */
 export interface StartDungeonRequest extends SupervisorRequest {
-    user: string;
+    // user: string;
 }
 
 /**

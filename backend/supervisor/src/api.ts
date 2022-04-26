@@ -131,12 +131,19 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', /*auth,*/ (req, res) => {
+        app.post('/startDungeon/:dungeonID', /*auth,*/ async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
-                this.hostLink.startDungeon(dungeonID);
-                res.json({ ok: 1 });
+                try {
+                    if (await this.hostLink.startDungeon(dungeonID)) {
+                        res.json({ ok: 1 });
+                    } else {
+                        res.json({ ok: 0, error: 'Dungeon could not be created' });
+                    }
+                } catch (err) {
+                    res.json({ ok: 0, error: 'Something went wrong' });
+                }
             } else {
                 res.json({ ok: 0, error: 'Dungeon does not exists' });
             }
@@ -161,8 +168,9 @@ export class API {
 
         // get my dungeons
         app.get('/myDungeons', auth, (req, res) => {
-            let user = req.cookies.user; // TODO: get myDungeons based on user   
-            res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
+            res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
+            // let user = req.cookies.user; // TODO: get myDungeons based on user   
+            // res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
         });
 
         // create dungeon

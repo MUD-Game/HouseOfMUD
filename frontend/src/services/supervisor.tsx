@@ -101,7 +101,7 @@ const supervisor = {
     },
 
     startDungeon(dungeonID: string, body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest(`/start/${dungeonID}`, "POST", body, {}, dataCallBack, error);
+        genericRequest(`/startDungeon/${dungeonID}`, "POST", body, {}, dataCallBack, error);
     },
 
     stopDungeon(dungeonID: string, body: StopDungeonRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {

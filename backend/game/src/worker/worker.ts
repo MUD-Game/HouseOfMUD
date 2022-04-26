@@ -184,8 +184,8 @@ function getDungeon(dungeonID: string): Dungeon {
         4
     );
     const TestCharacter: Character = new CharacterImpl(
-        '1',
-        '1',
+        'Jeff',
+        'Jeff',
         '1',
         'Jeff',
         'Magier',

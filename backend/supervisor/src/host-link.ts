@@ -222,20 +222,25 @@ export class HostLink {
      * send a dungeon start event to a host
      * @param dungeonID dungeon id
      */
-    public startDungeon(dungeonID: string): void {
+    public async startDungeon(dungeonID: string): Promise<boolean> {
         if (this.dungeonExists(dungeonID)) {
             const host: string = this.getBestHost();
             if (this.hosts[host] !== undefined) {
-                this.hosts[host].socket.emit('start', { dungeonID: dungeonID }, (created: boolean) => {
-                    if (created) {
-                        this.hosts[host].dungeons.push(dungeonID);
-                        this.dungeons[dungeonID].host = host;
-                        this.dungeons[dungeonID].status = 'online';
-                        this.dungeons[dungeonID].currentPlayers = 0;
-                    }
+                return new Promise<boolean>((resolve, reject) => {
+                    this.hosts[host].socket.emit('start', { dungeonID: dungeonID }, (created: boolean) => {
+                        if (created) {
+                            this.hosts[host].dungeons.push(dungeonID);
+                            this.dungeons[dungeonID].host = host;
+                            this.dungeons[dungeonID].status = 'online';
+                            this.dungeons[dungeonID].currentPlayers = 0;
+                            return resolve(true);
+                        }
+                        return resolve(false);
+                    });
                 });
             }
         }
+        return false;
     }
 
     /**

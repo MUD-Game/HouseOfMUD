@@ -24,25 +24,23 @@ export class PrivateMessageAction implements Action {
         let dungeonId: string = dungeon.getId()
         let roomId: string = senderCharacter.getPosition()
         let room: Room = dungeon.getRoom(roomId)
-        let routingKeySender = `${dungeonId}.character.${senderCharacterId}`
         let recipientCharacterName: string = args[0]
         try {
             let recipientCharacter: Character = dungeon.getCharacterByName(recipientCharacterName)
             let recipientCharacterRoomId: string = recipientCharacter.getPosition()
             let recipientCharacterId: string = recipientCharacter.getId()
-            let routingKeyRecipient = `${dungeonId}.character.${recipientCharacterId}`
             if (recipientCharacterRoomId === room.getId()) {
                 args.shift()
                 let messageBody: string = args.join(' ')
                 let responseMessage: string = `[privat] ${senderCharacterName} -> ${recipientCharacterName}: ${messageBody}`
-                amqpAdapter.sendToClient(routingKeySender, {action: "message", data: {message: responseMessage}})
-                amqpAdapter.sendToClient(routingKeyRecipient, {action: "message", data: {message: responseMessage}})
+                amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
+                amqpAdapter.sendToClient(recipientCharacterId, {action: "message", data: {message: responseMessage}})
             } else {
-                amqpAdapter.sendToClient(routingKeySender, {action: "message", data: {message: `${recipientCharacterName} ist nicht in diesem Raum!`}})
+                amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ist nicht in diesem Raum!`}})
             }
         } catch(e) {
             console.log(e)
-            amqpAdapter.sendToClient(routingKeySender, {action: "message", data: {message: `Der Charakter ${recipientCharacterName} existiert nicht in diesem Dungeon!`}})
+            amqpAdapter.sendToClient(user, {action: "message", data: {message: `Der Charakter ${recipientCharacterName} existiert nicht in diesem Dungeon!`}})
         }
         
     }

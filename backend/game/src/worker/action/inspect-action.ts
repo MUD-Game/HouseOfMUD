@@ -27,11 +27,10 @@ export class InspectAction implements Action {
                 inspectMessage = `Du untersuchst ${itemName}: ${itemDescription}`
             }
         })
-        let routingKeySender = `${dungeonId}.character.${user}`
         if (userHasItem) {
-            this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: inspectMessage}})
+            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inspectMessage}})
         } else {
-            this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: "Du besitzt dieses Item nicht!"}})
+            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: "Du besitzt dieses Item nicht!"}})
         }
         
     }

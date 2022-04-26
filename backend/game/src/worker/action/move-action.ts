@@ -68,12 +68,12 @@ export class MoveAction implements Action {
                     break;
             }
             if (invalidDirection) {
-                amqpAdapter.sendToClient(routingKeySender, {
+                amqpAdapter.sendToClient(user, {
                     action: 'message',
                     data: { message: `Diese Richtung existiert nicht!` },
                 });
             } else if (closedPath) {
-                amqpAdapter.sendToClient(routingKeySender, {
+                amqpAdapter.sendToClient(user, {
                     action: 'message',
                     data: { message: `In diese Richtung ist der Raum geschlossen!` },
                 });
@@ -81,7 +81,7 @@ export class MoveAction implements Action {
                 let destinationRoomId: string = destinationRoom.getId();
                 let destinationRoomName: string = destinationRoom.getName();
                 senderCharacter.modifyPosition(destinationRoomId);
-                let routingKey: string = `${dungeonId}.room.${destinationRoomId}`;
+                let routingKey: string = `room.${destinationRoomId}`;
                 amqpAdapter.unbindClientQueue(user, `room.${currentRoomId}`);
                 amqpAdapter.bindClientQueue(user, `room.${destinationRoomId}`);
                 amqpAdapter.sendWithRouting(routingKey, {
@@ -91,7 +91,7 @@ export class MoveAction implements Action {
             }
         } catch (e) {
             console.log(e);
-            amqpAdapter.sendToClient(routingKeySender, {
+            amqpAdapter.sendToClient(user, {
                 action: 'message',
                 data: { message: `In diese Richtung existiert kein Raum!` },
             });

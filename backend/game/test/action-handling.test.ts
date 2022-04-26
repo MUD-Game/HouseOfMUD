@@ -328,7 +328,7 @@ describe('Actions', () => {
             'Hallo',
             'zusammen!',
         ]);
-        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('1.room.1', {
+        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
             data: { message: '[Raum-1] Jeff sagt Hallo zusammen!' },
         });
@@ -339,11 +339,11 @@ describe('Actions', () => {
             'Spieler',
             'Hallo',
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: '[privat] Jeff -> Spieler: Hallo' },
         });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.2', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('2', {
             action: 'message',
             data: { message: '[privat] Jeff -> Spieler: Hallo' },
         });
@@ -354,7 +354,7 @@ describe('Actions', () => {
             'Bob',
             'Hallo',
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'Bob ist nicht in diesem Raum!' },
         });
@@ -365,7 +365,7 @@ describe('Actions', () => {
             'Held',
             'Hallo',
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: {
                 message:
@@ -383,7 +383,7 @@ describe('Actions', () => {
             'room.1'
         );
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('1', 'room.2');
-        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('1.room.2', {
+        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
             data: { message: 'Jeff ist Raum-N beigetreten!' },
         });
@@ -407,7 +407,7 @@ describe('Actions', () => {
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', () => {
         TestDungeon.characters[0].position = TestRoomNorth.id;
         moveAction.performAction(TestDungeon.characters[0].id, ['Osten']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'In diese Richtung existiert kein Raum!' },
         });
@@ -416,7 +416,7 @@ describe('Actions', () => {
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', () => {
         TestDungeon.characters[0].position = TestRoomNorth.id;
         moveAction.performAction(TestDungeon.characters[0].id, ['Nord-Sueden']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'Diese Richtung existiert nicht!' },
         });
@@ -425,7 +425,7 @@ describe('Actions', () => {
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', () => {
         TestDungeon.characters[0].position = TestRoomNorth.id;
         moveAction.performAction(TestDungeon.characters[0].id, ['Norden']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'In diese Richtung ist der Raum geschlossen!' },
         });
@@ -434,7 +434,7 @@ describe('Actions', () => {
 
     test('LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload', () => {
         lookAction.performAction(TestDungeon.characters[0].id, []);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: {
                 message:
@@ -445,7 +445,7 @@ describe('Actions', () => {
 
     test('InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload', () => {
         inventoryAction.performAction(TestDungeon.characters[0].id, []);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'Du hast folgende Items im Inventar: Apfel' },
         });
@@ -453,7 +453,7 @@ describe('Actions', () => {
 
     test('InspectAction should call sendToClient on AmqpAdapter with the correct routingKey and payload', () => {
         inspectAction.performAction(TestDungeon.characters[0].id, ['Apfel']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'Du untersuchst Apfel: Apfliger Apfel' },
         });
@@ -461,7 +461,7 @@ describe('Actions', () => {
 
     test('InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item', () => {
         inspectAction.performAction(TestDungeon.characters[0].id, ['Birne']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1.character.1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'Du besitzt dieses Item nicht!' },
         });

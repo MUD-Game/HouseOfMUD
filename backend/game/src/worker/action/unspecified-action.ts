@@ -11,6 +11,6 @@ export default class UnspecifiedAction implements Action {
         this.dungeonController = dungeonController
     }
     performAction(user: string, args: string[]) {
-        throw new Error("Method not implemented.");
+        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: "Diese Aktion existiert nicht!"}})
     }
 }

@@ -4,6 +4,7 @@ import { Character, characterSchema } from "./datasets/character";
 import { CharacterClass, characterClassSchema } from "./datasets/characterClass";
 import { CharacterGender, characterGenderSchema } from "./datasets/characterGender";
 import { CharacterSpecies, characterSpeciesSchema } from "./datasets/characterSpecies";
+import { CharacterStats } from "./datasets/charcterStats";
 import { Dungeon, dungeonSchema } from "./datasets/dungeon";
 import { Item, itemSchema } from "./datasets/item";
 import { Npc, npcSchema } from "./datasets/npc";
@@ -13,9 +14,6 @@ import { User, userSchema } from "./datasets/user";
 /**
  * encapsulation of the mongoose API
  */
-
-
-
 export class DatabaseAdapter {
     connection: mongoose.Connection;
     item: mongoose.Model<Item>
@@ -29,8 +27,8 @@ export class DatabaseAdapter {
     room: mongoose.Model<Room>
     user: mongoose.Model<User>
 
-    constructor(connectionString: string){
-        this.connection = mongoose.createConnection(connectionString);
+    constructor(connectionString: string, databaseName: string){
+        this.connection = mongoose.createConnection(connectionString, {dbName: databaseName});
         this.item = this.connection.model<Item>('Item', itemSchema)
         this.action = this.connection.model<Action>('Action', actionSchema)
         this.character = this.connection.model<Character>('Character', characterSchema)
@@ -73,23 +71,104 @@ export class DatabaseAdapter {
      */
     async getDungeon(id: string){
         const foundDungeon = await this.dungeon.findOne({_id: new mongoose.Types.ObjectId(id)})
-        return {
-            _id : foundDungeon!.id,
-            name: foundDungeon!.name,
-            description: foundDungeon!.description,
-            creatorId: foundDungeon!.description,
-            masterId: foundDungeon!.masterId,
-            maxPlayers: foundDungeon!.maxPlayers,
-            blacklist: foundDungeon!.blacklist,
-            characters: (await foundDungeon!.populate('characters')).characters,
-            characterClasses: (await foundDungeon!.populate('characterClasses')).characterClasses,
-            characterSpecies: (await foundDungeon!.populate('characterSpecies')).characterSpecies,
-            characterGender: (await foundDungeon!.populate('characterGender')).characterGender,
-            rooms: (await foundDungeon!.populate('rooms')).rooms,
-            items: (await foundDungeon!.populate('items')).items,
-            npcs: (await foundDungeon!.populate('npcs')).npcs,
-            actions: (await foundDungeon!.populate('actions')).actions
+        if (foundDungeon == undefined){
+            return undefined
         }
+        return {
+            _id : foundDungeon.id,
+            name: foundDungeon.name,
+            description: foundDungeon.description,
+            creatorId: foundDungeon.description,
+            masterId: foundDungeon.masterId,
+            maxPlayers: foundDungeon.maxPlayers,
+            blacklist: foundDungeon.blacklist,
+            characters: (await foundDungeon.populate('characters')).characters,
+            characterClasses: (await foundDungeon.populate('characterClasses')).characterClasses,
+            characterSpecies: (await foundDungeon.populate('characterSpecies')).characterSpecies,
+            characterGender: (await foundDungeon.populate('characterGender')).characterGender,
+            rooms: (await foundDungeon.populate('rooms')).rooms,
+            items: (await foundDungeon.populate('items')).items,
+            npcs: (await foundDungeon.populate('npcs')).npcs,
+            actions: (await foundDungeon.populate('actions')).actions
+        }
+    }
+
+    /**
+     * deletes a dungeon from the dungeons collection inside the database
+     * @param dungeonId the ObjectId of the dungeon to delete
+     * @returns the query response (information about the performed database action)
+     */
+    async deleteDungeon(dungeonId: string){
+        const foundDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        if (foundDungeon == undefined){
+            return undefined
+        }
+        foundDungeon.characters.forEach(async char => {
+            await this.character.findByIdAndDelete(char)
+        })
+        foundDungeon.characterClasses.forEach(async charClass => {
+            await this.characterClass.findByIdAndDelete(charClass)
+        })
+        foundDungeon.characterSpecies.forEach(async charSpec => {
+            await this.characterSpecies.findByIdAndDelete(charSpec)
+        })
+        foundDungeon.characterGender.forEach(async charGen => {
+            await this.characterGender.findByIdAndDelete(charGen)
+        })
+        foundDungeon.rooms.forEach(async r => {
+            await this.room.findByIdAndDelete(r)
+        })
+        foundDungeon.items.forEach(async it => {
+            await this.item.findByIdAndDelete(it)
+        })
+        foundDungeon.npcs.forEach(async npc => {
+            await this.npc.findByIdAndDelete(npc)
+        })
+        foundDungeon.actions.forEach(async ac => {
+            await this.action.findByIdAndDelete(ac)
+        })
+    }
+
+    /**
+     * updates a dungeon with a specified id with the new dungeon data (all character information will be taken over)
+     * @param dungeonId the object id of the dungeon to update
+     * @param newDungeon the new dungeon data
+     * @returns the new Dungeon data
+     */
+    async updateDungeon(dungeonId: string, newDungeon: Dungeon){
+        const oldDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        if (oldDungeon == undefined){
+            return undefined
+        }
+        oldDungeon.rooms.forEach(async r => {
+            await this.room.findByIdAndDelete(r)
+        })
+        oldDungeon.items.forEach(async it => {
+            await this.item.findByIdAndDelete(it)
+        })
+        oldDungeon.npcs.forEach(async npc => {
+            await this.npc.findByIdAndDelete(npc)
+        })
+        oldDungeon.actions.forEach(async ac => {
+            await this.action.findByIdAndDelete(ac)
+        })
+
+        return this.dungeon.create({
+            name: newDungeon.name,
+            description: newDungeon.description,
+            creatorId: newDungeon.creatorId, 
+            masterId: newDungeon.masterId,
+            maxPlayers: newDungeon.maxPlayers,
+            blacklist: newDungeon.blacklist,
+            characters: oldDungeon.characters,
+            characterClasses: oldDungeon.characterClasses,
+            characterSpecies: oldDungeon.characterSpecies,
+            characterGender: oldDungeon.characterGender,
+            rooms: await this.room.insertMany(newDungeon.rooms),
+            items: await this.item.insertMany(newDungeon.items),
+            npcs: await this.npc.insertMany(newDungeon.npcs),
+            actions: await this.action.insertMany(newDungeon.actions)
+        })
     }
 
     /**
@@ -150,69 +229,6 @@ export class DatabaseAdapter {
     }
 
     /**
-     * updates a room inside from the rooms collection inside the database
-     * @param room the updated room (has to have the same custom id as the room that should be updated)
-     * @returns the query response (information about the performed database action)
-     */
-    async updateRoom(room: Room){
-        return this.room.updateOne({id: room.id}, room)
-    }
-
-    /**
-     * updates an item from the item collection inside the database
-     * @param item the updated item (has to have the same custom id as the item that should be updated)
-     * @returns the query response (information about the performed database action)
-     */
-    async updateItem(item: Item){
-        return this.item.updateOne({id: item.id}, item)
-    }
-
-    /**
-     * updates an item from the item collection inside the database
-     * @param item the updated item (has to have the same custom id as the item that should be updated)
-     * @returns the query response (information about the performed database action)
-     */
-     async updateDungeon(dungeonId: string, updatedDungeon: Dungeon){
-        await this.deleteDungeon(dungeonId)
-        return this.dungeon.create({
-            _id: new mongoose.Types.ObjectId(dungeonId),
-            name: updatedDungeon.name,
-            description: updatedDungeon.description,
-            creatorId: updatedDungeon.creatorId, 
-            masterId: updatedDungeon.masterId,
-            maxPlayers: updatedDungeon.maxPlayers,
-            blacklist: updatedDungeon.blacklist,
-            characters: await this.character.insertMany(updatedDungeon.characters),
-            characterClasses: await this.characterClass.insertMany(updatedDungeon.characterClasses),
-            characterSpecies: await this.characterSpecies.insertMany(updatedDungeon.characterSpecies),
-            characterGender: await this.characterGender.insertMany(updatedDungeon.characterGender),
-            rooms: await this.room.insertMany(updatedDungeon.rooms),
-            items: await this.item.insertMany(updatedDungeon.items),
-            npcs: await this.npc.insertMany(updatedDungeon.npcs),
-            actions: await this.action.insertMany(updatedDungeon.actions)
-        })
-    }
-
-    /**
-     * deletes a room from the rooms collection inside the database
-     * @param roomId the id of the room to delete
-     * @returns the query response (information about the performed database action)
-     */
-    async deleteRoom(roomId: string){
-        //! die Referenzen auf diesen Raum müssen im Backend gelöscht werden
-        return this.room.deleteOne({id: roomId})
-    }
-
-    /**
-     * deletes an item from the items collection inside the database
-     * @param itemId the id of the item to delete
-     * @returns the query response (information about the performed database action)
-     */
-    async deleteItem(itemId: string){
-        return this.item.deleteOne({id: itemId})
-    }
-
-    /**
      * deletes a character from the characters collection inside the database
      * @param characterId the id of the character to delete
      * @returns the query response (information about the performed database action)
@@ -222,14 +238,20 @@ export class DatabaseAdapter {
     }
 
     /**
-     * deletes a dungeon from the dungeons collection inside the database
-     * @param dungeonId the ObjectId of the dungeon to delete
-     * @returns the query response (information about the performed database action)
+     * updates the stats of an existing character
+     * @param characterId the id of the character to update
+     * @param stats the new stats for the character
      */
-    async deleteDungeon(dungeonId: string){
-        return this.dungeon.deleteOne({id: dungeonId})
+    async updateCharacterStats(characterId: string, stats: CharacterStats){
+        await this.character.updateOne({id: characterId}, {currentStats: stats})
     }
 
-    //TODO: editierten Character speichern
-    //? soll es überhaput die Möglichkeit geben einen Raum zu bearbeiten?
+    /**
+     * updates a room inside from the rooms collection inside the database
+     * @param room the updated room (has to have the same custom id as the room that should be updated)
+     * @returns the query response (information about the performed database action)
+     */
+    async updateRoom(room: Room){
+        return this.room.updateOne({id: room.id}, room)
+    }
 }

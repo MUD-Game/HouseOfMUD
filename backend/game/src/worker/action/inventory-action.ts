@@ -21,8 +21,7 @@ export class InventoryAction implements Action {
             let itemName: string = item.getName()
             inventoryMessage += ` ${itemName}`
         })
-        let routingKeySender = `${dungeonId}.character.${user}`
-        this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: inventoryMessage}})
+        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inventoryMessage}})
     }
 
 }

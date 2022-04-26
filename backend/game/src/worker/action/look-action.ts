@@ -82,8 +82,6 @@ export class LookAction implements Action {
         })
         actionString += ". "
         description += actionString
-
-        let routingKeySender = `${dungeonId}.character.${senderCharacterId}`
-        this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: description}})
+        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: description}})
     }
 }

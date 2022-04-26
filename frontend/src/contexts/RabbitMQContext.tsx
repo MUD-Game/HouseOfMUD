@@ -108,10 +108,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       data: {}
     };
     rabbit.onConnect = () => {
+      sendPayload(loginPayload);
       rabbit.subscribe(`/queue/${dungeon}-${characterID}`, (message: IMessage) => {
         processAction(message);
       }, { "auto-delete": "true" });
-      sendPayload(loginPayload);
     }
     rabbit.onStompError = (receipt: IFrame) => {
       errorSubscriber(receipt.body);

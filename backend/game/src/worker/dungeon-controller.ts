@@ -1,5 +1,5 @@
 import { AmqpAdapter } from "./amqp-adapter";
-import { Dungeon } from "../dungeon/dungeon"
+import { CharacterGenderImpl, CharacterImpl, CharacterSpeciesImpl, CharacterStatsImpl, Dungeon } from "../dungeon/dungeon"
 import { ConsumeMessage } from "amqplib";
 import { ActionHandlerImpl, ActionHandler } from "./action/action-handler";
 
@@ -34,6 +34,30 @@ export class DungeonController {
             // TODO: check verifyToken
             // this.actionHandler.processAction(data.character, data.data.message);
         });
+    }
+
+    createCharacter(name: string) {
+        new CharacterImpl(
+            name,
+            name,
+            '1',
+            name,
+            'Magier',
+            new CharacterSpeciesImpl(
+                '1',
+                'Hexer',
+                'Hexiger Hexer'
+            ),
+            new CharacterGenderImpl(
+                '1',
+                'Mann',
+                'Maennlicher Mann'
+            ),
+            new CharacterStatsImpl(100, 20, 100),
+            new CharacterStatsImpl(100, 20, 100),
+            "1",
+            ["1"]
+        )
     }
 
     getDungeon(): Dungeon {

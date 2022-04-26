@@ -1,5 +1,5 @@
 import { AmqpAdapter } from "./amqp-adapter";
-import { CharacterGenderImpl, CharacterImpl, CharacterSpeciesImpl, CharacterStatsImpl, Dungeon } from "../dungeon/dungeon"
+import { Character, CharacterGenderImpl, CharacterImpl, CharacterSpeciesImpl, CharacterStatsImpl, Dungeon } from "../dungeon/dungeon"
 import { ConsumeMessage } from "amqplib";
 import { ActionHandlerImpl, ActionHandler } from "./action/action-handler";
 
@@ -37,7 +37,7 @@ export class DungeonController {
     }
 
     createCharacter(name: string) {
-        new CharacterImpl(
+        let newCharacter: Character = new CharacterImpl(
             name,
             name,
             '1',
@@ -58,6 +58,7 @@ export class DungeonController {
             "1",
             ["1"]
         )
+        this.dungeon.characters.push(newCharacter)
     }
 
     getDungeon(): Dungeon {

@@ -7,7 +7,7 @@ export interface CharacterGender {
 }
 
 export const characterGenderSchema = new Schema<CharacterGender>({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
   name: { type: String },
   description: { type: String },
 });

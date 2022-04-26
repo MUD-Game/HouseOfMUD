@@ -16,7 +16,7 @@ export interface Character {
 }
 
 export const characterSchema = new Schema<Character>({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
   name: { type: String },
   userId: { type: String },
   dungeonId: { type: String },

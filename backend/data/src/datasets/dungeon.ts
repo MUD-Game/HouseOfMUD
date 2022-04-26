@@ -9,13 +9,11 @@ import { Npc } from "./npc";
 import { Room } from "./room";
 
 export interface Dungeon {
-  id: string;
   name: string;
   description: string;
   creatorId: string;
   masterId: string;
   maxPlayers: number;
-  currentPlayers: number;
   characters: Character[];
   characterClasses: CharacterClass[];
   characterSpecies: CharacterSpecies[];
@@ -28,13 +26,11 @@ export interface Dungeon {
 }
 
 export const dungeonSchema = new Schema<Dungeon>({
-  id: { type: String, required: true, unique: true },
   name: { type: String, maxLength: 50 },
   description: { type: String },
   creatorId: { type: String },
   masterId: { type: String },
   maxPlayers: { type: Number },
-  currentPlayers: { type: Number },
   characters: [{ type: Schema.Types.ObjectId, ref: "Character" }],
   characterClasses: [{ type: Schema.Types.ObjectId, ref: "CharacterClass" }],
   characterSpecies: [{ type: Schema.Types.ObjectId, ref: "CharacterSpecies" }],

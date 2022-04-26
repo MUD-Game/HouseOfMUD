@@ -149,11 +149,87 @@ export class DatabaseAdapter {
         return this.dungeon.updateOne({_id: dungeonId}, {$push: {characters: await this.character.create(newCharacter)}})
     }
 
+    /**
+     * updates a room inside from the rooms collection inside the database
+     * @param room the updated room (has to have the same custom id as the room that should be updated)
+     * @returns the query response (information about the performed database action)
+     */
+    async updateRoom(room: Room){
+        return this.room.updateOne({id: room.id}, room)
+    }
 
-    //TODO: get dungeon (alle infos ohne characters)
-    //TODO: editierten Raum speichern
+    /**
+     * updates an item from the item collection inside the database
+     * @param item the updated item (has to have the same custom id as the item that should be updated)
+     * @returns the query response (information about the performed database action)
+     */
+    async updateItem(item: Item){
+        return this.item.updateOne({id: item.id}, item)
+    }
+
+    /**
+     * updates an item from the item collection inside the database
+     * @param item the updated item (has to have the same custom id as the item that should be updated)
+     * @returns the query response (information about the performed database action)
+     */
+     async updateDungeon(dungeonId: string, updatedDungeon: Dungeon){
+        await this.deleteDungeon(dungeonId)
+        return this.dungeon.create({
+            _id: new mongoose.Types.ObjectId(dungeonId),
+            name: updatedDungeon.name,
+            description: updatedDungeon.description,
+            creatorId: updatedDungeon.creatorId, 
+            masterId: updatedDungeon.masterId,
+            maxPlayers: updatedDungeon.maxPlayers,
+            blacklist: updatedDungeon.blacklist,
+            characters: await this.character.insertMany(updatedDungeon.characters),
+            characterClasses: await this.characterClass.insertMany(updatedDungeon.characterClasses),
+            characterSpecies: await this.characterSpecies.insertMany(updatedDungeon.characterSpecies),
+            characterGender: await this.characterGender.insertMany(updatedDungeon.characterGender),
+            rooms: await this.room.insertMany(updatedDungeon.rooms),
+            items: await this.item.insertMany(updatedDungeon.items),
+            npcs: await this.npc.insertMany(updatedDungeon.npcs),
+            actions: await this.action.insertMany(updatedDungeon.actions)
+        })
+    }
+
+    /**
+     * deletes a room from the rooms collection inside the database
+     * @param roomId the id of the room to delete
+     * @returns the query response (information about the performed database action)
+     */
+    async deleteRoom(roomId: string){
+        //! die Referenzen auf diesen Raum müssen im Backend gelöscht werden
+        return this.room.deleteOne({id: roomId})
+    }
+
+    /**
+     * deletes an item from the items collection inside the database
+     * @param itemId the id of the item to delete
+     * @returns the query response (information about the performed database action)
+     */
+    async deleteItem(itemId: string){
+        return this.item.deleteOne({id: itemId})
+    }
+
+    /**
+     * deletes a character from the characters collection inside the database
+     * @param characterId the id of the character to delete
+     * @returns the query response (information about the performed database action)
+     */
+     async deleteCharacter(characterId: string){
+        return this.character.deleteOne({id: characterId})
+    }
+
+    /**
+     * deletes a dungeon from the dungeons collection inside the database
+     * @param dungeonId the ObjectId of the dungeon to delete
+     * @returns the query response (information about the performed database action)
+     */
+    async deleteDungeon(dungeonId: string){
+        return this.dungeon.deleteOne({id: dungeonId})
+    }
+
     //TODO: editierten Character speichern
-    //TODO: character aus dungeon löschen
-    //TODO: editierten Dungeon speichern
-    //TODO: dungeon löschen
+    //? soll es überhaput die Möglichkeit geben einen Raum zu bearbeiten?
 }

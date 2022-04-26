@@ -84,10 +84,12 @@ export class MoveAction implements Action {
                 let routingKey: string = `room.${destinationRoomId}`;
                 amqpAdapter.unbindClientQueue(user, `room.${currentRoomId}`);
                 amqpAdapter.bindClientQueue(user, `room.${destinationRoomId}`);
-                amqpAdapter.sendWithRouting(routingKey, {
-                    action: 'message',
-                    data: { message: `${senderCharacterName} ist ${destinationRoomName} beigetreten!` },
-                });
+                setTimeout(() => {
+                    amqpAdapter.sendWithRouting(routingKey, {
+                        action: 'message',
+                        data: { message: `${senderCharacterName} ist ${destinationRoomName} beigetreten!` },
+                    });
+                }, 100);
             }
         } catch (e) {
             console.log(e);

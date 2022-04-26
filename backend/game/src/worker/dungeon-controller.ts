@@ -25,7 +25,15 @@ export class DungeonController {
             console.log(data);
             switch (data.action) {
                 case 'login':
+                    let character = this.createCharacter(data.character);
                     this.amqpAdapter.initClient(data.character);
+                    this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
+                    setTimeout(() => {
+                        this.amqpAdapter.broadcast({
+                            action: 'message',
+                            data: { message: `${data.character} ist dem Dungeon beigetreten!` },
+                        });
+                    }, 500);
                     break;
                 case 'message':
                     this.actionHandler.processAction(data.character, data.data.message);
@@ -36,7 +44,7 @@ export class DungeonController {
         });
     }
 
-    createCharacter(name: string) {
+    createCharacter(name: string): Character {
         let newCharacter: Character = new CharacterImpl(
             name,
             name,
@@ -57,8 +65,9 @@ export class DungeonController {
             new CharacterStatsImpl(100, 20, 100),
             "1",
             ["1"]
-        )
-        this.dungeon.characters.push(newCharacter)
+        );
+        this.dungeon.characters.push(newCharacter);
+        return newCharacter;
     }
 
     getDungeon(): Dungeon {

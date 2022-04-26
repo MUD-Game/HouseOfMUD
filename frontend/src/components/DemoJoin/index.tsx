@@ -1,8 +1,8 @@
 /**
- * @module CharacterDemo
+ * @module DemoJoin
  * @category React Components
  * @description Component to handle Character-Creation and to join a dungeon.
- * @props {@linkcode CharacterDemoProps}
+ * @props {@linkcode DemoJoinProps}
  * ```jsx
  * <>
  *  <CreateNewCharacter />
@@ -18,14 +18,14 @@ import { supervisor } from 'src/services/supervisor';
 import { useAuth } from 'src/hooks/useAuth';
 import { GetCharactersRequest, GetCharacterAttributesResponse, LoginRequest, StartDungeonRequest, StartDungeonResponse } from '@supervisor/api';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { useMudConsole } from '../../hooks/useMudConsole';
 import { CharactersResponseData } from '@supervisor/api';
 import MudInput from '../Custom/MudInupt';
-export interface CharacterDemoProps { }
+export interface DemoJoinProps { }
 
 
-const CharacterDemo: React.FC<CharacterDemoProps> = (props) => {
+const DemoJoin: React.FC<DemoJoinProps> = (props) => {
 
     const game = useGame();
     const auth = useAuth();
@@ -37,7 +37,11 @@ const CharacterDemo: React.FC<CharacterDemoProps> = (props) => {
     const homosole = useMudConsole();
     
 
-    const join = (character: string) => {
+    const join = (evt: FormEvent<HTMLFormElement>) => {
+        evt.preventDefault();
+        let formData = new FormData(evt.currentTarget);
+        let character: string = formData.get('name') as string;
+
         console.log(`join ${character}`);
 
         let body: LoginRequest = {
@@ -56,33 +60,20 @@ const CharacterDemo: React.FC<CharacterDemoProps> = (props) => {
         });
     }
 
-    const startAndJoin = (evt: FormEvent<HTMLFormElement>) => {
-
-        evt.preventDefault();
-        let formData = new FormData(evt.currentTarget);
-        let character: string = formData.get('name') as string;
-
-        console.log('starting Dungeon');
-
-        supervisor.startDungeon(dungeon, {}, (data) => {
-            setTimeout(() => {
-                join(character);
-            }, 1000);
-        }, (error) => {
-            // TODO: handle error in a better way
-            homosole.error(error.error);
-        });
-    }
-
     return (
         <Container className="mb-5">
             <h2>{dungeonName}</h2>
-            <form onSubmit={startAndJoin}>
-                <MudInput required colmd={6} name="name" type="text" placeholder="Charactername eingeben" />
-                <button className="btn drawn-border btn-green btn-xpadding" type="submit">Dungeon starten und beitreten</button>
+            <form onSubmit={join}>
+                <Row className="align-items-end g-2">
+                    <MudInput required colmd={8} name="name" type="text" placeholder="Charactername eingeben" />
+
+                    <div className="col-md-4">
+                        <button className="btn w-100 drawn-border btn-green" type="submit">Dungeon beitreten</button>
+                    </div>
+                </Row>
             </form>
         </Container>
     )
 }
 
-export default CharacterDemo;    
+export default DemoJoin;    

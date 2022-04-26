@@ -38,10 +38,16 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
         navigate("/select-character");
     }
 
+    let joinDemo = () => {
+        game.setDungeon(id);
+        game.setDungeonName(name);
+        navigate("/demo-join");
+    }
+
     let startDemo = () => {
         game.setDungeon(id);
         game.setDungeonName(name);
-        navigate("/demo-character");
+        navigate("/demo-start");
     }
 
     return (
@@ -63,8 +69,9 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
                 
             </div>
             <div className="col-2">         
-                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>}
-                {status === 'offline' && <button className="btn drawn-border btn-standard" onClick={startDemo}>Demo</button>}
+                {/* {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>} */}
+                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDemo}>Join</button>}
+                {status === 'offline' && <button className="btn drawn-border btn-standard" onClick={startDemo}>Start</button>}
             </div>
         </Row>
     )

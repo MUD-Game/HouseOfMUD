@@ -7,7 +7,7 @@
  */
 
 import { IMessage } from '@stomp/stompjs';
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import { Row } from 'react-bootstrap';
@@ -26,23 +26,35 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
     };
 
     setChatSubscriber((data: any)=>{
-
         addMessage(data.message);
     });
+
+
+    const messagesEndRef = useRef<HTMLInputElement>(null);
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+    useEffect(scrollToBottom, [messages]);
+
     
     return (
         <Row>
             <div className="col">
                 <span>CHAT-OUTPUT</span>
-                <div className="mock-placeholder chat drawn-border p-2">
-                    {messages.map((message, index) => {
-                        return (
-                            <div key={index} className={"chat-message channel-global"}>
-                                {message}
-                            </div>
-                        )
-                    })}
-                </div>      
+                <div className="chat drawn-border p-2 pe-3">
+                    <div className="chat-content">
+                        {messages.map((message, index) => {
+                            return (
+                                <span key={index} className={"chat-message channel-global"}>
+                                    {message} <br />
+                                </span>
+                            )
+                        })}
+                        <div id="messagesEndRef" ref={messagesEndRef} />
+                    </div>
+                </div>
             </div>
         </Row>
     )

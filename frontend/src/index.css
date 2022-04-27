@@ -56,7 +56,7 @@ a:hover {
 }
 
 #header-logo {
-  max-width: 350px;
+  max-width: 275px;
   width: 100%;
 }
 
@@ -178,9 +178,28 @@ a:hover {
   width: 100%;
   aspect-ratio: 1 / 1;
 }
-.mock-placeholder.chat {
+.chat {
   width: 100%;
   aspect-ratio: 1 / .6;
+}
+
+.chat-content {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.chat-content::-webkit-scrollbar {
+  width: 15px;
+}
+.chat-content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--accent);
+  background-color: var(--accentlight);
+  border-radius: 10px;
+}
+.chat-content::-webkit-scrollbar-thumb {    
+  background: var(--accent);
+  border-radius: 10px;
 }
 
 .progress {  

@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                     <img id="header-logo" src={Logo} alt="Logo HouseOfMUD" />
                 </Link>
             </Row>
-            <Row className="mt-5 align-items-center">
+            <Row className="mt-3 align-items-center">
                 <Col className="text-start">
                     <p className="headline">{auth.user ? "Willkommen: ": "Anmelden"}<b>{auth.user}</b></p>
                 </Col>

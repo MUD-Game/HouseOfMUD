@@ -1,6 +1,6 @@
-import { Character, Dungeon, Item } from "../../dungeon/dungeon";
-import { Action } from "./action";
-import { DungeonController } from "../dungeon-controller"
+import { Character, Dungeon, Item } from "../../../dungeon/dungeon";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 export class InspectAction implements Action {
     trigger: string;

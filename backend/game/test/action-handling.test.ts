@@ -27,18 +27,18 @@ import {
     ActionHandler,
     ActionHandlerImpl,
 } from '../src/worker/action/action-handler';
-import { DiscardAction } from '../src/worker/action/discard-action';
-import { DungeonAction } from '../src/worker/action/dungeon-action';
-import { InspectAction } from '../src/worker/action/inspect-action';
-import { InventoryAction } from '../src/worker/action/inventory-action';
-import { LookAction } from '../src/worker/action/look-action';
-import { MessageAction } from '../src/worker/action/message-action';
-import { MoveAction } from '../src/worker/action/move-action';
-import { PickupAction } from '../src/worker/action/pickup-action';
-import { PrivateMessageAction } from '../src/worker/action/private-message-action';
-import UnspecifiedAction from '../src/worker/action/unspecified-action';
-import { AmqpAdapter } from '../src/worker/amqp-adapter';
-import { DungeonController } from '../src/worker/dungeon-controller';
+import { DiscardAction } from '../src/worker/action/actions/discard-action';
+import { DungeonAction } from '../src/worker/action/actions/dungeon-action';
+import { InspectAction } from '../src/worker/action/actions/inspect-action';
+import { InventoryAction } from '../src/worker/action/actions/inventory-action';
+import { LookAction } from '../src/worker/action/actions/look-action';
+import { MessageAction } from '../src/worker/action/actions/message-action';
+import { MoveAction } from '../src/worker/action/actions/move-action';
+import { PickupAction } from '../src/worker/action/actions/pickup-action';
+import { PrivateMessageAction } from '../src/worker/action/actions/private-message-action';
+import UnspecifiedAction from '../src/worker/action/actions/unspecified-action';
+import { AmqpAdapter } from '../src/worker/amqp/amqp-adapter';
+import { DungeonController } from '../src/worker/controller/dungeon-controller';
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(

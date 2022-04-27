@@ -1,7 +1,7 @@
-import { AmqpAdapter } from "./amqp-adapter";
-import { Character, CharacterGenderImpl, CharacterImpl, CharacterSpeciesImpl, CharacterStatsImpl, Dungeon } from "../dungeon/dungeon"
+import { AmqpAdapter } from "../amqp/amqp-adapter";
+import { Character, CharacterGenderImpl, CharacterImpl, CharacterSpeciesImpl, CharacterStatsImpl, Dungeon } from "../../dungeon/dungeon"
 import { ConsumeMessage } from "amqplib";
-import { ActionHandlerImpl, ActionHandler } from "./action/action-handler";
+import { ActionHandlerImpl, ActionHandler } from "../action/action-handler";
 
 
 export class DungeonController {

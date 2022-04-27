@@ -1,7 +1,7 @@
-import { Character, Dungeon, Room } from '../../dungeon/dungeon';
-import { DungeonController } from '../dungeon-controller';
-import { Action } from './action';
-import { AmqpAdapter } from '../amqp-adapter';
+import { Character, Dungeon, Room } from "../../../dungeon/dungeon";
+import { AmqpAdapter } from "../../amqp/amqp-adapter";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 export class MoveAction implements Action {
     /**

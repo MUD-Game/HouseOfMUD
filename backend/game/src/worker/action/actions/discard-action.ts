@@ -1,6 +1,5 @@
-import { Dungeon } from "../../dungeon/dungeon";
-import { Action } from "./action";
-import { DungeonController } from "../dungeon-controller"
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 export class DiscardAction implements Action {
     trigger: string;

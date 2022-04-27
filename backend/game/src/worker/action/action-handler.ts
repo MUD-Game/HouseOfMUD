@@ -1,16 +1,16 @@
 import { Dungeon } from '../../dungeon/dungeon';
 import { Action } from './action';
-import { DiscardAction } from './discard-action';
-import { DungeonAction } from './dungeon-action';
-import { InspectAction } from './inspect-action';
-import { InventoryAction } from './inventory-action';
-import { LookAction } from './look-action';
-import { MessageAction } from './message-action';
-import { MoveAction } from './move-action';
-import { PickupAction } from './pickup-action';
-import { PrivateMessageAction } from './private-message-action';
-import UnspecifiedAction from './unspecified-action';
-import { DungeonController } from '../dungeon-controller';
+import { DiscardAction } from './actions/discard-action';
+import { DungeonAction } from './actions/dungeon-action';
+import { InspectAction } from './actions/inspect-action';
+import { InventoryAction } from './actions/inventory-action';
+import { LookAction } from './actions/look-action';
+import { MessageAction } from './actions/message-action';
+import { MoveAction } from './actions/move-action';
+import { PickupAction } from './actions/pickup-action';
+import { PrivateMessageAction } from './actions/private-message-action';
+import UnspecifiedAction from './actions/unspecified-action';
+import { DungeonController } from '../controller/dungeon-controller';
 
 /**
  * Processes Actions received by the dungeon controller.

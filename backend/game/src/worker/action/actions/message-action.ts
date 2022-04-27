@@ -1,6 +1,6 @@
-import { Character, Dungeon, Room } from "../../dungeon/dungeon";
-import { Action } from "./action";
-import { DungeonController } from "../dungeon-controller"
+import { Character, Room } from "../../../dungeon/dungeon";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 /**
  * Action that gets performed when user sends a "sag" message.

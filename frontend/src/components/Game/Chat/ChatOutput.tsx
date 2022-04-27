@@ -17,15 +17,7 @@ export interface ChatOutputProps {}
 
 const ChatOutput: React.FC<ChatOutputProps> = () => {
 
-    console.log('ASDasdasdasd');
-    
     const [messages, setMessages] = useState<string[]>([]);
-
-    // const [message, setMessage] = useState<string>();
-
-    // const [messages, setMessages] = useState("Mock");
-
-    // const messages: string[] = [];
 
     const {setChatSubscriber} = useRabbitMQ();
 
@@ -36,13 +28,6 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
     setChatSubscriber((data: any)=>{
 
         addMessage(data.message);
-
-        // messages.push(data.message);
-        // setMessage(data.message);
-
-        // setMessages([...messages!, data.message]);
-        // setMessage({ message: message });
-        // setMessages(message)
     });
     
     return (

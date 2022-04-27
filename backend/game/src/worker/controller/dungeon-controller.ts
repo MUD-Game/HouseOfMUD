@@ -20,27 +20,34 @@ export class DungeonController {
     }
 
     init() {
+        // comsume messages from clients
         this.amqpAdapter.consume((consumeMessage: ConsumeMessage) => {
-            let data = JSON.parse(consumeMessage.content.toString());
-            console.log(data);
-            switch (data.action) {
-                case 'login':
-                    let character = this.createCharacter(data.character);
-                    this.amqpAdapter.initClient(data.character);
-                    this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
-                    setTimeout(() => {
-                        this.amqpAdapter.broadcast({
-                            action: 'message',
-                            data: { message: `${data.character} ist dem Dungeon beigetreten!` },
-                        });
-                    }, 200);
-                    break;
-                case 'message':
-                    this.actionHandler.processAction(data.character, data.data.message);
-                    break;
+            try {
+                let data = JSON.parse(consumeMessage.content.toString());
+                console.log(data);
+                if (data.action !== undefined && data.character !== undefined && data.data !== undefined) {
+                    switch (data.action) {
+                        case 'login':
+                            /* temporary */
+                            let character = this.createCharacter(data.character);
+                            /* temporary */
+                            this.amqpAdapter.initClient(data.character);
+                            this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
+                            setTimeout(() => {
+                                this.amqpAdapter.broadcast({
+                                    action: 'message',
+                                    data: { message: `${data.character} ist dem Dungeon beigetreten!` },
+                                });
+                            }, 200);
+                            break;
+                        case 'message':
+                            this.actionHandler.processAction(data.character, data.data.message);
+                            break;
+                    }
+                }
+            } catch (err) {
+                console.log(err);
             }
-            // TODO: check verifyToken
-            // this.actionHandler.processAction(data.character, data.data.message);
         });
     }
 

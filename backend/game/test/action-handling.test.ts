@@ -302,10 +302,12 @@ describe('ActionHandler', () => {
         ]);
     });
 });
+
 describe('Actions', () => {
     beforeEach(() => {
         TestDungeon.characters[0].position = TestRoom.id;
     });
+
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
     const messageAction: MessageAction = actionHandler.actions['sag'];
     const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester'];
@@ -322,6 +324,7 @@ describe('Actions', () => {
     amqpAdapter.sendToClient = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
+    jest.useFakeTimers()
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
         messageAction.performAction(TestDungeon.characters[0].id, [
@@ -374,8 +377,9 @@ describe('Actions', () => {
         });
     });
 
-    //MOVEACTION TEST
-    test('MoveAction should modify the position, call the functions to bind the client queues and call sendWithRouting on the AmqpAdapter when user moves to another room', () => {
+    
+    test(`MoveAction should modify the position, call the functions to bind the client queues 
+    and call sendWithRouting on the AmqpAdapter when user moves to another room`, () => {
         moveAction.performAction(TestDungeon.characters[0].id, ['Norden']);
         expect(TestDungeon.characters[0].position).toBe(TestRoomNorth.id);
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith(
@@ -383,6 +387,7 @@ describe('Actions', () => {
             'room.1'
         );
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('1', 'room.2');
+        jest.runAllTimers()
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
             data: { message: 'Jeff ist Raum-N beigetreten!' },

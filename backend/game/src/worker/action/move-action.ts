@@ -18,6 +18,7 @@ export class MoveAction implements Action {
         this.trigger = 'gehe';
         this.dungeonController = dungeonController;
     }
+
     /**
      * Modifies the character position if passage exists and sends appropriate message to client.
      * @param user Character id of user that sent the message.
@@ -26,17 +27,14 @@ export class MoveAction implements Action {
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon();
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter();
-        let dungeonId: string = dungeon.getId();
         let direction: string = args[0];
         let senderCharacter: Character = dungeon.getCharacter(user);
         let senderCharacterName: string = senderCharacter.getName();
-        let senderCharacterId: string = senderCharacter.getId();
         let currentRoomId: string = senderCharacter.getPosition();
         let currentRoom: Room = dungeon.getRoom(currentRoomId);
         let destinationRoom: Room | undefined;
         let invalidDirection: boolean = false;
         let closedPath: boolean = false;
-        let routingKeySender = `${dungeonId}.character.${senderCharacterId}`;
         try {
             switch (direction) {
                 case 'Norden':

@@ -33,7 +33,7 @@ export class DungeonController {
                             action: 'message',
                             data: { message: `${data.character} ist dem Dungeon beigetreten!` },
                         });
-                    }, 100);
+                    }, 200);
                     break;
                 case 'message':
                     this.actionHandler.processAction(data.character, data.data.message);

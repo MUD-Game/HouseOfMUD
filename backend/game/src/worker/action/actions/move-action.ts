@@ -36,26 +36,26 @@ export class MoveAction implements Action {
         let invalidDirection: boolean = false;
         let closedPath: boolean = false;
         try {
-            switch (direction) {
-                case 'Norden':
+            switch (direction.toLowerCase()) {
+                case 'norden':
                     destinationRoom = dungeon.getNorthernRoom(currentRoom);
                     if (destinationRoom.getSouthConnection() === 'closed') {
                         closedPath = true;
                     }
                     break;
-                case 'Osten':
+                case 'osten':
                     destinationRoom = dungeon.getEasternRoom(currentRoom);
                     if (currentRoom.getEastConnection() === 'closed') {
                         closedPath = true;
                     }
                     break;
-                case 'Sueden':
+                case 'sueden':
                     destinationRoom = dungeon.getSouthernRoom(currentRoom);
                     if (currentRoom.getSouthConnection() === 'closed') {
                         closedPath = true;
                     }
                     break;
-                case 'Westen':
+                case 'westen':
                     destinationRoom = dungeon.getWesternRoom(currentRoom);
                     if (destinationRoom.getEastConnection() === 'closed') {
                         closedPath = true;

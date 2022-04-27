@@ -25,7 +25,7 @@ export interface ActionHandler {
     /**
      * Dungeon specific actions.
      */
-    dungeonActions: DungeonAction[];
+    dungeonActions: { [trigger: string]: DungeonAction };
 
     /**
      * Action that notifies the dungeon master to act.
@@ -43,7 +43,7 @@ export interface ActionHandler {
 
 export class ActionHandlerImpl implements ActionHandler {
     actions: { [trigger: string]: Action } = {};
-    dungeonActions: DungeonAction[];
+    dungeonActions: { [trigger: string]: DungeonAction } = {};
     unspecifiedAction: UnspecifiedAction;
 
     /**
@@ -65,12 +65,11 @@ export class ActionHandlerImpl implements ActionHandler {
             this.actions[action.trigger] = action;
         });
         let dungeon: Dungeon = dungeonController.getDungeon();
-        let dungeonActions: DungeonAction[] = [];
         let dungeonActionElements = dungeon.getActions();
-        dungeonActionElements.forEach(action =>
-            dungeonActions.push(new DungeonAction(action.command, dungeonController))
-        );
-        this.dungeonActions = dungeonActions;
+        dungeonActionElements.forEach(action => {
+            let dungeonAction: DungeonAction = new DungeonAction(action.command, dungeonController)
+            this.dungeonActions[dungeonAction.trigger] = dungeonAction
+        });
         this.unspecifiedAction = new UnspecifiedAction('unspecified',dungeonController);
     }
 
@@ -81,9 +80,7 @@ export class ActionHandlerImpl implements ActionHandler {
         if (commandString in this.actions) {
             action = this.actions[commandString];
         } else {
-            action = this.dungeonActions.find(
-                action => action.trigger === message
-            );
+            action = this.dungeonActions[message]
             if (action === undefined) {
                 action = this.unspecifiedAction;
             }

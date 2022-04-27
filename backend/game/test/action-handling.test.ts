@@ -234,7 +234,7 @@ describe('ActionHandler', () => {
     const lookAction: LookAction = actionHandler.actions['umschauen'];
     const moveAction: MoveAction = actionHandler.actions['gehe'];
     const pickupAction: PickupAction = actionHandler.actions['aufheben'];
-    const dungeonAction: DungeonAction = actionHandler.dungeonActions.find(action => action instanceof DungeonAction)!;
+    const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
     const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction;
 
     messageAction.performAction = jest.fn();
@@ -317,7 +317,7 @@ describe('Actions', () => {
     const lookAction: LookAction = actionHandler.actions['umschauen'];
     const moveAction: MoveAction = actionHandler.actions['gehe'];
     const pickupAction: PickupAction = actionHandler.actions['aufheben'];
-    const dungeonAction: DungeonAction = actionHandler.dungeonActions.find(action => action instanceof DungeonAction)!;
+    const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
     const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction;
 
     amqpAdapter.sendWithRouting = jest.fn();

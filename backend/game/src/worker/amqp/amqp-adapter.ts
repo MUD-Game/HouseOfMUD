@@ -98,7 +98,8 @@ export class AmqpAdapter {
     }
 
     /**
-     * Binds queue that client is subscribed to with new key. Is used when client goes to a room of a dungeon.
+     * Binds the queue of a client to the ClientExchange with a pattern.
+     * The pattern is used to filter the messages with a routingKey. 
      * @param user Client that needs to be binded.
      * @param pattern Key pattern.
      */
@@ -113,8 +114,8 @@ export class AmqpAdapter {
     }
 
     /**
-     * Unbinds queue with a specific key. Is used when client leaves a room of a dungeon.
-     * @param user Client that needs to be binded.
+     * Unbinds a pattern from the queue of a client.
+     * @param user Client that needs to be unbinded.
      * @param pattern  Key pattern.
      */
     async unbindClientQueue(user: string, pattern: string): Promise<void> {
@@ -128,7 +129,7 @@ export class AmqpAdapter {
     }
 
     /**
-     * Sends message to specified client. ANPASSEN
+     * Sends message to specified client.
      * @param user Client that receives message.
      * @param msg Message to send.
      */
@@ -144,7 +145,7 @@ export class AmqpAdapter {
     }
 
     /**
-     * Sends message to everyone in dungeon. ANPASSEN
+     * Sends message to everyone in dungeon.
      * @param msg Message to send.
      */
     async broadcast(msg: any): Promise<void> {
@@ -158,8 +159,9 @@ export class AmqpAdapter {
     }
 
     /**
-     * Sends message to queues with specified key. ANPASSEN
-     * @param routingKey Key that specifies receiver (room).
+     * Sends message to ClientExchange with a routingKey.
+     * The routingKey is used to determine which clients receive the message.
+     * @param routingKey Key that specifies receiver(s) (e.g. roomID).
      * @param msg Message to send.
      */
     async sendWithRouting(routingKey: string, msg: any): Promise<void> {
@@ -173,7 +175,7 @@ export class AmqpAdapter {
     }
 
     /**
-     * Consumese messages from client.
+     * Consumese messages coming from the clients.
      * @param onMessage Function that processes incoming messages.
      */
     async consume(onMessage: (msg: amqplib.ConsumeMessage) => void): Promise<void> {

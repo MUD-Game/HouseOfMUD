@@ -21,14 +21,9 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
 
     const {setChatSubscriber} = useRabbitMQ();
 
-    let addMessage = (message: string) => {
-        setMessages([...messages, message]);
-    };
-
     setChatSubscriber((data: any)=>{
-        addMessage(data.message);
+        setMessages([...messages, data.message]);
     });
-
 
     const messagesEndRef = useRef<HTMLInputElement>(null);
     const scrollToBottom = () => {
@@ -37,7 +32,6 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
         }
     };
     useEffect(scrollToBottom, [messages]);
-
     
     return (
         <Row>
@@ -52,7 +46,7 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
                                 </span>
                             )
                         })}
-                        <div id="messagesEndRef" ref={messagesEndRef} />
+                        <div ref={messagesEndRef} />
                     </div>
                 </div>
             </div>

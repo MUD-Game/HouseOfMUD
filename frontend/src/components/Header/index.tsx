@@ -11,12 +11,14 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
+import { useMudConsole } from 'src/hooks/useMudConsole';
 import Logo from '../../assets/LogoHOM.png';
 type HeaderProps = {}
 
 const Header: React.FC<HeaderProps> = (props) => {
 
     const auth = useAuth();
+    const homsole = useMudConsole();
     const location = useLocation();
     const navigate = useNavigate();
     return (
@@ -35,6 +37,8 @@ const Header: React.FC<HeaderProps> = (props) => {
                         <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {
                             auth.logout(() => {
                                 navigate("/login");
+                            },()=>{
+                                homsole.error("Logout fehlgeschlagen");
                             });
                         }}>Logout</button> 
                         : null}

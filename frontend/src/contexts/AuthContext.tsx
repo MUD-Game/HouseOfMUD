@@ -10,7 +10,7 @@ type AuthContextType = {
   isAuthenticated: (success: VoidFunction, error: VoidFunction) => void;
   login: (user: string, password: string, success: VoidFunction, error: (error:string)=>void) => void;
   register: (email: string, user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
-  logout: (callback: VoidFunction) => void;
+  logout: (success: VoidFunction, error: (error: string) => void) => void;
   verifyEmail: (token: string, success: VoidFunction, error: VoidFunction) => void;
   deleteUser: (success: VoidFunction, error: VoidFunction) => void;
 }
@@ -56,13 +56,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }, homosole.supervisorerror)
   }
 
-  let logout = (callback: VoidFunction) => {
-    setUser("");
-    setToken("");
-    let c = new Cookies();
-    c.remove("user"); 
-    c.remove("token");
-    callback();
+  let logout = (success: VoidFunction, error: (error:string)=>void) => {
+    supervisor.userLogout(() => {
+      success();
+    },()=>{
+      error("Logout fehlgeschlagen");
+    });
   };
 
   let register = (email: string, newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {

@@ -27,8 +27,25 @@ export default class AuthProvider {
         this.validateToken = this.validateToken.bind(this);
         this.validatePassword = this.validatePassword.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
-    
+        this.logout = this.logout.bind(this);
 }
+
+    async logout(req:any, res:any){
+        if (req.cookies.authToken) {
+            delete this.sessioned_users[req.cookies.authToken];
+            res.cookie('authToken', "", { domain: this.cookie_host, maxAge: 0 });
+            res.cookie('user', "", { domain: this.cookie_host, maxAge: 0 });
+            res.status(200).send({
+                ok: 1
+            });
+        }else{
+            res.status(400).send({
+                ok: 0,
+                error: "not logged in"
+            });
+        }
+    }
+
     async deleteUser(req:any, res:any, next:any){
         this.dba.deleteUser(req.cookies.user).then(() => {
             if (this.sessioned_users[req.cookies.authToken]) {

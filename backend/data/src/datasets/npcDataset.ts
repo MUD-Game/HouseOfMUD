@@ -1,7 +1,8 @@
 import { MongoTailableCursorError } from "mongodb";
 import {Schema, model} from "mongoose";
+import { Npc } from "../interfaces/npc";
 
-export interface Npc{
+export interface NpcDataset{
     id: string,
     name: string,
     description: string,

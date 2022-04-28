@@ -1,9 +1,10 @@
 
-import { ActionElement, ActionElementImpl, Character, CharacterClass, CharacterClassImpl, CharacterGender, CharacterGenderImpl, CharacterImpl, CharacterSpecies, CharacterSpeciesImpl, CharacterStats, CharacterStatsImpl, ConnectionInfo, ConnectionInfoImpl, Dungeon, DungeonImpl, Event, EventImpl, Item, ItemImpl, Npc, NpcImpl, Room, RoomImpl } from "../dungeon/dungeon";
+import { ActionElement, ActionElementImpl, Character, CharacterClass, CharacterClassImpl, CharacterGender, CharacterGenderImpl, CharacterImpl, CharacterSpecies, CharacterSpeciesImpl, CharacterStats, CharacterStatsImpl, ConnectionInfo, ConnectionInfoImpl, Dungeon, DungeonImpl, Event, EventImpl, Item, ItemImpl, Npc, NpcImpl, Room, RoomImpl } from "../../interfaces/dungeon";
 import { exit } from 'process';
 import { AmqpAdapter } from "./amqp/amqp-adapter";
 import { DungeonController } from "./controller/dungeon-controller";
-
+import { DatabaseAdapter } from '../../../data/src/databaseAdapter';
+// import { Dungeon } from '../../../data/src/datasets/dungeon'
 
 const dungeonID = process.argv[2];
 
@@ -18,7 +19,8 @@ const userTokens: Tokens = {};
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
-    let dungeon: Dungeon = getDungeon(dungeonID);
+    const dba: DatabaseAdapter = new DatabaseAdapter();
+    let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
 
     let amqpConfig = getAmqpAdapterConfig();
     let amqpAdapter: AmqpAdapter = new AmqpAdapter(

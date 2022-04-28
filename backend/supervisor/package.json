@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "npx tsc",
-    "start": "npx tsc && node ./dist/supervisor.js"
+    "start": "npx tsc && node ./dist/src/supervisor.js"
   },
   "devDependencies": {
     "typescript": "^4.6.3"

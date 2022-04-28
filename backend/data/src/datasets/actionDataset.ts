@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
-import { ActionEvent } from "./actionEvent";
+import { ActionEvent } from "../interfaces/actionEvent";
 
-export interface Action {
+export interface ActionDataset {
   id: string;
   command: string;
   output: string;
@@ -10,7 +10,7 @@ export interface Action {
   itemsneeded: string[];
 }
 
-export const actionSchema = new Schema<Action>({
+export const actionSchema = new Schema<ActionDataset>({
   id: { type: String, required: true },
   command: { type: String, required: true },
   output: { type: String },

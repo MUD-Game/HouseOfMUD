@@ -21,8 +21,8 @@ import {
     ActionElementImpl,
     CharacterImpl,
     DungeonImpl,
-    EventImpl,
-} from '../src/dungeon/dungeon';
+    ActionEventImpl
+} from '../interfaces/dungeon';
 import {
     ActionHandler,
     ActionHandlerImpl,
@@ -85,7 +85,7 @@ const TestAction: ActionElement = new ActionElementImpl(
     'essen Apfel',
     'gegessen',
     'essen aktion',
-    [new EventImpl('addhp', 10)],
+    [new ActionEventImpl('addhp', 10)],
     ['1']
 );
 const TestRoom: Room = new RoomImpl(
@@ -160,8 +160,8 @@ const TestCharacter: Character = new CharacterImpl(
     '1',
     'Jeff',
     'Magier',
-    TestSpecies,
-    TestGender,
+    '1',
+    '1',
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
@@ -173,8 +173,8 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
     '1',
     'Spieler',
     'Magier',
-    TestSpecies,
-    TestGender,
+    '1',
+    '1',
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
@@ -186,8 +186,8 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     '1',
     'Bob',
     'Magier',
-    TestSpecies,
-    TestGender,
+    '1',
+    '1',
     TestMaxStats,
     TestStartStats,
     TestRoomNorth.id,

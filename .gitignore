@@ -1,6 +1,8 @@
 #Sonstiges
 notes.txt
 config.yml
+*.js
+*.js.map
 
 # Logs
 logs

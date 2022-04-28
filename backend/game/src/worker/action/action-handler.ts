@@ -1,4 +1,4 @@
-import { Dungeon } from '../../dungeon/dungeon';
+import { Dungeon } from '../../../interfaces/dungeon';
 import { Action } from './action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';

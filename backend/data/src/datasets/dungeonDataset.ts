@@ -1,28 +1,29 @@
 import { Schema } from "mongoose";
-import { Action } from "./action";
-import { Character } from "./character";
-import { CharacterClass } from "./characterClass";
-import { CharacterGender } from "./characterGender";
-import { CharacterSpecies } from "./characterSpecies";
-import { Item } from "./item";
-import { Npc } from "./npc";
-import { Room } from "./room";
+import { ActionElement } from "../interfaces/actionElement";
+import { Character } from "../interfaces/character";
+import { Dungeon } from "../interfaces/dungeon";
+import { Item } from "../interfaces/item";
+import { Npc } from "../interfaces/npc";
+import { Room } from "../interfaces/room";
+import { CharacterClassDataset } from "./characterClassDataset";
+import { CharacterGenderDataset } from "./characterGenderDataset";
+import { CharacterSpeciesDataset } from "./characterSpeciesDataset";
 
-export interface Dungeon {
+export interface DungeonDataset {
   name: string;
   description: string;
   creatorId: string;
   masterId: string;
   maxPlayers: number;
   characters: Character[];
-  characterClasses: CharacterClass[];
-  characterSpecies: CharacterSpecies[];
-  characterGender: CharacterGender[];
+  characterClasses: CharacterClassDataset[];
+  characterSpecies: CharacterSpeciesDataset[];
+  characterGenders: CharacterGenderDataset[];
   rooms: Room[];
   items: Item[];
   npcs: Npc[];
   blacklist: string[];
-  actions: Action[];
+  actions: ActionElement[];
 }
 
 export const dungeonSchema = new Schema<Dungeon>({
@@ -34,7 +35,7 @@ export const dungeonSchema = new Schema<Dungeon>({
   characters: [{ type: Schema.Types.ObjectId, ref: "Character" }],
   characterClasses: [{ type: Schema.Types.ObjectId, ref: "CharacterClass" }],
   characterSpecies: [{ type: Schema.Types.ObjectId, ref: "CharacterSpecies" }],
-  characterGender: [{ type: Schema.Types.ObjectId, ref: "CharacterGender" }],
+  characterGenders: [{ type: Schema.Types.ObjectId, ref: "CharacterGenders" }],
   rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
   items: [{ type: Schema.Types.ObjectId, ref: "Item" }],
   npcs: [{ type: Schema.Types.ObjectId, ref: "Npc" }],

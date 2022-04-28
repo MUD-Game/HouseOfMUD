@@ -1,4 +1,4 @@
-import { Character, Dungeon, Item } from "../../../dungeon/dungeon";
+import { Character, Dungeon, Item } from "../../../../interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 

@@ -260,7 +260,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                     genders: processToSend(genders),
                     characters: [],
                     characterSpecies: processToSend(species) as MudCharacterSpecies[],
-                    characterGender: processToSend(genders) as MudCharacterGender[],
+                    characterGenders: processToSend(genders) as MudCharacterGender[],
                     actions,
                     characterClasses: classes,
                     items,

@@ -9,7 +9,6 @@ import { Item, itemSchema } from "./datasets/item";
 import { Npc, npcSchema } from "./datasets/npc";
 import { Room, roomSchema } from "./datasets/room";
 import { User, userSchema } from "./datasets/user";
-
 /**
  * encapsulation of the mongoose API
  */
@@ -67,6 +66,26 @@ export class DatabaseAdapter {
             actions: await this.action.insertMany(dungeonToStore.actions)
         })
     } 
+
+    async deleteUser(username: string){
+        return this.user.deleteOne({username: username});
+    }
+
+    async registerUser(user: User){
+        return this.user.create(user);
+    }
+
+    async getPassword(username: string){
+        return (await this.user.findOne({username: username}))?.password;
+    }
+
+    async checkIfUserExists(username: string){
+        return (await this.user.findOne({username: username})) != null;
+    }
+
+    async checkIfEmailExists(email: string){
+        return (await this.user.findOne({email: email})) != null;
+    }
 
     /**
      * get a dungeon from the 'dungeons' Collection in the Mongo database

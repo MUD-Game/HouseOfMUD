@@ -7,7 +7,7 @@ export interface CharacterSpecies {
 }
 
 export const characterSpeciesSchema = new Schema<CharacterSpecies>({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
   name: { type: String },
   description: { type: String },
 });

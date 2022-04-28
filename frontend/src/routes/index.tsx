@@ -1,9 +1,9 @@
 import React, { ReactElement } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Login from "../components/Login";
+import Login from "../components/Authentication/Login";
 import Dashboard from "../components/Dashboard";
 import NotFound from "../components/NotFound";
-import RequireAuth from "../components/RequireAuth";
+import RequireAuth from "../components/Authentication/RequireAuth";
 import Header from "../components/Header";
 import { AuthProvider } from "src/contexts/AuthContext";
 import { GameProvider } from "src/contexts/GameContext";
@@ -15,6 +15,9 @@ import DungeonConfigurator from '../components/DungeonConfigurator/index';
 import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorContext";
 import DemoStart from "src/components/DemoStart";
 import DemoJoin from "src/components/DemoJoin";
+import VerifyEmail from "src/components/Authentication/VerifyEmail";
+import Register from "src/components/Authentication/Register";
+import UserSettings from "src/components/Authentication/UserSettings";
 
 
 
@@ -28,6 +31,8 @@ const IndexRouter: React.FC = (): ReactElement => {
                     <GameProvider>
                         <Routes>
                             <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/user-settings" element={<RequireAuth><UserSettings /></RequireAuth>} />
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
@@ -44,6 +49,7 @@ const IndexRouter: React.FC = (): ReactElement => {
                                     <Game />
                                 </RabbitMQProvider>
                             </RequireAuth>} />
+                            <Route path="/verify" element={<VerifyEmail />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </GameProvider>

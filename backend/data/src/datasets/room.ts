@@ -14,7 +14,7 @@ export interface Room {
 }
 
 export const roomSchema = new Schema<Room>({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
   name: { type: String },
   description: { type: String },
   npcs: [{ type: String }],

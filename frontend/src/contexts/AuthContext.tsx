@@ -8,9 +8,11 @@ type AuthContextType = {
   user: string;
   token: string;
   isAuthenticated: (success: VoidFunction, error: VoidFunction) => void;
-  login: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
-  register: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
-  logout: (callback: VoidFunction) => void;
+  login: (user: string, password: string, success: VoidFunction, error: (error:string)=>void) => void;
+  register: (email: string, user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
+  logout: (success: VoidFunction, error: (error: string) => void) => void;
+  verifyEmail: (token: string, success: VoidFunction, error: VoidFunction) => void;
+  deleteUser: (success: VoidFunction, error: VoidFunction) => void;
 }
 
 let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
@@ -40,24 +42,36 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(c.get('authToken'));
         success();
       } else {
-        homosole.supervisorerror(data.error);
+        error(data.error);
       }
+    }, (data)=>{
+      error(data.error);
+    });
+  };
+
+  let deleteUser = (success: VoidFunction, error: VoidFunction) => {
+    supervisor.deleteUser(() => {
+      homosole.log("User gelöscht");
+      success();
     }, homosole.supervisorerror)
-  };
-
-  let logout = (callback: VoidFunction) => {
-    setUser("");
-    setToken("");
-    let c = new Cookies();
-    c.remove("user"); 
-    c.remove("token");
-    callback();
-  };
-
-  let register = (newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
-
   }
-  let value = { user, token, login, logout, register, isAuthenticated };
+
+  let logout = (success: VoidFunction, error: (error:string)=>void) => {
+    supervisor.userLogout(() => {
+      success();
+    },()=>{
+      error("Logout fehlgeschlagen");
+    });
+  };
+
+  let register = (email: string, newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
+    supervisor.register(email, newUser, password, success, error);
+  }
+
+  let verifyEmail = (token:string, success: VoidFunction, error: VoidFunction) => {
+    supervisor.verify(token, success, error);
+  }
+  let value = { user, token, login, logout, register, isAuthenticated, verifyEmail, deleteUser };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

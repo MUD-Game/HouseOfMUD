@@ -10,7 +10,14 @@ export interface Config {
         port: number;
     }
     tls: TLS;
-
+    auth: {
+        salt: string;
+        verifyLink: string;
+        emailservice: string;
+        emailadress: string;
+        emailsecret: string;
+        cookie_host: string;
+    }
     mongodb: {
         host: string;
         port: number;

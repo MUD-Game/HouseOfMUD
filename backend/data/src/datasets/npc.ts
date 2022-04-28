@@ -9,7 +9,7 @@ export interface Npc{
 }
 
 export const npcSchema = new Schema<Npc>({
-    id: {type: String, required: true, unique: true},
+    id: {type: String, required: true },
     name: {type: String, maxLength: 50},
     description: {type: String, maxLength: 500},
     species: {type: String, maxLength: 50}

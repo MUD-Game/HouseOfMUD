@@ -1,14 +1,13 @@
-import { MongoTailableCursorError } from "mongodb";
-import {Schema, model} from "mongoose";
+import { Schema } from "mongoose";
 
-export interface Npc{
+export interface NpcDataset{
     id: string,
     name: string,
     description: string,
     species: string
 }
 
-export const npcSchema = new Schema<Npc>({
+export const npcSchema = new Schema<NpcDataset>({
     id: {type: String, required: true },
     name: {type: String, maxLength: 50},
     description: {type: String, maxLength: 500},

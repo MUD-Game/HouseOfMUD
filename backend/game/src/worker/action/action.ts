@@ -1,4 +1,5 @@
 import { DungeonController } from "../controller/dungeon-controller"
+
 export interface Action {
     /**
      * Command user has to input to execute action.

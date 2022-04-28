@@ -1,6 +1,6 @@
 import { ChildProcess, fork, ForkOptions } from 'child_process';
 import path from 'path';
-import { AmqpAdapterConfig } from './types/config';
+import { AmqpAdapterConfig, MongodbConfig } from './types/config';
 
 const filePath: (file: string) => string = (file: string) => path.resolve(__dirname, file);
 
@@ -26,9 +26,11 @@ export class ForkHandler {
     public workerExitCallback: ((dungeon: string) => void) | undefined;
     
     private amqpConfig: AmqpAdapterConfig;
+    private mongodbConfig: MongodbConfig;
 
-    constructor (amqpConfig: AmqpAdapterConfig) {
+    constructor (amqpConfig: AmqpAdapterConfig, mongodbConfig: MongodbConfig) {
         this.amqpConfig = amqpConfig;
+        this.mongodbConfig = mongodbConfig;
     }
 
     /**
@@ -91,7 +93,8 @@ export class ForkHandler {
      */
     startDungeon(dungeon: string): boolean {
         if (!(dungeon in this.dungeonWorker)) {
-            let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange];
+            const mongoConnString: string = `mongodb://${this.mongodbConfig.user}:${encodeURIComponent(this.mongodbConfig.password)}@${this.mongodbConfig.host}:${this.mongodbConfig.port}`; //                                  Database
+            let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange, mongoConnString, "Test"];
             let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
             dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
             dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));

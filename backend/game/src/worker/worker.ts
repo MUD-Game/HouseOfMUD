@@ -1,9 +1,21 @@
-
-import { ActionElement, ActionElementImpl, Character, CharacterClass, CharacterClassImpl, CharacterGender, CharacterGenderImpl, CharacterImpl, CharacterSpecies, CharacterSpeciesImpl, CharacterStats, CharacterStatsImpl, ConnectionInfo, ConnectionInfoImpl, Dungeon, DungeonImpl, Event, EventImpl, Item, ItemImpl, Npc, NpcImpl, Room, RoomImpl } from "../dungeon/dungeon";
 import { exit } from 'process';
+import { DatabaseAdapter } from '../data/databaseAdapter';
+import { CharacterStats } from '../data/datasets/charcterStats';
+import { ActionElement, ActionElementImpl } from '../data/interfaces/actionElement';
+import { ActionEventImpl } from '../data/interfaces/actionEvent';
+import { CharacterClass, CharacterClassImpl } from '../data/interfaces/characterClass';
+import { CharacterGender, CharacterGenderImpl } from '../data/interfaces/characterGender';
+import { CharacterSpecies, CharacterSpeciesImpl } from '../data/interfaces/characterSpecies';
+import { CharacterStatsImpl } from '../data/interfaces/characterStats';
+import { ConnectionInfo, ConnectionInfoImpl } from '../data/interfaces/connectionInfo';
+import { Dungeon, DungeonImpl } from '../data/interfaces/dungeon';
+import { Item, ItemImpl } from '../data/interfaces/item';
+import { Npc, NpcImpl } from '../data/interfaces/npc';
+import { Room, RoomImpl } from '../data/interfaces/room';
 import { AmqpAdapter } from "./amqp/amqp-adapter";
 import { DungeonController } from "./controller/dungeon-controller";
 
+// import { Dungeon } from '../../../data/src/datasets/dungeon'
 
 const dungeonID = process.argv[2];
 
@@ -18,6 +30,10 @@ const userTokens: Tokens = {};
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
+    // const mongoConnString: string = process.argv[9];
+    // const database: string = process.argv[10];
+    // const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
+    // let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
     let dungeon: Dungeon = getDungeon(dungeonID);
 
     let amqpConfig = getAmqpAdapterConfig();
@@ -114,7 +130,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'essen',
         'gegessen',
         'essen aktion',
-        [new EventImpl('addhp', 10)],
+        [new ActionEventImpl('addhp', '10')],
         ['1']
     );
     const TestRoom: Room = new RoomImpl(

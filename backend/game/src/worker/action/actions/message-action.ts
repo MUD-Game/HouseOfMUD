@@ -1,4 +1,5 @@
-import { Character, Room } from "../../../dungeon/dungeon";
+import { Character } from "../../../data/interfaces/character";
+import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 

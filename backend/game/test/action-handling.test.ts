@@ -1,44 +1,29 @@
-import {
-    ActionElement,
-    CharacterGender,
-    CharacterSpecies,
-    Character,
-    Item,
-    CharacterStats,
-    CharacterClass,
-    Npc,
-    ConnectionInfo,
-    Room,
-    Dungeon,
-    CharacterSpeciesImpl,
-    CharacterStatsImpl,
-    CharacterGenderImpl,
-    CharacterClassImpl,
-    NpcImpl,
-    ItemImpl,
-    RoomImpl,
-    ConnectionInfoImpl,
-    ActionElementImpl,
-    CharacterImpl,
-    DungeonImpl,
-    EventImpl,
-} from '../src/dungeon/dungeon';
-import {
-    ActionHandler,
-    ActionHandlerImpl,
-} from '../src/worker/action/action-handler';
-import { DiscardAction } from '../src/worker/action/actions/discard-action';
-import { DungeonAction } from '../src/worker/action/actions/dungeon-action';
-import { InspectAction } from '../src/worker/action/actions/inspect-action';
-import { InventoryAction } from '../src/worker/action/actions/inventory-action';
-import { LookAction } from '../src/worker/action/actions/look-action';
-import { MessageAction } from '../src/worker/action/actions/message-action';
-import { MoveAction } from '../src/worker/action/actions/move-action';
-import { PickupAction } from '../src/worker/action/actions/pickup-action';
-import { PrivateMessageAction } from '../src/worker/action/actions/private-message-action';
-import UnspecifiedAction from '../src/worker/action/actions/unspecified-action';
-import { AmqpAdapter } from '../src/worker/amqp/amqp-adapter';
-import { DungeonController } from '../src/worker/controller/dungeon-controller';
+import { CharacterStats } from "../src/data/datasets/charcterStats";
+import { ActionElement, ActionElementImpl } from "../src/data/interfaces/actionElement";
+import { ActionEventImpl } from "../src/data/interfaces/actionEvent";
+import { Character, CharacterImpl } from "../src/data/interfaces/character";
+import { CharacterClass, CharacterClassImpl } from "../src/data/interfaces/characterClass";
+import { CharacterGender, CharacterGenderImpl } from "../src/data/interfaces/characterGender";
+import { CharacterSpecies, CharacterSpeciesImpl } from "../src/data/interfaces/characterSpecies";
+import { CharacterStatsImpl } from "../src/data/interfaces/characterStats";
+import { ConnectionInfo, ConnectionInfoImpl } from "../src/data/interfaces/connectionInfo";
+import { Dungeon, DungeonImpl } from "../src/data/interfaces/dungeon";
+import { Item, ItemImpl } from "../src/data/interfaces/item";
+import { Npc, NpcImpl } from "../src/data/interfaces/npc";
+import { Room, RoomImpl } from "../src/data/interfaces/room";
+import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
+import { DiscardAction } from "../src/worker/action/actions/discard-action";
+import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
+import { InspectAction } from "../src/worker/action/actions/inspect-action";
+import { InventoryAction } from "../src/worker/action/actions/inventory-action";
+import { LookAction } from "../src/worker/action/actions/look-action";
+import { MessageAction } from "../src/worker/action/actions/message-action";
+import { MoveAction } from "../src/worker/action/actions/move-action";
+import { PickupAction } from "../src/worker/action/actions/pickup-action";
+import { PrivateMessageAction } from "../src/worker/action/actions/private-message-action";
+import UnspecifiedAction from "../src/worker/action/actions/unspecified-action";
+import { AmqpAdapter } from "../src/worker/amqp/amqp-adapter";
+import { DungeonController } from "../src/worker/controller/dungeon-controller";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -85,7 +70,7 @@ const TestAction: ActionElement = new ActionElementImpl(
     'essen Apfel',
     'gegessen',
     'essen aktion',
-    [new EventImpl('addhp', 10)],
+    [new ActionEventImpl('addhp', '10')],
     ['1']
 );
 const TestRoom: Room = new RoomImpl(
@@ -160,8 +145,8 @@ const TestCharacter: Character = new CharacterImpl(
     '1',
     'Jeff',
     'Magier',
-    TestSpecies,
-    TestGender,
+    '1',
+    '1',
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
@@ -173,8 +158,8 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
     '1',
     'Spieler',
     'Magier',
-    TestSpecies,
-    TestGender,
+    '1',
+    '1',
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
@@ -186,8 +171,8 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     '1',
     'Bob',
     'Magier',
-    TestSpecies,
-    TestGender,
+    '1',
+    '1',
     TestMaxStats,
     TestStartStats,
     TestRoomNorth.id,

@@ -1,4 +1,6 @@
-import { Character, Dungeon, Room } from "../../../../interfaces/dungeon";
+import { Character } from "src/data/interfaces/character";
+import { Dungeon } from "src/data/interfaces/dungeon";
+import { Room } from "src/data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";

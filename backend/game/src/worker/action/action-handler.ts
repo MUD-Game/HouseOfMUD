@@ -1,4 +1,3 @@
-import { Dungeon } from '../../../interfaces/dungeon';
 import { Action } from './action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';
@@ -11,6 +10,7 @@ import { PickupAction } from './actions/pickup-action';
 import { PrivateMessageAction } from './actions/private-message-action';
 import UnspecifiedAction from './actions/unspecified-action';
 import { DungeonController } from '../controller/dungeon-controller';
+import { Dungeon } from 'src/data/interfaces/dungeon';
 
 /**
  * Processes Actions received by the dungeon controller.

@@ -1,4 +1,9 @@
-import { ActionElement, Character, Dungeon, Item, Npc, Room } from "../../../../interfaces/dungeon";
+import { ActionElement } from "src/data/interfaces/actionElement";
+import { Character } from "src/data/interfaces/character";
+import { Dungeon } from "src/data/interfaces/dungeon";
+import { Item } from "src/data/interfaces/item";
+import { Npc } from "src/data/interfaces/npc";
+import { Room } from "src/data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 

@@ -1,28 +1,16 @@
-import {
-    ActionElement,
-    CharacterGender,
-    CharacterSpecies,
-    Character,
-    Item,
-    CharacterStats,
-    CharacterClass,
-    Npc,
-    ConnectionInfo,
-    Room,
-    Dungeon,
-    CharacterSpeciesImpl,
-    CharacterStatsImpl,
-    CharacterGenderImpl,
-    CharacterClassImpl,
-    NpcImpl,
-    ItemImpl,
-    RoomImpl,
-    ConnectionInfoImpl,
-    ActionElementImpl,
-    CharacterImpl,
-    DungeonImpl,
-    ActionEventImpl
-} from '../interfaces/dungeon';
+import { CharacterStats } from '../src/data/datasets/charcterStats';
+import { ActionElement, ActionElementImpl } from '../src/data/interfaces/actionElement';
+import { ActionEventImpl } from '../src/data/interfaces/actionEvent';
+import { Character, CharacterImpl } from '../src/data/interfaces/character';
+import { CharacterClass, CharacterClassImpl } from '../src/data/interfaces/characterClass';
+import { CharacterGender, CharacterGenderImpl } from '../src/data/interfaces/characterGender';
+import { CharacterSpecies, CharacterSpeciesImpl } from '../src/data/interfaces/characterSpecies';
+import { CharacterStatsImpl } from '../src/data/interfaces/characterStats';
+import { ConnectionInfo, ConnectionInfoImpl } from '../src/data/interfaces/connectionInfo';
+import { Dungeon, DungeonImpl } from '../src/data/interfaces/dungeon';
+import { Item, ItemImpl } from '../src/data/interfaces/item';
+import { Npc, NpcImpl } from '../src/data/interfaces/npc';
+import { Room, RoomImpl } from '../src/data/interfaces/room';
 import {
     ActionHandler,
     ActionHandlerImpl,
@@ -85,7 +73,7 @@ const TestAction: ActionElement = new ActionElementImpl(
     'essen Apfel',
     'gegessen',
     'essen aktion',
-    [new ActionEventImpl('addhp', 10)],
+    [new ActionEventImpl('addhp', '10')],
     ['1']
 );
 const TestRoom: Room = new RoomImpl(

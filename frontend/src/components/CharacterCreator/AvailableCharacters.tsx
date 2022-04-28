@@ -25,19 +25,19 @@ const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters })
         <>
             <p className="headline">Charakter auswählen</p>
             <Row className="py-2">
-                <div className="col-2">
+                <div className="col">
                     <b><u>Name</u></b>
                 </div>
-                <div className="col-2">
+                <div className="col">
                     <b><u>Klasse</u></b>         
                 </div>
-                <div className="col-2">
+                <div className="col">
                     <b><u>Geschlecht</u></b>      
                 </div>
-                <div className="col-2">  
+                <div className="col">  
                     <b><u>Spezies</u></b>
                 </div>
-                <div className="col-4"></div>           
+                <div className="col"></div>           
             </Row>
             {characters.map((character, index) => {
                 return <AvailableCharactersLi character={character} key={index} />

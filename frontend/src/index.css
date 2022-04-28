@@ -163,10 +163,35 @@ a:hover {
   border-radius: 1% 98% 1% 99% /99% 2% 50% 1%;
 }
 
-.dashboard-list, .character-list {
+.dashboard-list {
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
   border-width: 0 0 3px;
+}
+
+/* Listen und Icons */
+#editIcon, #deleteIcon, #joinIcon {
+  opacity: 0.2;
+  margin-left: 5px;
+  transition: opacity .1s ease-in, transform .05s ease-in;
+}
+
+.row:hover #editIcon, .row:hover #deleteIcon, .row:hover #joinIcon {
+  opacity: 1;
+}
+
+#editIcon:hover, #deleteIcon:hover, #joinIcon:hover {
+  transform: scale(1.2);
+}
+
+.configurator-item, .character-item {
+  border-radius: .3em;
+  transition: background-color .1s ease-in;
+}
+
+.configurator-item:hover, .character-item:hover {
+  background-color: rgb(146, 144, 141);
+  box-shadow: 0em 0em .3em rgb(146, 144, 141);
 }
 
 /* Game */

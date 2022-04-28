@@ -5,8 +5,6 @@ import { MudCharacterClass, MudItem } from "src/types/dungeon";
 import { MudActionElement } from '../../types/dungeon';
 import DungeonObjectListElement from './DungeonObjectListElement';
 
-import './index.css'
-
 export type AcceptedTypes = MudCharacterClass | MudItem | MudActionElement;
 export interface DungeonObjectListProps {
     title: string;

@@ -1,13 +1,12 @@
 import { Schema } from "mongoose";
-import { ActionElement } from "../interfaces/actionElement";
-import { Character } from "../interfaces/character";
-import { Dungeon } from "../interfaces/dungeon";
-import { Item } from "../interfaces/item";
-import { Npc } from "../interfaces/npc";
-import { Room } from "../interfaces/room";
+import { ActionDataset } from "./actionDataset";
 import { CharacterClassDataset } from "./characterClassDataset";
+import { CharacterDataset } from "./characterDataset";
 import { CharacterGenderDataset } from "./characterGenderDataset";
 import { CharacterSpeciesDataset } from "./characterSpeciesDataset";
+import { ItemDataset } from "./itemDataset";
+import { NpcDataset } from "./npcDataset";
+import { RoomDataset } from "./roomDataset";
 
 export interface DungeonDataset {
   name: string;
@@ -15,18 +14,18 @@ export interface DungeonDataset {
   creatorId: string;
   masterId: string;
   maxPlayers: number;
-  characters: Character[];
+  characters: CharacterDataset[];
   characterClasses: CharacterClassDataset[];
   characterSpecies: CharacterSpeciesDataset[];
   characterGenders: CharacterGenderDataset[];
-  rooms: Room[];
-  items: Item[];
-  npcs: Npc[];
+  rooms: RoomDataset[];
+  items: ItemDataset[];
+  npcs: NpcDataset[];
   blacklist: string[];
-  actions: ActionElement[];
+  actions: ActionDataset[];
 }
 
-export const dungeonSchema = new Schema<Dungeon>({
+export const dungeonSchema = new Schema<DungeonDataset>({
   name: { type: String, maxLength: 50 },
   description: { type: String },
   creatorId: { type: String },
@@ -35,7 +34,7 @@ export const dungeonSchema = new Schema<Dungeon>({
   characters: [{ type: Schema.Types.ObjectId, ref: "Character" }],
   characterClasses: [{ type: Schema.Types.ObjectId, ref: "CharacterClass" }],
   characterSpecies: [{ type: Schema.Types.ObjectId, ref: "CharacterSpecies" }],
-  characterGenders: [{ type: Schema.Types.ObjectId, ref: "CharacterGenders" }],
+  characterGenders: [{ type: Schema.Types.ObjectId, ref: "CharacterGender" }],
   rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
   items: [{ type: Schema.Types.ObjectId, ref: "Item" }],
   npcs: [{ type: Schema.Types.ObjectId, ref: "Npc" }],

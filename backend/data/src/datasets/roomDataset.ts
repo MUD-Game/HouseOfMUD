@@ -14,7 +14,7 @@ export interface RoomDataset {
   yCoordinate: number;
 }
 
-export const roomSchema = new Schema<Room>({
+export const roomSchema = new Schema<RoomDataset>({
   id: { type: String, required: true },
   name: { type: String },
   description: { type: String },

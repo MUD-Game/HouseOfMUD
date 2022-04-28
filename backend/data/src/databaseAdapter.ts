@@ -7,14 +7,11 @@ import { CharacterSpeciesDataset, characterSpeciesSchema } from "./datasets/char
 import { CharacterStats } from "./datasets/charcterStats";
 import { DungeonDataset, dungeonSchema } from "./datasets/dungeonDataset";
 import { ItemDataset, itemSchema } from "./datasets/itemDataset";
-import { npcSchema } from "./datasets/npcDataset";
+import { NpcDataset, npcSchema } from "./datasets/npcDataset";
 import { RoomDataset, roomSchema } from "./datasets/roomDataset";
 import { User, userSchema } from "./datasets/userDataset";
 import yaml from 'js-yaml';
 import fs from 'fs';
-import { Dungeon, DungeonImpl } from "./interfaces/dungeon";
-import { Room } from "./interfaces/room";
-import { Npc } from "./interfaces/npc";
 
 
 interface DBConfig {
@@ -28,7 +25,6 @@ interface DBConfig {
 }
 
 function arrayToMap(array: any[]): any {
-    // array.reduce((obj, item) => ({...obj, [item.id]: item}), {});
     let map: {[id: string]: any} = {};
     array.forEach((obj: any) => {
         let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
@@ -58,11 +54,11 @@ export class DatabaseAdapter {
     action: mongoose.Model<ActionDataset>
     character: mongoose.Model<CharacterDataset>
     characterClass: mongoose.Model<CharacterClassDataset>
-    characterGender: mongoose.Model<CharacterGenderDataset>
+    characterGenders: mongoose.Model<CharacterGenderDataset>
     characterSpecies: mongoose.Model<CharacterSpeciesDataset>
-    dungeon: mongoose.Model<Dungeon>
-    npc: mongoose.Model<Npc>
-    room: mongoose.Model<Room>
+    dungeon: mongoose.Model<DungeonDataset>
+    npc: mongoose.Model<NpcDataset>
+    room: mongoose.Model<RoomDataset>
     user: mongoose.Model<User>
 
     constructor(){
@@ -76,11 +72,11 @@ export class DatabaseAdapter {
         this.action = this.connection.model<ActionDataset>('Action', actionSchema)
         this.character = this.connection.model<CharacterDataset>('Character', characterSchema)
         this.characterClass = this.connection.model<CharacterClassDataset>('CharacterClass', characterClassSchema)
-        this.characterGender = this.connection.model<CharacterGenderDataset>('CharacterGender', characterGenderSchema)
+        this.characterGenders = this.connection.model<CharacterGenderDataset>('CharacterGender', characterGenderSchema)
         this.characterSpecies = this.connection.model<CharacterSpeciesDataset>('CharacterSpecies', characterSpeciesSchema)
-        this.dungeon = this.connection.model<Dungeon>('Dungeon', dungeonSchema)
-        this.npc = this.connection.model<Npc>('Npc', npcSchema)
-        this.room = this.connection.model<Room>('Room', roomSchema)
+        this.dungeon = this.connection.model<DungeonDataset>('Dungeon', dungeonSchema)
+        this.npc = this.connection.model<NpcDataset>('Npc', npcSchema)
+        this.room = this.connection.model<RoomDataset>('Room', roomSchema)
         this.user = this.connection.model<User>('User', userSchema)
     }
 
@@ -88,7 +84,7 @@ export class DatabaseAdapter {
      * store a dungeon inside the 'dungeons' Collection of the connection
      * @param dungeonToStore the 'Dungeon' dataset that contains all information of the dungeon
      */
-    async storeDungeon(dungeonToStore:Dungeon) {
+    async storeDungeon(dungeonToStore:DungeonDataset) {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
@@ -99,7 +95,7 @@ export class DatabaseAdapter {
             characters: await this.character.insertMany(dungeonToStore.characters),
             characterClasses: await this.characterClass.insertMany(dungeonToStore.characterClasses),
             characterSpecies: await this.characterSpecies.insertMany(dungeonToStore.characterSpecies),
-            characterGender: await this.characterGender.insertMany(dungeonToStore.characterGenders),
+            characterGenders: await this.characterGenders.insertMany(dungeonToStore.characterGenders),
             rooms: await this.room.insertMany(dungeonToStore.rooms),
             items: await this.item.insertMany(dungeonToStore.items),
             npcs: await this.npc.insertMany(dungeonToStore.npcs),
@@ -112,29 +108,27 @@ export class DatabaseAdapter {
      * @param id the id of the dungeon to get
      * @returns complete dungeon dataset with all sub objects
      */
-    async getDungeon(id: string): Promise<Dungeon | undefined>{
+    async getDungeon(id: string): Promise<DungeonDataset | undefined> {
         const foundDungeon = await this.dungeon.findOne({_id: new mongoose.Types.ObjectId(id)})
         if (foundDungeon == undefined){
             return undefined
         }
-        return new DungeonImpl(
-            foundDungeon.id,
-            foundDungeon.name,
-            foundDungeon.description,
-            foundDungeon.creatorId,
-            foundDungeon.masterId,
-            foundDungeon.maxPlayers,
-            0,
-            (await foundDungeon.populate('characterSpecies')).characterSpecies,
-            (await foundDungeon.populate('characterClasses')).characterClasses,
-            (await foundDungeon.populate('characterGenders')).characterGenders,
-            (await foundDungeon.populate('characters')).characters,
-            (await foundDungeon.populate('rooms')).rooms,
-            foundDungeon.blacklist,
-            (await foundDungeon.populate('actions')).actions,
-            (await foundDungeon.populate('items')).items,
-            (await foundDungeon.populate('npcs')).npcs
-        )
+        return {
+            name: foundDungeon.name,
+            description: foundDungeon.description,
+            creatorId: foundDungeon.description,
+            masterId: foundDungeon.masterId,
+            maxPlayers: foundDungeon.maxPlayers,
+            blacklist: foundDungeon.blacklist,
+            characters: (await foundDungeon.populate('characters')).characters,
+            characterClasses: (await foundDungeon.populate('characterClasses')).characterClasses,
+            characterSpecies: (await foundDungeon.populate('characterSpecies')).characterSpecies,
+            characterGenders: (await foundDungeon.populate('characterGenders')).characterGenders,
+            rooms: (await foundDungeon.populate('rooms')).rooms,
+            items: (await foundDungeon.populate('items')).items,
+            npcs: (await foundDungeon.populate('npcs')).npcs,
+            actions: (await foundDungeon.populate('actions')).actions
+        }
     }
 
     /**
@@ -157,7 +151,7 @@ export class DatabaseAdapter {
             await this.characterSpecies.findByIdAndDelete(charSpec)
         })
         foundDungeon.characterGenders.forEach(async charGen => {
-            await this.characterGender.findByIdAndDelete(charGen)
+            await this.characterGenders.findByIdAndDelete(charGen)
         })
         foundDungeon.rooms.forEach(async r => {
             await this.room.findByIdAndDelete(r)
@@ -207,7 +201,7 @@ export class DatabaseAdapter {
             characters: oldDungeon.characters,
             characterClasses: oldDungeon.characterClasses,
             characterSpecies: oldDungeon.characterSpecies,
-            characterGender: oldDungeon.characterGenders,
+            characterGenders: oldDungeon.characterGenders,
             rooms: await this.room.insertMany(newDungeon.rooms),
             items: await this.item.insertMany(newDungeon.items),
             npcs: await this.npc.insertMany(newDungeon.npcs),
@@ -343,4 +337,7 @@ export class DatabaseAdapter {
     async checkIfEmailExists(email: string){
         return (await this.user.findOne({email: email})) != null
     }
+
+    //TODO: get all characters from user in dungeon
+    //TODO: get character by id
 }

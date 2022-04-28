@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { ActionEvent } from "../interfaces/actionEvent";
+import { ActionEvent } from "./actionEvent";
 
 export interface ActionDataset {
   id: string;

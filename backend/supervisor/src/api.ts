@@ -9,9 +9,7 @@ import { mockauth, mockresponse } from './mock/api';
 import AuthProvider from './services/AuthProvider';
 import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
-import { Dungeon } from './services/databaseadapter/datasets/dungeon';
 import crypto, { Hmac } from 'crypto';
-import { User } from './services/databaseadapter/datasets/user';
 import nodemailer from 'nodemailer'
 
 /**

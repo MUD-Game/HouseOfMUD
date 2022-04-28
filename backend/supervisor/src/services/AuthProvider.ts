@@ -1,6 +1,6 @@
 import { mockauth } from "../mock/api";
 import { DatabaseAdapter } from "./databaseadapter/databaseAdapter";
-import { User } from "./databaseadapter/datasets/user";
+import { User } from "./databaseadapter/datasets/userDataset";
 import crypto from 'crypto'
 
 export default class AuthProvider {

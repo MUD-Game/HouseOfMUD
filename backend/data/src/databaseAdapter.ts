@@ -333,6 +333,28 @@ export class DatabaseAdapter {
         return (await this.user.findOne({email: email})) != null
     }
 
-    //TODO: get all characters from user in dungeon
-    //TODO: get character by id
+    /**
+     * gets an array of all characters from a user in a specified dungeon
+     * @param username the user that owns the characters
+     * @param dungeonId the dungeon for which the characters were created
+     * @returns an array of all characters from the specified user in the specified dungeon
+     */
+    async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]>{
+        var charactersFromUser: CharacterDataset[] = [];
+        (await this.getAllCharactersFromDungeon(dungeonId)).forEach(char => {
+            if(char.userId === username){
+                charactersFromUser.push(char)
+            }
+        })
+        return charactersFromUser
+    }
+
+    /**
+     * gets a character with specified character id from database
+     * @param characterId the character id of the character to get
+     * @returns  the found character
+     */
+    async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null>{
+        return this.character.findOne({id: characterId})
+    }
 }

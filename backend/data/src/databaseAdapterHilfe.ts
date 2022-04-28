@@ -1,7 +1,6 @@
-import { DatabaseAdapter } from "../databaseAdapter";
-import { Dungeon } from "./dungeon";
+import { DatabaseAdapter } from "./databaseAdapter";
 
-const testdungeon: Dungeon = {
+const TestDungeon = {
     id: "dungeon1",
     name: "Dungeon",
     description: "this is the best dungeon ever",
@@ -12,7 +11,7 @@ const testdungeon: Dungeon = {
     characters: [],
     characterClasses: [],
     characterSpecies: [],
-    characterGender: [],
+    characterGenders: [],
     rooms: [],
     items: [
         {
@@ -47,10 +46,13 @@ const testdungeon: Dungeon = {
     ]
 }
 
+async function execute() {
+    let databaseAdapter: DatabaseAdapter = new DatabaseAdapter("mongodb://127.0.0.1:27017", "test")
+    //console.log(await databaseAdapter.storeDungeon(TestDungeon))
+    let receivedDungeon = await databaseAdapter.getDungeon("626aa3eea8183b0a09d74bc3")
+    console.log(await databaseAdapter.getAllCharactersFromUserInDungeon("test1", "626aa3eea8183b0a09d74bc3"))
+    console.log(await databaseAdapter.getCharacterById("test2"))
+    console.log(receivedDungeon)    
+}
 
-// const adapter = new DatabaseAdapter("mongodb://127.0.0.1:27017/test")
-// async function call(){
-//     console.log(await adapter.getAllDungeonInfos())
-// }
-
-// call()
+execute()

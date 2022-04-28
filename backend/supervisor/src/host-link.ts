@@ -4,6 +4,7 @@ import http from 'http';
 import { TLS } from './types/tls';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 
+
 interface Host {
     socket: Socket;
     dungeons: string[];

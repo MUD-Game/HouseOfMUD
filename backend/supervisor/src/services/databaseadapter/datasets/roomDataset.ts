@@ -1,7 +1,8 @@
 import { Schema } from "mongoose";
+import { Room } from "../interfaces/room";
 import { ConnectionInfo } from "./connectionInfo";
 
-export interface Room {
+export interface RoomDataset {
   id: string;
   name: string;
   description: string;
@@ -13,7 +14,7 @@ export interface Room {
   yCoordinate: number;
 }
 
-export const roomSchema = new Schema<Room>({
+export const roomSchema = new Schema<RoomDataset>({
   id: { type: String, required: true },
   name: { type: String },
   description: { type: String },

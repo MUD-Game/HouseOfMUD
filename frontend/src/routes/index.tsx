@@ -15,6 +15,7 @@ import DungeonConfigurator from '../components/DungeonConfigurator/index';
 import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorContext";
 import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
+import UserSettings from "src/components/Authentication/UserSettings";
 
 
 
@@ -29,6 +30,7 @@ const IndexRouter: React.FC = (): ReactElement => {
                         <Routes>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
+                            <Route path="/user-settings" element={<RequireAuth><UserSettings /></RequireAuth>} />
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />

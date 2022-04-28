@@ -154,7 +154,6 @@ export default class AuthProvider {
         if(dbPw === undefined) return false;
         let hasher = crypto.createHmac('sha256', this.salt);
         let hashedPassword: string = hasher.update(password).digest('base64');
-        console.log(dbPw === hashedPassword);
         return dbPw === hashedPassword;
     }
 

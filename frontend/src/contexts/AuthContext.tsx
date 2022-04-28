@@ -12,6 +12,7 @@ type AuthContextType = {
   register: (email: string, user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
   logout: (callback: VoidFunction) => void;
   verifyEmail: (token: string, success: VoidFunction, error: VoidFunction) => void;
+  deleteUser: (success: VoidFunction, error: VoidFunction) => void;
 }
 
 let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
@@ -46,6 +47,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }, homosole.supervisorerror)
   };
 
+  let deleteUser = (success: VoidFunction, error: VoidFunction) => {
+    supervisor.deleteUser(() => {
+      homosole.log("User gelöscht");
+      success();
+    }, homosole.supervisorerror)
+  }
+
   let logout = (callback: VoidFunction) => {
     setUser("");
     setToken("");
@@ -62,7 +70,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   let verifyEmail = (token:string, success: VoidFunction, error: VoidFunction) => {
     supervisor.verify(token, success, error);
   }
-  let value = { user, token, login, logout, register, isAuthenticated, verifyEmail };
+  let value = { user, token, login, logout, register, isAuthenticated, verifyEmail, deleteUser };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -96,6 +96,9 @@ const supervisor = {
         genericRequest("/auth", "POST", body, {}, dataCallBack, error);
     },
 
+    deleteUser(dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/deleteuser", "DELETE", {}, {}, dataCallBack, error);
+    },
     register(email: string, user: string, password: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
         genericRequest("/register", "POST", {email, user, password}, {}, dataCallBack, error);
     },

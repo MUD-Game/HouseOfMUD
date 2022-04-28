@@ -8,7 +8,7 @@ type AuthContextType = {
   user: string;
   token: string;
   isAuthenticated: (success: VoidFunction, error: VoidFunction) => void;
-  login: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
+  login: (user: string, password: string, success: VoidFunction, error: (error:string)=>void) => void;
   register: (email: string, user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
   logout: (callback: VoidFunction) => void;
   verifyEmail: (token: string, success: VoidFunction, error: VoidFunction) => void;
@@ -42,9 +42,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(c.get('authToken'));
         success();
       } else {
-        homosole.supervisorerror(data.error);
+        error(data.error);
       }
-    }, homosole.supervisorerror)
+    }, (data)=>{
+      error(data.error);
+    });
   };
 
   let deleteUser = (success: VoidFunction, error: VoidFunction) => {

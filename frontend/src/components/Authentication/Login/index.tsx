@@ -15,7 +15,9 @@ import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Busy from 'src/components/Busy';
 import { useAuth } from 'src/hooks/useAuth';
+import { useMudConsole } from '../../../hooks/useMudConsole';
 type LoginProps = {}
 
 interface LocationState {
@@ -23,19 +25,23 @@ interface LocationState {
 }
 const Login: React.FC<LoginProps> = (props) => {
     let navigate = useNavigate();
+    const [isLoading, setIsLoading] = React.useState(false);
+    const homsole = useMudConsole();
     let location = useLocation();
     let auth = useAuth();
     let from = (location.state as LocationState)?.from?.pathname || "/";
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
+        setIsLoading(true);
         let formData = new FormData(event.currentTarget);
         let username = formData.get("username") as string;
         let password = formData.get("password") as string;
         auth.login(username, password, () => {
             navigate(from, { replace: true });
-        }, () => {
+        }, (error) => {
+            homsole.error(error);
+            setIsLoading(false);
         });
     }
 
@@ -43,6 +49,7 @@ const Login: React.FC<LoginProps> = (props) => {
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
+                    {isLoading ? <Busy/> :
                     <form onSubmit={handleSubmit}>
                         <div className="input-group py-2">
                             <input name="username" className="input-standard drawn-border" type="text" placeholder="Username" />
@@ -54,6 +61,7 @@ const Login: React.FC<LoginProps> = (props) => {
                         <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">Login</button> <br />
                         <span>Noch keinen Account? <Link to="/register">Hier registrieren</Link></span>
                     </form>
+                    }
                 </div>
             </Row>
         </Container>

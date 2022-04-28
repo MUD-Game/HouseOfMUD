@@ -18,7 +18,6 @@ const Header: React.FC<HeaderProps> = (props) => {
 
     const auth = useAuth();
     const location = useLocation();
-    console.log(location.pathname === '/login')
     const navigate = useNavigate();
     return (
         <Container className="text-center">

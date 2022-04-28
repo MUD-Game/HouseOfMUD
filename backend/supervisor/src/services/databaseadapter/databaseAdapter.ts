@@ -71,6 +71,10 @@ export class DatabaseAdapter {
         return this.user.create(user);
     }
 
+    async getPassword(username: string){
+        return (await this.user.findOne({username: username}))?.password;
+    }
+
     async checkIfUserExists(username: string){
         return (await this.user.findOne({username: username})) != null;
     }

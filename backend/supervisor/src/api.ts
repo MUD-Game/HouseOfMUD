@@ -6,8 +6,7 @@ import { TLS } from './types/tls';
 import * as comm from './types/api';
 import { GetDungeonResponse } from './types/api';
 import { mockauth, mockresponse } from './mock/api';
-import authProvider from './services/auth-provider';
-import auth from './middlewares/auth';
+import AuthProvider from './services/AuthProvider';
 import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 import { Dungeon } from './services/databaseadapter/datasets/dungeon';
@@ -26,25 +25,20 @@ export class API {
     private tls: TLS;
     private hostLink: HostLink;
     private dba: DatabaseAdapter;
-    private unverified_users: { [token: string]: User } = {};
-    private salt: string
-    private transporter: any
-    private verifyLink:string
+    private authProvider:AuthProvider;
     /**
      * @param port api port 
      * @param tls TLS object
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any, cookie_host: string) {
         this.origin = origin;
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
-        this.salt = salt;
-        this.transporter = transporter
-        this.verifyLink = verifyLink;
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookie_host);
 
     }
 
@@ -98,86 +92,18 @@ export class API {
         });
 
         // platform registration
-        app.post('/register', async (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.email !== undefined && body.password !== undefined) {
-                let hasher = crypto.createHmac('sha256', this.salt);
-                let user: string = body.user;
-                let email: string = body.email;
-                let password: string = hasher.update(body.password).digest('base64');
-                if( Object.keys(this.unverified_users).some(token => this.unverified_users[token].username === user) || await this.dba.checkIfUserExists(user)){
-                    res.status(409).send({
-                        ok:0,
-                        error: "User already exists"
-                    });
-                } else if (Object.keys(this.unverified_users).some(token => this.unverified_users[token].email === email) || await this.dba.checkIfEmailExists(email)) {
-                    res.status(409).send({
-                        ok:0,
-                        error: "Email already exists"
-                    });
-                } else {
-                    let verifyToken: string = this.generateVerifyToken();
-                    this.unverified_users[verifyToken] = {
-                        username: user,
-                        password: password,
-                        email: email
-                    };
-                    let options = {
-                        from: 'HouseOfMUD <houseofmud2022@gmail.com>',
-                        to: email,
-                        subject: 'Email-Verifizierung',
-                        text: `Bitte klicken Sie auf den folgenden Link um Ihre Email zu verifizieren: ${this.verifyLink}?token=${verifyToken}`
-                    }
-                    this.transporter.sendMail(options, (error: any, info: any) => {
-                        if (error) {
-                            console.log(error);
-                            res.status(500).json({ok:0,error:error});
-                        }else{
-                            res.status(200).json({ok:1});
-                        }
-                    });
-                }
+        app.post('/register', this.authProvider.register);
 
-            }else{
-                res.status(400).send({
-                    ok:0,
-                    error: "missing parameters"
-                });
-            }
-        });
-
-        app.post('/verify', (req,res)=>{
-            let body: any = req.body;
-            if(body.token !== undefined){
-                if(this.unverified_users[body.token] !== undefined){
-                    let user: User = this.unverified_users[body.token];
-                    delete this.unverified_users[body.token];
-                    this.dba.registerUser({username: user.username, password: user.password, email: user.email});
-                    res.status(200).send({
-                        ok:1
-                    });
-                }else{
-                    res.status(400).send({
-                        ok:0,
-                        error: "invalid token"
-                    });
-                }
-            }else{
-                res.status(400).send({
-                    ok:0,
-                    error: "missing token"
-                });
-            }
-        });
+        app.post('/verify', this.authProvider.verifyEmail);
 
         // TODO: Create actual authentication
         // platform authentication
-        app.post('/auth', auth ,  (req, res) => {
+        app.post('/auth', this.authProvider.auth ,  (req, res) => {
             res.json({ok:1});
         });
 
         // login to dungeon
-        app.post('/login/:dungeonID', auth, (req, res) => {
+        app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
             res.json({ok:1, verifyToken: this.generateVerifyToken()});
             // let dungeonID: string = req.params.dungeonID;
             // let body: any = req.body;
@@ -200,7 +126,7 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', /*auth,*/ (req, res) => {
+        app.post('/startDungeon/:dungeonID', /*this.authProvider.auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
@@ -212,7 +138,7 @@ export class API {
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*auth,*/ (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
@@ -224,18 +150,18 @@ export class API {
         });
 
         // get dungeons
-        app.get('/dungeons', auth, (req, res) => {
+        app.get('/dungeons', this.authProvider.auth, (req, res) => {
             res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
         });
 
         // get my dungeons
-        app.get('/myDungeons', auth, (req, res) => {
+        app.get('/myDungeons', this.authProvider.auth, (req, res) => {
             let user = req.cookies.user; // TODO: get myDungeons based on user   
             res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
         });
 
         // create dungeon
-        app.post('/dungeon', auth,  (req, res) => {
+        app.post('/dungeon', this.authProvider.auth,  (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
             let user = req.cookies.user; // TODO: get myDungeons based on user
             // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
@@ -253,7 +179,7 @@ export class API {
         });
 
         // get dungeon
-        app.get('/dungeon/:dungeonID', auth, (req, res) => {
+        app.get('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
             let params: any = req.query;
             if (params.user !== undefined && params.authToken !== undefined) {
                 let user: string = params.user;
@@ -265,7 +191,7 @@ export class API {
         });
 
         // edit dungeon
-        app.patch('/dungeon/:dungeonID', auth, (req, res) => {
+        app.patch('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
             if (body.user !== undefined && body.authToken !== undefined && body.dungeonData !== undefined) {
@@ -279,7 +205,7 @@ export class API {
         });
 
         // delete dungeon
-        app.delete('/dungeon/:dungeonID', auth, (req, res) => {
+        app.delete('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
             if (body.user !== undefined && body.authToken !== undefined) {
@@ -292,7 +218,7 @@ export class API {
         });
 
         // get character attributes for dungeon
-        app.get('/character/attributes/:dungeonID', auth, (req, res) => {
+        app.get('/character/attributes/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let user = req.cookies.user!; // Cant be undefined because of auth middleware
             res.json({
@@ -302,7 +228,7 @@ export class API {
         });
 
         // get user-characters for dungeon
-        app.get('/characters/:dungeonID', auth, (req, res) => {
+        app.get('/characters/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let user = req.cookies.user!; // Cant be undefined because of auth middleware
             //TODO: Get user-characters for dungeon
@@ -310,7 +236,7 @@ export class API {
         });
 
         // create character
-        app.post('/character/:dungeonID', auth, (req, res) => {
+        app.post('/character/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
             if (body.user !== undefined && body.authToken !== undefined && body.characterData !== undefined) {
@@ -324,7 +250,7 @@ export class API {
         });
 
         // delete character
-        app.delete('/character/:dungeonID', auth, (req, res) => {
+        app.delete('/character/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
             if (body.user !== undefined && body.authToken !== undefined && body.character !== undefined) {

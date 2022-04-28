@@ -17,7 +17,10 @@ tls:
 auth:
   salt: secret
   verifyLink: http://localhost:3000/verify
-  emailsecret: secret
+  emailservice: gmail
+  emailadress: houseofmud2022@gmail.com
+  emailsecret: ...
+  cookiehost: .mud-ga.me
 
 mongodb:
   host: 127.0.0.1

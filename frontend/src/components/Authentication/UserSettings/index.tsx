@@ -15,6 +15,7 @@ import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import { useAuth } from 'src/hooks/useAuth';
 type UserSettingsProps = {}
 
@@ -25,7 +26,6 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
     let navigate = useNavigate();
     let location = useLocation();
     let auth = useAuth();
-    
 
     return (
         <Container className="mt-5">
@@ -41,7 +41,7 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
                 </div>
             </Row>
         </Container>
-    );
+    )
 }
 
 export default UserSettings;    

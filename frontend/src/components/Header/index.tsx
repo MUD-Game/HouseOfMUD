@@ -28,22 +28,22 @@ const Header: React.FC<HeaderProps> = (props) => {
                     <img id="header-logo" src={Logo} alt="Logo HouseOfMUD" />
                 </Link>
             </Row>
-            <Row className="mt-3 align-items-center">
-                <Col className="text-start">
-                    <p className="headline">{auth.user ? <>Wilkommen <Link to="/user-settings"><b>{auth.user}</b></Link></>: null}</p>
-                </Col>
-                <Col className="text-end">
-                    {location.pathname!=='/login' ?
-                        <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {
-                            auth.logout(() => {
-                                navigate("/login");
-                            },()=>{
-                                homsole.error("Logout fehlgeschlagen");
-                            });
-                        }}>Logout</button> 
-                        : null}
-                </Col>
-            </Row>
+            {location.pathname!=='/login' && location.pathname!=='/register' ?
+                <Row className="mt-3 align-items-center">
+                    <Col className="text-start">
+                        <p className="headline">{auth.user ? <>Wilkommen <Link to="/user-settings"><b>{auth.user}</b></Link></>: null}</p>
+                    </Col>
+                    <Col className="text-end">
+                            <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {
+                                auth.logout(() => {
+                                    navigate("/login");
+                                },()=>{
+                                    homsole.error("Logout fehlgeschlagen");
+                                });
+                            }}>Logout</button> 
+                    </Col>
+                </Row>
+            : null}
             <hr />
         </Container>
     )

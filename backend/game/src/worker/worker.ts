@@ -1,18 +1,18 @@
 
+import { DatabaseAdapter } from 'data/databaseAdapter';
+import { CharacterStats } from 'data/datasets/charcterStats';
+import { ActionElement, ActionElementImpl } from 'data/interfaces/actionElement';
+import { ActionEventImpl } from 'data/interfaces/actionEvent';
+import { CharacterClass, CharacterClassImpl } from 'data/interfaces/characterClass';
+import { CharacterGender, CharacterGenderImpl } from 'data/interfaces/characterGender';
+import { CharacterSpecies, CharacterSpeciesImpl } from 'data/interfaces/characterSpecies';
+import { CharacterStatsImpl } from 'data/interfaces/characterStats';
+import { ConnectionInfo, ConnectionInfoImpl } from 'data/interfaces/connectionInfo';
+import { Dungeon, DungeonImpl } from 'data/interfaces/dungeon';
+import { Item, ItemImpl } from 'data/interfaces/item';
+import { Npc, NpcImpl } from 'data/interfaces/npc';
+import { Room, RoomImpl } from 'data/interfaces/room';
 import { exit } from 'process';
-import { DatabaseAdapter } from '../data/databaseAdapter';
-import { CharacterStats } from '../data/datasets/charcterStats';
-import { ActionElement, ActionElementImpl } from '../data/interfaces/actionElement';
-import { ActionEventImpl } from '../data/interfaces/actionEvent';
-import { CharacterClass, CharacterClassImpl } from '../data/interfaces/characterClass';
-import { CharacterGender, CharacterGenderImpl } from '../data/interfaces/characterGender';
-import { CharacterSpecies, CharacterSpeciesImpl } from '../data/interfaces/characterSpecies';
-import { CharacterStatsImpl } from '../data/interfaces/characterStats';
-import { ConnectionInfo, ConnectionInfoImpl } from '../data/interfaces/connectionInfo';
-import { Dungeon, DungeonImpl } from '../data/interfaces/dungeon';
-import { Item, ItemImpl } from '../data/interfaces/item';
-import { Npc, NpcImpl } from '../data/interfaces/npc';
-import { Room, RoomImpl } from '../data/interfaces/room';
 import { AmqpAdapter } from "./amqp/amqp-adapter";
 import { DungeonController } from "./controller/dungeon-controller";
 

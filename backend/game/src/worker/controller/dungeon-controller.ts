@@ -1,9 +1,9 @@
-import { AmqpAdapter } from "../amqp/amqp-adapter";
 import { ConsumeMessage } from "amqplib";
-import { ActionHandlerImpl, ActionHandler } from "../action/action-handler";
-import { Character, CharacterImpl } from "../../data/interfaces/character";
-import { CharacterStatsImpl } from "../../data/interfaces/characterStats";
-import { Dungeon } from "../../data/interfaces/dungeon";
+import { Character, CharacterImpl } from "data/interfaces/character";
+import { CharacterStatsImpl } from "data/interfaces/characterStats";
+import { Dungeon } from "data/interfaces/dungeon";
+import { ActionHandler, ActionHandlerImpl } from "worker/action/action-handler";
+import { AmqpAdapter } from "worker/amqp/amqp-adapter";
 
 
 export class DungeonController {

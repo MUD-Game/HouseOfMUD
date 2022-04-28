@@ -26,7 +26,22 @@ export default class AuthProvider {
         this.auth = this.auth.bind(this);
         this.validateToken = this.validateToken.bind(this);
         this.validatePassword = this.validatePassword.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+    
+}
+    async deleteUser(req:any, res:any, next:any){
+        this.dba.deleteUser(req.cookies.user).then(() => {
+            if (this.sessioned_users[req.cookies.authToken]) {
+                delete this.sessioned_users[req.cookies.authToken];
+            }
+            next();
+        }).catch(() => {
+            res.code(500).json({ok:0, error: "Could not delete user"});
+        }
+        );
     }
+
+
         async register(req:any, res:any){
         let body: any = req.body;
         if (body.user !== undefined && body.email !== undefined && body.password !== undefined) {
@@ -136,7 +151,6 @@ export default class AuthProvider {
     async validatePassword(user: string, password: string) {
         // Fake wait
         const dbPw = await this.dba.getPassword(user);
-        console.log(dbPw);
         if(dbPw === undefined) return false;
         let hasher = crypto.createHmac('sha256', this.salt);
         let hashedPassword: string = hasher.update(password).digest('base64');

@@ -67,6 +67,10 @@ export class DatabaseAdapter {
         })
     } 
 
+    async deleteUser(username: string){
+        return this.user.deleteOne({username: username});
+    }
+
     async registerUser(user: User){
         return this.user.create(user);
     }

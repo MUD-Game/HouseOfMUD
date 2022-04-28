@@ -102,6 +102,10 @@ export class API {
             res.json({ok:1});
         });
 
+        app.delete('/deleteuser', this.authProvider.auth, this.authProvider.deleteUser, (req, res) => {
+            res.json({ok:1});
+        });
+
         // login to dungeon
         app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
             res.json({ok:1, verifyToken: this.generateVerifyToken()});

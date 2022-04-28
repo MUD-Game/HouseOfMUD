@@ -8,10 +8,12 @@
 
 import React, { FormEvent } from 'react';
 import { supervisor } from 'src/services/supervisor';
-import { CreateCharacterRequest, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import { CreateCharacterRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';
+import MudInput from '../Custom/MudInupt';
+import MudSelect from '../Custom/MudSelect';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
@@ -28,7 +30,6 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
         let formData = new FormData(evt.currentTarget);
         let bodyData: CreateCharacterRequest = {
             user: auth.user,
-            authToken: auth.token,
             characterData: {
                 name: formData.get("name") as string,
                 fullname: formData.get("fullname") as string,
@@ -49,44 +50,32 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
         <form onSubmit={onCreateCharacter}>
             <p className="headline">Neuen Charakter anlegen</p>
             <Row className="py-3 g-4">
-                <div className="col-md-6">
-                    <label htmlFor="name"><b>Charaktername:</b></label>
-                    <input required className="drawn-border input-standard" type="text" name="name" placeholder="Charaktername wählen" />
-                </div>
+                <MudInput required colmd={6} name="name" type="text" placeholder="Charaktername wählen" />
                 {/* <div className="col-md-6">
                     <label htmlFor="fullname"><b>Fullname:</b></label>
                     <input required className="drawn-border input-standard" type="text" name="fullname" placeholder="Fullname wählen" />
                 </div> */}
-                <div className="col-md-6">
-                    <label htmlFor="class"><b>Klasse:</b></label>
-                    <select className="drawn-border select-standard" name="class">
-                        {classes.map((cl, index) => {
-                            return (
-                                <option key={index} value={cl.id}>{cl.name}</option>
-                            )
-                        })}
-                    </select>
-                </div>
-                <div className="col-md-6">
-                    <label htmlFor="gender"><b>Geschlecht:</b></label>
-                    <select className="drawn-border select-standard" name="gender">
-                    {genders.map((cl, index) => {
+                <MudSelect required colmd={6} name="class" label="Klasse">
+                    {classes.map((cl, index) => {
                         return (
                             <option key={index} value={cl.id}>{cl.name}</option>
                         )
                     })}
-                </select>
-                </div>
-                <div className="col-md-6">
-                    <label htmlFor="species"><b>Spezies:</b></label>
-                    <select className="drawn-border select-standard" name="species">
-                        {species.map((cl, index) => {
-                            return (
-                                <option key={index} value={cl.id}>{cl.name}</option>
-                            )
-                        })}
-                    </select>
-                </div>
+                </MudSelect>
+                <MudSelect required colmd={6} name="gender" label="Geschlecht">
+                    {genders.map((ge, index) => {
+                        return (
+                            <option key={index} value={ge.id}>{ge.name}</option>
+                        )
+                    })}
+                </MudSelect>
+                <MudSelect required colmd={6} name="species" label="Spezies">
+                    {species.map((sp, index) => {
+                        return (
+                            <option key={index} value={sp.id}>{sp.name}</option>
+                        )
+                    })}
+                </MudSelect>
             </Row>
 
             <Row className="text-end">
@@ -94,9 +83,9 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
                     <button className="btn drawn-border btn-green btn-xpadding" type="submit">Erstellen und Beitreten</button>
                 </Col>
             </Row>
-            
+
         </form>
-        
+
     )
 }
 

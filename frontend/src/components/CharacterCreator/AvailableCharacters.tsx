@@ -13,32 +13,31 @@
 
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import { GetCharactersResponse, GetCharacterAttributesResponse } from 'src/types/supervisor';
+import {  CharactersResponseData } from '@supervisor/api';
 import AvailableCharactersLi from './AvailableCharactersLi';
 
 export interface AvailableCharactersProps {
-    characters: GetCharactersResponse
+    characters: CharactersResponseData[];
 }
 
 const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters }) => {
-
     return (
         <>
             <p className="headline">Charakter auswählen</p>
             <Row className="py-2">
-                <div className="col-2">
+                <div className="col">
                     <b><u>Name</u></b>
                 </div>
-                <div className="col-2">
+                <div className="col">
                     <b><u>Klasse</u></b>         
                 </div>
-                <div className="col-2">
+                <div className="col">
                     <b><u>Geschlecht</u></b>      
                 </div>
-                <div className="col-2">  
+                <div className="col">  
                     <b><u>Spezies</u></b>
                 </div>
-                <div className="col-4"></div>           
+                <div className="col"></div>           
             </Row>
             {characters.map((character, index) => {
                 return <AvailableCharactersLi character={character} key={index} />

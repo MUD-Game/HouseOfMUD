@@ -1,37 +1,77 @@
 import React from 'react';
-
-import { supervisor as authProvider } from 'src/services/supervisor';
+import { useNavigate } from 'react-router-dom';
+import { useMudConsole } from 'src/hooks/useMudConsole';
+import { supervisor } from 'src/services/supervisor';
+import Cookies from 'universal-cookie';
 
 type AuthContextType = {
   user: string;
   token: string;
-  isAuthenticated: () => Promise<boolean>;
-  login: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
-  register: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
-  logout: (callback: VoidFunction) => void;
+  isAuthenticated: (success: VoidFunction, error: VoidFunction) => void;
+  login: (user: string, password: string, success: VoidFunction, error: (error:string)=>void) => void;
+  register: (email: string, user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
+  logout: (success: VoidFunction, error: (error: string) => void) => void;
+  verifyEmail: (token: string, success: VoidFunction, error: VoidFunction) => void;
+  deleteUser: (success: VoidFunction, error: VoidFunction) => void;
 }
 
 let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  let [user, setUser] = React.useState<string>("DummyUser");
-  let [token, setToken] = React.useState<string>('xxx');
-  let isAuthenticated = async () => {
-    return true;
+  let [user, setUser] = React.useState<string>("");
+  let [token, setToken] = React.useState<string>('');
+  const navigate = useNavigate();
+  const homosole = useMudConsole();
+  let isAuthenticated = (success:VoidFunction, error:VoidFunction) => {
+    supervisor.authenticate({ user: user, password: token }, (data:any)=>{
+        if(data.ok){
+          let c = new Cookies();
+          setUser(c.get('user'));
+          success();
+        }else{
+          error();
+        }
+    }, error)
   }
 
   let login = (user: string, password: string, success: VoidFunction, error: (error: string) => void) => {
-
+    supervisor.authenticate({ user, password }, (data: any) => {
+      if (data.ok) {
+        setUser(user);
+        let c = new Cookies();
+        setToken(c.get('authToken'));
+        success();
+      } else {
+        error(data.error);
+      }
+    }, (data)=>{
+      error(data.error);
+    });
   };
 
-  let logout = (callback: VoidFunction) => {
-
-  };
-
-  let register = (newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
-
+  let deleteUser = (success: VoidFunction, error: VoidFunction) => {
+    supervisor.deleteUser(() => {
+      homosole.log("User gelöscht");
+      success();
+    }, homosole.supervisorerror)
   }
-  let value = { user, token, login, logout, register, isAuthenticated };
+
+  let logout = (success: VoidFunction, error: (error:string)=>void) => {
+    supervisor.userLogout(() => {
+      success();
+    },()=>{
+      error("Logout fehlgeschlagen");
+    });
+  };
+
+  let register = (email: string, newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
+    supervisor.register(email, newUser, password, success, error);
+  }
+
+  let verifyEmail = (token:string, success: VoidFunction, error: VoidFunction) => {
+    supervisor.verify(token, success, error);
+  }
+  let value = { user, token, login, logout, register, isAuthenticated, verifyEmail, deleteUser };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

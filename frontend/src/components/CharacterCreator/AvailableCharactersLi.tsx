@@ -7,15 +7,17 @@
 
 
 import React from 'react';
-import { GetCharactersResponseData, LoginRequest } from 'src/types/supervisor';
+import { CharactersResponseData, LoginRequest } from '@supervisor/api';
 import { supervisor } from 'src/services/supervisor';
 import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
 import { Row } from 'react-bootstrap';
+import { useMudConsole } from 'src/hooks/useMudConsole';
+import { Play, PlayCircle, Trash } from 'react-bootstrap-icons';
 
 export interface AvailableCharactersLiProps {
-    character: GetCharactersResponseData
+    character: CharactersResponseData
 }
 
 const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character }) => {
@@ -24,12 +26,14 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
     const { dungeon, setCharacterID, setVerifyToken, setCharacter } = useGame();
     const navigate = useNavigate();
 
+    const homosole = useMudConsole();
+
     const onDelete = () => {
-        supervisor.deleteCharacter(dungeon, { user, authToken: token, character: character.character }, (data) => {
+        supervisor.deleteCharacter(dungeon, { user, character: character.character }, (data) => {
             navigate("/characters");
         }, (error) => {
-            // TODO: handle error in a better way
-            alert(error);
+            homosole.error(error.error);
+
         })
     }
 
@@ -38,7 +42,6 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
         let body: LoginRequest = {
             user: user,
             character: character.character,
-            authToken: token
         }
 
         supervisor.login(dungeon, body, (data) => {
@@ -48,30 +51,28 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
             navigate("/game");
         }, (error) => {
             // TODO: handle error in a better way
-            alert(error);
+            homosole.error(error.error);
         });
     }
 
     return (
-        <Row className="character-list align-items-center py-2">
-            <div className="col-2">
+        <Row className="character-item align-items-center py-2">
+            <div className="col">
                 <b>{character.name}</b>
             </div>
-            <div className="col-2">
+            <div className="col">
                 {character.class}            
             </div>
-            <div className="col-2">
+            <div className="col">
                 GeschlechtX{/* {character.gender} */}
             </div>
-            <div className="col-2">        
+            <div className="col">        
                 SpeziesY{/* {character.species} */}
             </div>
-            <div className="col-2">                            
-                <button className="btn w-100 drawn-border btn-red" onClick={onDelete}>Löschen</button>
-            </div>
-            <div className="col-2">         
-                <button className="btn w-100 drawn-border btn-green" onClick={onJoin}>Beitreten</button>    
-            </div>           
+            <div className="col text-end">
+                <Trash size={30} id="deleteIcon" className="mx-1" onClick={onDelete} style={{ cursor: "pointer", color: "red" }} />
+                <Play size={45} id="joinIcon" className="mx-1" onClick={onJoin} style={{ cursor: "pointer", color: "green" }} />
+            </div>        
         </Row>
     )
 }

@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "build": "npx tsc",
+    "start": "npx tsc && node ./dist/supervisor.js"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "@types/js-yaml": "^4.0.5",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^17.0.25",
+    "@types/nodemailer": "^6.4.4",
+    "@types/socket.io": "^3.0.2",
+    "body-parser": "^1.20.0",
+    "crypto": "^1.0.1",
+    "express": "^4.17.3",
+    "js-yaml": "^4.1.0",
+    "mongoose": "^6.3.1",
+    "nodemailer": "^6.7.3",
+    "socket.io": "^4.4.1",
+    "typedoc-umlclass": "^0.6.0"
+  }
+}

@@ -1,0 +1,22 @@
+
+name: Alpha
+
+supervisorLink:
+  url: localhost
+  port: 43211
+  tls: false
+  authKey: SuperSecretKey
+
+amqpAdapter:
+  url: mud-ga.me
+  port: 5672
+  user: guest
+  password: guest
+  serverExchange: ServerExchange
+  clientExchange: ClientExchange
+
+mongodb:
+  host: 127.0.0.1
+  port: 27017
+  user: root
+  password: root

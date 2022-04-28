@@ -5,10 +5,14 @@
   --accentlight: #a7795b;
   --accent: #6b2a00;
   --accent0:rgba(107, 43, 0, 0);
-  --lightgreen: #57c659;
-  --green: #29872c;
-  --lightred: #fa8585;
-  --red: #ff1515;
+  --green: rgb(21, 115, 71);
+  --lightgreen: rgb(37, 147, 95);
+  --red: rgb(187, 45, 59);
+  --lightred: rgb(228, 61, 78);
+
+  --health: #ff0000;
+  --mana: #a600ff;
+  --damage: #bbbbbb;
 }
 
 html, body {
@@ -52,7 +56,7 @@ a:hover {
 }
 
 #header-logo {
-  max-width: 350px;
+  max-width: 275px;
   width: 100%;
 }
 
@@ -87,6 +91,13 @@ a:hover {
   box-shadow: none;
 }
 
+.btn {
+  border-color: var(--accent);
+}
+.btn:hover {
+  border-color: var(--accent);
+}
+
 .btn-standard {
   width: 100%;
   color: var(--textcolor);
@@ -97,7 +108,7 @@ a:hover {
 }
 
 .btn-green {
-  color: var(--textcolor);
+  color: white;
   background-color: var(--lightgreen);
 }
 .btn-green:hover {
@@ -106,7 +117,7 @@ a:hover {
 }
 
 .btn-red {
-  color: var(--textcolor);
+  color: white;
   background-color: var(--lightred);
 }
 .btn-red:hover {
@@ -152,10 +163,88 @@ a:hover {
   border-radius: 1% 98% 1% 99% /99% 2% 50% 1%;
 }
 
-.dashboard-list, .character-list {
+.dashboard-list {
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
   border-width: 0 0 3px;
+}
+
+/* Listen und Icons */
+#editIcon, #deleteIcon, #joinIcon {
+  opacity: 0.2;
+  margin-left: 5px;
+  transition: opacity .1s ease-in, transform .05s ease-in;
+}
+
+.row:hover #editIcon, .row:hover #deleteIcon, .row:hover #joinIcon {
+  opacity: 1;
+}
+
+#editIcon:hover, #deleteIcon:hover, #joinIcon:hover {
+  transform: scale(1.2);
+}
+
+.configurator-item, .character-item {
+  border-radius: .3em;
+  transition: background-color .1s ease-in;
+}
+
+.configurator-item:hover, .character-item:hover {
+  background-color: rgb(146, 144, 141);
+  box-shadow: 0em 0em .3em rgb(146, 144, 141);
+}
+
+/* Game */
+.mock-placeholder.minimap {
+  width: 100%;
+  aspect-ratio: 1 / .7;
+}
+.mock-placeholder.inventory {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+.chat {
+  width: 100%;
+  aspect-ratio: 1 / .6;
+}
+
+.chat-content {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.chat-content::-webkit-scrollbar {
+  width: 15px;
+}
+.chat-content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--accent);
+  background-color: var(--accentlight);
+  border-radius: 10px;
+}
+.chat-content::-webkit-scrollbar-thumb {    
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+.progress {  
+  height: auto;
+  border: solid var(--accent);
+  border-width: 3px 4px 3px 5px;
+  border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
+  background-color: transparent;
+}
+.progress-bar {
+  font-size: .6rem;
+}
+.bg-health {
+  background-color: var(--health);
+}
+.bg-mana {
+  background-color: var(--mana);
+}
+.bg-damage {
+  background-color: var(--damage);
 }
 
 code {
@@ -163,31 +252,35 @@ code {
     monospace;
 }
 
+/* Toasts */
+.toast-container{
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+}
 .toast{
   font-family: 'Segoe UI', 'Calibri', Helvetica, sans-serif;
   font-size:0.75rem;
+  z-index:100 !important;
 }
-
 .toast.bg-danger .toast-header {
   color:rgb(218, 54, 54);
   background-color:#ffefef !important;
 }
-
 .toast.bg-warning .toast-header {
   color:rgb(255, 149, 0);
-  background-color:rgb(69, 60, 30) !important;
+  background-color:rgb(255, 245, 213) !important;
 }
-
 .toast.bg-info .toast-header {
   color:rgb(45, 136, 255);
   background-color:rgb(218, 236, 255) !important;
 }
-
 .toast{
-  background-color: rgba(255, 255, 255, 0.944) !important;
+  background-color: rgb(255, 255, 255) !important;
   color:rgb(29, 29, 29);
 }
-
 .toast-header strong{
   text-transform: capitalize;
 }
+/* Toasts END */

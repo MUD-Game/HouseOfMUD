@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "mongodb": "^4.5.0",
+    "mongoose": "^6.3.0",
+    "typedoc-umlclass": "^0.6.0",
+    "typescript": "^4.6.3"
+  }
+}

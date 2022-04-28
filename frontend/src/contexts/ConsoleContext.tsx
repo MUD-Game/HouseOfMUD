@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Toast, Col, Row, ToastContainer, ToastHeader, ToastProps } from 'react-bootstrap';
-import { ErrorResponse } from '../types/supervisor';
-import { useEffect } from 'react';
+import { Toast, ToastContainer, ToastProps } from 'react-bootstrap';
+import { ErrorResponse } from '@supervisor/api';
 
 type ConsoleContextType = {
   log: (message: string, location?: string) => void;
@@ -39,10 +38,10 @@ function ConsoleProvider({ children }: { children: React.ReactNode }) {
   }
 
   const addToast = (type: 'danger' | 'warning' | 'info', message: string, location?: string) => {
-    location = location ? location : 'general';
-    setToastKey(toastKey + 1);
-    setToasts({ ...toasts, [toastKey]: { type, message, location } });
-    destroyToastSoon(toastKey);
+    // location = location ? location : 'general';
+    // setToastKey(toastKey + 1);
+    // setToasts({ ...toasts, [toastKey]: { type, message, location } });
+    // destroyToastSoon(toastKey);
   }
 
   const log = (message: string, location?: string) => {
@@ -53,7 +52,7 @@ function ConsoleProvider({ children }: { children: React.ReactNode }) {
   }
 
   const supervisorerror = (err: ErrorResponse) => {
-    addToast('info', err.error, "Supervisor");
+    addToast('danger', err.error, "Supervisor");
   }
 
   const error = (message: string, location?: string) => {

@@ -12,13 +12,15 @@
  * ```
  */
 import React, { useEffect } from 'react'
-import { Container, Nav } from 'react-bootstrap';
+import { Button, Container, Form, FormControl, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
-import { GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from 'src/types/supervisor';
+import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
 import AllDungeons from './AllDungeons';
 import "./index.css"
+import { useNavigate } from 'react-router-dom';
+import $ from 'jquery';
 
 
 export type DashboardProps = {
@@ -28,14 +30,15 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
     const auth = useAuth();
     const homsole = useMudConsole();
-    let [allDungeons, setAllDungeons] = React.useState<GetDungeonsResponse>();
-    let [myDungeons, setMyDungeons] = React.useState<GetMyDungeonsResponse>();
+    const navigate = useNavigate();
+    let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
+    let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
     let [dungeonView, setDungeonView] = React.useState<"all" | "my">("all");
+    let [searchTerm, setSearchTerm] = React.useState<string>('');
 
     useEffect(() => {
         let request: GetDungeonsRequest = {
             user: auth.user,
-            authToken: auth.token,
         }
         supervisor.getDungeons(request, setAllDungeons, homsole.supervisorerror)
         supervisor.getMyDungeons(request, setMyDungeons, homsole.supervisorerror);
@@ -48,22 +51,37 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             setDungeonView("my");
         }
     }
+    const handleSearch = (event: any) => {
+        setSearchTerm(event.target.value);
+    }
 
     return (
         <Container className="mb-5">
-            <h2>Dashboard</h2>
+            <Row className="align-items-center mb-3">
+                <div className="col-8">
+                    <h2 className='my-3'>Dashboard</h2>
+                </div>
+                <div className="col-4">
+                    <button className="btn drawn-border btn-standard" onClick={() => {
+                        navigate("/dungeon-configurator", { state: { action: "new" } });
+                    }}>Neuen Dungeon erstellen</button>
+                </div>
+            </Row>
+
             <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                 <Nav.Item>
                     <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                     <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
+                    {/* <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link> */}
                 </Nav.Item>
             </Nav>
+            <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder="Suche Dungeon" />
 
-            {dungeonView === "all" && allDungeons ? <AllDungeons allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <AllDungeons allDungeons={myDungeons} /> : null}
-        </Container>
+            {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={myDungeons} /> : null}
+        </Container >
     )
 }
 

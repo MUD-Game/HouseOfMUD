@@ -12,7 +12,7 @@
  * ```
  */
 import React, { useEffect } from 'react'
-import { Container, Nav, Row } from 'react-bootstrap';
+import { Button, Container, Form, FormControl, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
@@ -20,6 +20,7 @@ import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDung
 import AllDungeons from './AllDungeons';
 import "./index.css"
 import { useNavigate } from 'react-router-dom';
+import $ from 'jquery';
 
 
 export type DashboardProps = {
@@ -33,6 +34,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
     let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
     let [dungeonView, setDungeonView] = React.useState<"all" | "my">("all");
+    let [searchTerm, setSearchTerm] = React.useState<string>('');
 
     useEffect(() => {
         let request: GetDungeonsRequest = {
@@ -49,6 +51,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             setDungeonView("my");
         }
     }
+    const handleSearch = (event: any) => {
+        setSearchTerm(event.target.value);
+    }
 
     return (
         <Container className="mb-5">
@@ -62,6 +67,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     }}>Neuen Dungeon erstellen</button>
                 </div>
             </Row>
+
             <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                 <Nav.Item>
                     <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
@@ -71,9 +77,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     {/* <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link> */}
                 </Nav.Item>
             </Nav>
+            <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder="Suche Dungeon" />
 
-            {dungeonView === "all" && allDungeons ? <AllDungeons allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <AllDungeons allDungeons={myDungeons} /> : null}
+            {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={myDungeons} /> : null}
         </Container >
     )
 }

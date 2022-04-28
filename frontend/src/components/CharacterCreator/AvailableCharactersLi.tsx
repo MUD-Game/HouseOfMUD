@@ -14,6 +14,7 @@ import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
 import { Row } from 'react-bootstrap';
 import { useMudConsole } from 'src/hooks/useMudConsole';
+import { Play, PlayCircle, Trash } from 'react-bootstrap-icons';
 
 export interface AvailableCharactersLiProps {
     character: CharactersResponseData
@@ -55,25 +56,23 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
     }
 
     return (
-        <Row className="character-list align-items-center py-2">
-            <div className="col-2">
+        <Row className="character-item align-items-center py-2">
+            <div className="col">
                 <b>{character.name}</b>
             </div>
-            <div className="col-2">
+            <div className="col">
                 {character.class}            
             </div>
-            <div className="col-2">
+            <div className="col">
                 GeschlechtX{/* {character.gender} */}
             </div>
-            <div className="col-2">        
+            <div className="col">        
                 SpeziesY{/* {character.species} */}
             </div>
-            <div className="col-2">                            
-                <button className="btn w-100 drawn-border btn-red" onClick={onDelete}>Löschen</button>
-            </div>
-            <div className="col-2">         
-                <button className="btn w-100 drawn-border btn-green" onClick={onJoin}>Beitreten</button>    
-            </div>           
+            <div className="col text-end">
+                <Trash size={30} id="deleteIcon" className="mx-1" onClick={onDelete} style={{ cursor: "pointer", color: "red" }} />
+                <Play size={45} id="joinIcon" className="mx-1" onClick={onJoin} style={{ cursor: "pointer", color: "green" }} />
+            </div>        
         </Row>
     )
 }

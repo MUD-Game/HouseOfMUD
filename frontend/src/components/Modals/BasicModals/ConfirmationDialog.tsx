@@ -9,7 +9,6 @@ export interface ConfirmationDialogProps {
     title: string;
     message: string;
 }
-
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onConfirm, onHide, show, title, message }) => {
 
     return (
@@ -28,7 +27,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onConfirm, onHi
                         </Button>
                     </div>
                     <div className="col-6">
-                    <Button autoFocus className="btn w-100 drawn-border btn-red" onClick={(e) => {
+                    <Button className="btn w-100 drawn-border btn-red" onClick={(e) => {
                         onConfirm();
                         onHide();
                     }}>

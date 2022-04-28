@@ -17,10 +17,11 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
-import AllDungeons from './AllDungeons';
+import AllDungeons from './AllDungeons/AllDungeons';
 import "./index.css"
 import { useNavigate } from 'react-router-dom';
 import $ from 'jquery';
+import MyDungeons from './MyDungeons/MyDungeons';
 
 
 export type DashboardProps = {
@@ -80,7 +81,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder="Suche Dungeon" />
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={myDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <MyDungeons filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )
 }

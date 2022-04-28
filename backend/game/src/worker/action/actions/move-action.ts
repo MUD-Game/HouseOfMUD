@@ -1,7 +1,7 @@
-import { Character, Dungeon, Room } from '../../dungeon/dungeon';
-import { DungeonController } from '../dungeon-controller';
-import { Action } from './action';
-import { AmqpAdapter } from '../amqp-adapter';
+import { Character, Dungeon, Room } from "../../../dungeon/dungeon";
+import { AmqpAdapter } from "../../amqp/amqp-adapter";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 export class MoveAction implements Action {
     /**
@@ -18,6 +18,7 @@ export class MoveAction implements Action {
         this.trigger = 'gehe';
         this.dungeonController = dungeonController;
     }
+
     /**
      * Modifies the character position if passage exists and sends appropriate message to client.
      * @param user Character id of user that sent the message.
@@ -26,38 +27,35 @@ export class MoveAction implements Action {
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon();
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter();
-        let dungeonId: string = dungeon.getId();
         let direction: string = args[0];
         let senderCharacter: Character = dungeon.getCharacter(user);
         let senderCharacterName: string = senderCharacter.getName();
-        let senderCharacterId: string = senderCharacter.getId();
         let currentRoomId: string = senderCharacter.getPosition();
         let currentRoom: Room = dungeon.getRoom(currentRoomId);
         let destinationRoom: Room | undefined;
         let invalidDirection: boolean = false;
         let closedPath: boolean = false;
-        let routingKeySender = `${dungeonId}.character.${senderCharacterId}`;
         try {
-            switch (direction) {
-                case 'Norden':
+            switch (direction.toLowerCase()) {
+                case 'norden':
                     destinationRoom = dungeon.getNorthernRoom(currentRoom);
                     if (destinationRoom.getSouthConnection() === 'closed') {
                         closedPath = true;
                     }
                     break;
-                case 'Osten':
+                case 'osten':
                     destinationRoom = dungeon.getEasternRoom(currentRoom);
                     if (currentRoom.getEastConnection() === 'closed') {
                         closedPath = true;
                     }
                     break;
-                case 'Sueden':
+                case 'sueden':
                     destinationRoom = dungeon.getSouthernRoom(currentRoom);
                     if (currentRoom.getSouthConnection() === 'closed') {
                         closedPath = true;
                     }
                     break;
-                case 'Westen':
+                case 'westen':
                     destinationRoom = dungeon.getWesternRoom(currentRoom);
                     if (destinationRoom.getEastConnection() === 'closed') {
                         closedPath = true;
@@ -68,12 +66,12 @@ export class MoveAction implements Action {
                     break;
             }
             if (invalidDirection) {
-                amqpAdapter.sendToClient(routingKeySender, {
+                amqpAdapter.sendToClient(user, {
                     action: 'message',
                     data: { message: `Diese Richtung existiert nicht!` },
                 });
             } else if (closedPath) {
-                amqpAdapter.sendToClient(routingKeySender, {
+                amqpAdapter.sendToClient(user, {
                     action: 'message',
                     data: { message: `In diese Richtung ist der Raum geschlossen!` },
                 });
@@ -81,17 +79,19 @@ export class MoveAction implements Action {
                 let destinationRoomId: string = destinationRoom.getId();
                 let destinationRoomName: string = destinationRoom.getName();
                 senderCharacter.modifyPosition(destinationRoomId);
-                let routingKey: string = `${dungeonId}.room.${destinationRoomId}`;
+                let routingKey: string = `room.${destinationRoomId}`;
                 amqpAdapter.unbindClientQueue(user, `room.${currentRoomId}`);
                 amqpAdapter.bindClientQueue(user, `room.${destinationRoomId}`);
-                amqpAdapter.sendWithRouting(routingKey, {
-                    action: 'message',
-                    data: { message: `${senderCharacterName} ist ${destinationRoomName} beigetreten!` },
-                });
+                setTimeout(() => {
+                    amqpAdapter.sendWithRouting(routingKey, {
+                        action: 'message',
+                        data: { message: `${senderCharacterName} ist ${destinationRoomName} beigetreten!` },
+                    });
+                }, 100);
             }
         } catch (e) {
             console.log(e);
-            amqpAdapter.sendToClient(routingKeySender, {
+            amqpAdapter.sendToClient(user, {
                 action: 'message',
                 data: { message: `In diese Richtung existiert kein Raum!` },
             });

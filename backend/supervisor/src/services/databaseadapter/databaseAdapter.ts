@@ -28,8 +28,8 @@ export class DatabaseAdapter {
     room: mongoose.Model<Room>
     user: mongoose.Model<User>
 
-    constructor(connectionString: string) {
-        this.connection = mongoose.createConnection(connectionString);
+    constructor(connectionString: string){
+        this.connection = mongoose.createConnection(connectionString, { dbName: 'test' });
         this.item = this.connection.model<Item>('Item', itemSchema)
         this.action = this.connection.model<Action>('Action', actionSchema)
         this.character = this.connection.model<Character>('Character', characterSchema)

@@ -68,6 +68,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 </Nav.Item>
                 <Nav.Item>
                     <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
+                    {/* <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link> */}
                 </Nav.Item>
             </Nav>
 

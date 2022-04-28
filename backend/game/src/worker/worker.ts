@@ -1,8 +1,8 @@
 
 import { ActionElement, ActionElementImpl, Character, CharacterClass, CharacterClassImpl, CharacterGender, CharacterGenderImpl, CharacterImpl, CharacterSpecies, CharacterSpeciesImpl, CharacterStats, CharacterStatsImpl, ConnectionInfo, ConnectionInfoImpl, Dungeon, DungeonImpl, Event, EventImpl, Item, ItemImpl, Npc, NpcImpl, Room, RoomImpl } from "../dungeon/dungeon";
-import { AmqpAdapter } from "./amqp-adapter";
-import { DungeonController } from "./dungeon-controller";
 import { exit } from 'process';
+import { AmqpAdapter } from "./amqp/amqp-adapter";
+import { DungeonController } from "./controller/dungeon-controller";
 
 
 const dungeonID = process.argv[2];
@@ -183,45 +183,45 @@ function getDungeon(dungeonID: string): Dungeon {
         2,
         4
     );
-    const TestCharacter: Character = new CharacterImpl(
-        '1',
-        '1',
-        '1',
-        'Jeff',
-        'Magier',
-        TestSpecies,
-        TestGender,
-        TestMaxStats,
-        TestStartStats,
-        TestRoom.id,
-        [TestItem.id]
-    );
-    const TestCharacterSameRoom: Character = new CharacterImpl(
-        '2',
-        '2',
-        '1',
-        'Spieler',
-        'Magier',
-        TestSpecies,
-        TestGender,
-        TestMaxStats,
-        TestStartStats,
-        TestRoom.id,
-        [TestItem.id]
-    );
-    const TestCharacterNotSameRoom: Character = new CharacterImpl(
-        '3',
-        '3',
-        '1',
-        'Bob',
-        'Magier',
-        TestSpecies,
-        TestGender,
-        TestMaxStats,
-        TestStartStats,
-        TestRoomNorth.id,
-        [TestItem.id]
-    );
+    // const TestCharacter: Character = new CharacterImpl(
+    //     'Jeff',
+    //     'Jeff',
+    //     '1',
+    //     'Jeff',
+    //     'Magier',
+    //     TestSpecies,
+    //     TestGender,
+    //     TestMaxStats,
+    //     TestStartStats,
+    //     TestRoom.id,
+    //     [TestItem.id]
+    // );
+    // const TestCharacterSameRoom: Character = new CharacterImpl(
+    //     '2',
+    //     '2',
+    //     '1',
+    //     'Spieler',
+    //     'Magier',
+    //     TestSpecies,
+    //     TestGender,
+    //     TestMaxStats,
+    //     TestStartStats,
+    //     TestRoom.id,
+    //     [TestItem.id]
+    // );
+    // const TestCharacterNotSameRoom: Character = new CharacterImpl(
+    //     '3',
+    //     '3',
+    //     '1',
+    //     'Bob',
+    //     'Magier',
+    //     TestSpecies,
+    //     TestGender,
+    //     TestMaxStats,
+    //     TestStartStats,
+    //     TestRoomNorth.id,
+    //     [TestItem.id]
+    // );
     const testDungeon: Dungeon = new DungeonImpl(
         dungeonID,
         'TestDungeon1',
@@ -233,7 +233,8 @@ function getDungeon(dungeonID: string): Dungeon {
         [TestSpecies],
         [TestClass],
         [TestGender],
-        [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
+        // [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
+        [],
         [
             TestRoom,
             TestRoomNorth,

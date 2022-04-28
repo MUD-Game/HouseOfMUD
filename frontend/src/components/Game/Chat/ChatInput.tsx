@@ -7,6 +7,7 @@
  */
 
 import React, { FormEvent } from 'react'
+import $ from "jquery";
 import { Row } from 'react-bootstrap';
 import { Send } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";
@@ -26,12 +27,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ }) => {
         }, (error) => {
             homsole.error(error, "RabbitMQ");
         })
+        $("#chat-input").val("");
     }
 
     return (
         <form className="row mt-3" onSubmit={sendInput}>
             <div className="col-10">
-                <input type="text" name="message" required autoComplete='off' />
+                <input type="text" name="message" id="chat-input" required autoComplete='off' />
             </div>
             <div className="col-2">
                 <button className="btn w-100 drawn-border btn-green" type="submit">

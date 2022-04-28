@@ -1,6 +1,6 @@
-import { Character, Dungeon, Item } from "../../dungeon/dungeon";
-import { Action } from "./action";
-import { DungeonController } from "../dungeon-controller"
+import { Character, Dungeon, Item } from "../../../dungeon/dungeon";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 export class InspectAction implements Action {
     trigger: string;
@@ -27,11 +27,10 @@ export class InspectAction implements Action {
                 inspectMessage = `Du untersuchst ${itemName}: ${itemDescription}`
             }
         })
-        let routingKeySender = `${dungeonId}.character.${user}`
         if (userHasItem) {
-            this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: inspectMessage}})
+            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inspectMessage}})
         } else {
-            this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: "Du besitzt dieses Item nicht!"}})
+            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: "Du besitzt dieses Item nicht!"}})
         }
         
     }

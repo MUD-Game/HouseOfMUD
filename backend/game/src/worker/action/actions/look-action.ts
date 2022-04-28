@@ -1,6 +1,6 @@
-import { ActionElement, Character, Dungeon, Item, Npc, Room } from "../../dungeon/dungeon";
-import { Action } from "./action";
-import { DungeonController } from "../dungeon-controller"
+import { ActionElement, Character, Dungeon, Item, Npc, Room } from "../../../dungeon/dungeon";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
 
 export class LookAction implements Action {
     trigger: string;
@@ -82,8 +82,6 @@ export class LookAction implements Action {
         })
         actionString += ". "
         description += actionString
-
-        let routingKeySender = `${dungeonId}.character.${senderCharacterId}`
-        this.dungeonController.getAmqpAdapter().sendToClient(routingKeySender, {action: "message", data: {message: description}})
+        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: description}})
     }
 }

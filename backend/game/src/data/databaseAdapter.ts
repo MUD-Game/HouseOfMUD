@@ -61,13 +61,8 @@ export class DatabaseAdapter {
     room: mongoose.Model<RoomDataset>
     user: mongoose.Model<User>
 
-    constructor(){
-        const config: DBConfig | undefined = loadConfig();
-        if(!config) {
-            throw new ReferenceError("Config file is missing!");
-        }
-        //const mongoConnString: string = `mongodb://${config.mongodb.user}:${encodeURIComponent(config.mongodb.password)}@${config.mongodb.host}:${config.mongodb.port}`;
-        this.connection = mongoose.createConnection("mongodb://127.0.0.1:27017/test");
+    constructor(connectionString: string, databaseName: string){
+        this.connection = mongoose.createConnection(connectionString, {dbName: databaseName});
         this.item = this.connection.model<ItemDataset>('Item', itemSchema)
         this.action = this.connection.model<ActionDataset>('Action', actionSchema)
         this.character = this.connection.model<CharacterDataset>('Character', characterSchema)

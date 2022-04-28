@@ -1,4 +1,3 @@
-
 import { exit } from 'process';
 import { DatabaseAdapter } from '../data/databaseAdapter';
 import { CharacterStats } from '../data/datasets/charcterStats';
@@ -31,8 +30,11 @@ const userTokens: Tokens = {};
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
-    const dba: DatabaseAdapter = new DatabaseAdapter();
-    let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
+    // const mongoConnString: string = process.argv[9];
+    // const database: string = process.argv[10];
+    // const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
+    // let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
+    let dungeon: Dungeon = getDungeon(dungeonID);
 
     let amqpConfig = getAmqpAdapterConfig();
     let amqpAdapter: AmqpAdapter = new AmqpAdapter(

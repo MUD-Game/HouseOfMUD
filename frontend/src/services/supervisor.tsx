@@ -93,7 +93,22 @@ const supervisor = {
     },
 
     authenticate(body: AuthenticateRequest, dataCallBack: (data: AuthenticateResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest("/auth", "POST", body, {}, dataCallBack, error);
+        genericRequest("/auth/login", "POST", body, {}, dataCallBack, error);
+    },
+
+    userLogout(dataCallBack: () => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/logout", "POST", {}, {}, dataCallBack, error);
+    },
+
+    deleteUser(dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/delete", "DELETE", {}, {}, dataCallBack, error);
+    },
+    register(email: string, user: string, password: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/register", "POST", {email, user, password}, {}, dataCallBack, error);
+    },
+
+    verify(token: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/verify", "POST", {token: token}, {}, dataCallBack, error);
     },
 
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {

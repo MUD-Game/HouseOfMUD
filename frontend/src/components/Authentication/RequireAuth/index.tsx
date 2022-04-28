@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
-import Busy from '../Busy/index';
+import Busy from '../../Busy/index';
 import { useEffect } from 'react';
 
 type RequireAuthProps = {

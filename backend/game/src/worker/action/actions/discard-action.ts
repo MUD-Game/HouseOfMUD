@@ -1,4 +1,4 @@
-import { DungeonController } from "worker/controller/dungeon-controller";
+import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 
 export class DiscardAction implements Action {

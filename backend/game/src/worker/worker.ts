@@ -1,18 +1,17 @@
-
-import { DatabaseAdapter } from 'data/databaseAdapter';
-import { CharacterStats } from 'data/datasets/charcterStats';
-import { ActionElement, ActionElementImpl } from 'data/interfaces/actionElement';
-import { ActionEventImpl } from 'data/interfaces/actionEvent';
-import { CharacterClass, CharacterClassImpl } from 'data/interfaces/characterClass';
-import { CharacterGender, CharacterGenderImpl } from 'data/interfaces/characterGender';
-import { CharacterSpecies, CharacterSpeciesImpl } from 'data/interfaces/characterSpecies';
-import { CharacterStatsImpl } from 'data/interfaces/characterStats';
-import { ConnectionInfo, ConnectionInfoImpl } from 'data/interfaces/connectionInfo';
-import { Dungeon, DungeonImpl } from 'data/interfaces/dungeon';
-import { Item, ItemImpl } from 'data/interfaces/item';
-import { Npc, NpcImpl } from 'data/interfaces/npc';
-import { Room, RoomImpl } from 'data/interfaces/room';
 import { exit } from 'process';
+import { DatabaseAdapter } from '../data/databaseAdapter';
+import { CharacterStats } from '../data/datasets/charcterStats';
+import { ActionElement, ActionElementImpl } from '../data/interfaces/actionElement';
+import { ActionEventImpl } from '../data/interfaces/actionEvent';
+import { CharacterClass, CharacterClassImpl } from '../data/interfaces/characterClass';
+import { CharacterGender, CharacterGenderImpl } from '../data/interfaces/characterGender';
+import { CharacterSpecies, CharacterSpeciesImpl } from '../data/interfaces/characterSpecies';
+import { CharacterStatsImpl } from '../data/interfaces/characterStats';
+import { ConnectionInfo, ConnectionInfoImpl } from '../data/interfaces/connectionInfo';
+import { Dungeon, DungeonImpl } from '../data/interfaces/dungeon';
+import { Item, ItemImpl } from '../data/interfaces/item';
+import { Npc, NpcImpl } from '../data/interfaces/npc';
+import { Room, RoomImpl } from '../data/interfaces/room';
 import { AmqpAdapter } from "./amqp/amqp-adapter";
 import { DungeonController } from "./controller/dungeon-controller";
 
@@ -31,8 +30,11 @@ const userTokens: Tokens = {};
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
-    const dba: DatabaseAdapter = new DatabaseAdapter();
-    let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
+    // const mongoConnString: string = process.argv[9];
+    // const database: string = process.argv[10];
+    // const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
+    // let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
+    let dungeon: Dungeon = getDungeon(dungeonID);
 
     let amqpConfig = getAmqpAdapterConfig();
     let amqpAdapter: AmqpAdapter = new AmqpAdapter(

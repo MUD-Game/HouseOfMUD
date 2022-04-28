@@ -1,7 +1,7 @@
-import { Character } from "data/interfaces/character";
-import { Dungeon } from "data/interfaces/dungeon";
-import { Item } from "data/interfaces/item";
-import { DungeonController } from "worker/controller/dungeon-controller";
+import { Character } from "../../../data/interfaces/character";
+import { Dungeon } from "../../../data/interfaces/dungeon";
+import { Item } from "../../../data/interfaces/item";
+import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 
 export class InspectAction implements Action {

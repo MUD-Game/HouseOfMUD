@@ -9,8 +9,9 @@ type AuthContextType = {
   token: string;
   isAuthenticated: (success: VoidFunction, error: VoidFunction) => void;
   login: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
-  register: (user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
+  register: (email: string, user: string, password: string, success: VoidFunction, error: VoidFunction) => void;
   logout: (callback: VoidFunction) => void;
+  verifyEmail: (token: string, success: VoidFunction, error: VoidFunction) => void;
 }
 
 let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
@@ -54,10 +55,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     callback();
   };
 
-  let register = (newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
-
+  let register = (email: string, newUser: string, password: string, success: VoidFunction, error: VoidFunction) => {
+    supervisor.register(email, newUser, password, success, error);
   }
-  let value = { user, token, login, logout, register, isAuthenticated };
+
+  let verifyEmail = (token:string, success: VoidFunction, error: VoidFunction) => {
+    supervisor.verify(token, success, error);
+  }
+  let value = { user, token, login, logout, register, isAuthenticated, verifyEmail };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

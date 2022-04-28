@@ -96,6 +96,14 @@ const supervisor = {
         genericRequest("/auth", "POST", body, {}, dataCallBack, error);
     },
 
+    register(email: string, user: string, password: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/register", "POST", {email, user, password}, {}, dataCallBack, error);
+    },
+
+    verify(token: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/verify", "POST", {token: token}, {}, dataCallBack, error);
+    },
+
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
         genericRequest(`/login/${dungeonID}`, "POST", body, {}, dataCallBack, error, "verifyToken");
     },

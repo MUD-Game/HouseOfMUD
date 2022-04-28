@@ -9,7 +9,6 @@ import { Item, itemSchema } from "./datasets/item";
 import { Npc, npcSchema } from "./datasets/npc";
 import { Room, roomSchema } from "./datasets/room";
 import { User, userSchema } from "./datasets/user";
-
 /**
  * encapsulation of the mongoose API
  */
@@ -29,7 +28,7 @@ export class DatabaseAdapter {
     room: mongoose.Model<Room>
     user: mongoose.Model<User>
 
-    constructor(connectionString: string){
+    constructor(connectionString: string) {
         this.connection = mongoose.createConnection(connectionString);
         this.item = this.connection.model<Item>('Item', itemSchema)
         this.action = this.connection.model<Action>('Action', actionSchema)
@@ -67,6 +66,18 @@ export class DatabaseAdapter {
             actions: await this.action.insertMany(dungeonToStore.actions)
         })
     } 
+
+    async registerUser(user: User){
+        return this.user.create(user);
+    }
+
+    async checkIfUserExists(username: string){
+        return (await this.user.findOne({username: username})) != null;
+    }
+
+    async checkIfEmailExists(email: string){
+        return (await this.user.findOne({email: email})) != null;
+    }
 
     /**
      * get a dungeon from the 'dungeons' Collection in the Mongo database

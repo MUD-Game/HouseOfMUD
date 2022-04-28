@@ -11,8 +11,9 @@ import auth from './middlewares/auth';
 import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 import { Dungeon } from './services/databaseadapter/datasets/dungeon';
-
-// import {DatabaseAdapter} from '@database/databaseAdapter';
+import crypto, { Hmac } from 'crypto';
+import { User } from './services/databaseadapter/datasets/user';
+import nodemailer from 'nodemailer'
 
 /**
  * client http-API
@@ -25,20 +26,26 @@ export class API {
     private tls: TLS;
     private hostLink: HostLink;
     private dba: DatabaseAdapter;
-
+    private unverified_users: { [token: string]: User } = {};
+    private salt: string
+    private transporter: any
+    private verifyLink:string
     /**
      * @param port api port 
      * @param tls TLS object
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any) {
         this.origin = origin;
-
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
+        this.salt = salt;
+        this.transporter = transporter
+        this.verifyLink = verifyLink;
+
     }
 
     /**
@@ -91,13 +98,75 @@ export class API {
         });
 
         // platform registration
-        app.post('/register', (req, res) => {
+        app.post('/register', async (req, res) => {
             let body: any = req.body;
             if (body.user !== undefined && body.email !== undefined && body.password !== undefined) {
+                let hasher = crypto.createHmac('sha256', this.salt);
                 let user: string = body.user;
                 let email: string = body.email;
-                let password: string = body.password;
-                // TODO
+                let password: string = hasher.update(body.password).digest('base64');
+                if( Object.keys(this.unverified_users).some(token => this.unverified_users[token].username === user) || await this.dba.checkIfUserExists(user)){
+                    res.status(409).send({
+                        ok:0,
+                        error: "User already exists"
+                    });
+                } else if (Object.keys(this.unverified_users).some(token => this.unverified_users[token].email === email) || await this.dba.checkIfEmailExists(email)) {
+                    res.status(409).send({
+                        ok:0,
+                        error: "Email already exists"
+                    });
+                } else {
+                    let verifyToken: string = this.generateVerifyToken();
+                    this.unverified_users[verifyToken] = {
+                        username: user,
+                        password: password,
+                        email: email
+                    };
+                    let options = {
+                        from: 'HouseOfMUD <houseofmud2022@gmail.com>',
+                        to: email,
+                        subject: 'Email-Verifizierung',
+                        text: `Bitte klicken Sie auf den folgenden Link um Ihre Email zu verifizieren: ${this.verifyLink}?token=${verifyToken}`
+                    }
+                    this.transporter.sendMail(options, (error: any, info: any) => {
+                        if (error) {
+                            console.log(error);
+                            res.status(500).json({ok:0,error:error});
+                        }else{
+                            res.status(200).json({ok:1});
+                        }
+                    });
+                }
+
+            }else{
+                res.status(400).send({
+                    ok:0,
+                    error: "missing parameters"
+                });
+            }
+        });
+
+        app.post('/verify', (req,res)=>{
+            let body: any = req.body;
+            if(body.token !== undefined){
+                if(this.unverified_users[body.token] !== undefined){
+                    let user: User = this.unverified_users[body.token];
+                    delete this.unverified_users[body.token];
+                    this.dba.registerUser({username: user.username, password: user.password, email: user.email});
+                    res.status(200).send({
+                        ok:1
+                    });
+                }else{
+                    res.status(400).send({
+                        ok:0,
+                        error: "invalid token"
+                    });
+                }
+            }else{
+                res.status(400).send({
+                    ok:0,
+                    error: "missing token"
+                });
             }
         });
 

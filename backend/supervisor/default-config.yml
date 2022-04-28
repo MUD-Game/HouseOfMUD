@@ -14,6 +14,11 @@ tls:
     cert: /etc/letsencrypt/live/fullchain.pem
     ca: /etc/letsencrypt/live/chain.pem
 
+auth:
+  salt: secret
+  verifyLink: http://localhost:3000/verify
+  emailsecret: secret
+
 mongodb:
   host: 127.0.0.1
   port: 27017

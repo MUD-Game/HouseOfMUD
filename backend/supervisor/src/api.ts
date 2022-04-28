@@ -92,17 +92,17 @@ export class API {
         });
 
         // platform registration
-        app.post('/register', this.authProvider.register);
+        app.post('/auth/register', this.authProvider.register);
 
-        app.post('/verify', this.authProvider.verifyEmail);
+        app.post('/auth/verify', this.authProvider.verifyEmail);
 
         // TODO: Create actual authentication
         // platform authentication
-        app.post('/auth', this.authProvider.auth ,  (req, res) => {
+        app.post('/auth/login', this.authProvider.auth ,  (req, res) => {
             res.json({ok:1});
         });
 
-        app.delete('/deleteuser', this.authProvider.auth, this.authProvider.deleteUser, (req, res) => {
+        app.delete('/auth/delete', this.authProvider.auth, this.authProvider.deleteUser, (req, res) => {
             res.json({ok:1});
         });
 

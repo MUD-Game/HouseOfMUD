@@ -70,7 +70,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
             </div>
             <div className="col-2">         
                 {/* {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>} */}
-                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDemo}>Join</button>}
+                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>}
                 {status === 'offline' && <button className="btn drawn-border btn-standard" onClick={startDemo}>Start</button>}
             </div>
         </Row>

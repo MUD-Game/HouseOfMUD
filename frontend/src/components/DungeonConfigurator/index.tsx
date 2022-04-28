@@ -6,7 +6,6 @@ import { useMudConsole } from 'src/hooks/useMudConsole';
 import MudInput from '../Custom/MudInupt';
 import MudTypeahead from '../Custom/MudTypeahead';
 import DungeonObjectList from './DungeonObjectList';
-import './index.css'
 type Option = string | { [key: string]: any };
 
 export interface DungeonConfiguratorProps { }

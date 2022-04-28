@@ -9,9 +9,7 @@ import { mockauth, mockresponse } from './mock/api';
 import AuthProvider from './services/AuthProvider';
 import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
-import { Dungeon } from './services/databaseadapter/datasets/dungeon';
 import crypto, { Hmac } from 'crypto';
-import { User } from './services/databaseadapter/datasets/user';
 import nodemailer from 'nodemailer'
 
 /**
@@ -168,18 +166,22 @@ export class API {
         });
 
         // get my dungeons
-        app.get('/myDungeons', this.authProvider.auth, (req, res) => {
+        app.get('/myDungeons', this.authProvider.auth, async (req, res) => {
             let user = req.cookies.user; // TODO: get myDungeons based on user   
-            res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
+            let userId = await this.dba.getUserId(user);
+            res.json({ ok: 1, dungeons: this.hostLink.getDungeons(userId) });
         });
 
         // create dungeon
-        app.post('/dungeon', this.authProvider.auth,  (req, res) => {
+        app.post('/dungeon', this.authProvider.auth, async (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
             let user = req.cookies.user; // TODO: get myDungeons based on user
-            // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
-            console.log(JSON.stringify(dungeonData));
+            // let dungeonID = this.h/ostLink.createDungeon(dungeonData, user);
             if(dungeonData){
+                const userId = await this.dba.getUserId(user);
+                console.log(userId);
+                dungeonData.masterId = userId;
+                dungeonData.creatorId = userId;
                 this.hostLink.addDungeon(dungeonData.id, dungeonData);
                 this.dba.storeDungeon(dungeonData).then(dungeonID => {
                     res.json({ ok: 1, dungeonID: dungeonID });

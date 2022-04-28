@@ -1,7 +1,7 @@
 import { mockauth } from "../mock/api";
 import { DatabaseAdapter } from "./databaseadapter/databaseAdapter";
-import { User } from "./databaseadapter/datasets/user";
 import crypto from 'crypto'
+import { User } from "./databaseadapter/interfaces/user";
 
 export default class AuthProvider {
 
@@ -79,6 +79,7 @@ export default class AuthProvider {
             } else {
                 let verifyToken: string = this.generateVerifyToken();
                 this.unverified_users[verifyToken] = {
+                    id: "",
                     username: user,
                     password: password,
                     email: email

@@ -20,6 +20,7 @@ interface Dungeon {
     name: string;
     description: string;
     maxPlayers: number;
+    masterId: string;
     currentPlayers: number;
     status: Status;
 }
@@ -164,6 +165,7 @@ export class HostLink {
                 name: dungeon.name,
                 description: dungeon.description,
                 maxPlayers: dungeon.maxPlayers,
+                masterId: dungeon.masterId,
                 currentPlayers: 0,
                 status: 'offline',
             };
@@ -180,6 +182,7 @@ export class HostLink {
             name: dungeonData.name,
             description: dungeonData.description,
             maxPlayers: dungeonData.maxPlayers,
+            masterId: dungeonData.masterId,
             currentPlayers: 0,
             status: 'offline'
         };
@@ -188,13 +191,17 @@ export class HostLink {
     /**
      * @returns dungeon informations for dashboard
      */
-    public getDungeons(): any[] {
+    public getDungeons(masterId?: string): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
-            dungeons.push({
-                id: dungeonID,
-                ...this.dungeons[dungeonID]
-            });
+            if (!masterId) {
+                dungeons.push(this.dungeons[dungeonID]);
+            }else if(this.dungeons[dungeonID].masterId === masterId){
+                dungeons.push({
+                    id: dungeonID,
+                    ...this.dungeons[dungeonID]
+                });
+            }
         }
         return dungeons;
     }

@@ -29,7 +29,7 @@ export interface Dungeon {
   npcs: Npc[];
 
   getId(): string
-  getName(): string
+  getName(): string | undefined
   getDescription(): string
   getCreatorId(): string
   getMasterId(): string
@@ -76,7 +76,7 @@ export class DungeonImpl implements Dungeon {
     return this.id;
   }
 
-  getName(): string {
+  getName(): string | undefined {
     return this.name;
   }
 

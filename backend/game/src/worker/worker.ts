@@ -1,6 +1,7 @@
 import { exit } from 'process';
 import { DatabaseAdapter } from '../data/databaseAdapter';
 import { CharacterStats } from '../data/datasets/charcterStats';
+import { DungeonDataset } from '../data/datasets/dungeonDataset';
 import { ActionElement, ActionElementImpl } from '../data/interfaces/actionElement';
 import { ActionEventImpl } from '../data/interfaces/actionEvent';
 import { CharacterClass, CharacterClassImpl } from '../data/interfaces/characterClass';
@@ -33,7 +34,7 @@ async function main() {
     // const mongoConnString: string = process.argv[9];
     // const database: string = process.argv[10];
     // const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
-    // let dungeon: Dungeon = (await dba.getDungeon(dungeonID)) as Dungeon;
+    // let databaseDungeon: DungeonDataset | undefined = (await dba.getDungeon(dungeonID))
     let dungeon: Dungeon = getDungeon(dungeonID);
 
     let amqpConfig = getAmqpAdapterConfig();
@@ -93,6 +94,18 @@ function getAmqpAdapterConfig() {
         clientExchange: process.argv[8],
     };
 }
+
+// async function getDungeonFromDatabase(dungeonId: string): Promise<Dungeon> {
+//     const mongoConnString: string = process.argv[9];
+//     const database: string = process.argv[10];
+//     const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
+//     let databaseDungeon: DungeonDataset | undefined = (await dba.getDungeon(dungeonID))
+//     if (databaseDungeon === undefined) {
+//         throw("The dungeon does not exist!")
+//     } else {
+//         let dungeonObject: Dungeon = new DungeonImpl('1', databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], databaseDungeon?.rooms, databaseDungeon?.blacklist, databaseDungeon?.actions, databaseDungeon?.items, databaseDungeon?.npcs)
+//     }
+// }
 
 function getDungeon(dungeonID: string): Dungeon {
     const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(

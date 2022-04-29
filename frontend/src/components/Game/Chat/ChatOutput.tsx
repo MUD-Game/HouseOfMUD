@@ -36,7 +36,7 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
     return (
         <Row className="chat-output-wrap">
             <div className="col">
-                <div className="chat drawn-border p-2 ps-3 pe-3 pe-lg-4">
+                <div className="chat drawn-border p-2 ps-3 pe-3 pt-lg-3 pe-lg-4">
                     <div className="chat-content">
                         {messages.map((message, index) => {
                             return (

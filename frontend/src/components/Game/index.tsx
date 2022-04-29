@@ -59,17 +59,19 @@ const Game: React.FC<GameProps> = ({ }) => {
 
 
     return (
-        <Container className="mb-5">
-            <Row>
-                <div className="col-3">
+        <Container fluid className="game-wrapper">
+            <Row className="game-header"></Row>
+            <Row className="game-body">
+                <div className="col col-4 col-md-3 col-lg-2">
                     <Minimap mapData={null} />
                     <Inventory items={null} />
                     <HUD {...hudMock} />
                 </div>
-                <div className="col-9">
+                <div className="col col-8 col-md-9 col-lg-10">
                     <Chat />
                 </div>
             </Row>
+            <Row className="game-footer"></Row>
         </Container>
     )
 }

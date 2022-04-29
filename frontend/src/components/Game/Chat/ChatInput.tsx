@@ -31,15 +31,17 @@ const ChatInput: React.FC<ChatInputProps> = ({ }) => {
     }
 
     return (
-        <form className="row mt-3" onSubmit={sendInput}>
-            <div className="col-10">
-                <input type="text" name="message" id="chat-input" required autoComplete='off' />
-            </div>
-            <div className="col-2">
-                <button className="btn w-100 drawn-border btn-green" type="submit">
-                    <Send/>
-                </button>
-            </div>
+        <form className="chat-input-wrap " onSubmit={sendInput}>
+            <Row className="h-100 mt-3">
+                <div className="col-10">
+                    <input type="text" name="message" id="chat-input" required autoComplete='off' />
+                </div>
+                <div className="col-2">
+                    <button className="btn w-100 drawn-border btn-green" type="submit">
+                        <Send/>
+                    </button>
+                </div>
+            </Row>
         </form>
     )
 }

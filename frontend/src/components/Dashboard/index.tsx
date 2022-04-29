@@ -18,9 +18,7 @@ import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
-import "./index.css"
 import { useNavigate } from 'react-router-dom';
-import $ from 'jquery';
 import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
 

@@ -34,10 +34,9 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
     useEffect(scrollToBottom, [messages]);
     
     return (
-        <Row>
+        <Row className="chat-output-wrap">
             <div className="col">
-                <span>CHAT-OUTPUT</span>
-                <div className="chat drawn-border p-2 pe-3">
+                <div className="chat drawn-border p-2 ps-3 pe-3 pe-lg-4">
                     <div className="chat-content">
                         {messages.map((message, index) => {
                             return (

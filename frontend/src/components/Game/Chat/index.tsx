@@ -13,10 +13,10 @@ export interface ChatProps { }
 
 const Chat: React.FC<ChatProps> = ({ }) => {
     return (
-        <div>
+        <>
             <ChatOutput/>
             <ChatInput />
-        </div>
+        </>
     )
 }
 

@@ -15,6 +15,7 @@ import React from 'react';
 import AllDungeonLi from './AllDungeonsLi';
 import { DungeonResponseData, GetDungeonsResponse } from '@supervisor/api';
 import { Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 export type AllDungeonProps = {
     filterKey: 'name' | 'description';
     filterValue: string;
@@ -23,20 +24,22 @@ export type AllDungeonProps = {
 
 const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filterKey }) => {
 
+    const {t, i18n} = useTranslation();
+
     return (
         <div className="dashboard pt-3">
             <Row className="py-2">
                 <div className="col-3">
-                    <b><u>Name</u></b>
+                    <b><u>{t("dungeon_keys.name")}</u></b>
                 </div>
                 <div className="col-5">
-                    <b><u>Beschreibung</u></b>
+                    <b><u>{t("dungeon_keys.description")}</u></b>
                 </div>
                 <div className="col-1">
-                    <b><u>Spieler</u></b>
+                    <b><u>{t("dungeon_keys.players")}</u></b>
                 </div>
                 <div className="col-1 text-center">
-                    <b><u>Status</u></b>
+                    <b><u>{t("dungeon_keys.status")}</u></b>
                 </div>
                 <div className="col-2"></div>
             </Row>

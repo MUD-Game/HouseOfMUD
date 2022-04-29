@@ -13,6 +13,7 @@
 
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
@@ -29,6 +30,7 @@ const Login: React.FC<LoginProps> = (props) => {
     const [password, setPassword] = React.useState("");
     const [username, setUsername] = React.useState("");
     const homsole = useMudConsole();
+    const {t} = useTranslation();
     let location = useLocation();
     let auth = useAuth();
     let from = (location.state as LocationState)?.from?.pathname || "/";
@@ -51,14 +53,13 @@ const Login: React.FC<LoginProps> = (props) => {
                     {isLoading ? <Busy/> :
                         <form onSubmit={handleSubmit} autoComplete="new-password">
                         <div className="input-group py-2">
-                            <input value={username} name="username" onChange={(event)=> setUsername(event.target.value)}className="input-standard drawn-border" type="text" placeholder="Username" />
+                                <input value={username} name="username" onChange={(event) => setUsername(event.target.value)} className="input-standard drawn-border" type="text" placeholder={t("login.username")} />
                         </div>
                         <div className="input-group pt-2">
-                            <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder="Passwort" />
+                            <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
                         </div>
-                        {/* <span className="forgot-pw">Passwort vergessen? Klicke <Link to="/login">hier</Link></span> <br /> */}
-                        <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">Login</button> <br />
-                        <span>Noch keinen Account? <Link to="/register">Hier registrieren</Link></span>
+                            <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">{t("button.login")}</button> <br />
+                            <span>{t("login.no_account")} <Link to="/register">{t("login.register_here")}</Link></span>
                     </form>
                     }
                 </div>

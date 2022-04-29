@@ -59,8 +59,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            console.log(xhr,errorText,errorThrown);
-            // error({ ok: 0, error: errorText });
+            error({ ok: 0, error: errorThrown });
         }
     });
 }

@@ -8,6 +8,7 @@
  */
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
@@ -21,6 +22,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     const homsole = useMudConsole();
     const location = useLocation();
     const navigate = useNavigate();
+    const {t} = useTranslation();
     return (
         <Container className="text-center">
             <Row>
@@ -31,7 +33,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             {location.pathname!=='/login' && location.pathname!=='/register' ?
                 <Row className="mt-3 align-items-center">
                     <Col className="text-start">
-                        <p className="headline">{auth.user ? <>Wilkommen <Link to="/user-settings"><b>{auth.user}</b></Link></>: null}</p>
+                        <p className="headline">{auth.user ? <>{t(`header.welcome`)} <Link to="/user-settings"><b>{auth.user}</b></Link></>: null}</p>
                     </Col>
                     <Col className="text-end">
                             <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {
@@ -40,7 +42,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                                 },()=>{
                                     homsole.error("Logout fehlgeschlagen");
                                 });
-                            }}>Logout</button> 
+                            }}>{t(`button.logout`)}</button> 
                     </Col>
                 </Row>
             : null}

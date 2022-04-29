@@ -1,0 +1,48 @@
+{
+    "dashboard":{
+        "title":"Dashboard",
+        "create_new_dungeon":"Neuen Dungeon erstellen",
+        "all_dungeons":"Alle Dungeons",
+        "my_dungeons":"Eigene Dungeons",
+        "search_dungeon":"Suche Dungeon",
+        "already_in_dungeon":"Du hast diesen Dungeon bereits gestartet"
+    },
+    "login":{
+        "password": "Passwort",
+        "username": "Benutzername",
+        "email": "E-Mail Adresse",
+        "no_account": "Noch keinen Account?",
+        "have_account": "Account bereits vorhanden?",
+        "login_here": "Hier anmelden",
+        "register_here": "Hier registrieren"
+    },
+    "dungeon_keys": {
+        "name": "Name",
+        "description": "Beschreibung",
+        "players": "Spieler",
+        "status": "Status"
+    },
+
+    "button": {
+        "submit": "Senden",
+        "ok": "O.K.",
+        "cancel": "Abbrechen",
+        "create": "Erstellen",
+        "save": "Speichern",
+        "remove": "Entfernen",
+        "delete": "Löschen",
+        "preview": "Vorschau",
+        "share": "Freigeben",
+        "update": "Aktualisieren",
+        "edit": "Bearbeiten",
+        "yes": "Ja",
+        "no": "Nein",
+        "close": "Schließen",
+        "upload": "Hochladen",
+        "download": "Herunterladen",
+        "logout": "Abmelden",
+        "login": "Anmelden",
+        "register": "Registrieren",
+        "delete_user": "Benutzer löschen"
+    }
+}

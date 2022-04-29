@@ -2,22 +2,24 @@
  * @module AllDungeonLi
  * @category React Components
  * @description A list item for the AllDungeon-List
- * @props {@linkcode AllDungeonLiProps}
+ * @props {@linkcode MyDungeonsLiProps}
  * ```jsx
  * ...
  * ```
  */
 
 
+import { t } from "i18next";
 import React from "react"
 import { Row } from "react-bootstrap";
-import { CloudCheck, CloudSlash, Lock, Unlock } from "react-bootstrap-icons";
+import { CloudCheck, CloudSlash, Lock, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "src/hooks/useGame";
 
 
 
-export interface AllDungeonLiProps {
+export interface MyDungeonsLiProps {
     id: string;
     name: string;
     description: string;
@@ -27,10 +29,11 @@ export interface AllDungeonLiProps {
     isPrivate: boolean;
 }
 
-const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status }) => {
+const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status }) => {
 
     const game = useGame();
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     let joinDungeon = () => {
         game.setDungeon(id);
@@ -56,25 +59,29 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
                 <b>{name}</b>
             </div>
             <div className="col-5">
-                {description}            
+                {description}
             </div>
             <div className="col-1">
-                {currentPlayers}/{maxPlayers}          
+                {currentPlayers}/{maxPlayers}
             </div>
-            <div className="col-1 text-center">        
-                {isPrivate ? '' : ''}                
+            <div className="col-1 text-center">
+                {isPrivate ? '' : ''}
                 <Lock size={25} className="mx-1" />
                 {/* <Unlock size={25} className="mx-1" /> */}
-                {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}                
-                
+                {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}
+
             </div>
-            <div className="col-2">         
+            <div className="col-2">
                 {/* {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>} */}
-                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>}
-                {status === 'offline' && <button className="btn drawn-border btn-standard" onClick={startDemo}>Start</button>}
+                {status=== "offline" ?
+                <div className="d-flex flex-row-reverse">
+                    <button className="btn btn-danger p-2 mx-1"><Trash /></button>
+                    <button className="btn btn-success p-2 mx-1" onClick={startDemo}><Play /></button>
+                </div>
+                    : t("dashboard.already_in_dungeon")}
             </div>
         </Row>
     )
 }
 
-export default AllDungeonLi;
+export default MyDungeonsLi;

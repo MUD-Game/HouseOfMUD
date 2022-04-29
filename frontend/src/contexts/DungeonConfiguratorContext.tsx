@@ -13,7 +13,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Busy from 'src/components/Busy';
 import { CharacterSpecies } from '../../../backend/data/src/interfaces/characterSpecies';
 import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
-import { ErrorResponse } from '../../../backend/supervisor/dist/types/api';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -112,13 +111,13 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setClasses(dungeon.characterClasses);
                 setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length });
                 setItems(dungeon.items);
-                setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length - 1 });
+                setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length  });
                 setActions(dungeon.actions);
-                setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length - 1 });
+                setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length  });
                 setRooms(dungeon.rooms);
-                setRoomKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.rooms.length - 1 });
+                setRoomKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.rooms.length  });
                 setNpcs(dungeon.npcs);
-                setNpcKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length - 1 });
+                setNpcKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length });
                 dungeon.characterSpecies.forEach((s:CharacterSpecies) => {
                     setSpecies([...species, { label: s.name, id: `new-id-${s.id}` }]);
                 });
@@ -392,6 +391,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             } else {
                 // User is editing
                 cc.id = itemsKey.selected + "";
+                console.log(actions);
                 // Set the key to a new id
                 setItemsKey({ ...itemsKey, selected: itemsKey.nextKey });
                 let temp = items;

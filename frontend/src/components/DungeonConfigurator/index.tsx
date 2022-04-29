@@ -37,7 +37,7 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <MudTypeahead disabled={dungeonId ? true : false} title={t(`${tl}.inputs.species.title`)} options={[]} allowNew colmd={12} multiple id='species-typeahead' placeholder={t(`${tl}.inputs.species.placeholder`)} emptyLabel={t(`${tl}.inputs.species.emptyLabel`)} onChange={dungeonConfig.setSpecies as unknown as (a: Option[]) => void} selected={dungeonConfig.species} />
             </Row>
 
-            <DungeonObjectList disabled identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
+            <DungeonObjectList disabled={dungeonId ? true : false} identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={["name", "description"]} onAdd={dungeonConfig.addItem} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_item`)} />
 

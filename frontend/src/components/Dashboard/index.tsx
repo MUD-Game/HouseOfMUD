@@ -29,10 +29,10 @@ export type DashboardProps = {
 }
 
 const Dashboard: React.FC<DashboardProps> = (props) => {
-
+    
+    const {t} = useTranslation();
     const auth = useAuth();
     const homsole = useMudConsole();
-    const {t, i18n} = useTranslation();
     const navigate = useNavigate();
     let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
     let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();

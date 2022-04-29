@@ -121,7 +121,7 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
     async deleteDungeon(dungeonId: string) {
-        const foundDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        const foundDungeon = await this.dungeon.findOneAndDelete({_id: new mongoose.Types.ObjectId(dungeonId)})
         if (foundDungeon == undefined) {
             return undefined
         }
@@ -158,7 +158,7 @@ export class DatabaseAdapter {
      * @returns the new Dungeon data
      */
     async updateDungeon(dungeonId: string, newDungeon: DungeonDataset) {
-        const oldDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        const oldDungeon = await this.dungeon.findOneAndDelete({ _id: new mongoose.Types.ObjectId(dungeonId) })
         if (oldDungeon == undefined) {
             return undefined
         }

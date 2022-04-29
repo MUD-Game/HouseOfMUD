@@ -249,7 +249,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         console.log(processToSend(species));
         if (validateData()) {
             let createBody: CreateDungeonRequest['dungeonData'] = {
-                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     name,
                     description,
                     creatorId: "",

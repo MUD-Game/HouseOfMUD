@@ -29,7 +29,11 @@
         "actions": "Aktionen",
         "items": "Items",
         "output": "Ausgabe",
-        "itemsNeeded": "Benötigte Gegenstände"
+        "itemsNeeded": "Benötigte Gegenstände",
+        "events": "Events",
+        "maxhp": "max HP",
+        "maxmana": "max Mana",
+        "maxdmg": "max Dmg"
     },
     "character_creator":{
         "pick_character": "Charakter auswählen",
@@ -42,6 +46,11 @@
                 "title": "Benutzer löschen",
                 "text": "Bist du sicher, dass du deinen Account löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
             }
+        },
+        "language":{
+            "label": "Sprache",
+            "en-US": "Englisch",
+            "de-DE": "Deutsch"
         }
     },
     "verify_email":{

@@ -13,6 +13,7 @@
 
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
@@ -27,17 +28,18 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
     const [verifyMessage, setVerifyMessage] = React.useState("");
     let navigate = useNavigate();
     let location = useLocation();
+    const {t} = useTranslation();
     let auth = useAuth();
     let token = new URLSearchParams(location.search).get('token')!;
     auth.verifyEmail(token, () => {
         setIsVerifying(false);
-        setVerifyMessage("E-Mail erfolgreich verifiziert! Sie werden in 3 Sekunden zum Login weitergeleitet");
+        setVerifyMessage(t("verify_email.success"));
         setTimeout(() => {
             navigate("/login");
         }, 3000);
     }, () => {
         setIsVerifying(false);
-        setVerifyMessage("Ihre Mail konnte nicht verifiziert werden, entweder ihr Token ist ungültig oder Sie haben sich bereits verifiziert.");
+        setVerifyMessage(t("verify_email.error"));
     });
 
 
@@ -46,7 +48,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
         {isVerifying ? <Busy /> : 
         <Container>
             <Row>
-                <h1>Email-Verifizierung</h1>
+                <h1>{t("verify_email.title")}</h1>
             </Row>
             <Row>
                 <p>

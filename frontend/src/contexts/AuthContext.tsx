@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
@@ -20,6 +21,7 @@ let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 function AuthProvider({ children }: { children: React.ReactNode }) {
   let [user, setUser] = React.useState<string>("");
   let [token, setToken] = React.useState<string>('');
+  const {t} = useTranslation();
   const navigate = useNavigate();
   const homosole = useMudConsole();
   let isAuthenticated = (success:VoidFunction, error:VoidFunction) => {

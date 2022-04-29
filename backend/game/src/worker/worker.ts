@@ -3,7 +3,7 @@ import { DatabaseAdapter } from '../data/databaseAdapter';
 import { CharacterStats } from '../data/datasets/charcterStats';
 import { DungeonDataset } from '../data/datasets/dungeonDataset';
 import { ActionElement, ActionElementImpl } from '../data/interfaces/actionElement';
-import { ActionEventImpl } from '../data/interfaces/actionEvent';
+import { ActionEvent, ActionEventImpl } from '../data/interfaces/actionEvent';
 import { CharacterClass, CharacterClassImpl } from '../data/interfaces/characterClass';
 import { CharacterGender, CharacterGenderImpl } from '../data/interfaces/characterGender';
 import { CharacterSpecies, CharacterSpeciesImpl } from '../data/interfaces/characterSpecies';
@@ -31,11 +31,12 @@ const userTokens: Tokens = {};
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
-    // const mongoConnString: string = process.argv[9];
-    // const database: string = process.argv[10];
-    // const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
-    // let databaseDungeon: DungeonDataset | undefined = (await dba.getDungeon(dungeonID))
-    let dungeon: Dungeon = getDungeon(dungeonID);
+    const mongoConnString: string = process.argv[9];
+    const database: string = process.argv[10];
+    const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
+    let databaseDungeon: DungeonDataset | undefined = (await dba.getDungeon(dungeonID))
+    let dungeon: Dungeon = translateDungeonFromDatabase(databaseDungeon)
+    // let dungeon: Dungeon = getDungeon(dungeonID);
 
     let amqpConfig = getAmqpAdapterConfig();
     let amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -95,17 +96,58 @@ function getAmqpAdapterConfig() {
     };
 }
 
-// async function getDungeonFromDatabase(dungeonId: string): Promise<Dungeon> {
-//     const mongoConnString: string = process.argv[9];
-//     const database: string = process.argv[10];
-//     const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
-//     let databaseDungeon: DungeonDataset | undefined = (await dba.getDungeon(dungeonID))
-//     if (databaseDungeon === undefined) {
-//         throw("The dungeon does not exist!")
-//     } else {
-//         let dungeonObject: Dungeon = new DungeonImpl('1', databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], databaseDungeon?.rooms, databaseDungeon?.blacklist, databaseDungeon?.actions, databaseDungeon?.items, databaseDungeon?.npcs)
-//     }
-// }
+function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefined): Dungeon {
+    if (databaseDungeon === undefined) {
+        throw("The dungeon does not exist!")
+    } else {
+        let dungeonRooms: Room[] = translateRoomsFromDatabase(databaseDungeon)
+        let dungeonActions: ActionElement[] = translateActionsFromDatabase(databaseDungeon)
+        let dungeonItems: Item[] = translateItemsFromDatabase(databaseDungeon)
+        let dungeonNpcs: Npc[] = translateNpcsFromDatabase(databaseDungeon)
+        let dungeonObject: Dungeon = new DungeonImpl('1', databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs)
+        return dungeonObject
+    }
+}
+
+function translateRoomsFromDatabase(dungeonFromDatabase: DungeonDataset): Room[] {
+    let rooms: Room[] = []
+    dungeonFromDatabase.rooms.forEach(databaseRoom => {
+        rooms.push(new RoomImpl(databaseRoom.id, databaseRoom.name, databaseRoom.description, databaseRoom.npcs, databaseRoom.items, databaseRoom.connections, databaseRoom.actions, databaseRoom.xCoordinate, databaseRoom.yCoordinate))
+    });
+    return rooms
+}
+
+function translateActionsFromDatabase(dungeonFromDatabase: DungeonDataset): ActionElement[] {
+    let actions: ActionElement[] = []
+    dungeonFromDatabase.actions.forEach(databaseAction => {
+        let actionEvents: ActionEvent[] = [];
+        databaseAction.events.forEach(databaseActionEvent => {
+            if (databaseActionEvent.eventType === "additem" || "removeItem" || "addhp" || "removehp" || "adddmg" || "removedmg" || "addmana" || "removemana") {
+                actionEvents.push(new ActionEventImpl(databaseActionEvent.eventType as "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", databaseActionEvent.value))
+            } else {
+                throw('ActionEvent has wrong event type')
+            }
+        })
+        actions.push(new ActionElementImpl(databaseAction.id, databaseAction.command, databaseAction.output, databaseAction.description, actionEvents, databaseAction.itemsneeded))
+    })
+    return actions
+}
+
+function translateItemsFromDatabase(dungeonFromDatabase: DungeonDataset): Item[] {
+    let items: Item[] = []
+    dungeonFromDatabase.items.forEach(databaseItem => {
+        items.push(new ItemImpl(databaseItem.id, databaseItem.name, databaseItem.description))
+    });
+    return items
+}
+
+function translateNpcsFromDatabase(dungeonFromDatabase: DungeonDataset): Npc[] {
+    let npcs: Npc[] = []
+    dungeonFromDatabase.npcs.forEach(databaseNpc => {
+        npcs.push(new NpcImpl(databaseNpc.id, databaseNpc.name, databaseNpc.description, databaseNpc.species))
+    });
+    return npcs
+}
 
 function getDungeon(dungeonID: string): Dungeon {
     const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(

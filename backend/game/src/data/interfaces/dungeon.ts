@@ -18,18 +18,18 @@ export interface Dungeon {
   masterId: string;
   maxPlayers: number;
   currentPlayers: number;
-  characterSpecies: CharacterSpecies[];
-  characterClasses: CharacterClass[];
-  characterGenders: CharacterGender[];
-  characters: Character[];
-  rooms: Room[];
+  characterSpecies: {[id: string]: CharacterSpecies};
+  characterClasses: {[id: string]: CharacterClass};
+  characterGenders: {[id: string]: CharacterGender};
+  characters: {[id: string]: Character};
+  rooms: {[id: string]: Room};
   blacklist: string[];
-  actions: ActionElement[];
-  items: Item[];
-  npcs: Npc[];
+  actions: {[id: string]: ActionElement};
+  items: {[id: string]: Item};
+  npcs: {[id: string]: Npc};
 
   getId(): string
-  getName(): string | undefined
+  getName(): string
   getDescription(): string
   getCreatorId(): string
   getMasterId(): string
@@ -62,21 +62,21 @@ export class DungeonImpl implements Dungeon {
   masterId: string;
   maxPlayers: number;
   currentPlayers: number;
-  characterSpecies: CharacterSpecies[];
-  characterClasses: CharacterClass[];
-  characterGenders: CharacterGender[];
-  characters: Character[];
-  rooms: Room[];
+  characterSpecies: {[id: string]: CharacterSpecies};
+  characterClasses: {[id: string]: CharacterClass};
+  characterGenders: {[id: string]: CharacterGender};
+  characters: {[id: string]: Character};
+  rooms: {[id: string]: Room};
   blacklist: string[];
-  actions: ActionElement[];
-  items: Item[];
-  npcs: Npc[];
+  actions: {[id: string]: ActionElement};
+  items: {[id: string]: Item};
+  npcs: {[id: string]: Npc};
 
   getId(): string {
     return this.id;
   }
 
-  getName(): string | undefined {
+  getName(): string{
     return this.name;
   }
 
@@ -100,80 +100,66 @@ export class DungeonImpl implements Dungeon {
     return this.currentPlayers;
   }
 
-  getSpecies(speciesName: string): CharacterSpecies {
-    let speciesIndex: number = this.characterSpecies.findIndex(
-      (species) => species.name === speciesName
-    );
-    if (speciesIndex === -1) {
+  getSpecies(speciesId: string): CharacterSpecies {
+    let species: CharacterSpecies = this.characterSpecies[speciesId]
+    if (species === undefined) {
       throw new Error("Species does not exist");
     } else {
-      return this.characterSpecies[speciesIndex];
+      return species;
     }
   }
 
-  getClass(className: string): CharacterClass {
-    let classIndex: number = this.characterClasses.findIndex(
-      (characterClass) => characterClass.name === className
-    );
-    if (classIndex === -1) {
+  getClass(classId: string): CharacterClass {
+    let characterClass: CharacterClass = this.characterClasses[classId]
+    if (characterClass === undefined) {
       throw new Error("Class does not exist");
     } else {
-      return this.characterClasses[classIndex];
+      return characterClass;
     }
   }
 
-  getGender(genderName: string): CharacterGender {
-    let genderIndex: number = this.characterGenders.findIndex(
-      (gender) => gender.name === genderName
-    );
-    if (genderIndex === -1) {
+  getGender(genderId: string): CharacterGender {
+    let characterGender: CharacterGender = this.characterGenders[genderId]
+    if (characterGender === undefined) {
       throw new Error("Gender does not exist");
     } else {
-      return this.characterGenders[genderIndex];
+      return characterGender;
     }
   }
 
   getCharacter(characterId: string): Character {
-    let characterIndex: number = this.characters.findIndex(
-      (character) => character.id === characterId
-    );
-    if (characterIndex === -1) {
+    let character: Character = this.characters[characterId]
+    if (character === undefined) {
       throw new Error("Character does not exist");
     } else {
-      return this.characters[characterIndex];
+      return character
     }
   }
 
   getCharacterByName(characterName: string): Character {
-    let characterIndex: number = this.characters.findIndex(
-      (character) => character.name === characterName
-    );
-    if (characterIndex === -1) {
+    let character: Character | undefined = Object.values(this.characters).find(character => character.getName() === characterName)
+    if (character === undefined) {
       throw new Error("Character does not exist");
     } else {
-      return this.characters[characterIndex];
+      return character;
     }
   }
 
   getRoom(roomId: string): Room {
-    let roomIndex: number = this.rooms.findIndex(
-      (room) => room.id === roomId
-    );
-    if (roomIndex === -1) {
+    let room: Room = this.rooms[roomId]
+    if (room === undefined) {
       throw new Error("Room does not exist");
     } else {
-      return this.rooms[roomIndex];
+      return room;
     }
   }
 
   getRoomByCoordinates(x: number, y: number): Room {
-    let roomIndex: number = this.rooms.findIndex(
-      (room) => room.xCoordinate === x && room.yCoordinate === y
-    );
-    if (roomIndex === -1) {
+    let room: Room | undefined = Object.values(this.rooms).find(room => room.xCoordinate === x && room.yCoordinate === y)
+    if (room === undefined) {
       throw new Error("Room does not exist");
     } else {
-      return this.rooms[roomIndex];
+      return room;
     }
   }
 
@@ -210,39 +196,33 @@ export class DungeonImpl implements Dungeon {
   }
 
   getAction(actionId: string): ActionElement {
-    let actionIndex: number = this.actions.findIndex(
-      (action) => action.id === actionId
-    );
-    if (actionIndex === -1) {
+    let action: ActionElement = this.actions[actionId]
+    if (action === undefined) {
       throw new Error("Room does not exist");
     } else {
-      return this.actions[actionIndex];
+      return action;
     }
   }
 
   getActions(): ActionElement[] {
-    return this.actions;
+    return Object.values(this.actions)
   }
 
   getItem(itemId: string): Item {
-    let itemIndex: number = this.items.findIndex(
-        (item) => item.id === itemId
-      );
-      if (itemIndex === -1) {
+    let item: Item = this.items[itemId]
+      if (item === undefined) {
         throw new Error("Room does not exist");
       } else {
-        return this.items[itemIndex];
+        return item;
       }
   }
 
   getNpc(npcId: string): Npc {
-    let npcIndex: number = this.npcs.findIndex(
-        (npc) => npc.id === npcId
-      );
-      if (npcIndex === -1) {
+    let npc: Npc = this.npcs[npcId]
+      if (npc === undefined) {
         throw new Error("Room does not exist");
       } else {
-        return this.npcs[npcIndex];
+        return npc;
       }
   }
 
@@ -271,14 +251,23 @@ export class DungeonImpl implements Dungeon {
     this.masterId = masterId;
     this.maxPlayers = maxPlayers;
     this.currentPlayers = currentPlayers;
-    this.characterSpecies = species;
-    this.characterClasses = classes;
-    this.characterGenders = genders;
-    this.characters = characters;
-    this.rooms = rooms;
+    this.characterSpecies = arrayToMap(species);
+    this.characterClasses = arrayToMap(classes);
+    this.characterGenders = arrayToMap(genders);
+    this.characters = arrayToMap(characters);
+    this.rooms = arrayToMap(rooms);
     this.blacklist = blacklist;
-    this.actions = actions;
-    this.items = items
-    this.npcs = npcs
+    this.actions = arrayToMap(actions);
+    this.items = arrayToMap(items)
+    this.npcs = arrayToMap(npcs)
   }
+}
+
+function arrayToMap(array: any[]): any {
+  let map: {[id: string]: any} = {};
+  array.forEach((obj: any) => {
+      //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
+      map[obj.id] = obj;
+  });
+  return map;
 }

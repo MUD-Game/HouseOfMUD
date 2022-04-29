@@ -34,6 +34,7 @@ interface Dungeons {
  * responsable for handling the communication between the supervisor and the host
  */
 export class HostLink {
+   
     private port: number;
     private tls: TLS;
     private authKey: string;
@@ -172,6 +173,10 @@ export class HostLink {
                 status: 'offline',
             };
         }
+    }
+
+    public isDungeonCreator(dungeonID: string, userID: string) {
+        return this.dungeons[dungeonID].creatorId === userID;
     }
 
 

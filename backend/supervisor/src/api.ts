@@ -207,9 +207,14 @@ export class API {
         });
 
         // edit dungeon
-        app.patch('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
+        app.patch('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
+            const user = req.cookies.user;
+            const userID = await this.dba.getUserId(user);
+            if(userID && !this.hostLink.isDungeonCreator(dungeonID, userID)){
+                res.json({ ok: 0, error: 'You cannot Edit this Dungeon!' });
+            }
             if (body.dungeonData !== undefined) {
                 let dungeonData: any = body.dungeonData;
                 if (this.hostLink.dungeonExists(dungeonID)) {
@@ -237,7 +242,7 @@ export class API {
             let userID = await this.dba.getUserId(user);
             console.log(userID);
             if(userID){
-                if(this.hostLink.isDungeonMaster(dungeonID, userID)){
+                if(this.hostLink.isDungeonCreator(dungeonID, userID)){
                     this.hostLink.deleteDungeon(dungeonID);
                     this.dba.deleteDungeon(dungeonID).then(() => {
                         res.json({ ok: 1 });
@@ -245,7 +250,7 @@ export class API {
                         res.json({ ok: 0, error: err.message });
                     });
                 }else{
-                    res.json({ ok: 0, error: 'You are not the master of this dungeon' });
+                    res.json({ ok: 0, error: 'You cannot delete this Dungeon!' });
                 }
             }else{
                res.json({ ok: 0, error: 'Invalid parameters' });

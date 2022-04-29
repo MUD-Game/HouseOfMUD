@@ -12,15 +12,14 @@
  * ```
  */
 import React, { useEffect } from 'react'
-import { Button, Container, Form, FormControl, Nav, Row } from 'react-bootstrap';
+import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
 import AllDungeons from './AllDungeons';
-import "./index.css"
 import { useNavigate } from 'react-router-dom';
-import $ from 'jquery';
+import { ImportsNotUsedAsValues } from 'typescript';
 
 
 export type DashboardProps = {
@@ -50,6 +49,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         } else {
             setDungeonView("my");
         }
+        setSearchTerm('');
     }
     const handleSearch = (event: any) => {
         setSearchTerm(event.target.value);
@@ -68,16 +68,25 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 </div>
             </Row>
 
-            <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
-                <Nav.Item>
-                    <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                    <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
-                    {/* <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link> */}
-                </Nav.Item>
-            </Nav>
-            <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder="Suche Dungeon" />
+            <Row className="mb-4">
+                <div className="col-md-6">
+                    <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder="Suche Dungeon" />
+                </div>
+            </Row>
+
+            <Row>
+                <div className="col">
+                    <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
+                        <Nav.Item>
+                            <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
+                        </Nav.Item>
+                    </Nav>
+                </div>
+            </Row>
+
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={myDungeons} /> : null}

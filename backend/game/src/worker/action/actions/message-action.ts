@@ -2,6 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
+import { triggers, actionMessages } from "./action-resources";
 
 /**
  * Action that gets performed when user sends a "sag" message.
@@ -11,7 +12,7 @@ export class MessageAction implements Action {
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = "sag";
+        this.trigger = triggers.message;
         this.dungeonController = dungeonController;
     }
     performAction(user: string, args: string[]) {
@@ -22,7 +23,7 @@ export class MessageAction implements Action {
         let room: Room = this.dungeonController.getDungeon().getRoom(roomId)
         let roomName: string = room.getName()
         let dungeonId: string = this.dungeonController.getDungeon().getId()
-        let responseMessage: string = `[${roomName}] ${senderCharacterName} sagt ${messageBody}`
+        let responseMessage: string = `[${roomName}] ${senderCharacterName} ${actionMessages.say} ${messageBody}`
         let routingKey = `room.${roomId}`
         this.dungeonController.getAmqpAdapter().sendWithRouting(routingKey, {action: "message", data: {message: responseMessage}})
     }

@@ -13,6 +13,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Busy from 'src/components/Busy';
 import { CharacterSpecies } from '../../../backend/data/src/interfaces/characterSpecies';
 import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
+import { useTranslation } from 'react-i18next';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -136,6 +137,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     
     const homosole = useMudConsole();
     const navigate = useNavigate();
+    const {t} = useTranslation();
     
     const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
         // REFACTOR: make it prettier and more readable
@@ -168,9 +170,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         }
     }
 
-    const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
+    const showConfirmation = (localeString: string, onConfirm: () => void) => {
         setShowConfirmationDialog({
-            show: true, message, title, onConfirm
+            show: true, message: t(`dungeon_configurator.confirmations.${localeString}.text`), title: t(`dungeon_configurator.confirmations.${localeString}.title`), onConfirm
         });
     }
 
@@ -189,7 +191,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setShowCharacterClassModal(true);
     }
     const deleteClass = (key: number) => {
-        showConfirmation("Delete Class", "Are you sure you want to delete this class?", () => {
+        showConfirmation("delete_class", () => {
             let index = classes.findIndex(c => c.id === key + "");
             let newClasses = classes;
             newClasses.splice(index, 1);
@@ -209,7 +211,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     }
 
     const deleteItem = (key: number) => {
-        showConfirmation("Delete Item", "Are you sure you want to delete this Item?", () => {
+        showConfirmation('delete_item', () => {
             let index = items.findIndex(c => c.id === key + "");
             let newItems = items;
             newItems.splice(index, 1);
@@ -230,7 +232,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setShowAddActionsModal(true);
     }
     const deleteAction = (key: number) => {
-        showConfirmation("Delete Action", "Are you sure you want to delete this Action?", () => {
+        showConfirmation('delete_action', () => {
             let index = actions.findIndex(c => c.id === key + "");
             let newActions = actions;
             newActions.splice(index, 1);

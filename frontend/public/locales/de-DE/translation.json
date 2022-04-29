@@ -59,6 +59,20 @@
         "error": "Ihre Mail konnte nicht verifiziert werden, entweder ihr Token ist ungültig oder Sie haben sich bereits verifiziert."
     },
     "dungeon_configurator":{
+        "confirmations": {
+            "delete_class": {
+                "title": "Klasse löschen",
+                "text": "Bist du sicher, dass du diese Klasse löschen möchtest?"
+            },
+            "delete_item": {
+                "title": "Item löschen",
+                "text": "Bist du sicher, dass du dieses Item löschen möchtest?"
+            },
+            "delete_action": {
+                "title": "Aktion löschen",
+                "text": "Bist du sicher, dass du diese Aktion löschen möchtest?"
+            }
+        },
         "title": "Dungeon konfigurieren",
         "inputs": {
             "name":{

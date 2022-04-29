@@ -12,7 +12,7 @@
  * ```
  */
 import React, { useEffect } from 'react'
-import { Button, Container, Form, FormControl, Nav, Row } from 'react-bootstrap';
+import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
@@ -53,6 +53,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         } else {
             setDungeonView("my");
         }
+        setSearchTerm('');
     }
     const handleSearch = (event: any) => {
         setSearchTerm(event.target.value);
@@ -70,16 +71,25 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     }}>{t("dashboard.create_new_dungeon")}</button>
                 </div>
             </Row>
+            <Row className="mb-4">
+                <div className="col-md-6">
+                    <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
+                </div>
+            </Row>
 
-            <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
-                <Nav.Item>
-                    <Nav.Link eventKey="all">{t("dashboard.all_dungeons")}</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                    <Nav.Link eventKey="my">{t("dashboard.my_dungeons")}</Nav.Link>
-                </Nav.Item>
-            </Nav>
-            <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
+            <Row>
+                <div className="col">
+                    <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
+                        <Nav.Item>
+                            <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
+                        </Nav.Item>
+                    </Nav>
+                </div>
+            </Row>
+
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <MyDungeons filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}

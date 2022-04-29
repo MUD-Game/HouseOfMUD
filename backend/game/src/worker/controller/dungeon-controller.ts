@@ -67,7 +67,7 @@ export class DungeonController {
             "1",
             ["1"]
         );
-        this.dungeon.characters.push(newCharacter);
+        this.dungeon.characters[name] = newCharacter;
         return newCharacter;
     }
 

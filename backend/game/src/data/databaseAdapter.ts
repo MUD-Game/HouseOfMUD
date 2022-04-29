@@ -178,8 +178,8 @@ export class DatabaseAdapter {
         return this.dungeon.create({
             name: newDungeon.name,
             description: newDungeon.description,
-            creatorId: newDungeon.creatorId,
-            masterId: newDungeon.masterId,
+            creatorId: oldDungeon.creatorId,
+            masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
             blacklist: newDungeon.blacklist,
             characters: oldDungeon.characters,

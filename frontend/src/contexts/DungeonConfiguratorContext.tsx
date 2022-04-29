@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MudActionElement, MudCharacterGender, MudCharacterSpecies, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
 import { MudCharacterClass } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
@@ -9,7 +9,11 @@ import AddActionModal from 'src/components/Modals/CharacterClass/AddActionModal'
 import { supervisor } from 'src/services/supervisor';
 import { CreateDungeonRequest } from '@supervisor/api';
 import { useMudConsole } from 'src/hooks/useMudConsole';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Busy from 'src/components/Busy';
+import { CharacterSpecies } from '../../../backend/data/src/interfaces/characterSpecies';
+import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
+import { ErrorResponse } from '../../../backend/supervisor/dist/types/api';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -64,6 +68,9 @@ export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfi
 let DungeonConfiguratorContext = React.createContext<DungeonConfiguratorContextType>({} as DungeonConfiguratorContextType);
 
 function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }) {
+    const location = useLocation();
+    let dungeonId = (location.state as any)?.dungeonId || undefined;
+    console.log(dungeonId, "dungeonId in provider")
     const [name, setName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [maxPlayers, setMaxPlayers] = React.useState<number>(0);
@@ -74,24 +81,63 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const [actions, setActions] = React.useState<MudActionElement[]>([]);
     const [rooms, setRooms] = React.useState<MudRoom[]>([]);
     const [npcs, setNpcs] = React.useState<MudNpc[]>([]);
-
-
+    
+    
     const [editData, setEditData] = React.useState<any>();
-
+    
     const [showCharacterClassModal, setShowCharacterClassModal] = React.useState<boolean>(false);
     const [characterClassKey, setCharacterClassKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-
+    
     const [showAddItemsModal, setShowAddItemsModal] = React.useState<boolean>(false);
     const [itemsKey, setItemsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-
+    
     const [showAddActionsModal, setShowAddActionsModal] = React.useState<boolean>(false);
     const [actionsKey, setActionsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
 
-    const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
+    const [showAddNpcModal, setShowAddNpcModal] = React.useState<boolean>(false);
+    const [npcKey, setNpcKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
 
+    const [showAddRoomModal, setshowAddRoomModal] = React.useState<boolean>(false);
+    const [roomKey, setRoomKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+    
+    const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
+    const [isLoading, setIsLoading] = React.useState<boolean>(dungeonId ? true : false);
+    useEffect(() => {
+        if (dungeonId) {
+            supervisor.getDungeon(dungeonId, {}, (dungeon: any) => {
+                console.log(dungeon, "dungeon in provider")
+                setName(dungeon.name);
+                setDescription(dungeon.description);
+                setMaxPlayers(dungeon.maxPlayers);
+                setClasses(dungeon.characterClasses);
+                setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length });
+                setItems(dungeon.items);
+                setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length - 1 });
+                setActions(dungeon.actions);
+                setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length - 1 });
+                setRooms(dungeon.rooms);
+                setRoomKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.rooms.length - 1 });
+                setNpcs(dungeon.npcs);
+                setNpcKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length - 1 });
+                dungeon.characterSpecies.forEach((s:CharacterSpecies) => {
+                    setSpecies([...species, { label: s.name, id: `new-id-${s.id}` }]);
+                });
+                dungeon.characterGenders.forEach((s:CharacterGender) => {
+                    setGenders([...genders, { label: s.name, id: `new-id-${s.id}` }]);
+                });
+                setIsLoading(false);
+                console.log(maxPlayers);
+            }, (error: any) => { });
+        }
+      return () => {
+        
+      }
+    }, [])
+    
+    
     const homosole = useMudConsole();
     const navigate = useNavigate();
-
+    
     const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
         // REFACTOR: make it prettier and more readable
         let target = event.target;
@@ -249,6 +295,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         console.log(processToSend(species));
         if (validateData()) {
             let createBody: CreateDungeonRequest['dungeonData'] = {
+                    id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                     name,
                     description,
                     creatorId: "",
@@ -268,17 +315,31 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                     blacklist: []
                 };
             console.log(createBody);
-            supervisor.createDungeon({ dungeonData: createBody }, (data) => {
-                if (data.ok) {
-                    homosole.log("Dungeon Successfully created");
-                    // navigate("/");
+            if(dungeonId){
+                supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
+                    if (data.ok) {
+                        homosole.log("Dungeon Successfully created");
+                        navigate("/");
 
-                } else {
-                    homosole.error("Dungeon could not be created");
-                }
-            }, (error) => {
-                homosole.log(error.error, "Dungeon-Configurator");
-            });
+                    } else {
+                        homosole.error("Dungeon could not be created");
+                    }
+                }, (error) => {
+                    homosole.log(error.error, "Dungeon-Configurator");
+                }); 
+            }else{
+                supervisor.createDungeon({ dungeonData: createBody }, (data) => {
+                    if (data.ok) {
+                        homosole.log("Dungeon Successfully created");
+                        navigate("/");
+                        
+                    } else {
+                        homosole.error("Dungeon could not be created");
+                    }
+                }, (error) => {
+                    homosole.log(error.error, "Dungeon-Configurator");
+                });
+            }
         } else {
             // homosole.warn("Bitte füll alle Felder aus!", "Dungeon-Configurator");
         }
@@ -363,7 +424,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         }} />
 
         <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
-        {children}
+        {isLoading ? <Busy/> : children}
     </DungeonConfiguratorContext.Provider>;
 }
 export { DungeonConfiguratorContext, DungeonConfiguratorProvider };

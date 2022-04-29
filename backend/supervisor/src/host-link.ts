@@ -172,6 +172,7 @@ export class HostLink {
         }
     }
 
+
     /**
      * adds a new dungeon to the list
      * @param id dungeon id
@@ -186,6 +187,13 @@ export class HostLink {
             currentPlayers: 0,
             status: 'offline'
         };
+    }
+
+    public editDungeon(id:string, dungeonData: any){
+        this.dungeons[id].name = dungeonData.name;
+        this.dungeons[id].description = dungeonData.description;
+        this.dungeons[id].maxPlayers = dungeonData.maxPlayers;
+        this.dungeons[id].masterId = dungeonData.masterId;
     }
 
     /**

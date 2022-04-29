@@ -208,11 +208,22 @@ export class API {
         app.patch('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.dungeonData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            if (body.dungeonData !== undefined) {
                 let dungeonData: any = body.dungeonData;
-                // TODO
+                if (this.hostLink.dungeonExists(dungeonID)) {
+                
+                this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
+                    if(newDungeon){
+                        this.hostLink.deleteDungeon(dungeonID);
+                        this.hostLink.addDungeon(newDungeon._id.toString(), dungeonData);
+                        res.json({ ok: 1, dungeonID: newDungeon._id.toString() });
+                    }else{
+                        res.json({ ok: 0, error: 'Dungeon could not be updated' });
+                    }
+                    }).catch(err => {
+                        res.json({ ok: 0, error: err.message });
+                    });
+                }
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }

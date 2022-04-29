@@ -13,6 +13,7 @@
 
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationDialog, { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
@@ -24,7 +25,7 @@ interface LocationState {
 }
 const UserSettings: React.FC<UserSettingsProps> = (props) => {
     let navigate = useNavigate();
-    let location = useLocation();
+    const {t} = useTranslation();
     let auth = useAuth();
 
     const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
@@ -42,14 +43,14 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
                 <Row>
                     <div className="col-lg-4 col-md-6 col-sm-8">
                             <button className="btn mt-3 mb-5 drawn-border btn-red btn-xpadding" onClick={()=>{
-                                showConfirmation('User löschen', 'Sicher dass du löschen...', ()=>{
+                            showConfirmation(t("user_settings.delete_user.confirmation.title"), t("user_settings.delete_user.confirmation.text"), ()=>{
                                     auth.deleteUser(() => {
                                         navigate('/register');
                                     },()=>{
                                         
                                     });
                                 })
-                            }}>User löschen</button> <br />
+                        }}>{t("user_settings.delete_user.button")}</button> <br />
                     </div>
                 </Row>
             </Container>

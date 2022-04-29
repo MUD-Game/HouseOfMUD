@@ -67,20 +67,19 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 <div className="col-4">
                     <button className="btn drawn-border btn-standard" onClick={() => {
                         navigate("/dungeon-configurator", { state: { action: "new" } });
-                    }}>Neuen Dungeon erstellen</button>
+                    }}>{t("dashboard.create_new_dungeon")}</button>
                 </div>
             </Row>
 
             <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                 <Nav.Item>
-                    <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
+                    <Nav.Link eventKey="all">{t("dashboard.all_dungeons")}</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
-                    {/* <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link> */}
+                    <Nav.Link eventKey="my">{t("dashboard.my_dungeons")}</Nav.Link>
                 </Nav.Item>
             </Nav>
-            <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder="Suche Dungeon" />
+            <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <MyDungeons filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}

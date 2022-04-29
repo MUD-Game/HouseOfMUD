@@ -10,6 +10,7 @@ import { MudItem, MudEvent } from '../../../types/dungeon';
 import MudTypeahead from '../../Custom/MudTypeahead';
 import MudSelect from 'src/components/Custom/MudSelect';
 import '../index.css'
+import { useTranslation } from 'react-i18next';
 type Option = string | { [key: string]: any };
 
 //REFACTOR: Redunant Modal, make generic pls
@@ -23,8 +24,8 @@ export interface AddActionModalProps {
 const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const dconf = useDungeonConfigurator();
-
-
+    const {t} = useTranslation();
+    const dt = 'dungeon_configurator';
     let initialItemsNeeded: Option[] = [];
     let initialRemoveItems: Option[] = [];
     let initialAddItems: Option[] = [];
@@ -130,33 +131,33 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        Neue Aktion anlegen
+                        {t(`${dt}.buttons.create_action`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3'>
-                    <MudInput placeholder='Befehl' colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
-                    <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <MudInput placeholder='Ausgabe' colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
                     <MudTypeahead
                         colmd={12}
-                        title={'Benötigte Items'}
+                        title={ t(`dungeon_keys.itemsNeeded`) }
                         id={"typeahead-items-needed"}
                         labelKey={(option: any) => `${option.name} (${option.description})`}
                         options={dconf.items}
                         multiple
                         onChange={setItemsNeeded}
-                        placeholder="Items auswählen"
+                        placeholder={t(`common.select_items`)}
                         selected={itemsNeeded}
                     />
                     <MudTypeahead
                         colmd={12}
-                        title="Events"
+                        title={t(`dungeon_keys.events`)}
                         id="typeahead-events"
                         labelKey="events"
                         multiple
                         options={eventTypes}
                         onChange={setSelectedEvents}
-                        placeholder="Items auswählen"
+                        placeholder={t(`common.select_events`)}
                         selected={selectedEvents}
                     />
                     {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {
@@ -170,7 +171,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                                     labelKey={(option: any) => `${option.name} (${option.description})`}
                                     options={dconf.items}
                                     onChange={(mudEvent as string === 'additem') ? setAddItems : (a) => { setRemoveItems(a); setItemsNeeded(a) }}
-                                    placeholder="Items auswählen"
+                                    placeholder={t(`common.select_items`)}
                                     selected={(mudEvent as string === 'additem') ? addItems : removeItems}
                                 />
                             )
@@ -183,10 +184,10 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">Abbrechen</Button>
+                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
-                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">Anlegen</Button>
+                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.create`)}</Button>
                     </div>
                 </Modal.Footer>
             </Container>

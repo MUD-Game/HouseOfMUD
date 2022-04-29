@@ -9,9 +9,11 @@
  */
 
 
+import { t } from "i18next";
 import React from "react"
 import { Row } from "react-bootstrap";
 import { CloudCheck, CloudSlash, Lock, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "src/hooks/useGame";
 
@@ -31,6 +33,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
 
     const game = useGame();
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     let joinDungeon = () => {
         game.setDungeon(id);
@@ -75,7 +78,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                     <button className="btn btn-danger p-2 mx-1"><Trash /></button>
                     <button className="btn btn-success p-2 mx-1" onClick={startDemo}><Play /></button>
                 </div>
-                : "Dieser Dungeon läuft bereits"}
+                    : t("dashboard.already_in_dungeon")}
             </div>
         </Row>
     )

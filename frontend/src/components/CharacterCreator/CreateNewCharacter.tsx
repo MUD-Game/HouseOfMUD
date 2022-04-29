@@ -14,6 +14,7 @@ import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';
 import MudInput from '../Custom/MudInupt';
 import MudSelect from '../Custom/MudSelect';
+import { useTranslation } from 'react-i18next';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
@@ -24,6 +25,7 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
 
     const auth = useAuth();
     const game = useGame();
+    const {t} = useTranslation();
 
     const onCreateCharacter = (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
@@ -48,28 +50,28 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
 
     return (
         <form onSubmit={onCreateCharacter}>
-            <p className="headline">Neuen Charakter anlegen</p>
+            <p className="headline">{t("character_creator.new_character")}</p>
             <Row className="py-3 g-4">
                 <MudInput required colmd={6} name="name" type="text" placeholder="Charaktername wählen" />
                 {/* <div className="col-md-6">
                     <label htmlFor="fullname"><b>Fullname:</b></label>
                     <input required className="drawn-border input-standard" type="text" name="fullname" placeholder="Fullname wählen" />
                 </div> */}
-                <MudSelect required colmd={6} name="class" label="Klasse">
+                <MudSelect required colmd={6} name="class" label={t("dungeon_keys.class")}>
                     {classes.map((cl, index) => {
                         return (
                             <option key={index} value={cl.id}>{cl.name}</option>
                         )
                     })}
                 </MudSelect>
-                <MudSelect required colmd={6} name="gender" label="Geschlecht">
+                <MudSelect required colmd={6} name="gender" label={t("dungeon_keys.gender")}>
                     {genders.map((ge, index) => {
                         return (
                             <option key={index} value={ge.id}>{ge.name}</option>
                         )
                     })}
                 </MudSelect>
-                <MudSelect required colmd={6} name="species" label="Spezies">
+                <MudSelect required colmd={6} name="species" label={t("dungeon_keys.species")}>
                     {species.map((sp, index) => {
                         return (
                             <option key={index} value={sp.id}>{sp.name}</option>

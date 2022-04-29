@@ -1,6 +1,7 @@
 import React, { ButtonHTMLAttributes, DetailedHTMLProps, MouseEvent } from "react";
 import { Row, Table } from 'react-bootstrap';
 import { Pencil, Trash } from "react-bootstrap-icons";
+import { useTranslation } from "react-i18next";
 import { MudCharacterClass, MudItem } from "src/types/dungeon";
 import { MudActionElement } from '../../types/dungeon';
 import DungeonObjectListElement from './DungeonObjectListElement';
@@ -14,10 +15,12 @@ export interface DungeonObjectListProps {
     onEditElement: (key: number) => void;
     onDeleteElement: (key: number) => void;
     data: AcceptedTypes[];
-    displayKeys: { [key: string]: string };
+    displayKeys: string[];
 }
 
 const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
+
+    const {t} = useTranslation();
 
     return (
         <>
@@ -31,10 +34,10 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
                 </div>
             </Row>
             <Row className="py-2">
-                {Object.keys(props.displayKeys).map((key, index) => {
+                {props.displayKeys.map((key, index) => {
                             return (
                                 <div className="col" key={index}>
-                                    <b><u>{props.displayKeys[key]}</u></b>
+                                    <b><u>{t(`dungeon_keys.${key}`)}</u></b>
                                 </div>
                             )
                         })}

@@ -16,11 +16,9 @@ import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
-import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData, GetDungeonsRequest } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
-import "./index.css"
 import { useNavigate } from 'react-router-dom';
-import $ from 'jquery';
 import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
 
@@ -40,11 +38,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     let [searchTerm, setSearchTerm] = React.useState<string>('');
 
     useEffect(() => {
-        let request: GetDungeonsRequest = {
-            user: auth.user,
-        }
-        supervisor.getDungeons(request, setAllDungeons, homsole.supervisorerror)
-        supervisor.getMyDungeons(request, setMyDungeons, homsole.supervisorerror);
+        supervisor.getDungeons({}, setAllDungeons, homsole.supervisorerror)
+        supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
     }, [])
 
     const handleSelect = (eventKey: string | null) => {
@@ -92,7 +87,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <MyDungeons filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <MyDungeons onDelete={()=>{
+                supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
+            }} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )
 }

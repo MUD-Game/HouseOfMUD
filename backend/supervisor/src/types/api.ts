@@ -10,9 +10,7 @@ export interface SupervisorResponse {
  * General Supervisor Request-Object. Its sent to the server and always contains a authToken
  * @category Request
  */
-export interface SupervisorRequest {
-    
-}
+export interface SupervisorRequest {}
 
 /**
  * Error-Response sent back to the client if there were any errors in the supervisor or the auth failed
@@ -91,9 +89,7 @@ export interface StopDungeonResponse extends SupervisorResponse { }
 /**
  * @category Request
  */
-export interface GetDungeonsRequest extends SupervisorRequest {
-    user: string;
-}
+export interface GetDungeonsRequest extends SupervisorRequest {}
 
 /**
  * @category Request
@@ -162,9 +158,7 @@ export interface EditDungeonResponse extends CreateDungeonResponse { }
 /**
  * @category Request
  */
-export interface DeleteDungeonRequest extends SupervisorRequest {
-    user: string;
-}
+export interface DeleteDungeonRequest extends SupervisorRequest { }
 
 /**
  * @category Response

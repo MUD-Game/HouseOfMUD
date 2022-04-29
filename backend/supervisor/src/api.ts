@@ -37,7 +37,6 @@ export class API {
         this.hostLink = hostLink;
         this.dba = dba;
         this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookie_host);
-
     }
 
     /**
@@ -182,8 +181,8 @@ export class API {
                 console.log(userId);
                 dungeonData.masterId = userId;
                 dungeonData.creatorId = userId;
-                this.hostLink.addDungeon(dungeonData.id, dungeonData);
                 this.dba.storeDungeon(dungeonData).then(dungeonID => {
+                    this.hostLink.addDungeon(dungeonID._id.toString(), dungeonData);
                     res.json({ ok: 1, dungeonID: dungeonID });
                 }).catch(err => {
                     res.json({ ok: 0, error: err });
@@ -220,15 +219,24 @@ export class API {
         });
 
         // delete dungeon
-        app.delete('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
+        app.delete('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+            let user:string = req.cookies.user;
+            let userID = await this.dba.getUserId(user);
+            console.log(userID);
+            if(userID){
+                if(this.hostLink.isDungeonMaster(dungeonID, userID)){
+                    this.hostLink.deleteDungeon(dungeonID);
+                    this.dba.deleteDungeon(dungeonID).then(() => {
+                        res.json({ ok: 1 });
+                    }).catch(err => {
+                        res.json({ ok: 0, error: err.message });
+                    });
+                }else{
+                    res.json({ ok: 0, error: 'You are not the master of this dungeon' });
+                }
+            }else{
+               res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 

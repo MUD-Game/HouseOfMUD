@@ -206,6 +206,14 @@ export class HostLink {
         return dungeons;
     }
 
+    public deleteDungeon(id: string) {
+        delete this.dungeons[id];
+    }
+
+    public isDungeonMaster(dungeonID: string, masterId: string): boolean {
+        return this.dungeons[dungeonID].masterId === masterId;
+    }
+
     /**
      * sends the verify token to specific host
      * @param dungeonID dungeon id

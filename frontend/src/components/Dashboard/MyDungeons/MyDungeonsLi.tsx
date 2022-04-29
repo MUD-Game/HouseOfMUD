@@ -14,6 +14,7 @@ import React from "react"
 import { Row } from "react-bootstrap";
 import { CloudCheck, CloudSlash, Lock, PencilFill, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "src/hooks/useGame";
 import { supervisor } from "src/services/supervisor";
@@ -79,7 +80,11 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                         <button className="btn btn-danger p-2 mx-1" onClick={()=>{
                             supervisor.deleteDungeon(id, {}, (data)=>{onDelete()}, (error)=>{});
                             }}><Trash /></button>
-                        <button className="btn btn-secondary p-2 mx-1"><PencilFill /></button>
+                        <button className="btn btn-secondary p-2 mx-1" onClick={
+                            ()=>{
+                                navigate("/dungeon-configurator", {state: {dungeonId: id}});
+                            }
+                        }> <PencilFill /></button>
                     <button className="btn btn-success p-2 mx-1" onClick={startDemo}><Play onClick={startDemo} /></button>
                 </div>
                     : t("dashboard.already_in_dungeon")}

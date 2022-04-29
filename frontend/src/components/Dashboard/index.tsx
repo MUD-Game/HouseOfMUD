@@ -89,6 +89,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <MyDungeons onDelete={()=>{
                 supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
+                supervisor.getDungeons({}, setAllDungeons, homsole.supervisorerror);
             }} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )

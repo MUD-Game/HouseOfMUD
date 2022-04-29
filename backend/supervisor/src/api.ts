@@ -194,11 +194,13 @@ export class API {
 
         // get dungeon
         app.get('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                // TODO
+            let dungeonID: string = req.params.dungeonID;
+            if(dungeonID){
+                this.dba.getDungeon(dungeonID).then(dungeon => {
+                    res.json({ ok: 1, dungeon: dungeon });
+                }).catch(err => {
+                    res.json({ ok: 0, error: err });
+                });
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }
@@ -211,7 +213,6 @@ export class API {
             if (body.dungeonData !== undefined) {
                 let dungeonData: any = body.dungeonData;
                 if (this.hostLink.dungeonExists(dungeonID)) {
-                
                 this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
                     if(newDungeon){
                         this.hostLink.deleteDungeon(dungeonID);

@@ -19,8 +19,9 @@ interface Dungeon {
     host?: string;
     name: string;
     description: string;
-    maxPlayers: number;
+    maxPlayers: number; 
     masterId: string;
+    creatorId: string;
     currentPlayers: number;
     status: Status;
 }
@@ -166,6 +167,7 @@ export class HostLink {
                 description: dungeon.description,
                 maxPlayers: dungeon.maxPlayers,
                 masterId: dungeon.masterId,
+                creatorId: dungeon.creatorId,
                 currentPlayers: 0,
                 status: 'offline',
             };
@@ -184,6 +186,7 @@ export class HostLink {
             description: dungeonData.description,
             maxPlayers: dungeonData.maxPlayers,
             masterId: dungeonData.masterId,
+            creatorId: dungeonData.creatorId,
             currentPlayers: 0,
             status: 'offline'
         };
@@ -194,17 +197,18 @@ export class HostLink {
         this.dungeons[id].description = dungeonData.description;
         this.dungeons[id].maxPlayers = dungeonData.maxPlayers;
         this.dungeons[id].masterId = dungeonData.masterId;
+        this.dungeons[id].creatorId = dungeonData.creatorId;
     }
 
     /**
      * @returns dungeon informations for dashboard
      */
-    public getDungeons(masterId?: string): any[] {
+    public getDungeons(creatorId?: string): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
-            if (!masterId) {
+            if (!creatorId) {
                 dungeons.push(this.dungeons[dungeonID]);
-            }else if(this.dungeons[dungeonID].masterId === masterId){
+            } else if (this.dungeons[dungeonID].creatorId === creatorId){
                 dungeons.push({
                     id: dungeonID,
                     ...this.dungeons[dungeonID]

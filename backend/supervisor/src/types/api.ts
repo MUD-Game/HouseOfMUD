@@ -76,10 +76,7 @@ export interface StartDungeonResponse extends SupervisorResponse { }
  * Stops a dungeon via POST: /stopDungeon
  * @category Request
  */
-export interface StopDungeonRequest {
-    user: string;
-    authToken: string;
-}
+export interface StopDungeonRequest {}
 
 /**
  * @category Response
@@ -94,9 +91,7 @@ export interface GetDungeonsRequest extends SupervisorRequest {}
 /**
  * @category Request
  */
-export interface GetDungeonRequest extends SupervisorRequest {
-    user: string;
-}
+export interface GetDungeonRequest extends SupervisorRequest {}
 
 /**
  * @category Response

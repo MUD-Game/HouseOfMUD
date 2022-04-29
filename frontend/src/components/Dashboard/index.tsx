@@ -22,6 +22,7 @@ import "./index.css"
 import { useNavigate } from 'react-router-dom';
 import $ from 'jquery';
 import MyDungeons from './MyDungeons/MyDungeons';
+import { useTranslation } from 'react-i18next';
 
 
 export type DashboardProps = {
@@ -31,6 +32,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
     const auth = useAuth();
     const homsole = useMudConsole();
+    const {t, i18n} = useTranslation();
     const navigate = useNavigate();
     let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
     let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
@@ -60,7 +62,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         <Container className="mb-5">
             <Row className="align-items-center mb-3">
                 <div className="col-8">
-                    <h2 className='my-3'>Dashboard</h2>
+                    <h2 className='my-3'>{t("dashboard.title")}</h2>
                 </div>
                 <div className="col-4">
                     <button className="btn drawn-border btn-standard" onClick={() => {

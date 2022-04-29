@@ -1,0 +1,23 @@
+{
+    "dashboard":{
+        "title":"Dashboard"
+    },
+    "button": {
+        "submit": "Senden",
+        "ok": "O.K.",
+        "cancel": "Abbrechen",
+        "create": "Erstellen",
+        "save": "Speichern",
+        "remove": "Entfernen",
+        "delete": "Löschen",
+        "preview": "Vorschau",
+        "share": "Freigeben",
+        "update": "Aktualisieren",
+        "edit": "Bearbeiten",
+        "yes": "Ja",
+        "no": "Nein",
+        "close": "Schließen",
+        "upload": "Hochladen",
+        "download": "Herunterladen"
+    }
+}

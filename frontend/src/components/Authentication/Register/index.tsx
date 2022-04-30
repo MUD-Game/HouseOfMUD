@@ -15,10 +15,10 @@ import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import $ from 'jquery';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import Busy from 'src/components/Busy';
+import { useTranslation } from 'react-i18next';
 type RegisterProps = {}
 
 interface LocationState {
@@ -29,6 +29,7 @@ const Register: React.FC<RegisterProps> = (props) => {
     let navigate = useNavigate();
     let auth = useAuth();
     const homsole = useMudConsole();
+    const {t} = useTranslation();
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -55,16 +56,16 @@ const Register: React.FC<RegisterProps> = (props) => {
                 {isLoading ? <Busy/> : 
                     <form onSubmit={handleSubmit}>
                         <div className="input-group py-2">
-                            <input name="email" className="input-standard drawn-border" type="email" placeholder="E-Mail Adresse" />
+                            <input name="email" className="input-standard drawn-border" type="email" placeholder={t("login.email")} />
                         </div>
                         <div className="input-group py-2">
-                            <input name="username" className="input-standard drawn-border" type="text" placeholder="Username" />
+                                <input name="username" className="input-standard drawn-border" type="text" placeholder={t("login.username")} />
                         </div>
                         <div className="input-group pt-2">
-                            <input name="password" className="input-standard drawn-border" type="password" placeholder="Passwort" />
+                                <input name="password" className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
                         </div>
-                        <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">Register</button> <br />
-                        <span>Account vorhanden? <Link to="/login">Hier anmelden</Link></span>
+                            <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">{t("button.register")}</button> <br />
+                            <span>{t("login.have_account")} <Link to="/login">{t("login.login_here")}</Link></span>
                     </form>
                     }
                 </div>

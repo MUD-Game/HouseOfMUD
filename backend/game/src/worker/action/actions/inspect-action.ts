@@ -3,13 +3,14 @@ import { Dungeon } from "../../../data/interfaces/dungeon";
 import { Item } from "../../../data/interfaces/item";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
+import { actionMessages, errorMessages, triggers } from "./action-resources";
 
 export class InspectAction implements Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = "untersuche";
+        this.trigger = triggers.inspect;
         this.dungeonController = dungeonController
     }
     performAction(user: string, args: string[]) {
@@ -26,15 +27,13 @@ export class InspectAction implements Action {
             if (itemName === itemToInspect) {
                 userHasItem = true
                 let itemDescription: string = item.getDescription()
-                inspectMessage = `Du untersuchst ${itemName}: ${itemDescription}`
+                inspectMessage = `${actionMessages.inspect} ${itemName}: ${itemDescription}`
             }
         })
         if (userHasItem) {
             this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inspectMessage}})
         } else {
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: "Du besitzt dieses Item nicht!"}})
+            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
         }
-        
     }
-
 }

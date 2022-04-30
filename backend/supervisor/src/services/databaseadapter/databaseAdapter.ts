@@ -83,7 +83,7 @@ export class DatabaseAdapter {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
-            creatorId: dungeonToStore.creatorId, 
+            creatorId: dungeonToStore.creatorId,
             masterId: dungeonToStore.masterId,
             maxPlayers: dungeonToStore.maxPlayers,
             blacklist: dungeonToStore.blacklist,
@@ -213,6 +213,16 @@ export class DatabaseAdapter {
         return (this.dungeon.findOne({id: id}, 
             'id name description creatorId masterId maxPlayers currentPlayers'))
     }
+
+    async getUserId(user: string): Promise<string | undefined> {
+        const foundUser = await this.user.findOne({ username: user }, '_id');
+        if (foundUser) {
+            return foundUser._id.toString();
+        } else {
+            return undefined;
+        }
+    }
+
 
     /**
      * get the dungeon information for the supervisor from all existing dungeons

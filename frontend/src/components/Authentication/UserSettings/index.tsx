@@ -13,10 +13,12 @@
 
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationDialog, { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import { useAuth } from 'src/hooks/useAuth';
+import MudSelect from '../../Custom/MudSelect';
 type UserSettingsProps = {}
 
 interface LocationState {
@@ -24,8 +26,9 @@ interface LocationState {
 }
 const UserSettings: React.FC<UserSettingsProps> = (props) => {
     let navigate = useNavigate();
-    let location = useLocation();
+    const {t, i18n} = useTranslation();
     let auth = useAuth();
+    console.log(i18n.language);
 
     const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
 
@@ -42,15 +45,26 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
                 <Row>
                     <div className="col-lg-4 col-md-6 col-sm-8">
                             <button className="btn mt-3 mb-5 drawn-border btn-red btn-xpadding" onClick={()=>{
-                                showConfirmation('User löschen', 'Sicher dass du löschen...', ()=>{
+                            showConfirmation(t("user_settings.delete_user.confirmation.title"), t("user_settings.delete_user.confirmation.text"), ()=>{
                                     auth.deleteUser(() => {
-                                        navigate('/register');
+                                        navigate('/login');
                                     },()=>{
                                         
                                     });
                                 })
-                            }}>User löschen</button> <br />
+                        }}>{t("user_settings.delete_user.button")}</button> <br />
                     </div>
+                </Row> 
+                <Row>
+                    <div className="col-lg-4 col-md-6 col-sm-8">
+                        <MudSelect colmd={5} defaultValue={i18n.language} label={t("user_settings.language.label")} onChange={(event) => {
+                            i18n.changeLanguage(event.target.value, );
+                        }}>
+                            <option value="en-US">{t("user_settings.language.en-US")}</option>
+                            <option value="de-DE">{t("user_settings.language.de-DE")}</option>
+                            </MudSelect>    
+                    </div>
+
                 </Row>
             </Container>
         </>

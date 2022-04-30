@@ -5,6 +5,7 @@ import { validator } from 'src/utils/validator';
 import { MudCharacterClass, MudCharacterStats } from '../../../types/dungeon';
 import { useMudConsole } from '../../../hooks/useMudConsole';
 import '../index.css'
+import { useTranslation } from 'react-i18next';
 
 export interface AddClassModalProps {
     show: boolean;
@@ -14,6 +15,9 @@ export interface AddClassModalProps {
 }
 
 const AddClassModal: React.FC<AddClassModalProps> = (props) => {
+
+    const {t} = useTranslation();
+    const dt = 'dungeon_configurator';
 
     const [name, setName] = React.useState<string>(props.editData?.name || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
@@ -54,22 +58,22 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        Neue Klasse anlegen
+                        {t(`${dt}.buttons.create_class`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3'>
                     <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                    <MudInput placeholder='Beschreibung' colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <MudInput placeholder='Max-HP' colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
-                    <MudInput placeholder='Max-Mana' colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
-                    <MudInput placeholder='Max-DMG' colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
+                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
+                    <MudInput placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
+                    <MudInput placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">Abbrechen</Button>
+                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
-                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">Anlegen</Button>
+                        <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.create`)}</Button>
                     </div>
                 </Modal.Footer>
             </Container>

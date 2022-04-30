@@ -1,0 +1,127 @@
+{
+    "dashboard": {
+        "title": "Dashboard",
+        "create_new_dungeon": "Neuen Dungeon erstellen",
+        "all_dungeons": "Alle Dungeons",
+        "my_dungeons": "Eigene Dungeons",
+        "search_dungeon": "Suche Dungeon",
+        "already_in_dungeon": "Du hast diesen Dungeon bereits gestartet"
+    },
+    "login": {
+        "password": "Passwort",
+        "username": "Benutzername",
+        "email": "E-Mail Adresse",
+        "no_account": "Noch keinen Account?",
+        "have_account": "Account bereits vorhanden?",
+        "login_here": "Hier anmelden",
+        "register_here": "Hier registrieren"
+    },
+    "dungeon_keys": {
+        "name": "Name",
+        "description": "Beschreibung",
+        "players": "Spieler",
+        "status": "Status",
+        "class": "Klasse",
+        "gender": "Geschlecht",
+        "species": "Spezies",
+        "create_and_join": "Erstellen und Beitreten",
+        "command": "Befehl",
+        "actions": "Aktionen",
+        "items": "Items",
+        "output": "Ausgabe",
+        "itemsNeeded": "Benötigte Gegenstände",
+        "events": "Events",
+        "maxhp": "max HP",
+        "maxmana": "max Mana",
+        "maxdmg": "max Dmg"
+    },
+    "character_creator":{
+        "pick_character": "Charakter auswählen",
+        "new_character": "Neuen Charakter anlegen"
+    },
+    "user_settings": {
+        "delete_user": {
+            "button": "Benutzer löschen",
+            "confirmation": {
+                "title": "Benutzer löschen",
+                "text": "Bist du sicher, dass du deinen Account löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
+            }
+        },
+        "language":{
+            "label": "Sprache",
+            "en-US": "Englisch",
+            "de-DE": "Deutsch"
+        }
+    },
+    "verify_email":{
+        "title": "Email-Verifizierung",
+        "success": "E-Mail erfolgreich verifiziert! Sie werden in 3 Sekunden zum Login weitergeleitet",
+        "error": "Ihre Mail konnte nicht verifiziert werden, entweder ihr Token ist ungültig oder Sie haben sich bereits verifiziert."
+    },
+    "dungeon_configurator":{
+        "title": "Dungeon konfigurieren",
+        "inputs": {
+            "name":{
+                "placeholder": "Name"
+            },
+            "description":{
+                "placeholder": "Beschreibung"
+            },
+            "maxPlayers":{
+                "placeholder": "Maximale Spieleranzahl"
+            },
+            "genders":{
+                "title": "Geschlechter",
+                "placeholder": "Geschlechter",
+                "emptyLabel": "Neues Geschlecht eingeben..."
+            },
+            "species":{
+                "title": "Spezies",
+                "placeholder": "Spezies",
+                "emptyLabel": "Neue Spezies eingeben..."
+            }
+        },
+        "buttons":{
+            "create_class": "neue Klasse anlegen",
+            "create_item": "neues Item erstellen",
+            "create_action": "neue Aktion anlegen"
+        }
+        
+    },
+    "common":{
+        "select_items": "Items auswählen",
+        "select_events": "Events auswählen",
+        "404": "Seite nicht gefunden..."
+    },
+    "header":{
+        "welcome": "Willkommen"
+    },
+    "button": {
+        "submit": "Senden",
+        "ok": "O.K.",
+        "join": "Beitreten",
+        "start": "Starten",
+        "cancel": "Abbrechen",
+        "create": "Erstellen",
+        "save": "Speichern",
+        "remove": "Entfernen",
+        "delete": "Löschen",
+        "preview": "Vorschau",
+        "share": "Freigeben",
+        "update": "Aktualisieren",
+        "edit": "Bearbeiten",
+        "yes": "Ja",
+        "no": "Nein",
+        "close": "Schließen",
+        "upload": "Hochladen",
+        "download": "Herunterladen",
+        "logout": "Abmelden",
+        "login": "Anmelden",
+        "register": "Registrieren"
+    },
+    "error":{
+        "logout_failed": "Logout fehlgeschlagen",
+        "login_failed": "Login fehlgeschlagen",
+        "register_failed": "Registrierung fehlgeschlagen"
+    }
+}

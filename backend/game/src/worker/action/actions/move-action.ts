@@ -4,6 +4,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
+import { triggers, errorMessages, actionMessages } from "./action-resources";
 
 export class MoveAction implements Action {
     /**
@@ -17,7 +18,7 @@ export class MoveAction implements Action {
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = 'gehe';
+        this.trigger = triggers.move;
         this.dungeonController = dungeonController;
     }
 
@@ -70,12 +71,12 @@ export class MoveAction implements Action {
             if (invalidDirection) {
                 amqpAdapter.sendToClient(user, {
                     action: 'message',
-                    data: { message: `Diese Richtung existiert nicht!` },
+                    data: { message: errorMessages.directionDoesNotExist },
                 });
             } else if (closedPath) {
                 amqpAdapter.sendToClient(user, {
                     action: 'message',
-                    data: { message: `In diese Richtung ist der Raum geschlossen!` },
+                    data: { message: actionMessages.moveRoomClosed },
                 });
             } else if (destinationRoom !== undefined) {
                 let destinationRoomId: string = destinationRoom.getId();
@@ -87,7 +88,7 @@ export class MoveAction implements Action {
                 setTimeout(() => {
                     amqpAdapter.sendWithRouting(routingKey, {
                         action: 'message',
-                        data: { message: `${senderCharacterName} ist ${destinationRoomName} beigetreten!` },
+                        data: { message: `${senderCharacterName} ${actionMessages.move1} ${destinationRoomName} ${actionMessages.move2}` },
                     });
                 }, 100);
             }
@@ -95,7 +96,7 @@ export class MoveAction implements Action {
             console.log(e);
             amqpAdapter.sendToClient(user, {
                 action: 'message',
-                data: { message: `In diese Richtung existiert kein Raum!` },
+                data: { message: actionMessages.moveRoomDoesNotExist },
             });
         }
     }

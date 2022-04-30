@@ -4,6 +4,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
+import { triggers, actionMessages, errorMessages } from "./action-resources";
 
 /**
  * Action that gets performed when user sends a "fluester" message.
@@ -13,7 +14,7 @@ export class PrivateMessageAction implements Action {
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = "fluester";
+        this.trigger = triggers.whisper;
         this.dungeonController = dungeonController
     }
     
@@ -38,11 +39,11 @@ export class PrivateMessageAction implements Action {
                 amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
                 amqpAdapter.sendToClient(recipientCharacterId, {action: "message", data: {message: responseMessage}})
             } else {
-                amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ist nicht in diesem Raum!`}})
+                amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ${actionMessages.whisperCharacterNotInSameRoom}`}})
             }
         } catch(e) {
             console.log(e)
-            amqpAdapter.sendToClient(user, {action: "message", data: {message: `Der Charakter ${recipientCharacterName} existiert nicht in diesem Dungeon!`}})
+            amqpAdapter.sendToClient(user, {action: "message", data: {message: `${errorMessages.characterDoesNotExist1} ${recipientCharacterName} ${errorMessages.characterDoesNotExist2}`}})
         }
         
     }

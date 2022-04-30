@@ -9,3 +9,7 @@
     border-color: var(--accent);
     border-width: 2px;
 }
+
+.modal-title::first-letter {
+    text-transform: uppercase;
+}

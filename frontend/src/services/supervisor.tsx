@@ -59,8 +59,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            console.log(xhr,errorText,errorThrown);
-            // error({ ok: 0, error: errorText });
+            error({ ok: 0, error: errorThrown });
         }
     });
 }
@@ -73,7 +72,7 @@ const getSearchParamas = (params:any) => {
 
 const supervisor = {
     getDungeon(dungeonID: string, body: GetDungeonRequest, dataCallBack: (response: GetDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        genericGet(`/dungeon{dungeonID}`, body, dataCallBack, error, "dungeon");
+        genericGet(`/dungeon/${dungeonID}`, body, dataCallBack, error, "dungeon");
     },
 
     getDungeons(body: GetDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
@@ -127,7 +126,7 @@ const supervisor = {
         genericRequest(`/dungeon`, "POST", body, {}, dataCallBack, error);
     },
     editDungeon(dungeonID: string, body: EditDungeonRequest, dataCallBack: (data: EditDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest(`/dungeon`, "PATCH", body, {}, dataCallBack, error);
+        genericRequest(`/dungeon/${dungeonID}`, "PATCH", body, {}, dataCallBack, error);
     },
     deleteDungeon(dungeonID: string, body: DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         genericRequest(`/dungeon/${dungeonID}`, "DELETE", body, {}, dataCallBack, error);

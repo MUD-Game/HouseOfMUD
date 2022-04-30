@@ -10,19 +10,6 @@ import { ItemDataset, itemSchema } from "./datasets/itemDataset";
 import { NpcDataset, npcSchema } from "./datasets/npcDataset";
 import { RoomDataset, roomSchema } from "./datasets/roomDataset";
 import { User, userSchema } from "./datasets/userDataset";
-import yaml from 'js-yaml';
-import fs from 'fs';
-
-
-interface DBConfig {
-    mongodb: {
-        host: string;
-        port: string;
-        user: string;
-        password: string;
-        database: string;
-    }
-}
 
 function arrayToMap(array: any[]): any {
     let map: { [id: string]: any } = {};
@@ -41,9 +28,7 @@ function mapToArray(map: any): any[] {
     return array;
 }
 
-function loadConfig(): DBConfig | undefined {
-    return yaml.load(fs.readFileSync('./config.yml', 'utf8')) as DBConfig | undefined;
-}
+
 
 /**
  * encapsulation of the mongoose API
@@ -126,38 +111,42 @@ export class DatabaseAdapter {
         }
     }
 
+    // get dungeons based on user id
+
+
+
     /**
      * deletes a dungeon from the dungeons collection inside the database
      * @param dungeonId the ObjectId of the dungeon to delete
      * @returns the query response (information about the performed database action)
      */
     async deleteDungeon(dungeonId: string) {
-        const foundDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        const foundDungeon = await this.dungeon.findOneAndDelete({ _id: new mongoose.Types.ObjectId(dungeonId) })
         if (foundDungeon == undefined) {
             return undefined
         }
-        foundDungeon.characters.forEach(async char => {
+        foundDungeon.characters.forEach(async (char: any) => {
             await this.character.findByIdAndDelete(char)
         })
-        foundDungeon.characterClasses.forEach(async charClass => {
+        foundDungeon.characterClasses.forEach(async (charClass: any) => {
             await this.characterClass.findByIdAndDelete(charClass)
         })
-        foundDungeon.characterSpecies.forEach(async charSpec => {
+        foundDungeon.characterSpecies.forEach(async (charSpec: any) => {
             await this.characterSpecies.findByIdAndDelete(charSpec)
         })
-        foundDungeon.characterGenders.forEach(async charGen => {
+        foundDungeon.characterGenders.forEach(async (charGen: any) => {
             await this.characterGenders.findByIdAndDelete(charGen)
         })
-        foundDungeon.rooms.forEach(async r => {
+        foundDungeon.rooms.forEach(async (r: any) => {
             await this.room.findByIdAndDelete(r)
         })
-        foundDungeon.items.forEach(async it => {
+        foundDungeon.items.forEach(async (it: any) => {
             await this.item.findByIdAndDelete(it)
         })
-        foundDungeon.npcs.forEach(async npc => {
+        foundDungeon.npcs.forEach(async (npc: any) => {
             await this.npc.findByIdAndDelete(npc)
         })
-        foundDungeon.actions.forEach(async ac => {
+        foundDungeon.actions.forEach(async (ac: any) => {
             await this.action.findByIdAndDelete(ac)
         })
     }
@@ -169,28 +158,28 @@ export class DatabaseAdapter {
      * @returns the new Dungeon data
      */
     async updateDungeon(dungeonId: string, newDungeon: DungeonDataset) {
-        const oldDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        const oldDungeon = await this.dungeon.findOneAndDelete({ _id: new mongoose.Types.ObjectId(dungeonId) })
         if (oldDungeon == undefined) {
             return undefined
         }
-        oldDungeon.rooms.forEach(async r => {
+        oldDungeon.rooms.forEach(async (r: any) => {
             await this.room.findByIdAndDelete(r)
         })
-        oldDungeon.items.forEach(async it => {
+        oldDungeon.items.forEach(async (it: any) => {
             await this.item.findByIdAndDelete(it)
         })
-        oldDungeon.npcs.forEach(async npc => {
+        oldDungeon.npcs.forEach(async (npc: any) => {
             await this.npc.findByIdAndDelete(npc)
         })
-        oldDungeon.actions.forEach(async ac => {
+        oldDungeon.actions.forEach(async (ac: any) => {
             await this.action.findByIdAndDelete(ac)
         })
 
         return this.dungeon.create({
             name: newDungeon.name,
             description: newDungeon.description,
-            creatorId: newDungeon.creatorId,
-            masterId: newDungeon.masterId,
+            creatorId: oldDungeon.creatorId,
+            masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
             blacklist: newDungeon.blacklist,
             characters: oldDungeon.characters,
@@ -224,21 +213,6 @@ export class DatabaseAdapter {
     }
 
 
-    async getDungeonCharacterAttributes(dungeonId: string) {
-        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'characterClasses characterSpecies characterGenders');
-        if (foundDungeon == undefined) {
-            return undefined
-        }
-        const data = {
-            classes: (await foundDungeon.populate('characterClasses')).characterClasses,
-            species: (await foundDungeon.populate('characterSpecies')).characterSpecies,
-            genders: (await foundDungeon.populate('characterGenders')).characterGenders,
-        }
-        return data;
-
-    }
-
-
     /**
      * get the dungeon information for the supervisor from all existing dungeons
      * @returns an array of the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
@@ -268,7 +242,7 @@ export class DatabaseAdapter {
         var foundFlag = false
         const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
         const foundCharacters = (await foundDungeon!.populate('characters')).characters
-        foundCharacters.forEach(char => {
+        foundCharacters.forEach((char: { id: string; }) => {
             if (char.id == characterId) {
                 foundFlag = true
             }
@@ -318,6 +292,20 @@ export class DatabaseAdapter {
         return this.room.updateOne({ id: room.id }, room)
     }
 
+    async getDungeonCharacterAttributes(dungeonId: string) {
+        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'characterClasses characterSpecies characterGenders');
+        if (foundDungeon == undefined) {
+            return undefined
+        }
+        const data = {
+            classes: (await foundDungeon.populate('characterClasses')).characterClasses,
+            species: (await foundDungeon.populate('characterSpecies')).characterSpecies,
+            genders: (await foundDungeon.populate('characterGenders')).characterGenders,
+        }
+        return data;
+
+    }
+
     /**
      * deletes a specified user from the database
      * @param username the username of the user to delete
@@ -365,14 +353,14 @@ export class DatabaseAdapter {
 
     /**
      * gets an array of all characters from a user in a specified dungeon
-     * @param userID the user that owns the characters
+     * @param username the user that owns the characters
      * @param dungeonId the dungeon for which the characters were created
      * @returns an array of all characters from the specified user in the specified dungeon
      */
-    async getAllCharactersFromUserInDungeon(userID: string, dungeonId: string): Promise<CharacterDataset[]> {
+    async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]> {
         var charactersFromUser: CharacterDataset[] = [];
         (await this.getAllCharactersFromDungeon(dungeonId)).forEach(char => {
-            if (char.userId === userID) {
+            if (char.userId === username) {
                 charactersFromUser.push(char)
             }
         })
@@ -387,4 +375,6 @@ export class DatabaseAdapter {
     async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null> {
         return this.character.findOne({ id: characterId })
     }
+
+
 }

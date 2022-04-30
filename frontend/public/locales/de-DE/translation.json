@@ -32,13 +32,15 @@
         "species": "Spezies",
         "command": "Befehl",
         "actions": "Aktionen",
+        "npcs": "NPCs",
         "items": "Items",
         "output": "Ausgabe",
         "itemsNeeded": "Benötigte Gegenstände",
         "events": "Events",
         "maxhp": "max HP",
         "maxmana": "max Mana",
-        "maxdmg": "max Dmg"
+        "maxdmg": "max Dmg",
+        "room": "Raum"
     },
     "character_creator":{
         "pick_character": "Charakter auswählen",
@@ -68,6 +70,29 @@
         "error": "Ihre Mail konnte nicht verifiziert werden, entweder ihr Token ist ungültig oder Sie haben sich bereits verifiziert."
     },
     "dungeon_configurator":{
+        "rooms":{
+            "create_room": "Neuen Raum anlegen",
+            "save_room": "Raum speichern",
+            "delete_room": "Raum löschen"
+        },
+        "confirmations": {
+            "delete_class": {
+                "title": "Klasse löschen",
+                "text": "Bist du sicher, dass du diese Klasse löschen möchtest?"
+            },
+            "delete_item": {
+                "title": "Item löschen",
+                "text": "Bist du sicher, dass du dieses Item löschen möchtest?"
+            },
+            "delete_action": {
+                "title": "Aktion löschen",
+                "text": "Bist du sicher, dass du diese Aktion löschen möchtest?"
+            },
+            "delete_room": {
+                "title": "Raum löschen",
+                "text": "Bist du sicher, dass du diesen Raum löschen möchtest?"
+            }
+        },
         "title": "Dungeon konfigurieren",
         "inputs": {
             "name":{
@@ -99,8 +124,11 @@
     },
     "common":{
         "select_items": "Items auswählen",
+        "select_npcs": "NPCs auswählen",
+        "select_actions": "Aktionen auswählen",
         "select_events": "Events auswählen",
-        "404": "Seite nicht gefunden..."
+        "404": "Seite nicht gefunden...",
+        "amount": "Anzahl"
     },
     "header":{
         "welcome": "Willkommen"

@@ -227,6 +227,7 @@ export class API {
                         }else{
                             res.json({ ok: 0, error: 'Dungeon could not be updated' });
                         }
+
                     }).catch(err => {
                         res.json({ ok: 0, error: err.message });
                     });

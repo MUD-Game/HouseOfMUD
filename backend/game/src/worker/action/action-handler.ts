@@ -70,7 +70,7 @@ export class ActionHandlerImpl implements ActionHandler {
             let dungeonAction: DungeonAction = new DungeonAction(action.command, dungeonController)
             this.dungeonActions[dungeonAction.trigger] = dungeonAction
         });
-        this.unspecifiedAction = new UnspecifiedAction('unspecified',dungeonController);
+        this.unspecifiedAction = new UnspecifiedAction(dungeonController);
     }
 
     processAction(user: string, message: string) {

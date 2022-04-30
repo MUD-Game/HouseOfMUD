@@ -16,7 +16,7 @@ import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
-import { DungeonResponseData, GetDungeonsRequest, GetDungeonsResponse, GetMyDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData, GetDungeonsRequest } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
 import { useNavigate } from 'react-router-dom';
 import MyDungeons from './MyDungeons/MyDungeons';
@@ -27,10 +27,10 @@ export type DashboardProps = {
 }
 
 const Dashboard: React.FC<DashboardProps> = (props) => {
-
+    
+    const {t} = useTranslation();
     const auth = useAuth();
     const homsole = useMudConsole();
-    const {t, i18n} = useTranslation();
     const navigate = useNavigate();
     let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
     let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
@@ -38,11 +38,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     let [searchTerm, setSearchTerm] = React.useState<string>('');
 
     useEffect(() => {
-        let request: GetDungeonsRequest = {
-            user: auth.user,
-        }
-        supervisor.getDungeons(request, setAllDungeons, homsole.supervisorerror)
-        supervisor.getMyDungeons(request, setMyDungeons, homsole.supervisorerror);
+        supervisor.getDungeons({}, setAllDungeons, homsole.supervisorerror)
+        supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
     }, [])
 
     const handleSelect = (eventKey: string | null) => {
@@ -90,7 +87,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <MyDungeons filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <MyDungeons onDelete={()=>{
+                supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
+                supervisor.getDungeons({}, setAllDungeons, homsole.supervisorerror);
+            }} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )
 }

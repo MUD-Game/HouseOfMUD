@@ -4,6 +4,7 @@ import http from 'http';
 import { TLS } from './types/tls';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 
+
 interface Host {
     socket: Socket;
     dungeons: string[];
@@ -19,8 +20,9 @@ interface Dungeon {
     host?: string;
     name: string;
     description: string;
-    maxPlayers: number;
+    maxPlayers: number; 
     masterId: string;
+    creatorId: string;
     currentPlayers: number;
     status: Status;
 }
@@ -33,6 +35,7 @@ interface Dungeons {
  * responsable for handling the communication between the supervisor and the host
  */
 export class HostLink {
+   
     private port: number;
     private tls: TLS;
     private authKey: string;
@@ -159,18 +162,25 @@ export class HostLink {
     private async loadAvailableDungeons(): Promise<void> {
 
         let dungeons = await this.databaseAdapter.getAllDungeonInfos();
-
+        
         for (let dungeon of dungeons) {
-            this.dungeons[dungeon.id] = {
+            let dungeonID = dungeon['_id'].toString();
+            this.dungeons[dungeonID] = {
                 name: dungeon.name,
                 description: dungeon.description,
                 maxPlayers: dungeon.maxPlayers,
                 masterId: dungeon.masterId,
+                creatorId: dungeon.creatorId,
                 currentPlayers: 0,
                 status: 'offline',
             };
         }
     }
+
+    public isDungeonCreator(dungeonID: string, userID: string) {
+        return this.dungeons[dungeonID].creatorId === userID;
+    }
+
 
     /**
      * adds a new dungeon to the list
@@ -183,27 +193,44 @@ export class HostLink {
             description: dungeonData.description,
             maxPlayers: dungeonData.maxPlayers,
             masterId: dungeonData.masterId,
+            creatorId: dungeonData.creatorId,
             currentPlayers: 0,
             status: 'offline'
         };
     }
 
+    public editDungeon(id:string, dungeonData: any){
+        this.dungeons[id].name = dungeonData.name;
+        this.dungeons[id].description = dungeonData.description;
+        this.dungeons[id].maxPlayers = dungeonData.maxPlayers;
+        this.dungeons[id].masterId = dungeonData.masterId;
+        this.dungeons[id].creatorId = dungeonData.creatorId;
+    }
+
     /**
      * @returns dungeon informations for dashboard
      */
-    public getDungeons(masterId?: string): any[] {
+    public getDungeons(creatorId?: string): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
-            if (!masterId) {
-                dungeons.push(this.dungeons[dungeonID]);
-            }else if(this.dungeons[dungeonID].masterId === masterId){
+            // if (!creatorId) {
+            //     dungeons.push(this.dungeons[dungeonID]);
+            // } else if (this.dungeons[dungeonID].creatorId === creatorId){
                 dungeons.push({
                     id: dungeonID,
                     ...this.dungeons[dungeonID]
                 });
-            }
+            // }
         }
         return dungeons;
+    }
+
+    public deleteDungeon(id: string) {
+        delete this.dungeons[id];
+    }
+
+    public isDungeonMaster(dungeonID: string, masterId: string): boolean {
+        return this.dungeons[dungeonID].masterId === masterId;
     }
 
     /**

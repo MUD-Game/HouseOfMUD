@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { MudCharacterClass, MudItem } from "src/types/dungeon";
 import { MudActionElement } from '../../types/dungeon';
 import DungeonObjectListElement from './DungeonObjectListElement';
+import "./index.css";
 
 export type AcceptedTypes = MudCharacterClass | MudItem | MudActionElement;
 export interface DungeonObjectListProps {
@@ -16,6 +17,7 @@ export interface DungeonObjectListProps {
     onDeleteElement: (key: number) => void;
     data: AcceptedTypes[];
     displayKeys: string[];
+    disabled?: boolean;
 }
 
 const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
@@ -23,7 +25,7 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
     const {t} = useTranslation();
 
     return (
-        <>
+        <div className={props.disabled ? "disabled": ""}>
             <Row className="mt-5">
                 <hr />
                 <div className="col-md-9">
@@ -50,7 +52,7 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
                 )
             })}
 
-        </>
+        </div>
     )
 }
 

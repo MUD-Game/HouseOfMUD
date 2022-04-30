@@ -37,7 +37,6 @@ export class API {
         this.hostLink = hostLink;
         this.dba = dba;
         this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookie_host);
-
     }
 
     /**
@@ -182,8 +181,8 @@ export class API {
                 console.log(userId);
                 dungeonData.masterId = userId;
                 dungeonData.creatorId = userId;
-                this.hostLink.addDungeon(dungeonData.id, dungeonData);
                 this.dba.storeDungeon(dungeonData).then(dungeonID => {
+                    this.hostLink.addDungeon(dungeonID._id.toString(), dungeonData);
                     res.json({ ok: 1, dungeonID: dungeonID });
                 }).catch(err => {
                     res.json({ ok: 0, error: err });
@@ -195,40 +194,66 @@ export class API {
 
         // get dungeon
         app.get('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                // TODO
+            let dungeonID: string = req.params.dungeonID;
+            if(dungeonID){
+                this.dba.getDungeon(dungeonID).then(dungeon => {
+                    res.json({ ok: 1, dungeon: dungeon });
+                }).catch(err => {
+                    res.json({ ok: 0, error: err });
+                });
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
         // edit dungeon
-        app.patch('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
+        app.patch('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.dungeonData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            const user = req.cookies.user;
+            const userID = await this.dba.getUserId(user);
+            if(userID && !this.hostLink.isDungeonCreator(dungeonID, userID)){
+                res.json({ ok: 0, error: 'You cannot Edit this Dungeon!' });
+            }
+            if (body.dungeonData !== undefined) {
                 let dungeonData: any = body.dungeonData;
-                // TODO
+                if (this.hostLink.dungeonExists(dungeonID)) {
+                this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
+                    if(newDungeon){
+                        this.hostLink.deleteDungeon(dungeonID);
+                        this.hostLink.addDungeon(newDungeon._id.toString(), dungeonData);
+                        res.json({ ok: 1, dungeonID: newDungeon._id.toString() });
+                    }else{
+                        res.json({ ok: 0, error: 'Dungeon could not be updated' });
+                    }
+                    }).catch(err => {
+                        res.json({ ok: 0, error: err.message });
+                    });
+                }
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 
         // delete dungeon
-        app.delete('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
+        app.delete('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+            let user:string = req.cookies.user;
+            let userID = await this.dba.getUserId(user);
+            console.log(userID);
+            if(userID){
+                if(this.hostLink.isDungeonCreator(dungeonID, userID)){
+                    this.hostLink.deleteDungeon(dungeonID);
+                    this.dba.deleteDungeon(dungeonID).then(() => {
+                        res.json({ ok: 1 });
+                    }).catch(err => {
+                        res.json({ ok: 0, error: err.message });
+                    });
+                }else{
+                    res.json({ ok: 0, error: 'You cannot delete this Dungeon!' });
+                }
+            }else{
+               res.json({ ok: 0, error: 'Invalid parameters' });
             }
         });
 

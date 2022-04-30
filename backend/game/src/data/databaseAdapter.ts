@@ -121,7 +121,7 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
     async deleteDungeon(dungeonId: string) {
-        const foundDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        const foundDungeon = await this.dungeon.findOneAndDelete({ _id: new mongoose.Types.ObjectId(dungeonId) })
         if (foundDungeon == undefined) {
             return undefined
         }
@@ -158,7 +158,7 @@ export class DatabaseAdapter {
      * @returns the new Dungeon data
      */
     async updateDungeon(dungeonId: string, newDungeon: DungeonDataset) {
-        const oldDungeon = await this.dungeon.findOneAndDelete(new mongoose.Types.ObjectId(dungeonId))
+        const oldDungeon = await this.dungeon.findOneAndDelete({ _id: new mongoose.Types.ObjectId(dungeonId) })
         if (oldDungeon == undefined) {
             return undefined
         }
@@ -178,8 +178,8 @@ export class DatabaseAdapter {
         return this.dungeon.create({
             name: newDungeon.name,
             description: newDungeon.description,
-            creatorId: newDungeon.creatorId,
-            masterId: newDungeon.masterId,
+            creatorId: oldDungeon.creatorId,
+            masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
             blacklist: newDungeon.blacklist,
             characters: oldDungeon.characters,
@@ -332,6 +332,28 @@ export class DatabaseAdapter {
         return (await this.user.findOne({ email: email })) != null
     }
 
-    //TODO: get all characters from user in dungeon
-    //TODO: get character by id
+    /**
+     * gets an array of all characters from a user in a specified dungeon
+     * @param username the user that owns the characters
+     * @param dungeonId the dungeon for which the characters were created
+     * @returns an array of all characters from the specified user in the specified dungeon
+     */
+    async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]>{
+        var charactersFromUser: CharacterDataset[] = [];
+        (await this.getAllCharactersFromDungeon(dungeonId)).forEach(char => {
+            if(char.userId === username){
+                charactersFromUser.push(char)
+            }
+        })
+        return charactersFromUser
+    }
+
+    /**
+     * gets a character with specified character id from database
+     * @param characterId the character id of the character to get
+     * @returns  the found character
+     */
+    async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null>{
+        return this.character.findOne({id: characterId})
+    }
 }

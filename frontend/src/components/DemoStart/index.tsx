@@ -48,7 +48,6 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
         supervisor.login(dungeon, body, (data) => {
             game.setCharacterID(character);
             game.setCharacter(character);
-            game.setVerifyToken(data.verifyToken);
             navigate("/game");
         }, (error) => {
             // TODO: handle error in a better way

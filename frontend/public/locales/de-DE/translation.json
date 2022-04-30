@@ -24,7 +24,6 @@
         "class": "Klasse",
         "gender": "Geschlecht",
         "species": "Spezies",
-        "create_and_join": "Erstellen und Beitreten",
         "command": "Befehl",
         "actions": "Aktionen",
         "items": "Items",
@@ -37,6 +36,7 @@
     },
     "character_creator":{
         "pick_character": "Charakter auswählen",
+        "create_and_join": "Erstellen und Beitreten",
         "new_character": "Neuen Charakter anlegen"
     },
     "user_settings": {

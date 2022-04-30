@@ -297,7 +297,7 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
      async deleteCharacter(characterId: string){
-        return this.character.deleteOne({id: characterId})
+        return this.character.deleteOne({_id: characterId})
     }
 
     /**

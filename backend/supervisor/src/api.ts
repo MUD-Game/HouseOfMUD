@@ -301,11 +301,9 @@ export class API {
         app.delete('/character/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.character !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
+            if (body.character !== undefined) {
                 let characterID: any = body.character;
-                // TODO
+                this.dba.deleteCharacter(characterID);
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }

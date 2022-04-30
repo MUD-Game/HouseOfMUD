@@ -93,8 +93,8 @@ export class ForkHandler {
      */
     startDungeon(dungeon: string): boolean {
         if (!(dungeon in this.dungeonWorker)) {
-            const mongoConnString: string = `mongodb://${this.mongodbConfig.user}:${encodeURIComponent(this.mongodbConfig.password)}@${this.mongodbConfig.host}:${this.mongodbConfig.port}`; //                                  Database
-            let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange, mongoConnString, "Test"];
+            const mongoConnString: string = `mongodb://${this.mongodbConfig.user}:${encodeURIComponent(this.mongodbConfig.password)}@${this.mongodbConfig.host}:${this.mongodbConfig.port}`;
+            let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange, mongoConnString, this.mongodbConfig.database];
             let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
             dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
             dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));

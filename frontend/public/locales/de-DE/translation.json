@@ -5,7 +5,13 @@
         "all_dungeons": "Alle Dungeons",
         "my_dungeons": "Eigene Dungeons",
         "search_dungeon": "Suche Dungeon",
-        "already_in_dungeon": "Du hast diesen Dungeon bereits gestartet"
+        "already_in_dungeon": "Du hast diesen Dungeon bereits gestartet",
+        "delete_dungeon": {
+            "confirmation": {
+                "title": "Dungeon löschen",
+                "text": "Bist du sicher, dass du diesen Dungeon löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
+            }
+        }
     },
     "login": {
         "password": "Passwort",

@@ -53,7 +53,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
     }
 
     return (
-        <Row className="dashboard-list align-items-center py-2">
+        <Row className="dashboard-list align-items-center pt-1 pb-2 mb-2">
             <div className="col-3">
                 <b>{name}</b>
             </div>

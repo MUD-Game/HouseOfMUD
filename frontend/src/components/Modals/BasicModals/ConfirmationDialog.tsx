@@ -14,13 +14,14 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onConfirm, onHi
 
     const {t} = useTranslation();
 
+
     return (
         <Modal size="lg" show={show} onHide={onHide} centered className='confirmation-dialog' >
             <Container>
                 <Modal.Header>
                     <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body >
                     <p>{message}</p>
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
@@ -30,7 +31,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onConfirm, onHi
                         </Button>
                     </div>
                     <div className="col-6">
-                    <Button className="btn w-100 drawn-border btn-red" onClick={(e) => {
+                    <Button autoFocus className="btn w-100 drawn-border btn-red" onClick={(e) => {
                         onConfirm();
                         onHide();
                     }}>

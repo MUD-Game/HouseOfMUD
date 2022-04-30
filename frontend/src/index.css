@@ -25,13 +25,13 @@
   --room-active-stroke : var(--accent-darker);
 
   --room-selected-fill:  var(--accent-darker); 
-  --room-selected-stroke: var(--accent-darker);
+  --room-selected-stroke: var(--red);
 
   /* Start Room */
   --room-start-fill: var(--lightgreen);
   --room-start-stroke:  var(--lightgreen);
   --room-start-selected-fill:  var(--green);
-  --room-start-selected-stroke:  var(--green);
+  --room-start-selected-stroke:  var(--red);
 
   --connection-closed: var(--red);
   --connection-inactive: rgb(202, 193, 176);

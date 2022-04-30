@@ -27,7 +27,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     const homosole = useMudConsole();
 
 
-
+    
     const onSubmit = () => {
         if (validator.isEmpty(name) || validator.isEmpty(description) || validator.isZero(hitPoints) || validator.isZero(mana) || validator.isZero(dmg)) {
             homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddClassModal");
@@ -48,6 +48,14 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
         }
     }
 
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            onSubmit();
+        }
+
+    }
+
     return (
         <Modal
             onHide={props.onHide}
@@ -61,7 +69,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
                         {t(`${dt}.buttons.create_class`)}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='row px-4 g-3'>
+                <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />

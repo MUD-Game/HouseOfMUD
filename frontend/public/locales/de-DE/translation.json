@@ -63,7 +63,8 @@
     "dungeon_configurator":{
         "rooms":{
             "create_room": "Neuen Raum anlegen",
-            "save_room": "Raum speichern"
+            "save_room": "Raum speichern",
+            "delete_room": "Raum löschen"
         },
         "confirmations": {
             "delete_class": {
@@ -77,6 +78,10 @@
             "delete_action": {
                 "title": "Aktion löschen",
                 "text": "Bist du sicher, dass du diese Aktion löschen möchtest?"
+            },
+            "delete_room": {
+                "title": "Raum löschen",
+                "text": "Bist du sicher, dass du diesen Raum löschen möchtest?"
             }
         },
         "title": "Dungeon konfigurieren",

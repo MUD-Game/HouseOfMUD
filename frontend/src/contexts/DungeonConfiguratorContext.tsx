@@ -15,6 +15,7 @@ import { CharacterSpecies } from '../../../backend/data/src/interfaces/character
 import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
 import { useTranslation } from 'react-i18next';
 import AddRoomModal from 'src/components/Modals/DungeonConfigurator/AddRoomModal';
+import { tmpdir } from 'os';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -35,6 +36,26 @@ const processToSend = (array: any[]) => {
         id: (id as string).split("-")[2],
         ...rest
     }));
+}
+
+const processAfterReceive = (array: any[]) => {
+    // Deletes the _id and  __v keys
+    let t = array.map(({
+        _id,
+        __v,
+        ...rest
+    }) => ({
+        ...rest
+    }));
+    return t;
+}
+
+function arrayToMap(array: any[]): any {
+    let map: { [id: string]: any } = {};
+    array.forEach((obj: any) => {
+        map[obj.id] = obj;
+    });
+    return map;
 }
 export interface DungeonConfiguratorContextMethods {
     setName: (name: string) => void;
@@ -58,7 +79,7 @@ export interface DungeonConfiguratorContextMethods {
 
     addRoom: (c: [number, number]) => void;
     editRoom: (room: MudRoom) => void;
-    deleteRoom: (c: [number, number]) => void;
+    deleteRoom: () => void;
     selectRoom: (c: [number, number]) => void;
     toggleRoomConnection: (c: [number, number], south: boolean) => void;
     setSelectedRoomItems: (items: Option[]) => void;
@@ -143,12 +164,17 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setMaxPlayers(dungeon.maxPlayers);
                 setClasses(dungeon.characterClasses);
                 setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length });
-                setItems(dungeon.items);
+                setItems(processAfterReceive(dungeon.items));
                 setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length });
-                setActions(dungeon.actions);
+                setActions(processAfterReceive(dungeon.actions));
                 setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length });
-                setRooms(dungeon.rooms);
+                
+                setRooms(arrayToMap(dungeon.rooms));
                 setRoomsKey("0,0");
+                setRoomCoordiantes([0, 0]);
+
+                setCurrentRoom(rooms["0,0"]);
+                
                 setNpcs(dungeon.npcs);
                 setNpcsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length });
                 dungeon.characterSpecies.forEach((s: CharacterSpecies) => {
@@ -262,16 +288,22 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setCurrentRoom(room);
     }
 
-    const deleteRoom = (c: [number, number]) => {
-        showConfirmation("delete_room", () => {
-            let newRooms = rooms;
-            delete newRooms[String(c)];
-            setRooms(newRooms);
-        });
+    const deleteRoom = () => {
+        if (roomsKey=== "0,0") {
+
+        } else {
+            showConfirmation("delete_room", () => {
+                roomConnectionNeighbour(roomCoordiantes, "inactive");
+                let newRooms = rooms;
+                delete newRooms[roomsKey];
+                setRooms(newRooms);
+            });
+        }
     }
 
     const selectRoom = (c: [number, number]) => {
         const key = String(c);
+        setRoomCoordiantes(c);
         setRoomsKey(key);
         if (rooms[key]) {
             setCurrentRoom(rooms[key]);
@@ -347,6 +379,33 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         }
     }
 
+    const roomConnectionNeighbour = (c: [number, number], connectionType: MudRoom['connections']['east']) => {
+        const [x, y] = c;
+        let room = rooms[String(c)];
+        let tempRooms = rooms;
+        if (room) {
+            if (tempRooms[String([x + 1, y])]) {
+                room.connections.east = connectionType;
+            }
+            if (tempRooms[String([x, y + 1])]) {
+                room.connections.south = connectionType;
+            }
+            if (tempRooms[String([x - 1, y])]) {
+                tempRooms[String([x - 1, y])].connections.east = connectionType;
+            }
+            if (tempRooms[String([x, y - 1])]) {
+                tempRooms[String([x, y - 1])].connections.south = connectionType;
+            }
+        }
+        setRooms(tempRooms);
+    }
+
+    const setInitialRoomConnections = (c: [number, number]) => {
+        roomConnectionNeighbour(c, "open");
+    }
+
+   
+ 
 
     const addItem = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setEditData(null);
@@ -458,11 +517,12 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 actions,
                 characterClasses: classes,
                 items,
-                rooms,
+                rooms: Object.keys(rooms).map((coordId)=>{
+                    return rooms[coordId]
+                }),
                 npcs,
                 blacklist: []
             };
-            console.log(createBody);
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
                     if (data.ok) {
@@ -557,6 +617,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             temp_rooms[String(newKey)] = cc;
             setRooms(temp_rooms);
             setShowAddRoomModal(false);
+            setInitialRoomConnections(newKey);
             selectRoom(newKey);
         }} show={showAddRoomModal} onHide={() => {
             setShowAddRoomModal(false);

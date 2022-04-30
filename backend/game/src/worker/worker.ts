@@ -18,7 +18,8 @@ import { DungeonController } from "./controller/dungeon-controller";
 
 // import { Dungeon } from '../../../data/src/datasets/dungeon'
 
-const dungeonID = process.argv[2];
+//const dungeonID = process.argv[2];
+const dungeonID = "626d1be8bd7036c89704263d";
 
 interface Tokens {
     [userID: string]: {

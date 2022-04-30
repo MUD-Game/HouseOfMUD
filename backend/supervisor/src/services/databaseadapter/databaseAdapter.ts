@@ -224,6 +224,21 @@ export class DatabaseAdapter {
     }
 
 
+    async getDungeonCharacterAttributes(dungeonId: string) {
+        const foundDungeon = await this.dungeon.findOne({_id: new mongoose.Types.ObjectId(dungeonId)}, 'characterClasses characterSpecies characterGenders');
+        if (foundDungeon == undefined) {
+            return undefined
+        }
+        const data = {
+            classes: (await foundDungeon.populate('characterClasses')).characterClasses,
+            species: (await foundDungeon.populate('characterSpecies')).characterSpecies,
+            genders: (await foundDungeon.populate('characterGenders')).characterGenders,
+        }
+        return data;
+        
+    }
+
+
     /**
      * get the dungeon information for the supervisor from all existing dungeons
      * @returns an array of the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
@@ -268,6 +283,11 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
     async storeCharacterInDungeon(newCharacter: CharacterDataset, dungeonId: string){
+        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'characterClasses');
+        const characterClasses = await foundDungeon!.populate('characterClasses');
+        const maxStats = characterClasses.characterClasses.find(c => c.id == newCharacter.characterClass)?.maxStats;
+        newCharacter.maxStats = maxStats!;
+        newCharacter.currentStats = maxStats!;
         return this.dungeon.updateOne({_id: dungeonId}, {$push: {characters: await this.character.create(newCharacter)}})
     }
 
@@ -345,14 +365,14 @@ export class DatabaseAdapter {
 
     /**
      * gets an array of all characters from a user in a specified dungeon
-     * @param username the user that owns the characters
+     * @param userID the user that owns the characters
      * @param dungeonId the dungeon for which the characters were created
      * @returns an array of all characters from the specified user in the specified dungeon
      */
-    async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]>{
+    async getAllCharactersFromUserInDungeon(userID: string, dungeonId: string): Promise<CharacterDataset[]>{
         var charactersFromUser: CharacterDataset[] = [];
         (await this.getAllCharactersFromDungeon(dungeonId)).forEach(char => {
-            if(char.userId === username){
+            if(char.userId === userID){
                 charactersFromUser.push(char)
             }
         })

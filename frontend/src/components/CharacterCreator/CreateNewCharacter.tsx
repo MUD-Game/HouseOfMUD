@@ -31,13 +31,13 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
         evt.preventDefault();
         let formData = new FormData(evt.currentTarget);
         let bodyData: CreateCharacterRequest = {
-            user: auth.user,
             characterData: {
                 name: formData.get("name") as string,
-                fullname: formData.get("fullname") as string,
-                class: formData.get("class") as string,
-                species: formData.get("species") as string,
-                gender: formData.get("gender") as string
+                characterClass: formData.get("class") as string,
+                characterSpecies: formData.get("species") as string,
+                characterGender: formData.get("gender") as string,
+                position: "0,0",
+                inventory: []
             }
         }
         supervisor.createCharacter(game.dungeon, bodyData, (data) => {

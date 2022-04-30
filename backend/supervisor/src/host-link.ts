@@ -213,14 +213,17 @@ export class HostLink {
     public getDungeons(creatorId?: string): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
-            // if (!creatorId) {
-            //     dungeons.push(this.dungeons[dungeonID]);
-            // } else if (this.dungeons[dungeonID].creatorId === creatorId){
+            if (!creatorId) {
                 dungeons.push({
                     id: dungeonID,
                     ...this.dungeons[dungeonID]
                 });
-            // }
+            } else if (this.dungeons[dungeonID].creatorId === creatorId){
+                dungeons.push({
+                    id: dungeonID,
+                    ...this.dungeons[dungeonID]
+                });
+            }
         }
         return dungeons;
     }

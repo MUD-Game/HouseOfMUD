@@ -60,14 +60,15 @@ export class DungeonController {
             '1',
             name,
             'Magier',
-            '1',
-            '1',
+            'species1',
+            'gender1',
             new CharacterStatsImpl(100, 20, 100),
             new CharacterStatsImpl(100, 20, 100),
-            "1",
-            ["1"]
+            "room1",
+            ["item1"]
         );
         this.dungeon.characters[name] = newCharacter;
+        console.log(this.dungeon)
         return newCharacter;
     }
 

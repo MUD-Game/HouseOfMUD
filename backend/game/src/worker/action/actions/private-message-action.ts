@@ -21,30 +21,34 @@ export class PrivateMessageAction implements Action {
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
-        let senderCharacter: Character = dungeon.getCharacter(user)
-        let senderCharacterName: string = senderCharacter.getName()
-        let senderCharacterId: string = senderCharacter.getId()
-        let dungeonId: string = dungeon.getId()
-        let roomId: string = senderCharacter.getPosition()
-        let room: Room = dungeon.getRoom(roomId)
         let recipientCharacterName: string = args[0]
+        args.shift()
+        let messageBody: string = args.join(' ')
         try {
             let recipientCharacter: Character = dungeon.getCharacterByName(recipientCharacterName)
-            let recipientCharacterRoomId: string = recipientCharacter.getPosition()
             let recipientCharacterId: string = recipientCharacter.getId()
-            if (recipientCharacterRoomId === room.getId()) {
-                args.shift()
-                let messageBody: string = args.join(' ')
-                let responseMessage: string = `[privat] ${senderCharacterName} -> ${recipientCharacterName}: ${messageBody}`
+            if (user === '0') {
+                let responseMessage: string = `[privat] ${actionMessages.dmWhisper} -> ${recipientCharacterName}: ${messageBody}`
                 amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
                 amqpAdapter.sendToClient(recipientCharacterId, {action: "message", data: {message: responseMessage}})
             } else {
-                amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ${actionMessages.whisperCharacterNotInSameRoom}`}})
+                let senderCharacter: Character = dungeon.getCharacter(user)
+                let senderCharacterName: string = senderCharacter.getName()
+                let roomId: string = senderCharacter.getPosition()
+                let room: Room = dungeon.getRoom(roomId)
+                let recipientCharacter: Character = dungeon.getCharacterByName(recipientCharacterName)
+                let recipientCharacterRoomId: string = recipientCharacter.getPosition()
+                if (recipientCharacterRoomId === room.getId()) {
+                    let responseMessage: string = `[privat] ${senderCharacterName} -> ${recipientCharacterName}: ${messageBody}`
+                    amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
+                    amqpAdapter.sendToClient(recipientCharacterId, {action: "message", data: {message: responseMessage}})
+                } else {
+                    amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ${actionMessages.whisperCharacterNotInSameRoom}`}})
+                }
             }
         } catch(e) {
             console.log(e)
             amqpAdapter.sendToClient(user, {action: "message", data: {message: `${errorMessages.characterDoesNotExist1} ${recipientCharacterName} ${errorMessages.characterDoesNotExist2}`}})
         }
-        
     }
 }

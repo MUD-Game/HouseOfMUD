@@ -1,3 +1,4 @@
+import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers } from "./action-resources";
@@ -11,6 +12,8 @@ export class BroadcastMessageAction implements Action {
         this.dungeonController = dungeonController;
     }
     performAction(user: string, args: string[]) {
-        throw new Error("Method not implemented.");
+        let messageBody: string = args.join(' ')
+        let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
+        amqpAdapter.broadcast({action: "message", data: {message: messageBody}})
     }
 }

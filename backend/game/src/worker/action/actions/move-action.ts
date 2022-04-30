@@ -90,7 +90,7 @@ export class MoveAction implements Action {
             } else if (inactivePath) {
                 amqpAdapter.sendToClient(user, {
                     action: 'message',
-                    data: { message: actionMessages.movePathInactive },
+                    data: { message: actionMessages.movePathNotAvailable },
                 });
             } else if (destinationRoom !== undefined) {
                 let destinationRoomId: string = destinationRoom.getId();
@@ -110,7 +110,7 @@ export class MoveAction implements Action {
             console.log(e);
             amqpAdapter.sendToClient(user, {
                 action: 'message',
-                data: { message: actionMessages.moveRoomDoesNotExist },
+                data: { message: actionMessages.movePathNotAvailable },
             });
         }
     }

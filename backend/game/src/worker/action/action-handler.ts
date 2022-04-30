@@ -10,6 +10,7 @@ import InvalidAction from './actions/invalid-action';
 import { InventoryAction } from './actions/inventory-action';
 import { LookAction } from './actions/look-action';
 import { MessageAction } from './actions/message-action';
+import { MessageMasterAction } from './actions/message-dm-action';
 import { MoveAction } from './actions/move-action';
 import { PickupAction } from './actions/pickup-action';
 import { PrivateMessageAction } from './actions/private-message-action';
@@ -17,7 +18,7 @@ import UnspecifiedAction from './actions/unspecified-action';
 
 
 const regExpression = {
-    forDungeonMaster: new RegExp("^((fluester)|(broadcast))", "i"),
+    forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified}))`, "i")
 }
 /**
@@ -68,7 +69,8 @@ export class ActionHandlerImpl implements ActionHandler {
             new PickupAction(dungeonController),
             new PrivateMessageAction(dungeonController),
             new BroadcastMessageAction(dungeonController),
-            new UnspecifiedAction(dungeonController)
+            new UnspecifiedAction(dungeonController),
+            new MessageMasterAction(dungeonController)
         ];
         actions.forEach(action => {
             this.actions[action.trigger] = action;

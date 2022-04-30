@@ -12,6 +12,7 @@ import { Item, ItemImpl } from "../src/data/interfaces/item";
 import { Npc, NpcImpl } from "../src/data/interfaces/npc";
 import { Room, RoomImpl } from "../src/data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
+import { actionMessages, errorMessages, triggers } from "../src/worker/action/actions/action-resources";
 import { BroadcastMessageAction } from "../src/worker/action/actions/broadcast-message-action";
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
@@ -20,6 +21,7 @@ import InvalidAction from "../src/worker/action/actions/invalid-action";
 import { InventoryAction } from "../src/worker/action/actions/inventory-action";
 import { LookAction } from "../src/worker/action/actions/look-action";
 import { MessageAction } from "../src/worker/action/actions/message-action";
+import { MessageMasterAction } from "../src/worker/action/actions/message-dm-action";
 import { MoveAction } from "../src/worker/action/actions/move-action";
 import { PickupAction } from "../src/worker/action/actions/pickup-action";
 import { PrivateMessageAction } from "../src/worker/action/actions/private-message-action";
@@ -225,22 +227,23 @@ const TestDungeonController: DungeonController = new DungeonController(
 
 describe('ActionHandler', () => {
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions['sag'];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester'];
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions['broadcast']
-    const discardAction: DiscardAction = actionHandler.actions['ablegen'];
-    const inspectAction: InspectAction = actionHandler.actions['untersuche'];
-    const inventoryAction: InventoryAction = actionHandler.actions['inv'];
-    const lookAction: LookAction = actionHandler.actions['umschauen'];
-    const moveAction: MoveAction = actionHandler.actions['gehe'];
-    const pickupAction: PickupAction = actionHandler.actions['aufheben'];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message];
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
+    const lookAction: LookAction = actionHandler.actions[triggers.look];
+    const moveAction: MoveAction = actionHandler.actions[triggers.move];
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions['dm'];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
     const invalidAction: InvalidAction = actionHandler.invalidAction;
     
-
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
+    messageMasterAction.performAction = jest.fn();
     broadcastMessageAction.performAction = jest.fn();
     discardAction.performAction = jest.fn();
     inspectAction.performAction = jest.fn();
@@ -252,45 +255,66 @@ describe('ActionHandler', () => {
     unspecifiedAction.performAction = jest.fn();
     invalidAction.performAction = jest.fn();
 
+    test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
+        actionHandler.processAction('0', `${triggers.message} Hallo`);
+        actionHandler.processAction('0', `${triggers.messageMaster} Hallo`);
+        actionHandler.processAction('0', `${triggers.discard} Apfel`);
+        actionHandler.processAction('0', `${triggers.inspect} Apfel`);
+        actionHandler.processAction('0', triggers.inventory);
+        actionHandler.processAction('0', triggers.look);
+        actionHandler.processAction('0', `${triggers.pickup} Apfel`);
+        actionHandler.processAction('0', `essen Apfel`);
+        actionHandler.processAction('0', `${triggers.unspecified} Test`);
+        expect(messageAction.performAction).not.toHaveBeenCalled()
+        expect(messageMasterAction.performAction).not.toHaveBeenCalled()
+        expect(discardAction.performAction).not.toHaveBeenCalled()
+        expect(inspectAction.performAction).not.toHaveBeenCalled()
+        expect(inventoryAction.performAction).not.toHaveBeenCalled()
+        expect(lookAction.performAction).not.toHaveBeenCalled()
+        expect(pickupAction.performAction).not.toHaveBeenCalled()
+        expect(dungeonAction.performAction).not.toHaveBeenCalled()
+        expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
+    })
+
     test('ActionHandler should call performAction on MessageAction with the correct parameters when it receives a "sag" action message', () => {
-        actionHandler.processAction('1', 'sag Hallo');
+        actionHandler.processAction('1', `${triggers.message} Hallo`);
         expect(messageAction.performAction).toHaveBeenCalledWith('1', [
             'Hallo',
         ]);
     });
     test('ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a "fluester" action message', () => {
-        actionHandler.processAction('1', 'fluester Spieler Hallo');
+        actionHandler.processAction('1', `${triggers.whisper} Spieler Hallo`);
         expect(privateMessageAction.performAction).toHaveBeenCalledWith('1', [
             'Spieler',
             'Hallo',
         ]);
     });
     test('ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a "ablegen" action message', () => {
-        actionHandler.processAction('1', 'ablegen Apfel');
+        actionHandler.processAction('1', `${triggers.discard} Apfel`);
         expect(discardAction.performAction).toHaveBeenCalledWith('1', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on InspectAction with the correct parameters when it receives a "untersuche" action message', () => {
-        actionHandler.processAction('1', 'untersuche Apfel');
+        actionHandler.processAction('1', `${triggers.inspect} Apfel`);
         expect(inspectAction.performAction).toHaveBeenCalledWith('1', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a "inv" action message', () => {
-        actionHandler.processAction('1', 'inv');
+        actionHandler.processAction('1', triggers.inventory);
         expect(inventoryAction.performAction).toHaveBeenCalledWith('1', []);
     });
     test('ActionHandler should call performAction on LookAction with the correct parameters when it receives a "umschauen" action message', () => {
-        actionHandler.processAction('1', 'umschauen');
+        actionHandler.processAction('1', triggers.look);
         expect(lookAction.performAction).toHaveBeenCalledWith('1', []);
     });
     test('ActionHandler should call performAction on MoveAction with the correct parameters when it receives a "gehe" action message', () => {
-        actionHandler.processAction('1', 'gehe Norden');
+        actionHandler.processAction('1', `${triggers.move} Norden`);
         expect(moveAction.performAction).toHaveBeenCalledWith('1', ['Norden']);
     });
     test('ActionHandler should call performAction on PickupAction with the correct parameters when it receives a "aufheben" action message', () => {
-        actionHandler.processAction('1', 'aufheben Apfel');
+        actionHandler.processAction('1', `${triggers.pickup} Apfel`);
         expect(pickupAction.performAction).toHaveBeenCalledWith('1', ['Apfel']);
     });
     test('ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message', () => {
@@ -300,7 +324,7 @@ describe('ActionHandler', () => {
         ]);
     });
     test('ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master', () => {
-        actionHandler.processAction('1', 'dm Test');
+        actionHandler.processAction('1', `${triggers.unspecified} Test`);
         expect(unspecifiedAction.performAction).toHaveBeenCalledWith('1', [
             'Test',
         ]);
@@ -313,36 +337,24 @@ describe('ActionHandler', () => {
     });
     //Tests with dungeon master as user
     test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
-        actionHandler.processAction('0', 'fluester Spieler Hilfe');
+        actionHandler.processAction('0', `${triggers.whisper} Spieler Hilfe`);
         expect(privateMessageAction.performAction).toHaveBeenCalledWith('0', ['Spieler', 'Hilfe'])
     })
     test('ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users', () => {
-        actionHandler.processAction('0', 'broadcast Hallo');
+        actionHandler.processAction('0', `${triggers.broadcast} Hallo`);
         expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('0', ['Hallo'])
     })
     test('ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action', () => {
-        actionHandler.processAction('1', 'broadcast Hallo');
+        actionHandler.processAction('1', `${triggers.broadcast} Hallo`);
         expect(invalidAction.performAction).toHaveBeenCalledWith('1', ['Hallo'])
     })
-    // hier machen evtl mocks probleme
-    test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
-        actionHandler.processAction('0', 'sag Hallo');
-        actionHandler.processAction('0', 'ablegen Apfel');
-        actionHandler.processAction('0', 'untersuche Apfel');
-        actionHandler.processAction('0', 'inv');
-        actionHandler.processAction('0', 'umschauen');
-        actionHandler.processAction('0', 'aufheben Apfel');
-        actionHandler.processAction('0', 'essen Apfel');
-        actionHandler.processAction('0', 'dm Test');
-        expect(messageAction.performAction).not.toHaveBeenCalled()
-        expect(discardAction.performAction).not.toHaveBeenCalled()
-        expect(inspectAction.performAction).not.toHaveBeenCalled()
-        expect(inventoryAction.performAction).not.toHaveBeenCalled()
-        expect(lookAction.performAction).not.toHaveBeenCalled()
-        expect(pickupAction.performAction).not.toHaveBeenCalled()
-        expect(dungeonAction.performAction).not.toHaveBeenCalled()
-        expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
-    })
+    test('ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a "fluesterdm" action message', () => {
+        actionHandler.processAction('1', `${triggers.messageMaster} Hallo`);
+        expect(messageMasterAction.performAction).toHaveBeenCalledWith('1', [
+            'Hallo',
+        ]);
+    });
+    
 });
 
 describe('Actions', () => {
@@ -354,19 +366,22 @@ describe('Actions', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions['sag'];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester'];
-    const discardAction: DiscardAction = actionHandler.actions['ablegen'];
-    const inspectAction: InspectAction = actionHandler.actions['untersuche'];
-    const inventoryAction: InventoryAction = actionHandler.actions['inv'];
-    const lookAction: LookAction = actionHandler.actions['umschauen'];
-    const moveAction: MoveAction = actionHandler.actions['gehe'];
-    const pickupAction: PickupAction = actionHandler.actions['aufheben'];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message];
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
+    const lookAction: LookAction = actionHandler.actions[triggers.look];
+    const moveAction: MoveAction = actionHandler.actions[triggers.move];
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions['dm'];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();
+    amqpAdapter.broadcast = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
     jest.useFakeTimers()
@@ -378,7 +393,7 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: '[Raum-1] Jeff sagt Hallo zusammen!' },
+            data: { message: `[Raum-1] Jeff ${actionMessages.say} Hallo zusammen!` },
         });
     });
 
@@ -397,6 +412,21 @@ describe('Actions', () => {
         });
     });
 
+    test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
+        privateMessageAction.performAction('0', [
+            'Spieler',
+            'Hallo',
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
+            action: 'message',
+            data: { message: `[privat] ${actionMessages.dmWhisper} -> Spieler: Hallo` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('2', {
+            action: 'message',
+            data: { message: `[privat] ${actionMessages.dmWhisper} -> Spieler: Hallo` },
+        });
+    });
+
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room', () => {
         privateMessageAction.performAction('1', [
             'Bob',
@@ -404,7 +434,7 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'Bob ist nicht in diesem Raum!' },
+            data: { message: `Bob ${actionMessages.whisperCharacterNotInSameRoom}` },
         });
     });
 
@@ -417,7 +447,7 @@ describe('Actions', () => {
             action: 'message',
             data: {
                 message:
-                    'Der Charakter Held existiert nicht in diesem Dungeon!',
+                    `${errorMessages.characterDoesNotExist1} Held ${errorMessages.characterDoesNotExist2}`,
             },
         });
     });
@@ -435,7 +465,7 @@ describe('Actions', () => {
         jest.runAllTimers()
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
-            data: { message: 'Jeff ist Raum-N beigetreten!' },
+            data: { message: `Jeff ${actionMessages.move1} Raum-N ${actionMessages.move2}` },
         });
     });
 
@@ -459,7 +489,7 @@ describe('Actions', () => {
         moveAction.performAction('1', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'In diese Richtung existiert kein Raum!' },
+            data: { message: actionMessages.movePathNotAvailable },
         });
     });
 
@@ -468,7 +498,7 @@ describe('Actions', () => {
         moveAction.performAction('1', ['Nord-Sueden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'Diese Richtung existiert nicht!' },
+            data: { message: errorMessages.directionDoesNotExist },
         });
     });
 
@@ -477,7 +507,7 @@ describe('Actions', () => {
         moveAction.performAction('1', ['Norden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'In diese Richtung ist der Raum geschlossen!' },
+            data: { message: actionMessages.moveRoomClosed },
         });
     });
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', () => {
@@ -485,7 +515,7 @@ describe('Actions', () => {
         moveAction.performAction('1', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'In diese Richtung existiert kein Durchgang!' },
+            data: { message: actionMessages.movePathNotAvailable },
         });
     });
     //MOVEACTION TEST
@@ -505,7 +535,7 @@ describe('Actions', () => {
         inventoryAction.performAction('1', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'Du hast folgende Items im Inventar: Apfel' },
+            data: { message: `${actionMessages.inventory} Apfel` },
         });
     });
 
@@ -513,7 +543,7 @@ describe('Actions', () => {
         inspectAction.performAction('1', ['Apfel']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'Du untersuchst Apfel: Apfliger Apfel' },
+            data: { message: `${actionMessages.inspect} Apfel: Apfliger Apfel` },
         });
     });
 
@@ -521,7 +551,21 @@ describe('Actions', () => {
         inspectAction.performAction('1', ['Birne']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
-            data: { message: 'Du besitzt dieses Item nicht!' },
+            data: { message: errorMessages.itemNotOwned },
         });
     });
+
+    test('MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload', () => {
+        messageMasterAction.performAction('1', [
+            'Hallo'
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: `[privat] Jeff -> ${actionMessages.dmWhisper}: Hallo` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
+            action: 'message',
+            data: { message: `[privat] Jeff -> ${actionMessages.dmWhisper}: Hallo` },
+        });
+    })
 });

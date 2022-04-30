@@ -12,6 +12,7 @@ export const triggers = {
     move: "gehe",
     pickup: "aufheben",
     whisper: "fluester",
+    messageMaster: "fluesterdm",
     unspecified: "dm",
     invalid: "invalid"
 }
@@ -34,9 +35,9 @@ export const actionMessages = {
     move1: "ist",
     move2: "beigetreten!",
     moveRoomClosed: "In diese Richtung ist der Raum geschlossen!",
-    movePathInactive: "In diese Richtung existiert kein Durchgang!",
-    moveRoomDoesNotExist: "In diese Richtung existiert kein Raum!",
-    whisperCharacterNotInSameRoom: "ist nicht in diesem Raum!"
+    movePathNotAvailable: "In diese Richtung geht es nicht weiter!",
+    whisperCharacterNotInSameRoom: "ist nicht in diesem Raum!",
+    dmWhisper: "Dungeon Master"
 }
 
 export const errorMessages = {

@@ -96,7 +96,9 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                 </div>
                 :
                 <div>
-                    <Stop size={30} id="deleteIcon" className="mx-1" onClick={() => alert('Dungeon wird gestoppt')} />
+                    <Stop size={30} id="deleteIcon" className="mx-1" onClick={() => 
+                        supervisor.stopDungeon(id, {}, (data) => {alert("Stop")}, (error) => {alert("error")})
+                    } />
                 </div>
                 }
             </div>

@@ -43,7 +43,6 @@ export interface AuthenticateResponse extends SupervisorResponse {
  * @category Request
  */
 export interface LoginRequest extends SupervisorRequest {
-    user: string;
     character: string;
 }
 
@@ -163,9 +162,7 @@ export interface DeleteDungeonResponse extends SupervisorResponse { }
 /**
  * @category Request
  */
-export interface GetCharacterAttributesRequest extends SupervisorRequest {
-    user: string;
-}
+export interface GetCharacterAttributesRequest extends SupervisorRequest {}
 
 
 /**
@@ -186,9 +183,12 @@ export interface GetCharactersRequest extends GetCharacterAttributesRequest { }
  * @category Response Data
  */
 export interface CharactersResponseData {
-    character: string;
+    characterClass: string;
+    characterGender: string;
+    characterSpecies: string;
+    id: string;
     name: string;
-    class: string;
+    _id: string;
 }
 
 /**
@@ -202,13 +202,13 @@ export interface GetCharactersResponse extends SupervisorResponse {
  * @category Request
  */
 export interface CreateCharacterRequest extends SupervisorRequest {
-    user: string;
     characterData: {
         name: string;
-        fullname: string;
-        class: string;
-        species: string;
-        gender: string;
+        characterClass: string;
+        characterSpecies: string;
+        characterGender: string;
+        position: string;
+        inventory: string[];
     };
 }
 
@@ -221,8 +221,7 @@ export interface CreateCharacterResponse extends SupervisorResponse { }
  * @category Request
  */
 export interface DeleteCharacterRequest extends SupervisorRequest {
-    user: string;
-    character: string;
+    _id: string;
 }
 
 /**

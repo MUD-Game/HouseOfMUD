@@ -41,7 +41,6 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
         console.log(`join ${character}`);
 
         let body: LoginRequest = {
-            user: user,
             character: character,
         }
 

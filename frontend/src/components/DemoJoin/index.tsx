@@ -45,7 +45,6 @@ const DemoJoin: React.FC<DemoJoinProps> = (props) => {
         console.log(`join ${character}`);
 
         let body: LoginRequest = {
-            user: user,
             character: character,
         }
 

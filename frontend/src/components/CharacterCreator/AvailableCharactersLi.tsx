@@ -29,23 +29,21 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
     const homosole = useMudConsole();
 
     const onDelete = () => {
-        supervisor.deleteCharacter(dungeon, { user, character: character.character }, (data) => {
-            navigate("/characters");
+        supervisor.deleteCharacter(dungeon, { _id: character._id }, (data) => {
+            // navigate("/characters");
         }, (error) => {
             homosole.error(error.error);
-
         })
     }
 
     const onJoin = () => {
 
         let body: LoginRequest = {
-            user: user,
-            character: character.character,
+            character: character.id,
         }
 
         supervisor.login(dungeon, body, (data) => {
-            setCharacterID(character.character);
+            setCharacterID(character.id);
             setCharacter(character.name);
             setVerifyToken(data.verifyToken);
             navigate("/game");
@@ -61,13 +59,13 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
                 <b>{character.name}</b>
             </div>
             <div className="col">
-                {character.class}            
+                {character.characterClass}            
             </div>
             <div className="col">
-                GeschlechtX{/* {character.gender} */}
+                {character.characterGender}
             </div>
             <div className="col">        
-                SpeziesY{/* {character.species} */}
+                {character.characterSpecies}
             </div>
             <div className="col text-end">
                 <Trash size={30} id="deleteIcon" className="mx-1" onClick={onDelete} style={{ cursor: "pointer", color: "red" }} />

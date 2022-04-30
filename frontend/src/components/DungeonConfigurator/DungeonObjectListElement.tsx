@@ -23,8 +23,8 @@ const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ ite
                 )
             })}
             <div className="col text-end">
-                <Pencil size={30} id="editIcon" className="mx-1" style={{ cursor: "pointer" }} onClick={() => onEditElement(parseInt(item.id))} />
-                <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} style={{ cursor: "pointer", color: "red" }} />
+                <Pencil size={30} id="editIcon" className="mx-1" onClick={() => onEditElement(parseInt(item.id))} />
+                <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} />
             </div>
         </Row>
     )

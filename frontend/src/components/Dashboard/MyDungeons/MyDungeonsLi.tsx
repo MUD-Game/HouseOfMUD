@@ -12,10 +12,11 @@
 import { t } from "i18next";
 import React from "react"
 import { Row } from "react-bootstrap";
-import { CloudCheck, CloudSlash, Lock, PencilFill, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";
+import { CloudCheck, CloudSlash, Lock, Pencil, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import ConfirmationDialog from "src/components/Modals/BasicModals/ConfirmationDialog";
 import { useGame } from "src/hooks/useGame";
 import { supervisor } from "src/services/supervisor";
 
@@ -38,6 +39,14 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
     const navigate = useNavigate();
     const {t} = useTranslation();
 
+    const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
+
+    const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
+        setShowConfirmationDialog({
+            show: true, message, title, onConfirm
+        });
+    }
+
     let joinDungeon = () => {
         game.setDungeon(id);
         game.setDungeonName(name);
@@ -57,7 +66,9 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
     }
 
     return (
-        <Row className="dashboard-list align-items-center py-2">
+        <>
+        <Row className="dashboard-list align-items-center pt-1 pb-2 mb-2">
+            <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
             <div className="col-3">
                 <b>{name}</b>
             </div>
@@ -68,28 +79,29 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                 {currentPlayers}/{maxPlayers}
             </div>
             <div className="col-1 text-center">
-                {isPrivate ? '' : ''}
-                <Lock size={25} className="mx-1" />
+                {isPrivate ? <Lock size={25} className="mx-1" /> : <Unlock size={25} className="mx-1" />}
                 {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}
 
             </div>
-            <div className="col-2">
-                {/* {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>Join</button>} */}
+            <div className="col-2 text-end">
                 {status=== "offline" ?
-                <div className="d-flex flex-row-reverse">
-                        <button className="btn btn-danger p-2 mx-1" onClick={()=>{
-                            supervisor.deleteDungeon(id, {}, (data)=>{onDelete()}, (error)=>{});
-                            }}><Trash /></button>
-                        <button className="btn btn-secondary p-2 mx-1" onClick={
-                            ()=>{
-                                navigate("/dungeon-configurator", {state: {dungeonId: id}});
-                            }
-                        }> <PencilFill /></button>
-                    <button className="btn btn-success p-2 mx-1" onClick={startDemo}><Play onClick={startDemo} /></button>
+                <div className="">
+                    <Play size={45} id="joinIcon" className="ms-1" onClick={startDemo} />
+                    <Pencil size={30} id="editIcon" className="me-1" onClick={()=>{ navigate("/dungeon-configurator", {state: {dungeonId: id}}); }} />
+                    <Trash size={30} id="deleteIcon" className="mx-1" onClick={()=>{
+                        showConfirmation(t("dashboard.delete_dungeon.confirmation.title"), t("dashboard.delete_dungeon.confirmation.text"),
+                        ()=>{supervisor.deleteDungeon(id, {}, (data)=>{onDelete()}, (error)=>{}); })
+                    }} />
+                    
                 </div>
-                    : t("dashboard.already_in_dungeon")}
+                :
+                <div>
+                    <Stop size={30} id="deleteIcon" className="mx-1" onClick={() => alert('Dungeon wird gestoppt')} />
+                </div>
+                }
             </div>
         </Row>
+        </>
     )
 }
 

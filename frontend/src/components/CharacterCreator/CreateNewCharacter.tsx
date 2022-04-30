@@ -82,7 +82,7 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
 
             <Row className="text-end">
                 <Col>
-                    <button className="btn drawn-border btn-green btn-xpadding" type="submit">Erstellen und Beitreten</button>
+                    <button className="btn drawn-border btn-green btn-xpadding" type="submit">{t("character_creator.create_and_join")}</button>
                 </Col>
             </Row>
 

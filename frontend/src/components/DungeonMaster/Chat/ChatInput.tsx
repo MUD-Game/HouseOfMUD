@@ -9,7 +9,7 @@
 import React, { FormEvent } from 'react'
 import $ from "jquery";
 import { Row } from 'react-bootstrap';
-import { Send } from 'react-bootstrap-icons';
+import { CloudArrowUp, Send } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";
 import { useMudConsole } from '../../../hooks/useMudConsole';
 export interface ChatInputProps { }
@@ -36,8 +36,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ }) => {
                 <div className="col-10">
                     <input type="text" name="message" id="chat-input" required autoComplete='off' />
                 </div>
-                <div className="col-2">
-                    <button className="btn w-100 drawn-border btn-green" type="submit">
+                <div className="col-1">
+                    <button className="btn px-0 w-100 drawn-border btn-blue" type="submit">
+                        <CloudArrowUp />
+                    </button>
+                </div>
+                <div className="col-1">
+                    <button className="btn px-0 w-100 drawn-border btn-green" type="submit">
                         <Send/>
                     </button>
                 </div>

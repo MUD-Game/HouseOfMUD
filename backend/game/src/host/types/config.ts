@@ -21,6 +21,7 @@ export interface MongodbConfig {
     port: number;
     user: string;
     password: string;
+    database: string;
 }
 
 export interface Config {

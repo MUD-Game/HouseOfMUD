@@ -53,7 +53,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
     }
 
     return (
-        <Row className="dashboard-list align-items-center py-2">
+        <Row className="dashboard-list align-items-center pt-1 pb-2 mb-2">
             <div className="col-3">
                 <b>{name}</b>
             </div>
@@ -63,14 +63,13 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
             <div className="col-1">
                 {currentPlayers}/{maxPlayers}          
             </div>
-            <div className="col-1 text-center">        
-                {isPrivate ? '' : ''}                
-                <Lock size={25} className="mx-1" />
+            <div className="col-1 text-center">   
+                {isPrivate ? <Lock size={25} className="mx-1" /> : <Unlock size={25} className="mx-1" />}
                 {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}                
                 
             </div>
             <div className="col-2">         
-                {status === 'online' && <button className="btn drawn-border btn-standard" onClick={joinDungeon}>{t("button.join")}</button>}
+                {status === 'online' && <button className="btn w-100 drawn-border btn-green" onClick={joinDungeon}>{t("button.join")}</button>}
                 {status === 'offline' && <button className="btn drawn-border btn-standard" onClick={startDemo}>{t("button.start")}</button>}
             </div>
         </Row>

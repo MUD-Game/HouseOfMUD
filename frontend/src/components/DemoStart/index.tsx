@@ -66,7 +66,7 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
         supervisor.startDungeon(dungeon, {}, (data) => {
             setTimeout(() => {
                 join(character);
-            }, 500);
+            }, 1000);
         }, (error) => {
             // TODO: handle error in a better way
             homosole.error(error.error);

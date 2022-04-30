@@ -8,12 +8,14 @@
   --accent0:rgba(107, 43, 0, 0);
   --green: rgb(21, 115, 71);
   --lightgreen: rgb(37, 147, 95);
-  --red: rgb(187, 45, 59);
+  --red: rgb(197, 40, 56);
   --lightred: rgb(228, 61, 78);
+  --blue: #0051ff;
+  --lightblue: #2f71ff;
 
   --health: #ff0000;
-  --mana: #a600ff;
-  --damage: #bbbbbb;
+  --mana: #0096b1;
+  --damage: #6d6d6d;
 
   /* Inactive Room (not yet created) */
   /* Inactive Room (not yet created */
@@ -148,6 +150,15 @@ a:hover {
   background-color: var(--red);
 }
 
+.btn-blue {
+  color: white;
+  background-color: var(--lightblue);
+}
+.btn-blue:hover {
+  color: white;
+  background-color: var(--blue);
+}
+
 .btn-xpadding {
   padding: .4em 2em;
 }
@@ -190,13 +201,24 @@ a:hover {
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
   border-width: 0 0 3px;
+  transition: background-color .1s ease-in;
 }
 
 /* Listen und Icons */
 #editIcon, #deleteIcon, #joinIcon {
-  opacity: 0.2;
   margin-left: 5px;
   transition: opacity .1s ease-in, transform .05s ease-in;
+}
+#deleteIcon {
+  cursor: pointer;
+  color: var(--red);
+}
+#joinIcon {
+  cursor: pointer;
+  color: var(--green);
+}
+#editIcon {
+  cursor: pointer;
 }
 
 .row:hover #editIcon, .row:hover #deleteIcon, .row:hover #joinIcon {
@@ -212,23 +234,51 @@ a:hover {
   transition: background-color .1s ease-in;
 }
 
-.configurator-item:hover, .character-item:hover {
-  background-color: rgb(146, 144, 141);
+.configurator-item:hover, .character-item:hover, .dashboard-list:hover {
+  background-color: rgba(146, 144, 141, 0.4);
   box-shadow: 0em 0em .3em rgb(146, 144, 141);
 }
 
 /* Game */
-.mock-placeholder.minimap {
-  width: 100%;
-  aspect-ratio: 1 / .7;
+.game-wrapper {
+  height: 100vh;
 }
-.mock-placeholder.inventory {
+.game-header, .game-footer {
+  height: 8%;
+}
+.game-body {
+  height: 89%;
+}
+
+.game-body .col {
+  height: 100%;
+}
+
+.minimap {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 30%;
+}
+.inventory {
+  width: 100%;
+  height: 50%;
+}
+.onlineplayers {
+  height: 50%;
+}
+.chatqueue {
+  height: 45%;
+}
+.playerinfo {
+  height: 45%;
+}
+.chat-output-wrap {
+  height: 90%;
+}
+.chat-input-wrap {
+  height: 10%;
 }
 .chat {
-  width: 100%;
-  aspect-ratio: 1 / .6;
+  height: 100%;
 }
 
 .chat-content {
@@ -258,7 +308,7 @@ a:hover {
   background-color: transparent;
 }
 .progress-bar {
-  font-size: .6rem;
+  font-size: .7rem;
 }
 .bg-health {
   background-color: var(--health);

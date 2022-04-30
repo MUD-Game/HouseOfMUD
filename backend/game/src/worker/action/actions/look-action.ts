@@ -6,13 +6,14 @@ import { Npc } from "../../../data/interfaces/npc";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
+import { triggers, actionMessages } from "./action-resources";
 
 export class LookAction implements Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = "umschauen";
+        this.trigger = triggers.look;
         this.dungeonController = dungeonController
     }
     performAction(user: string, args: string[]) {
@@ -24,10 +25,10 @@ export class LookAction implements Action {
         let room: Room = dungeon.getRoom(roomId)
         let roomName: string = room.getName()
         let roomDescription: string = room.getDescription()
-        let description: string = `Du befindest dich im Raum ${roomName}: ${roomDescription}. Du schaust dich um. `
+        let description: string = `${actionMessages.lookRoom} ${roomName}: ${roomDescription}. ${actionMessages.lookAround} `
 
         let roomItems: string[] = room.getItems()
-        let itemString: string = `Es liegen folgende Items in dem Raum:`
+        let itemString: string = actionMessages.lookItems
         roomItems.forEach(itemId => {
             let item: Item = dungeon.getItem(itemId)
             let itemName: string = item.getName()
@@ -37,7 +38,7 @@ export class LookAction implements Action {
         description += itemString
 
         let roomNpcs: string[] = room.getNpcs()
-        let npcString: string = `Folgende NPCs sind in diesem Raum:`
+        let npcString: string = actionMessages.lookNpcs
         roomNpcs.forEach(npcId => {
             let npc: Npc = dungeon.getNpc(npcId)
             let npcName: string = npc.getName()
@@ -48,7 +49,7 @@ export class LookAction implements Action {
 
         try {
             let northRoom: Room = dungeon.getNorthernRoom(room)
-            let northRoomString: string = `Im Norden befindet sich folgender Raum: ${northRoom.getName()}. `
+            let northRoomString: string = `${actionMessages.lookNorth} ${northRoom.getName()}. `
             description += northRoomString
         } catch(e) {
             console.log(e)
@@ -56,7 +57,7 @@ export class LookAction implements Action {
 
         try {
             let eastRoom: Room = dungeon.getEasternRoom(room)
-            let eastRoomString: string = `Im Osten befindet sich folgender Raum: ${eastRoom.getName()}. `
+            let eastRoomString: string = `${actionMessages.lookEast} ${eastRoom.getName()}. `
             description += eastRoomString
         } catch(e) {
             console.log(e)
@@ -64,7 +65,7 @@ export class LookAction implements Action {
 
         try {
             let southRoom: Room = dungeon.getSouthernRoom(room)
-            let southRoomString: string = `Im Sueden befindet sich folgender Raum: ${southRoom.getName()}. `
+            let southRoomString: string = `${actionMessages.lookSouth} ${southRoom.getName()}. `
             description += southRoomString
         } catch(e) {
             console.log(e)
@@ -72,14 +73,14 @@ export class LookAction implements Action {
 
         try {
             let westRoom: Room = dungeon.getWesternRoom(room)
-            let westRoomString: string = `Im Westen befindet sich folgender Raum: ${westRoom.getName()}. `
+            let westRoomString: string = `${actionMessages.lookWest} ${westRoom.getName()}. `
             description += westRoomString
         } catch(e) {
             console.log(e)
         }
 
         let roomActions: string[] = room.getActions()
-        let actionString: string = `Du kannst in diesem Raum folgende Aktionen ausfuehren:`
+        let actionString: string = actionMessages.lookActions
         roomActions.forEach(actionId => {
             let action: ActionElement = dungeon.getAction(actionId)
             let actionCommand: string = action.getCommand()
@@ -87,6 +88,15 @@ export class LookAction implements Action {
         })
         actionString += ". "
         description += actionString
+
+        let roomPlayers: Character[] = Object.values(dungeon.characters)
+        let playersString: string = actionMessages.lookPlayers
+        roomPlayers.forEach(character => {
+            let characterName: string = character.getName()
+            playersString += ` ${characterName}`
+        })
+        playersString += ". "
+        description += playersString
         this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: description}})
     }
 }

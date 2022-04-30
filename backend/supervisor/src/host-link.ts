@@ -4,6 +4,7 @@ import http from 'http';
 import { TLS } from './types/tls';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 
+
 interface Host {
     socket: Socket;
     dungeons: string[];
@@ -161,9 +162,10 @@ export class HostLink {
     private async loadAvailableDungeons(): Promise<void> {
 
         let dungeons = await this.databaseAdapter.getAllDungeonInfos();
-
+        
         for (let dungeon of dungeons) {
-            this.dungeons[dungeon.id] = {
+            let dungeonID = dungeon['_id'].toString();
+            this.dungeons[dungeonID] = {
                 name: dungeon.name,
                 description: dungeon.description,
                 maxPlayers: dungeon.maxPlayers,
@@ -212,7 +214,10 @@ export class HostLink {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
             if (!creatorId) {
-                dungeons.push(this.dungeons[dungeonID]);
+                dungeons.push({
+                    id: dungeonID,
+                    ...this.dungeons[dungeonID]
+                });
             } else if (this.dungeons[dungeonID].creatorId === creatorId){
                 dungeons.push({
                     id: dungeonID,

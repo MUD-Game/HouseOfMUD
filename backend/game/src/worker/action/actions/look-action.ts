@@ -6,7 +6,7 @@ import { Npc } from "../../../data/interfaces/npc";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages } from "./action-resources";
+import { triggers, actionMessages, errorMessages } from "./action-resources";
 
 export class LookAction implements Action {
     trigger: string;
@@ -29,21 +29,39 @@ export class LookAction implements Action {
 
         let roomItems: string[] = room.getItems()
         let itemString: string = actionMessages.lookItems
-        roomItems.forEach(itemId => {
-            let item: Item = dungeon.getItem(itemId)
-            let itemName: string = item.getName()
-            itemString += ` ${itemName}`
-        })
+        if (roomItems.length === 0) {
+            itemString += actionMessages.lookEmpty
+        } else {
+            try {
+                roomItems.forEach(itemId => {
+                    let item: Item = dungeon.getItem(itemId)
+                    let itemName: string = item.getName()
+                    itemString += ` ${itemName}`
+                })
+            } catch(e) {
+                console.log(e)
+                itemString += errorMessages.lookError
+            }
+        }
         itemString += ". "
         description += itemString
 
         let roomNpcs: string[] = room.getNpcs()
         let npcString: string = actionMessages.lookNpcs
-        roomNpcs.forEach(npcId => {
-            let npc: Npc = dungeon.getNpc(npcId)
-            let npcName: string = npc.getName()
-            npcString += ` ${npcName}`
-        })
+        if (roomNpcs.length === 0) {
+            npcString += actionMessages.lookEmpty
+        } else {
+            try {
+                roomNpcs.forEach(npcId => {
+                    let npc: Npc = dungeon.getNpc(npcId)
+                    let npcName: string = npc.getName()
+                    npcString += ` ${npcName}`
+                })
+            } catch(e) {
+                console.log(e)
+                npcString += errorMessages.lookError
+            }
+        }
         npcString += ". "
         description += npcString
 
@@ -81,20 +99,34 @@ export class LookAction implements Action {
 
         let roomActions: string[] = room.getActions()
         let actionString: string = actionMessages.lookActions
-        roomActions.forEach(actionId => {
-            let action: ActionElement = dungeon.getAction(actionId)
-            let actionCommand: string = action.getCommand()
-            actionString += ` ${actionCommand}`
-        })
+        if (roomActions.length === 0) {
+            actionString += actionMessages.lookEmpty
+        } else {
+            try {
+                roomActions.forEach(actionId => {
+                    let action: ActionElement = dungeon.getAction(actionId)
+                    let actionCommand: string = action.getCommand()
+                    actionString += ` ${actionCommand}`
+                })
+            } catch(e) {
+                console.log(e)
+                actionString += errorMessages.lookError
+            }
+        }
         actionString += ". "
         description += actionString
 
         let roomPlayers: Character[] = Object.values(dungeon.characters)
         let playersString: string = actionMessages.lookPlayers
-        roomPlayers.forEach(character => {
-            let characterName: string = character.getName()
-            playersString += ` ${characterName}`
-        })
+        try {
+            roomPlayers.forEach(character => {
+                let characterName: string = character.getName()
+                playersString += ` ${characterName}`
+            })
+        } catch(e) {
+            console.log(e)
+            playersString += errorMessages.lookError
+        }
         playersString += ". "
         description += playersString
         this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: description}})

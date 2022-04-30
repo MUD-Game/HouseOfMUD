@@ -19,6 +19,7 @@ export const triggers = {
 export const actionMessages = {
     inspect: "Du untersuchst",
     inventory: "Du hast folgende Items im Inventar:",
+    lookEmpty: " Keine",
     lookRoom: "Du befindest dich im Raum",
     lookAround: "Du schaust dich um.",
     lookItems: "Es liegen folgende Items in dem Raum:",
@@ -43,5 +44,6 @@ export const errorMessages = {
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist1: "Der Charakter",
     characterDoesNotExist2: "existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion existiert nicht!"
+    actionDoesNotExist: "Diese Aktion existiert nicht!",
+    lookError: " Fehler!"
 }

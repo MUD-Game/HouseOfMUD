@@ -18,7 +18,8 @@ import { DungeonController } from "./controller/dungeon-controller";
 
 // import { Dungeon } from '../../../data/src/datasets/dungeon'
 
-const dungeonID = process.argv[2];
+//const dungeonID = process.argv[2];
+const dungeonID = "626d1be8bd7036c89704263d";
 
 interface Tokens {
     [userID: string]: {
@@ -105,6 +106,7 @@ function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefine
         let dungeonItems: Item[] = translateItemsFromDatabase(databaseDungeon)
         let dungeonNpcs: Npc[] = translateNpcsFromDatabase(databaseDungeon)
         let dungeonObject: Dungeon = new DungeonImpl('1', databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs)
+        console.log(dungeonObject)
         return dungeonObject
     }
 }

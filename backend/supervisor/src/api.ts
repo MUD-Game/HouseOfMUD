@@ -11,6 +11,7 @@ import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 import crypto, { Hmac } from 'crypto';
 import nodemailer from 'nodemailer'
+import { CharacterDataset } from './services/databaseadapter/datasets/characterDataset';
 
 /**
  * client http-API
@@ -181,9 +182,9 @@ export class API {
                 console.log(userId);
                 dungeonData.masterId = userId;
                 dungeonData.creatorId = userId;
-                this.dba.storeDungeon(dungeonData).then(dungeonID => {
-                    this.hostLink.addDungeon(dungeonID._id.toString(), dungeonData);
-                    res.json({ ok: 1, dungeonID: dungeonID });
+                this.dba.storeDungeon(dungeonData).then(dungeon => {
+                    this.hostLink.addDungeon(dungeon._id.toString(), dungeonData);
+                    res.json({ ok: 1, dungeonID: dungeon._id.toString() });
                 }).catch(err => {
                     res.json({ ok: 0, error: err });
                 });
@@ -275,18 +276,26 @@ export class API {
             let dungeonID: string = req.params.dungeonID;
             let user = req.cookies.user!; // Cant be undefined because of auth middleware
             //TODO: Get user-characters for dungeon
+            this.dba.getAllCharactersFromUserInDungeon(user, dungeonID).then(characters => {
+                res.json({ ok: 1, characters: characters });
+            }).catch(err => {
+                res.json({ ok: 0, error: err });
+            });
             res.json({ ok: 1, characters: mockresponse.getcharacters });
         });
 
         // create character
-        app.post('/character/:dungeonID', this.authProvider.auth, (req, res) => {
+        app.post('/character/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
+            let user = req.cookies.user!; // Cant be undefined because of auth middleware
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.characterData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                let characterData: any = body.characterData;
-                // TODO
+            if (body.characterData !== undefined) {
+                let characterData: CharacterDataset = body.characterData;
+                this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
+                    res.json({ ok: 1, character: character });
+                }).catch(err => {
+                    res.json({ ok: 0, error: err });
+                });
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }

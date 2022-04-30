@@ -164,7 +164,7 @@ export class HostLink {
         let dungeons = await this.databaseAdapter.getAllDungeonInfos();
         
         for (let dungeon of dungeons) {
-            let dungeonID = dungeon['_id'].toString();
+            let dungeonID = dungeon._id.toString();
             this.dungeons[dungeonID] = {
                 name: dungeon.name,
                 description: dungeon.description,

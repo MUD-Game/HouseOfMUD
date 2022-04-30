@@ -462,6 +462,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 npcs,
                 blacklist: []
             };
+            console.log(createBody);
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
                     if (data.ok) {

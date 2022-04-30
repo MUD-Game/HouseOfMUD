@@ -221,7 +221,7 @@ export class API {
                 this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
                     if(newDungeon){
                         this.hostLink.deleteDungeon(dungeonID);
-                        this.hostLink.addDungeon(newDungeon._id.toString(), dungeonData);
+                        this.hostLink.addDungeon(newDungeon._id.toString(), newDungeon);
                         res.json({ ok: 1, dungeonID: newDungeon._id.toString() });
                     }else{
                         res.json({ ok: 0, error: 'Dungeon could not be updated' });

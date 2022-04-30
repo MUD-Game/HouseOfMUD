@@ -4,6 +4,7 @@
   --offcolor: #2e2e2e;
   --accentlight: #a7795b;
   --accent: #6b2a00;
+  --accent-darker: #4a1c00;
   --accent0:rgba(107, 43, 0, 0);
   --green: rgb(21, 115, 71);
   --lightgreen: rgb(37, 147, 95);
@@ -13,6 +14,28 @@
   --health: #ff0000;
   --mana: #a600ff;
   --damage: #bbbbbb;
+
+  /* Inactive Room (not yet created) */
+  /* Inactive Room (not yet created */
+  --room-fill: #f0f0f0;
+  --room-stroke: #000000;
+  
+  /* Created Rooms */
+  --room-active-fill: var(--accent);
+  --room-active-stroke : var(--accent-darker);
+
+  --room-selected-fill:  var(--accent-darker); 
+  --room-selected-stroke: var(--accent-darker);
+
+  /* Start Room */
+  --room-start-fill: var(--lightgreen);
+  --room-start-stroke:  var(--lightgreen);
+  --room-start-selected-fill:  var(--green);
+  --room-start-selected-stroke:  var(--green);
+
+  --connection-closed: var(--red);
+  --connection-inactive: rgb(202, 193, 176);
+  --connection-open: var(--green);
 }
 
 html, body {

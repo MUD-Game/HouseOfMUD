@@ -27,13 +27,15 @@
         "create_and_join": "Erstellen und Beitreten",
         "command": "Befehl",
         "actions": "Aktionen",
+        "npcs": "NPCs",
         "items": "Items",
         "output": "Ausgabe",
         "itemsNeeded": "Benötigte Gegenstände",
         "events": "Events",
         "maxhp": "max HP",
         "maxmana": "max Mana",
-        "maxdmg": "max Dmg"
+        "maxdmg": "max Dmg",
+        "room": "Raum"
     },
     "character_creator":{
         "pick_character": "Charakter auswählen",
@@ -59,6 +61,10 @@
         "error": "Ihre Mail konnte nicht verifiziert werden, entweder ihr Token ist ungültig oder Sie haben sich bereits verifiziert."
     },
     "dungeon_configurator":{
+        "rooms":{
+            "create_room": "Neuen Raum anlegen",
+            "save_room": "Raum speichern"
+        },
         "confirmations": {
             "delete_class": {
                 "title": "Klasse löschen",
@@ -104,6 +110,8 @@
     },
     "common":{
         "select_items": "Items auswählen",
+        "select_npcs": "NPCs auswählen",
+        "select_actions": "Aktionen auswählen",
         "select_events": "Events auswählen",
         "404": "Seite nicht gefunden...",
         "amount": "Anzahl"

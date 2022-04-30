@@ -30,9 +30,7 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
 
         <Container className="mb-5">
             <h2>{t(`${tl}.title`)}</h2>
-            <Row>
-                <RoomConfigurator />
-            </Row>
+
             <Row className="my-3 g-3">
                 <MudInput maxLength={50} colmd={9} defaultValue={dungeonConfig.name} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="name" placeholder={ t(`${tl}.inputs.name.placeholder`)} />
                 <MudInput colmd={3} defaultValue={dungeonConfig.maxPlayers} onBlur={dungeonConfig.handleOnBlurInput} type="number" name="maxPlayers" placeholder={t(`${tl}.inputs.maxPlayers.placeholder`)} />
@@ -47,6 +45,9 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editAction} onDeleteElement={dungeonConfig.deleteAction} data={dungeonConfig.actions} displayKeys={["command", "description"]} onAdd={dungeonConfig.addAction} title={t(`dungeon_keys.actions`)} buttonText={t(`${tl}.buttons.create_action`)} />
 
+            <Row>
+                <RoomConfigurator />
+            </Row>
             <Row className="mt-5 justify-content-end">
                 <div className="col-md-5">
                     <button className="btn w-100 btn-green drawn-border" onClick={dungeonConfig.save}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>

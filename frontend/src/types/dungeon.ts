@@ -95,8 +95,8 @@ export interface MudActionElement {
 }
 
 export interface MudConnectionInfo {
-    east: 'active' | 'inactive' | 'closed';
-    south: 'active' | 'inactive' | 'closed';
+    east: 'open' | 'inactive' | 'closed';
+    south: 'open' | 'inactive' | 'closed';
 }
 
 export interface MudRoom {

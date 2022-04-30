@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     const location = useLocation();
     const navigate = useNavigate();
     const {t} = useTranslation();
-    if(location.pathname==='/game') { return null }
+    if(location.pathname==='/game' || location.pathname==='/dungeon-master') { return null }
     return (
         <Container className="text-center">
             <Row>

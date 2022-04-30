@@ -214,18 +214,19 @@ export class API {
             const userID = await this.dba.getUserId(user);
             if(userID && !this.hostLink.isDungeonCreator(dungeonID, userID)){
                 res.json({ ok: 0, error: 'You cannot Edit this Dungeon!' });
-            }
-            if (body.dungeonData !== undefined) {
-                let dungeonData: any = body.dungeonData;
+            }else{
+
+                if (body.dungeonData !== undefined) {
+                    let dungeonData: any = body.dungeonData;
                 if (this.hostLink.dungeonExists(dungeonID)) {
-                this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
-                    if(newDungeon){
-                        this.hostLink.deleteDungeon(dungeonID);
-                        this.hostLink.addDungeon(newDungeon._id.toString(), dungeonData);
-                        res.json({ ok: 1, dungeonID: newDungeon._id.toString() });
-                    }else{
-                        res.json({ ok: 0, error: 'Dungeon could not be updated' });
-                    }
+                    this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
+                        if(newDungeon){
+                            this.hostLink.deleteDungeon(dungeonID);
+                            this.hostLink.addDungeon(newDungeon._id.toString(), dungeonData);
+                            res.json({ ok: 1, dungeonID: newDungeon._id.toString() });
+                        }else{
+                            res.json({ ok: 0, error: 'Dungeon could not be updated' });
+                        }
                     }).catch(err => {
                         res.json({ ok: 0, error: err.message });
                     });
@@ -233,8 +234,9 @@ export class API {
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }
+        }
         });
-
+        
         // delete dungeon
         app.delete('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;

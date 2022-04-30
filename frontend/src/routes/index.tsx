@@ -9,6 +9,7 @@ import { AuthProvider } from "src/contexts/AuthContext";
 import { GameProvider } from "src/contexts/GameContext";
 import CharacterCreator from "src/components/CharacterCreator";
 import Game from "src/components/Game";
+import DungeonMaster from "src/components/DungeonMaster"
 import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
 import { ConsoleProvider } from "src/contexts/ConsoleContext";
 import DungeonConfigurator from '../components/DungeonConfigurator/index';
@@ -47,6 +48,11 @@ const IndexRouter: React.FC = (): ReactElement => {
                             <Route path="/game" element={<RequireAuth>
                                 <RabbitMQProvider>
                                     <Game />
+                                </RabbitMQProvider>
+                            </RequireAuth>} />
+                            <Route path="/dungeon-master" element={<RequireAuth>
+                                <RabbitMQProvider>
+                                    <DungeonMaster />
                                 </RabbitMQProvider>
                             </RequireAuth>} />
                             <Route path="/verify" element={<VerifyEmail />} />

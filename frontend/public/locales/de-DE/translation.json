@@ -53,6 +53,9 @@
             "de-DE": "Deutsch"
         }
     },
+    "game":{
+        "leave": "Verlassen"
+    },
     "verify_email":{
         "title": "Email-Verifizierung",
         "success": "E-Mail erfolgreich verifiziert! Sie werden in 3 Sekunden zum Login weitergeleitet",

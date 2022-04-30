@@ -10,9 +10,6 @@
  */
 
 import React from 'react'
-import Chat from './Chat';
-import HUD, { HUDProps } from './HUD';
-import Inventory from './Inventory';
 import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
@@ -20,6 +17,10 @@ import { Navigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Container, Row } from 'react-bootstrap';
+import Chat from './Chat';
+import OnlinePlayers from './OnlinePlayers';
+import ChatQueue from './ChatQueue';
+import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
 export interface GameProps { }
 
@@ -48,14 +49,6 @@ const Game: React.FC<GameProps> = ({ }) => {
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
     }
-    const hudMock: HUDProps = {
-        health: 50,
-        maxHealth: 100,
-        mana: 100,
-        maxMana: 100,
-        damage: 10,
-        maxDamage: 100
-    }
 
 
 
@@ -68,13 +61,16 @@ const Game: React.FC<GameProps> = ({ }) => {
                 </div>
             </Row>
             <Row className="game-body">
-                <div className="col col-4 col-md-3 col-lg-2">
+                <div className="col col-md-3 col-lg-2">
                     <Minimap mapData={null} />
-                    <Inventory items={null} />
-                    <HUD {...hudMock} />
+                    <OnlinePlayers players={null} />
                 </div>
-                <div className="col col-8 col-md-9 col-lg-10">
+                <div className="col col-md-6 col-lg-8">
                     <Chat />
+                </div>
+                <div className="col col-md-3 col-lg-2">
+                    <ChatQueue commands={null} />
+                    <PlayerInfo player={null} />
                 </div>
             </Row>
         </Container>

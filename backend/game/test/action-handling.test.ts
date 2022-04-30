@@ -12,6 +12,7 @@ import { Item, ItemImpl } from "../src/data/interfaces/item";
 import { Npc, NpcImpl } from "../src/data/interfaces/npc";
 import { Room, RoomImpl } from "../src/data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
+import { BroadcastMessageAction } from "../src/worker/action/actions/broadcast-message-action";
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
 import { InspectAction } from "../src/worker/action/actions/inspect-action";
@@ -226,6 +227,7 @@ describe('ActionHandler', () => {
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
     const messageAction: MessageAction = actionHandler.actions['sag'];
     const privateMessageAction: PrivateMessageAction = actionHandler.actions['fluester'];
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions['broadcast']
     const discardAction: DiscardAction = actionHandler.actions['ablegen'];
     const inspectAction: InspectAction = actionHandler.actions['untersuche'];
     const inventoryAction: InventoryAction = actionHandler.actions['inv'];
@@ -239,6 +241,7 @@ describe('ActionHandler', () => {
 
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
+    broadcastMessageAction.performAction = jest.fn();
     discardAction.performAction = jest.fn();
     inspectAction.performAction = jest.fn();
     inventoryAction.performAction = jest.fn();
@@ -311,7 +314,34 @@ describe('ActionHandler', () => {
     //Tests with dungeon master as user
     test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
         actionHandler.processAction('0', 'fluester Spieler Hilfe');
-        //expect()
+        expect(privateMessageAction.performAction).toHaveBeenCalledWith('0', ['Spieler', 'Hilfe'])
+    })
+    test('ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users', () => {
+        actionHandler.processAction('0', 'broadcast Hallo');
+        expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('0', ['Hallo'])
+    })
+    test('ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action', () => {
+        actionHandler.processAction('1', 'broadcast Hallo');
+        expect(invalidAction.performAction).toHaveBeenCalledWith('1', ['Hallo'])
+    })
+    // hier machen evtl mocks probleme
+    test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
+        actionHandler.processAction('0', 'sag Hallo');
+        actionHandler.processAction('0', 'ablegen Apfel');
+        actionHandler.processAction('0', 'untersuche Apfel');
+        actionHandler.processAction('0', 'inv');
+        actionHandler.processAction('0', 'umschauen');
+        actionHandler.processAction('0', 'aufheben Apfel');
+        actionHandler.processAction('0', 'essen Apfel');
+        actionHandler.processAction('0', 'dm Test');
+        expect(messageAction.performAction).not.toHaveBeenCalled()
+        expect(discardAction.performAction).not.toHaveBeenCalled()
+        expect(inspectAction.performAction).not.toHaveBeenCalled()
+        expect(inventoryAction.performAction).not.toHaveBeenCalled()
+        expect(lookAction.performAction).not.toHaveBeenCalled()
+        expect(pickupAction.performAction).not.toHaveBeenCalled()
+        expect(dungeonAction.performAction).not.toHaveBeenCalled()
+        expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
     })
 });
 

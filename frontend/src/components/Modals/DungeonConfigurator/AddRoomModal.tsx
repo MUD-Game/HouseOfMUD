@@ -45,6 +45,14 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
             props.onHide();
         }
     }
+    
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            onSubmit();
+        }
+
+    }
 
     return (
         <Modal
@@ -59,7 +67,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
                         {t(`${dt}.rooms.create_room`)}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='row px-4 g-3'>
+                <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <MudInput colmd={6} placeholder="x" value={props.coordinates[0]} disabled />
                     <MudInput colmd={6} placeholder="y" value={props.coordinates[1]} disabled />
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />

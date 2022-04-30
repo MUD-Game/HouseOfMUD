@@ -1,10 +1,46 @@
-.disabled{
+.disabled {
     pointer-events: none;
     opacity: 0.5;
 }
 
-.disabled svg{
+.disabled svg {
     display: none;
+}
+
+#refocus-button {
+    position: absolute;
+    z-index: 2000;
+    transition: fill 0.2s;
+}
+
+#refocus-button{
+    transition: opacity 0.2s, transform 0.2s;
+    fill:var(--accent);
+    opacity: 0.5;
+}
+
+#refocus-button:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+#refocus-button-container {
+    position: relative;
+    top: 20px;
+    left: 14px;
+}
+
+
+
+#refocus-button-fill:hover {
+    opacity: 1;
+    transform: translateY(-5px);
+}
+
+#refocus-button-fill:hover+#refocus-button {
+    opacity: 0;
+    transform: translateY(-5px);
+
 }
 
 canvas {

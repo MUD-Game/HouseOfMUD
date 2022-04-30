@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Button, ModalProps, Form, Container } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import MudInput from 'src/components/Custom/MudInupt';
@@ -31,6 +31,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     let initialAddItems: Option[] = [];
     let initialEvents: Option[] = [];
     let initialEventValues: { [key: string]: number } = {};
+   
     const constructToModalData = () => {
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
         props.editData?.itemsneeded?.forEach((item: number) => {
@@ -47,6 +48,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             }
         });
 
+       
+        
 
     }
     constructToModalData();
@@ -120,6 +123,13 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
         }
     }
 
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            onSubmit();
+        }
+
+    }
 
     return (
         <Modal
@@ -134,8 +144,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         {t(`${dt}.buttons.create_action`)}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='row px-4 g-3'>
-                    <MudInput placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
+                <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
+                    <MudInput autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
                     <MudTypeahead

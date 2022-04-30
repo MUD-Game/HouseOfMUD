@@ -38,6 +38,16 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
         }
     }
 
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            onSubmit();
+        }
+
+    }
+
+
+
     return (
         <Modal
             onHide={props.onHide}
@@ -52,7 +62,7 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
 
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='row px-4 g-3'>
+                <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
                 </Modal.Body>

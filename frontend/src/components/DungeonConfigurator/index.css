@@ -6,3 +6,7 @@
 .disabled svg{
     display: none;
 }
+
+canvas {
+    outline: 2px solid var(--accent);
+}

@@ -9,7 +9,7 @@ export interface MudDungeon {
     species: MudCharacterSpecies[];
     classes: MudCharacterClass[];
     genders: MudCharacterGender[];
-    rooms: MudRoom[];
+    rooms: { [key: string]: MudRoom };
     blacklist: string[];
     actions: MudActionElement[];
 }
@@ -103,8 +103,10 @@ export interface MudRoom {
     id: string;
     name: string;
     description: string;
-    npcs: MudNpc[];
-    items: MudItem[];
+    npcs: string[];
+    items: string[];
     connections: MudConnectionInfo;
-    actions: MudActionElement[];
+    actions: string[];
+    xCoordinate: number;
+    yCoordinate: number;
 }

@@ -105,7 +105,8 @@
     "common":{
         "select_items": "Items auswählen",
         "select_events": "Events auswählen",
-        "404": "Seite nicht gefunden..."
+        "404": "Seite nicht gefunden...",
+        "amount": "Anzahl"
     },
     "header":{
         "welcome": "Willkommen"

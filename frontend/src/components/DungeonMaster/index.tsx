@@ -13,7 +13,7 @@ import React from 'react'
 import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Container, Row } from 'react-bootstrap';
@@ -27,6 +27,7 @@ export interface GameProps { }
 const Game: React.FC<GameProps> = ({ }) => {
     const {t} = useTranslation();
     let homsole = useMudConsole();
+    let navigate = useNavigate();
 
     const rabbit = useRabbitMQ();
     const { isAbleToJoinGame } = useGame();
@@ -57,7 +58,7 @@ const Game: React.FC<GameProps> = ({ }) => {
         <Container fluid className="game-wrapper">
             <Row className="game-header align-items-center">
                 <div className="col text-end">
-                    <button className="btn drawn-border btn-xpadding btn-red">{t("game.leave")}</button>
+                    <button className="btn drawn-border btn-xpadding btn-red" onClick={() => navigate("/")}>{t("game.leave")}</button>
                 </div>
             </Row>
             <Row className="game-body">

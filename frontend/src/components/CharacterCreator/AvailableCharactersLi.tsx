@@ -48,7 +48,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
             setCharacterID(character.character);
             setCharacter(character.name);
             setVerifyToken(data.verifyToken);
-            navigate("/dungeon-master");
+            navigate("/game");
         }, (error) => {
             // TODO: handle error in a better way
             homosole.error(error.error);

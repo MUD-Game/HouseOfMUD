@@ -8,10 +8,12 @@ export const triggers = {
     inventory: "inv",
     look: "umschauen",
     message: "sag",
+    broadcast: "broadcast",
     move: "gehe",
     pickup: "aufheben",
     whisper: "fluester",
-    unspecified: "unspecified"
+    unspecified: "dm",
+    invalid: "invalid"
 }
 
 export const actionMessages = {
@@ -31,6 +33,7 @@ export const actionMessages = {
     move1: "ist",
     move2: "beigetreten!",
     moveRoomClosed: "In diese Richtung ist der Raum geschlossen!",
+    movePathInactive: "In diese Richtung existiert kein Durchgang!",
     moveRoomDoesNotExist: "In diese Richtung existiert kein Raum!",
     whisperCharacterNotInSameRoom: "ist nicht in diesem Raum!"
 }

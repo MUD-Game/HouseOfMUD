@@ -1,9 +1,12 @@
 import { Dungeon } from '../../data/interfaces/dungeon';
 import { DungeonController } from '../controller/dungeon-controller';
 import { Action } from './action';
+import { triggers } from './actions/action-resources';
+import { BroadcastMessageAction } from './actions/broadcast-message-action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';
 import { InspectAction } from './actions/inspect-action';
+import InvalidAction from './actions/invalid-action';
 import { InventoryAction } from './actions/inventory-action';
 import { LookAction } from './actions/look-action';
 import { MessageAction } from './actions/message-action';
@@ -12,6 +15,11 @@ import { PickupAction } from './actions/pickup-action';
 import { PrivateMessageAction } from './actions/private-message-action';
 import UnspecifiedAction from './actions/unspecified-action';
 
+
+const regExpression = {
+    forDungeonMaster: new RegExp("^((fluester)|(broadcast))", "i"),
+    predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified}))`, "i")
+}
 /**
  * Processes Actions received by the dungeon controller.
  * @category Action Handler
@@ -28,10 +36,9 @@ export interface ActionHandler {
     dungeonActions: { [trigger: string]: DungeonAction };
 
     /**
-     * Action that notifies the dungeon master to act.
+     * Used when user tries to perform an action that does not exist.
      */
-
-    unspecifiedAction: UnspecifiedAction;
+    invalidAction: InvalidAction;
 
     /**
      * Based on the received data in the message the ActionHandler performs the action on the corresponding action type.
@@ -44,7 +51,7 @@ export interface ActionHandler {
 export class ActionHandlerImpl implements ActionHandler {
     actions: { [trigger: string]: Action } = {};
     dungeonActions: { [trigger: string]: DungeonAction } = {};
-    unspecifiedAction: UnspecifiedAction;
+    invalidAction: InvalidAction;
 
     /**
      * Creates an instance of ActionHandler with its necessary actions.
@@ -60,6 +67,8 @@ export class ActionHandlerImpl implements ActionHandler {
             new MoveAction(dungeonController),
             new PickupAction(dungeonController),
             new PrivateMessageAction(dungeonController),
+            new BroadcastMessageAction(dungeonController),
+            new UnspecifiedAction(dungeonController)
         ];
         actions.forEach(action => {
             this.actions[action.trigger] = action;
@@ -70,23 +79,72 @@ export class ActionHandlerImpl implements ActionHandler {
             let dungeonAction: DungeonAction = new DungeonAction(action.command, dungeonController)
             this.dungeonActions[dungeonAction.trigger] = dungeonAction
         });
-        this.unspecifiedAction = new UnspecifiedAction(dungeonController);
+        this.invalidAction = new InvalidAction(dungeonController)
     }
 
     processAction(user: string, message: string) {
-        let splitMessageString: string[] = message.split(' ');
-        let commandString: string = splitMessageString[0];
-        let action: Action | undefined;
-        if (commandString in this.actions) {
-            action = this.actions[commandString];
+        let action: Action | undefined = undefined;
+        let commandString: string;
+        if (this.userIsDungeonMaster(user)) {
+            if (this.inputMatch(message, regExpression.forDungeonMaster)) {
+                action = this.getAction(message)
+            } else {
+                action = this.invalidAction;
+            }
         } else {
-            action = this.dungeonActions[message]
+            let dungeonActions: DungeonAction[] = Object.values(this.dungeonActions)
+            action = dungeonActions.find(dungeonAction => this.inputMatch(message, dungeonAction.regEx))
             if (action === undefined) {
-                action = this.unspecifiedAction;
+                if (this.inputMatch(message, regExpression.predefinedActions)) {
+                    action = this.getAction(message)
+                } else {
+                    action = this.invalidAction
+                }
             }
         }
-        let actionArguments: string[] = splitMessageString.slice(1);
+        let actionArguments: string[] = this.getActionArguments(message)
         action.performAction(user, actionArguments);
         return action;
+    }
+
+    /**
+     * Checks if user is dungeon master.
+     * @param user Character Id of user to check.
+     * @returns True if character id of user is 0.
+     */
+    userIsDungeonMaster(user: string): boolean {
+        if (user === '0') {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * Returns command from message string.
+     * @param messageString Message string to get command from.
+     * @returns First value of message string.
+     */
+    getAction(messageString: string): Action {
+        let splitMessageString: string[] = messageString.split(' ');
+        console.log(splitMessageString[0])
+        let action: Action = this.actions[splitMessageString[0]]
+        return action;
+    }
+
+    getActionArguments(messageString: string): string[] {
+        let splitMessageString: string[] = messageString.split(' ');
+        let actionArguments: string[] = splitMessageString.slice(1);
+        return actionArguments;
+    }
+
+    /**
+     * Checks if message matches with given regular Expression.
+     * @param message Message to check.
+     * @param regEx Regular expression to check against.
+     * @returns True if message matches regular expression.
+     */
+    inputMatch(message: string, regEx: RegExp): boolean {
+        return regEx.test(message)
     }
 }

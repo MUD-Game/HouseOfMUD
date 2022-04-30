@@ -98,7 +98,7 @@ function getAmqpAdapterConfig() {
 
 function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefined): Dungeon {
     if (databaseDungeon === undefined) {
-        throw("The dungeon does not exist!")
+        throw new Error("The dungeon does not exist!")
     } else {
         let dungeonRooms: Room[] = translateRoomsFromDatabase(databaseDungeon)
         let dungeonActions: ActionElement[] = translateActionsFromDatabase(databaseDungeon)
@@ -125,7 +125,7 @@ function translateActionsFromDatabase(dungeonFromDatabase: DungeonDataset): Acti
             if (databaseActionEvent.eventType === "additem" || "removeItem" || "addhp" || "removehp" || "adddmg" || "removedmg" || "addmana" || "removemana") {
                 actionEvents.push(new ActionEventImpl(databaseActionEvent.eventType as "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", databaseActionEvent.value))
             } else {
-                throw('ActionEvent has wrong event type')
+                throw new Error('ActionEvent has wrong event type')
             }
         })
         actions.push(new ActionElementImpl(databaseAction.id, databaseAction.command, databaseAction.output, databaseAction.description, actionEvents, databaseAction.itemsneeded))

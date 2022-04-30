@@ -15,6 +15,7 @@ import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-ha
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
 import { InspectAction } from "../src/worker/action/actions/inspect-action";
+import InvalidAction from "../src/worker/action/actions/invalid-action";
 import { InventoryAction } from "../src/worker/action/actions/inventory-action";
 import { LookAction } from "../src/worker/action/actions/look-action";
 import { MessageAction } from "../src/worker/action/actions/message-action";
@@ -139,6 +140,17 @@ const TestRoomNorthNorth: Room = new RoomImpl(
     2,
     4
 );
+const TestRoomNorthEast: Room = new RoomImpl(
+    '7',
+    'Raum-NE',
+    'Der Raum im Norden, dann Osten',
+    [TestNpc.id],
+    [TestItem.id],
+    new ConnectionInfoImpl('inactive', 'inactive'),
+    [TestAction.id],
+    3,
+    4
+);
 const TestCharacter: Character = new CharacterImpl(
     '1',
     '1',
@@ -197,6 +209,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
         TestRoomSouth,
         TestRoomWest,
         TestRoomNorthNorth,
+        TestRoomNorthEast
     ],
     ['abc'],
     [TestAction],
@@ -220,7 +233,9 @@ describe('ActionHandler', () => {
     const moveAction: MoveAction = actionHandler.actions['gehe'];
     const pickupAction: PickupAction = actionHandler.actions['aufheben'];
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction;
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions['dm'];
+    const invalidAction: InvalidAction = actionHandler.invalidAction;
+    
 
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
@@ -232,6 +247,7 @@ describe('ActionHandler', () => {
     pickupAction.performAction = jest.fn();
     dungeonAction.performAction = jest.fn();
     unspecifiedAction.performAction = jest.fn();
+    invalidAction.performAction = jest.fn();
 
     test('ActionHandler should call performAction on MessageAction with the correct parameters when it receives a "sag" action message', () => {
         actionHandler.processAction('1', 'sag Hallo');
@@ -280,12 +296,23 @@ describe('ActionHandler', () => {
             'Apfel',
         ]);
     });
-    test('ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives a non specified action message', () => {
-        actionHandler.processAction('1', 'angriff Monster');
+    test('ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master', () => {
+        actionHandler.processAction('1', 'dm Test');
         expect(unspecifiedAction.performAction).toHaveBeenCalledWith('1', [
+            'Test',
+        ]);
+    });
+    test('ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message', () => {
+        actionHandler.processAction('1', 'angriff Monster');
+        expect(invalidAction.performAction).toHaveBeenCalledWith('1', [
             'Monster',
         ]);
     });
+    //Tests with dungeon master as user
+    test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
+        actionHandler.processAction('0', 'fluester Spieler Hilfe');
+        //expect()
+    })
 });
 
 describe('Actions', () => {
@@ -306,7 +333,7 @@ describe('Actions', () => {
     const moveAction: MoveAction = actionHandler.actions['gehe'];
     const pickupAction: PickupAction = actionHandler.actions['aufheben'];
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.unspecifiedAction;
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions['dm'];
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();
@@ -421,6 +448,14 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
             action: 'message',
             data: { message: 'In diese Richtung ist der Raum geschlossen!' },
+        });
+    });
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', () => {
+        TestDungeon.characters['1'].position = TestRoomNorthNorth.id;
+        moveAction.performAction('1', ['Osten']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: 'In diese Richtung existiert kein Durchgang!' },
         });
     });
     //MOVEACTION TEST

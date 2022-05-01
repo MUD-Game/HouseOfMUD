@@ -60,8 +60,8 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
                         <MudSelect colmd={5} defaultValue={i18n.language} label={t("user_settings.language.label")} onChange={(event) => {
                             i18n.changeLanguage(event.target.value, );
                         }}>
-                            <option value="en-US">{t("user_settings.language.en-US")}</option>
                             <option value="de-DE">{t("user_settings.language.de-DE")}</option>
+                            <option value="en-US">{t("user_settings.language.en-US")}</option>
                             </MudSelect>    
                     </div>
 

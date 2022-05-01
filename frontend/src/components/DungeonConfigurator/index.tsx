@@ -46,10 +46,11 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editAction} onDeleteElement={dungeonConfig.deleteAction} data={dungeonConfig.actions} displayKeys={["command", "description"]} onAdd={dungeonConfig.addAction} title={t(`dungeon_keys.actions`)} buttonText={t(`${tl}.buttons.create_action`)} />
             
 
-            <Row>
-                <RoomConfigurator />
+            <Row className="mb-5">
+                <RoomConfigurator />                
             </Row>
-            <Row className="mt-5 justify-content-end">
+            <hr />
+            <Row className="mt-3 justify-content-end">                
                 <div className="col-md-5">
                     <button className="btn w-100 btn-green drawn-border" onClick={dungeonConfig.save}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>
                 </div>

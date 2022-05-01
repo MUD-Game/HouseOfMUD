@@ -7,7 +7,7 @@ import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import MudInput from 'src/components/Custom/MudInupt';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/MudTypeahead';
-import { GeoAlt } from 'react-bootstrap-icons';
+import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
 import { Row } from 'react-bootstrap';
 
 const roomSize = 60;
@@ -184,11 +184,14 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
             </div>
         </Row>
         <Row>
-            <div id="refocus-button-container">
-            <GeoAlt size={40} id="refocus-button" onClick={() => {
+            <div id="konva-buttons-container">
+                    <GeoAlt size={37} id="refocus-button" onClick={() => {
                 stageRef.current.scale({ x: 1, y: 1 });
                 
                 stageRef.current.position({ x: 0, y: 0 });
+            }} />
+            <QuestionCircle id="help-button" size={37} onClick={() => {
+                
             }} />
             </div>
         </Row>

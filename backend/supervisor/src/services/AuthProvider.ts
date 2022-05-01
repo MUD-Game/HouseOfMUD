@@ -43,7 +43,7 @@ export default class AuthProvider {
         }else{
             res.status(400).send({
                 ok: 0,
-                error: "not logged in"
+                error: "logout"
             });
         }
     }
@@ -55,7 +55,7 @@ export default class AuthProvider {
             }
             next();
         }).catch(() => {
-            res.code(500).json({ok:0, error: "Could not delete user"});
+            res.code(500).json({ok:0, error: "internal"});
         }
         );
     }
@@ -71,12 +71,12 @@ export default class AuthProvider {
             if (Object.keys(this.unverified_users).some(token => this.unverified_users[token].username === user) || await this.dba.checkIfUserExists(user)) {
                 res.status(409).send({
                     ok: 0,
-                    error: "User already exists"
+                    error: "exists.user"
                 });
             } else if (Object.keys(this.unverified_users).some(token => this.unverified_users[token].email === email) || await this.dba.checkIfEmailExists(email)) {
                 res.status(409).send({
                     ok: 0,
-                    error: "Email already exists"
+                    error: "exists.email"
                 });
             } else {
                 let verifyToken: string = this.generateVerifyToken();
@@ -104,7 +104,7 @@ export default class AuthProvider {
         } else {
             res.status(400).send({
                 ok: 0,
-                error: "missing parameters"
+                error: "parameters"
             });
         }
     }
@@ -122,13 +122,13 @@ export default class AuthProvider {
             } else {
                 res.status(400).send({
                     ok: 0,
-                    error: "invalid token"
+                    error: "invalid_token"
                 });
             }
         } else {
             res.status(400).send({
                 ok: 0,
-                error: "missing token"
+                error: "missing_token"
             });
         }
     }
@@ -168,7 +168,7 @@ export default class AuthProvider {
                 res.cookie('userID', "", { domain: this.cookie_host, maxAge:  0 });
                 res.status(401).send({
                     ok: 0,
-                    error: "Unauthorized"
+                    error: "unauthorized"
                 });
             }
         } catch (error) {

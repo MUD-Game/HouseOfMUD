@@ -192,6 +192,10 @@
         "register": "Registrieren"
     },
     "error":{
+        "unauthorized": {
+            "title": "Falsche Anmeldedaten",
+            "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch."
+        },
         "logout_failed": "Logout fehlgeschlagen",
         "login_failed": "Login fehlgeschlagen",
         "register_failed": "Registrierung fehlgeschlagen"

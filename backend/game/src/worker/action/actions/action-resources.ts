@@ -8,15 +8,19 @@ export const triggers = {
     inventory: "inv",
     look: "umschauen",
     message: "sag",
+    broadcast: "broadcast",
     move: "gehe",
     pickup: "aufheben",
     whisper: "fluester",
-    unspecified: "unspecified"
+    messageMaster: "fluesterdm",
+    unspecified: "dm",
+    invalid: "invalid"
 }
 
 export const actionMessages = {
     inspect: "Du untersuchst",
     inventory: "Du hast folgende Items im Inventar:",
+    lookEmpty: " Keine",
     lookRoom: "Du befindest dich im Raum",
     lookAround: "Du schaust dich um.",
     lookItems: "Es liegen folgende Items in dem Raum:",
@@ -31,14 +35,20 @@ export const actionMessages = {
     move1: "ist",
     move2: "beigetreten!",
     moveRoomClosed: "In diese Richtung ist der Raum geschlossen!",
-    moveRoomDoesNotExist: "In diese Richtung existiert kein Raum!",
-    whisperCharacterNotInSameRoom: "ist nicht in diesem Raum!"
+    movePathNotAvailable: "In diese Richtung geht es nicht weiter!",
+    whisperCharacterNotInSameRoom: "ist nicht in diesem Raum!",
+    dmWhisper: "Dungeon Master",
+    discard: "Du hast folgendes Item abgelegt: ",
+    pickup: "Du hast folgendes Item aufgehoben: "
 }
 
 export const errorMessages = {
     itemNotOwned: "Du besitzt dieses Item nicht!",
+    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist1: "Der Charakter",
     characterDoesNotExist2: "existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion existiert nicht!"
+    actionDoesNotExist: "Diese Aktion existiert nicht!",
+    lookError: " Fehler!",
+
 }

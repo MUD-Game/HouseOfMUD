@@ -38,30 +38,39 @@ export class MoveAction implements Action {
         let destinationRoom: Room | undefined;
         let invalidDirection: boolean = false;
         let closedPath: boolean = false;
+        let inactivePath: boolean = false;
         try {
             switch (direction.toLowerCase()) {
                 case 'norden':
                     destinationRoom = dungeon.getNorthernRoom(currentRoom);
                     if (destinationRoom.getSouthConnection() === 'closed') {
                         closedPath = true;
+                    } else if (destinationRoom.getSouthConnection() === 'inactive') {
+                        inactivePath = true;
                     }
                     break;
                 case 'osten':
                     destinationRoom = dungeon.getEasternRoom(currentRoom);
                     if (currentRoom.getEastConnection() === 'closed') {
                         closedPath = true;
+                    } else if (currentRoom.getEastConnection() === 'inactive') {
+                        inactivePath = true;
                     }
                     break;
                 case 'sueden':
                     destinationRoom = dungeon.getSouthernRoom(currentRoom);
                     if (currentRoom.getSouthConnection() === 'closed') {
                         closedPath = true;
+                    } else if (currentRoom.getSouthConnection() === 'inactive') {
+                        inactivePath = true;
                     }
                     break;
                 case 'westen':
                     destinationRoom = dungeon.getWesternRoom(currentRoom);
                     if (destinationRoom.getEastConnection() === 'closed') {
                         closedPath = true;
+                    } else if (destinationRoom.getEastConnection() === 'inactive') {
+                        inactivePath = true;
                     }
                     break;
                 default:
@@ -77,6 +86,11 @@ export class MoveAction implements Action {
                 amqpAdapter.sendToClient(user, {
                     action: 'message',
                     data: { message: actionMessages.moveRoomClosed },
+                });
+            } else if (inactivePath) {
+                amqpAdapter.sendToClient(user, {
+                    action: 'message',
+                    data: { message: actionMessages.movePathNotAvailable },
                 });
             } else if (destinationRoom !== undefined) {
                 let destinationRoomId: string = destinationRoom.getId();
@@ -96,7 +110,7 @@ export class MoveAction implements Action {
             console.log(e);
             amqpAdapter.sendToClient(user, {
                 action: 'message',
-                data: { message: actionMessages.moveRoomDoesNotExist },
+                data: { message: actionMessages.movePathNotAvailable },
             });
         }
     }

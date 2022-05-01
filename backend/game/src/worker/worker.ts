@@ -18,7 +18,8 @@ import { DungeonController } from "./controller/dungeon-controller";
 
 // import { Dungeon } from '../../../data/src/datasets/dungeon'
 
-const dungeonID = process.argv[2];
+//const dungeonID = process.argv[2];
+const dungeonID = "626d1be8bd7036c89704263d";
 
 interface Tokens {
     [userID: string]: {
@@ -98,13 +99,14 @@ function getAmqpAdapterConfig() {
 
 function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefined): Dungeon {
     if (databaseDungeon === undefined) {
-        throw("The dungeon does not exist!")
+        throw new Error("The dungeon does not exist!")
     } else {
         let dungeonRooms: Room[] = translateRoomsFromDatabase(databaseDungeon)
         let dungeonActions: ActionElement[] = translateActionsFromDatabase(databaseDungeon)
         let dungeonItems: Item[] = translateItemsFromDatabase(databaseDungeon)
         let dungeonNpcs: Npc[] = translateNpcsFromDatabase(databaseDungeon)
-        let dungeonObject: Dungeon = new DungeonImpl('1', databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs)
+        let dungeonObject: Dungeon = new DungeonImpl(dungeonID, databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs)
+        console.log(dungeonObject)
         return dungeonObject
     }
 }
@@ -125,7 +127,7 @@ function translateActionsFromDatabase(dungeonFromDatabase: DungeonDataset): Acti
             if (databaseActionEvent.eventType === "additem" || "removeItem" || "addhp" || "removehp" || "adddmg" || "removedmg" || "addmana" || "removemana") {
                 actionEvents.push(new ActionEventImpl(databaseActionEvent.eventType as "additem" | "removeItem" | "addhp" | "removehp" | "adddmg" | "removedmg" | "addmana" | "removemana", databaseActionEvent.value))
             } else {
-                throw('ActionEvent has wrong event type')
+                throw new Error('ActionEvent has wrong event type')
             }
         })
         actions.push(new ActionElementImpl(databaseAction.id, databaseAction.command, databaseAction.output, databaseAction.description, actionEvents, databaseAction.itemsneeded))

@@ -177,7 +177,6 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     const [isEdited, setIsEdited] = React.useState(false);
     return (
       <>
-        <div className="" id="konvacontainer" ref={widthRef}>
         <Row className="mt-5">
             <hr />
             <div className="col mb-3">
@@ -192,6 +191,9 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 stageRef.current.position({ x: 0, y: 0 });
             }} />
             </div>
+        </Row>
+            <div id="konvacontainer" ref={widthRef}>
+
             <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width / 1.618} draggable offsetY={-(width / 1.618) / 2} offsetX={-width / 2}>
                 <Layer>
                     <Group name="connections">
@@ -292,8 +294,8 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                     </Group>
                 </Layer>
             </Stage>
-        </div>
-        </Row>
+                </div>
+
             <form onSubmit={submitEditDungeon} onChange={() => {
                 if (!isEdited) {
                     setIsEdited(true);

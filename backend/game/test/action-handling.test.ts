@@ -65,6 +65,9 @@ const TestNpc: Npc = new NpcImpl(
     'Barde'
 );
 const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
+const TestItemDiscard: Item = new ItemImpl('2', 'Schwert', 'Schwertiges Schwert');
+const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
+
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
     'active',
     'active'
@@ -216,7 +219,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     ],
     ['abc'],
     [TestAction],
-    [TestItem],
+    [TestItem, TestItemDiscard, TestItemPickup],
     [TestNpc]
 );
 const TestDungeonController: DungeonController = new DungeonController(
@@ -566,6 +569,60 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
             action: 'message',
             data: { message: `[privat] Jeff -> ${actionMessages.dmWhisper}: Hallo` },
+        });
+    })
+
+    test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
+        TestDungeon.characters['1'].inventory.push(TestItemDiscard.id)
+        discardAction.performAction('1', ['Schwert']);
+        expect(TestDungeon.characters['1'].inventory).toStrictEqual([TestItem.id])
+        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id, TestItemDiscard.id])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: `${actionMessages.discard}Schwert` },
+        });
+    })
+
+    test('DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own', () => {
+        discardAction.performAction('1', ['Gold']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: errorMessages.itemNotOwned },
+        });
+    })
+
+    test('DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon', () => {
+        discardAction.performAction('1', ['Rubin']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: errorMessages.itemNotOwned },
+        });
+    })
+
+    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
+        TestDungeon.rooms[TestRoom.id].items.push(TestItemPickup.id)
+        pickupAction.performAction('1', ['Gold']);
+        expect(TestDungeon.characters['1'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
+        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: `${actionMessages.pickup}Gold` },
+        });
+    })
+
+    test('PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold', () => {
+        pickupAction.performAction('1', ['Schwert']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: errorMessages.itemNotInRoom },
+        });
+    })
+
+    test('PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon', () => {
+        pickupAction.performAction('1', ['Rubin']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+            action: 'message',
+            data: { message: errorMessages.itemNotInRoom },
         });
     })
 });

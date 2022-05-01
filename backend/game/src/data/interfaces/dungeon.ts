@@ -50,6 +50,7 @@ export interface Dungeon {
   getAction(actionId: string): ActionElement
   getActions(): ActionElement[]
   getItem(itemId: string): Item
+  getItemByName(itemName: string): Item
   getNpc(npcId: string): Npc
 
 }
@@ -215,6 +216,15 @@ export class DungeonImpl implements Dungeon {
       } else {
         return item;
       }
+  }
+
+  getItemByName(itemName: string): Item {
+    let item: Item | undefined = Object.values(this.items).find(item => item.getName() === itemName)
+    if (item === undefined) {
+      throw new Error("Item does not exist");
+    } else {
+      return item;
+    }
   }
 
   getNpc(npcId: string): Npc {

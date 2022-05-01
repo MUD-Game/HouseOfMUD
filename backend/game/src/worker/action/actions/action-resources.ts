@@ -37,14 +37,18 @@ export const actionMessages = {
     moveRoomClosed: "In diese Richtung ist der Raum geschlossen!",
     movePathNotAvailable: "In diese Richtung geht es nicht weiter!",
     whisperCharacterNotInSameRoom: "ist nicht in diesem Raum!",
-    dmWhisper: "Dungeon Master"
+    dmWhisper: "Dungeon Master",
+    discard: "Du hast folgendes Item abgelegt: ",
+    pickup: "Du hast folgendes Item aufgehoben: "
 }
 
 export const errorMessages = {
     itemNotOwned: "Du besitzt dieses Item nicht!",
+    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist1: "Der Charakter",
     characterDoesNotExist2: "existiert nicht in diesem Dungeon!",
     actionDoesNotExist: "Diese Aktion existiert nicht!",
-    lookError: " Fehler!"
+    lookError: " Fehler!",
+
 }

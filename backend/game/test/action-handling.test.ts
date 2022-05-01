@@ -229,6 +229,10 @@ const TestDungeonController: DungeonController = new DungeonController(
 );
 
 describe('ActionHandler', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
     const messageAction: MessageAction = actionHandler.actions[triggers.message];
     const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
@@ -366,6 +370,9 @@ describe('Actions', () => {
     })
     beforeEach(() => {
         TestDungeon.characters['1'].position = TestRoom.id;
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
@@ -581,6 +588,7 @@ describe('Actions', () => {
             action: 'message',
             data: { message: `${actionMessages.discard}Schwert` },
         });
+        TestDungeon.rooms['1'].items.pop()
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own', () => {
@@ -608,6 +616,7 @@ describe('Actions', () => {
             action: 'message',
             data: { message: `${actionMessages.pickup}Gold` },
         });
+        TestDungeon.characters['1'].inventory.pop()
     })
 
     test('PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold', () => {

@@ -167,7 +167,7 @@ export class DungeonImpl implements Dungeon {
   getNorthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
-      initialRoom.yCoordinate + 1
+      initialRoom.yCoordinate - 1
     );
   }
 
@@ -181,7 +181,7 @@ export class DungeonImpl implements Dungeon {
   getSouthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
-      initialRoom.yCoordinate - 1
+      initialRoom.yCoordinate + 1
     );
   }
 

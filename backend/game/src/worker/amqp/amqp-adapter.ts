@@ -34,6 +34,11 @@ export class AmqpAdapter {
         return this.connection !== undefined && this.channel !== undefined;
     }
 
+    setDisconnected(): void {
+        this.channel = undefined;
+        this.connection = undefined;
+    }
+
     /**
      * Creates new exchanges.
      */
@@ -54,10 +59,10 @@ export class AmqpAdapter {
             await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `${this.dungeonID}.#`);
         } catch (err) {
             await this.channel?.close();
-            this.channel = undefined;
-
             await this.connection?.close();
-            this.connection = undefined;
+            
+            this.setDisconnected();
+
             console.error(err);
         }
     }
@@ -70,10 +75,9 @@ export class AmqpAdapter {
                 await this.channel?.deleteExchange(`${this.clientExchange}-${this.dungeonID}`);
 
                 await this.channel?.close();
-                this.channel = undefined;
-
                 await this.connection?.close();
-                this.connection = undefined;
+                
+                this.setDisconnected();
             } catch (err) {
                 throw err;
             }

@@ -60,7 +60,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
             <h2>{dungeonName}</h2>
             {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter onCreate={fetchNewCharacters} {...dungeonData} /> : null}
             <br /><hr /><br />
-            {characters !== [] ? <AvailableCharacters characters={characters} /> : null}
+            {characters !== [] ? <AvailableCharacters characters={characters} characterAttributes={dungeonData}/> : null}
         </Container>
     )
 }

@@ -39,19 +39,13 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
         if (!dungeon) return;
-        let requestBody: GetCharactersRequest = {
-            user: user,
-        }
-        supervisor.getCharacterAttributes(dungeon, requestBody, setDungeonData, homsole.supervisorerror);
-        supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
+        supervisor.getCharacterAttributes(dungeon, {}, setDungeonData, homsole.supervisorerror);
+        supervisor.getCharacters(dungeon, {}, setCharacters, homsole.supervisorerror);
     }, []);
 
 
     const fetchNewCharacters = () => {
-        let requestBody: GetCharactersRequest = {
-            user: user,
-        }
-        supervisor.getCharacters(dungeon, requestBody, setCharacters, homsole.supervisorerror);
+        supervisor.getCharacters(dungeon, {}, setCharacters, homsole.supervisorerror);
     }
 
     if (!game.isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
@@ -60,7 +54,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
             <h2>{dungeonName}</h2>
             {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter onCreate={fetchNewCharacters} {...dungeonData} /> : null}
             <br /><hr /><br />
-            {characters !== [] ? <AvailableCharacters characters={characters} /> : null}
+            {characters !== [] ? <AvailableCharacters characters={characters} fetchCharacters={fetchNewCharacters} characterAttributes={dungeonData}/> : null}
         </Container>
     )
 }

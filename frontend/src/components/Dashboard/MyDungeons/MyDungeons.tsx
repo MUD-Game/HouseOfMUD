@@ -20,10 +20,10 @@ export type AllDungeonProps = {
     filterKey: 'name' | 'description';
     filterValue: string;
     myDungeons: DungeonResponseData[];
-    onDelete: ()=>void;
+    fetchMyDungeons: ()=>void;
 }
 
-const MyDungeons: React.FC<AllDungeonProps> = ({ myDungeons, filterValue, filterKey, onDelete }) => {
+const MyDungeons: React.FC<AllDungeonProps> = ({ myDungeons, filterValue, filterKey, fetchMyDungeons }) => {
 
     const {t} = useTranslation();
 
@@ -47,7 +47,7 @@ const MyDungeons: React.FC<AllDungeonProps> = ({ myDungeons, filterValue, filter
 
             {myDungeons.filter(dungeon => dungeon[filterKey].toLowerCase().includes(filterValue.toLowerCase())).map((dungeon, index) => {
                 return (
-                    <MyDungeonsLi key={index} isPrivate={false} onDelete={onDelete} {...dungeon} />
+                    <MyDungeonsLi key={index} isPrivate={false} fetchMyDungeons={fetchMyDungeons} {...dungeon} />
                 )
             })}
 

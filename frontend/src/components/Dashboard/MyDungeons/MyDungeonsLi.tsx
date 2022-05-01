@@ -28,15 +28,16 @@ export interface MyDungeonsLiProps {
     currentPlayers: number;
     status: "online" | "offline";
     isPrivate: boolean;
-    onDelete: () => void;
+    fetchMyDungeons: () => void;
 }
 
-const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status, onDelete }) => {
+const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status, fetchMyDungeons }) => {
 
     const game = useGame();
     const navigate = useNavigate();
     const {t} = useTranslation();
 
+    const [isBusy, setIsBusy] = React.useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
 
     const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
@@ -65,7 +66,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
 
     return (
         <>
-        <Row className="dashboard-list align-items-center pt-1 pb-2 mb-2">
+        <Row className={"dashboard-list align-items-center pt-1 pb-2 mb-2 " + (isBusy ? " disabled" : "")}>
             <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
             <div className="col-3">
                 <b>{name}</b>
@@ -88,14 +89,14 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                     <Pencil size={30} id="editIcon" className="me-1" onClick={()=>{ navigate("/dungeon-configurator", {state: {dungeonId: id}}); }} />
                     <Trash size={30} id="deleteIcon" className="mx-1" onClick={()=>{
                         showConfirmation(t("dashboard.delete_dungeon.confirmation.title"), t("dashboard.delete_dungeon.confirmation.text"),
-                        ()=>{supervisor.deleteDungeon(id, {}, (data)=>{onDelete()}, (error)=>{}); })
+                        ()=>{supervisor.deleteDungeon(id, {}, (data)=>{fetchMyDungeons()}, (error)=>{}); })
                     }} />
                     
                 </div>
                 :
                 <div>
                     <Stop size={30} id="deleteIcon" className="mx-1" onClick={() => 
-                        supervisor.stopDungeon(id, {}, (data) => {alert("Stop")}, (error) => {alert("error")})
+                        supervisor.stopDungeon(id, {}, (data) => {fetchMyDungeons()}, (error) => {alert(error.error)})
                     } />
                 </div>
                 }

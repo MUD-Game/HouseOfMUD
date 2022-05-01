@@ -17,10 +17,12 @@ import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Play, PlayCircle, Trash } from 'react-bootstrap-icons';
 
 export interface AvailableCharactersLiProps {
-    character: CharactersResponseData
+    character: CharactersResponseData;
+    characterAttributes:{characterClass: string, characterGender: string, characterSpecies: string};
+    fetchCharacters: () => void;
 }
 
-const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character }) => {
+const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character, characterAttributes, fetchCharacters }) => {
 
     const { user, token } = useAuth();
     const { dungeon, setCharacterID, setVerifyToken, setCharacter } = useGame();
@@ -30,7 +32,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
 
     const onDelete = () => {
         supervisor.deleteCharacter(dungeon, { _id: character._id }, (data) => {
-            // navigate("/characters");
+            fetchCharacters();
         }, (error) => {
             homosole.error(error.error);
         })
@@ -59,13 +61,13 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
                 <b>{character.name}</b>
             </div>
             <div className="col">
-                {character.characterClass}            
+                {characterAttributes.characterClass}            
             </div>
             <div className="col">
-                {character.characterGender}
+                {characterAttributes.characterGender}
             </div>
             <div className="col">        
-                {character.characterSpecies}
+                {characterAttributes.characterSpecies}
             </div>
             <div className="col text-end">
                 <Trash size={30} id="deleteIcon" className="mx-1" onClick={onDelete} style={{ cursor: "pointer", color: "red" }} />

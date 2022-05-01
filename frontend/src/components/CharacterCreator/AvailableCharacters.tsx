@@ -13,15 +13,17 @@
 
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import {  CharactersResponseData } from '@supervisor/api';
+import {  CharactersResponseData, GetCharacterAttributesResponse } from '@supervisor/api';
 import AvailableCharactersLi from './AvailableCharactersLi';
 import { useTranslation } from 'react-i18next';
 
 export interface AvailableCharactersProps {
     characters: CharactersResponseData[];
+    characterAttributes: GetCharacterAttributesResponse;
+    fetchCharacters: ()=>void;
 }
 
-const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters }) => {
+const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters, characterAttributes, fetchCharacters }) => {
 
     const {t} = useTranslation();
 
@@ -44,7 +46,13 @@ const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters })
                 <div className="col"></div>           
             </Row>
             {characters.map((character, index) => {
-                return <AvailableCharactersLi character={character} key={index} />
+                let resolvedCharacterAttributes = {
+                    characterClass: characterAttributes?.classes?.find(characterClass => characterClass.id === character.characterClass)?.name || "undefined",
+                    characterGender: characterAttributes?.genders?.find(characterGender => characterGender.id === character.characterGender)?.name || "undefined",
+                    characterSpecies: characterAttributes?.species?.find(characterSpecies => characterSpecies.id === character.characterSpecies)?.name || "undefined",
+                }
+                // Resolve right character attributes
+                return <AvailableCharactersLi character={character} characterAttributes={resolvedCharacterAttributes} key={index} fetchCharacters={fetchCharacters} />
             }
             )}
         </>

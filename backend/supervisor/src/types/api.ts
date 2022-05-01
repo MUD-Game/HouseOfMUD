@@ -42,9 +42,7 @@ export interface AuthenticateResponse extends SupervisorResponse {
  * Login to a dungeon via POST: /login/:dungeonId
  * @category Request
  */
-export interface LoginRequest extends SupervisorRequest {
-    character: string;
-}
+export interface LoginRequest extends SupervisorRequest {}
 
 /**
  * @category Response Data

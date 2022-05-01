@@ -12,7 +12,7 @@
 
 
 import React from 'react'
-import { Container, Row } from 'react-bootstrap';
+import { Alert, Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -29,6 +29,7 @@ const Login: React.FC<LoginProps> = (props) => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [password, setPassword] = React.useState("");
     const [username, setUsername] = React.useState("");
+    const [error, setError] = React.useState("");
     const homsole = useMudConsole();
     const {t} = useTranslation();
     let location = useLocation();
@@ -41,7 +42,7 @@ const Login: React.FC<LoginProps> = (props) => {
         auth.login(username, password, () => {
             navigate(from, { replace: true });
         }, (error) => {
-            homsole.error(error);
+            setError(error.toLowerCase());
             setIsLoading(false);
         });
     }
@@ -50,6 +51,12 @@ const Login: React.FC<LoginProps> = (props) => {
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
+                    {error !== "" ? <Alert variant="danger"  dismissible onClose={()=>setError("")}>
+                        <Alert.Heading>{t(`error.${error}.title`)}</Alert.Heading>
+                        <p>
+                            {t(`error.${error}.text`)}
+                        </p>
+                    </Alert> : null}
                     {isLoading ? <Busy/> :
                         <form onSubmit={handleSubmit} autoComplete="new-password">
                         <div className="input-group py-2">
@@ -58,7 +65,7 @@ const Login: React.FC<LoginProps> = (props) => {
                         <div className="input-group pt-2">
                             <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
                         </div>
-                            <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">{t("button.login")}</button> <br />
+                            <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.login")}</button> <br />
                             <span>{t("login.no_account")} <Link to="/register">{t("login.register_here")}</Link></span>
                     </form>
                     }

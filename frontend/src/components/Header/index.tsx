@@ -8,12 +8,14 @@
  */
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
+import { Gear } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import Logo from '../../assets/LogoHOM.png';
+import "./index.css"
 type HeaderProps = {}
 
 const Header: React.FC<HeaderProps> = (props) => {
@@ -34,7 +36,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             {location.pathname!=='/login' && location.pathname!=='/register' ?
                 <Row className="mt-3 align-items-center">
                     <Col className="text-start">
-                        <p className="headline">{auth.user ? <>{t(`header.welcome`)} <Link to="/user-settings"><b>{auth.user}</b></Link></>: null}</p>
+                        <p className="headline">{auth.user ? <>{t(`header.welcome`)} <Link to="/user-settings"><b>{auth.user}<Gear size={15} style={{transform: "translateY(-6px)"}}/></b></Link></>: null}</p>
                     </Col>
                     <Col className="text-end">
                             <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {

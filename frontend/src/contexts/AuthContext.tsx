@@ -53,7 +53,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   let deleteUser = (success: VoidFunction, error: VoidFunction) => {
     supervisor.deleteUser(() => {
-      homosole.log("User gelöscht");
       success();
     }, homosole.supervisorerror)
   }
@@ -61,8 +60,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   let logout = (success: VoidFunction, error: (error:string)=>void) => {
     supervisor.userLogout(() => {
       success();
-    },()=>{
-      error("Logout fehlgeschlagen");
+    },(errorRes)=>{
+      error(errorRes.error);
     });
   };
 

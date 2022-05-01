@@ -8,7 +8,10 @@ import MudInput from 'src/components/Custom/MudInupt';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/MudTypeahead';
 import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
-import { Row } from 'react-bootstrap';
+import { Col, Container, Overlay, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import connectionOpenPng from 'src/assets/connection_open.png';
+import connectionClosedPng from 'src/assets/connection_closed.png';
+import connectionInactivePng from 'src/assets/connection_inactive.png';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -48,9 +51,12 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
     const [width, setWidth] = React.useState(0);
     const [mapSize, setMapSize] = React.useState({ width: 10, height: 5 });
+    const [showOverlay, setShowOverlay] = React.useState(false);
     const widthRef = useRef<any>();
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
+    const overlayRef = useRef<any>();
+
     useEffect(() => {
         setWidth(widthRef.current.clientWidth);
     }, []);
@@ -109,7 +115,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     }
 
     const emptyRoomClickHandler = (e: any) => {
-     addNewRoom(e.target.attrs["data-coordinates"]); 
+        addNewRoom(e.target.attrs["data-coordinates"]);
     }
     const getPossibleEmptyRooms = (rooms: { [key: string]: MudRoom }) => {
         const occupiedCoords = Object.keys(rooms);
@@ -171,133 +177,205 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 });
         }
     }
-
     const { t } = useTranslation();
+    const dt = "room_tooltip";
+    const renderTooltip = (props: any) => (
+        <Tooltip id="help-tooltip" {...props}>
+            <Container>
+                <div>
+                    <h4>{t(`${dt}.title`)}</h4>
+                    <h5>{t(`${dt}.add_room.title`)}</h5>
+                    <p>{t(`${dt}.add_room.text`)}</p>
+                    <h5>{t(`${dt}.edit_room.title`)}</h5>
+                    <p>{t(`${dt}.edit_room.text`)}</p>
+                    <h5>{t(`${dt}.toggle_connections.title`)}</h5>
+                    <p>{t(`${dt}.toggle_connections.text`)}</p>
+                    <Row>
+                        <div className="col-md-3">
+                            <u>{t("dungeon_keys.connections.open")}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={connectionOpenPng} width={100} alt="open" />
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-md-3">
+                            <u>{t("dungeon_keys.connections.closed")}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={connectionClosedPng} width={100} alt="closed" />
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-md-3">
+                            <u>{t("dungeon_keys.connections.inactive")}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={connectionInactivePng} width={100} alt="inactive" />
+                        </div>
+                    </Row>
+                    <br />
+
+                    <h5>{t(`${dt}.navigation.title`)}</h5>
+
+                    <Row>
+                        <div className="col-md-3">
+                            <u>{t(`${dt}.navigation.zoom_in_out`)}:</u>
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <kbd className="light">{t(`${dt}.navigation.ctrl`)}</kbd> + <kbd className="light">{t(`${dt}.navigation.scroll_wheel`)} ↑↓</kbd>
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-md-3">
+                            <u>{t(`${dt}.navigation.drag.title`)}:</u>
+                        </div>
+                        <div className="col-md-9 text-start">
+                            {t(`${dt}.navigation.drag.text`)}
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-md-3">
+                            <u> {t(`${dt}.navigation.refocus`)}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <GeoAlt />
+                        </div>
+                    </Row>
+                </div>
+            </Container>
+            <br/>
+        </Tooltip>
+    );
     const tl = 'dungeon_configurator';
     const [isEdited, setIsEdited] = React.useState(false);
     return (
-      <>
-        <Row className="mt-5">
-            <hr />
-            <div className="col mb-3">
-                <span className="headline">{ t("dungeon_configurator.rooms.title") }</span>
-            </div>
-        </Row>
-        <Row>
-            <div id="konva-buttons-container">
-                    <GeoAlt size={37} id="refocus-button" onClick={() => {
-                stageRef.current.scale({ x: 1, y: 1 });
-                
-                stageRef.current.position({ x: 0, y: 0 });
-            }} />
-            <QuestionCircle id="help-button" size={37} onClick={() => {
-                
-            }} />
-            </div>
-        </Row>
-            <div id="konvacontainer" ref={widthRef}>
-
-            <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width / 1.618} draggable offsetY={-(width / 1.618) / 2} offsetX={-width / 2}>
-                <Layer>
-                    <Group name="connections">
-                        {Object.keys(rooms).map(key => {
-                            const room = rooms[key];
-                            const x = room.xCoordinate;
-                            const y = room.yCoordinate;
-
-                            let xStrokeCol = connectionOpen;
-                            let yStrokeCol = connectionOpen;
-                            switch (room.connections.east) {
-                                case 'open':
-                                    xStrokeCol = connectionOpen;
-                                    break;
-                                case 'inactive':
-                                    xStrokeCol = connectionInactive;
-                                    break;
-                                case 'closed':
-                                    xStrokeCol = connectionClosed;
-                                    break;
-                            }
-                            switch (room.connections.south) {
-                                case 'open':
-                                    yStrokeCol = connectionOpen;
-                                    break;
-                                case 'inactive':
-                                    yStrokeCol = connectionInactive;
-                                    break;
-                                case 'closed':
-                                    yStrokeCol = connectionClosed;
-                                    break;
-                            }
-                            const xStatus = rooms[key].connections.east;
-                            const yStatus = rooms[key].connections.south;
-
-                            const hasSouthRoom = rooms[x + ',' + (y + 1)] !== undefined;
-                            const hasEastRoom = rooms[(x + 1) + ',' + y] !== undefined;
-
-                            return (
-                                <Group key={key + "connections"}>
-                                    {hasEastRoom && <Line points={[x * roomOffset + roomSize + (roomStrokeWidth / 2), y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)]} stroke={xStrokeCol} onClick={(e) => handleConnectionClick(e, [x, y], false)} onTap={(e) => handleConnectionClick(e, [x, y], false)}  strokeWidth={connectionStrokeWidth} data-status={xStatus} />}
-
-                                    {hasSouthRoom && <Line points={[x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + (roomStrokeWidth / 2), x * roomOffset + (roomSize / 2), (y + 1) * roomOffset]} stroke={yStrokeCol} onTap={(e) => handleConnectionClick(e, [x, y], true)} onClick={(e) => handleConnectionClick(e, [x, y], true)} strokeWidth={connectionStrokeWidth} data-status={yStatus} />}
-                                </Group>
-                            )
-                        })}
-                    </Group>
-                    <Group name="emptyRooms">
-                        {getPossibleEmptyRooms(rooms).map((coords: [number, number], index) => {
-                            const [xc, yc] = coords;
-                            const x = xc * roomOffset;
-                            const y = yc * roomOffset;
-                            return (
-                                <Rect key={index + "-empty"}
-                                    onClick={emptyRoomClickHandler}
-                                    onTap={emptyRoomClickHandler}
-                                    data-coordinates={coords}
-                                    x={x}
-                                    y={y}
-                                    width={roomSize}
-                                    height={roomSize}
-                                    fill={fillInactive}
-                                    stroke={strokeInactive}
-                                    strokeWidth={roomStrokeWidth}
-                                />
-                            )
-                        })}
-                    </Group>
-                    <Group name="rooms" ref={roomRefs}>
-                        {Object.keys(rooms).map((roomkey, index) => {
-                            const room = rooms[roomkey];
-                            let fillColor = room.id === "0,0" ? fillStart : fillActive;
-                            let strokeColor = room.id === "0,0" ? strokeStart : strokeActive;
-                            if ([room.xCoordinate, room.yCoordinate].toString() === currentRoom.id.toString()) {
-                                fillColor = room.id === "0,0" ? fillStartSelected : fillActiveSelected;
-                                strokeColor = room.id === "0,0" ? strokeStartSelected : strokeSelected;
-                            }
-                            let x = room.xCoordinate * roomOffset;
-                            let y = room.yCoordinate * roomOffset;
-                            let fill = room.id === "0,0" ? fillStart : fillActive;
-                            let stroke = room.id === "0,0" ? strokeStart : strokeActive;
-                            let name = room.name;
-                            return (
-                                <Rect onClick={roomClickHandler} onTap={roomClickHandler} key={room.id}
-                                    x={x}
-                                    y={y}
-                                    data-coordinates={[room.xCoordinate, room.yCoordinate]}
-                                    width={roomSize}
-                                    height={roomSize}
-                                    fill={fill}
-                                    strokeWidth={roomStrokeWidth}
-                                    name={name}
-                                    stroke={stroke}
-                                />
-
-                            )
-                        })}
-                    </Group>
-                </Layer>
-            </Stage>
+        <>
+            <Row className="mt-5">
+                <hr />
+                <div className="col mb-3">
+                    <span className="headline">{t("dungeon_configurator.rooms.title")}</span>
                 </div>
+            </Row>
+            <Row>
+                <div id="konva-buttons-container">
+                    <GeoAlt size={37} id="refocus-button" onClick={() => {
+                        stageRef.current.scale({ x: 1, y: 1 });
+                        stageRef.current.position({ x: 0, y: 0 });
+                    }} />
+                    <OverlayTrigger
+                        placement="left"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={renderTooltip}
+                    >
+                        <QuestionCircle id="help-button" size={37} onClick={() => {
+                        }} />
+                    </OverlayTrigger>
+
+                </div>
+            </Row>
+            <div id="konvacontainer" ref={widthRef}>
+                <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width / 1.618} draggable offsetY={-(width / 1.618) / 2} offsetX={-width / 2}>
+                    <Layer>
+                        <Group name="connections">
+                            {Object.keys(rooms).map(key => {
+                                const room = rooms[key];
+                                const x = room.xCoordinate;
+                                const y = room.yCoordinate;
+
+                                let xStrokeCol = connectionOpen;
+                                let yStrokeCol = connectionOpen;
+                                switch (room.connections.east) {
+                                    case 'open':
+                                        xStrokeCol = connectionOpen;
+                                        break;
+                                    case 'inactive':
+                                        xStrokeCol = connectionInactive;
+                                        break;
+                                    case 'closed':
+                                        xStrokeCol = connectionClosed;
+                                        break;
+                                }
+                                switch (room.connections.south) {
+                                    case 'open':
+                                        yStrokeCol = connectionOpen;
+                                        break;
+                                    case 'inactive':
+                                        yStrokeCol = connectionInactive;
+                                        break;
+                                    case 'closed':
+                                        yStrokeCol = connectionClosed;
+                                        break;
+                                }
+                                const xStatus = rooms[key].connections.east;
+                                const yStatus = rooms[key].connections.south;
+
+                                const hasSouthRoom = rooms[x + ',' + (y + 1)] !== undefined;
+                                const hasEastRoom = rooms[(x + 1) + ',' + y] !== undefined;
+
+                                return (
+                                    <Group key={key + "connections"}>
+                                        {hasEastRoom && <Line points={[x * roomOffset + roomSize + (roomStrokeWidth / 2), y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)]} stroke={xStrokeCol} onClick={(e) => handleConnectionClick(e, [x, y], false)} onTap={(e) => handleConnectionClick(e, [x, y], false)} strokeWidth={connectionStrokeWidth} data-status={xStatus} />}
+
+                                        {hasSouthRoom && <Line points={[x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + (roomStrokeWidth / 2), x * roomOffset + (roomSize / 2), (y + 1) * roomOffset]} stroke={yStrokeCol} onTap={(e) => handleConnectionClick(e, [x, y], true)} onClick={(e) => handleConnectionClick(e, [x, y], true)} strokeWidth={connectionStrokeWidth} data-status={yStatus} />}
+                                    </Group>
+                                )
+                            })}
+                        </Group>
+                        <Group name="emptyRooms">
+                            {getPossibleEmptyRooms(rooms).map((coords: [number, number], index) => {
+                                const [xc, yc] = coords;
+                                const x = xc * roomOffset;
+                                const y = yc * roomOffset;
+                                return (
+                                    <Rect key={index + "-empty"}
+                                        onClick={emptyRoomClickHandler}
+                                        onTap={emptyRoomClickHandler}
+                                        data-coordinates={coords}
+                                        x={x}
+                                        y={y}
+                                        width={roomSize}
+                                        height={roomSize}
+                                        fill={fillInactive}
+                                        stroke={strokeInactive}
+                                        strokeWidth={roomStrokeWidth}
+                                    />
+                                )
+                            })}
+                        </Group>
+                        <Group name="rooms" ref={roomRefs}>
+                            {Object.keys(rooms).map((roomkey, index) => {
+                                const room = rooms[roomkey];
+                                let fillColor = room.id === "0,0" ? fillStart : fillActive;
+                                let strokeColor = room.id === "0,0" ? strokeStart : strokeActive;
+                                if ([room.xCoordinate, room.yCoordinate].toString() === currentRoom.id.toString()) {
+                                    fillColor = room.id === "0,0" ? fillStartSelected : fillActiveSelected;
+                                    strokeColor = room.id === "0,0" ? strokeStartSelected : strokeSelected;
+                                }
+                                let x = room.xCoordinate * roomOffset;
+                                let y = room.yCoordinate * roomOffset;
+                                let fill = room.id === "0,0" ? fillStart : fillActive;
+                                let stroke = room.id === "0,0" ? strokeStart : strokeActive;
+                                let name = room.name;
+                                return (
+                                    <Rect onClick={roomClickHandler} onTap={roomClickHandler} key={room.id}
+                                        x={x}
+                                        y={y}
+                                        data-coordinates={[room.xCoordinate, room.yCoordinate]}
+                                        width={roomSize}
+                                        height={roomSize}
+                                        fill={fill}
+                                        strokeWidth={roomStrokeWidth}
+                                        name={name}
+                                        stroke={stroke}
+                                    />
+
+                                )
+                            })}
+                        </Group>
+                    </Layer>
+                </Stage>
+            </div>
 
             <form onSubmit={submitEditDungeon} onChange={() => {
                 if (!isEdited) {

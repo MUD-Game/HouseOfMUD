@@ -100,7 +100,7 @@ const TestRoomNorth: Room = new RoomImpl(
     new ConnectionInfoImpl('inactive', 'open'),
     [TestAction.id],
     2,
-    3
+    1
 );
 const TestRoomEast: Room = new RoomImpl(
     '3',
@@ -122,7 +122,7 @@ const TestRoomSouth: Room = new RoomImpl(
     new ConnectionInfoImpl('inactive', 'inactive'),
     [TestAction.id],
     2,
-    1
+    3
 );
 const TestRoomWest: Room = new RoomImpl(
     '5',
@@ -144,7 +144,7 @@ const TestRoomNorthNorth: Room = new RoomImpl(
     new ConnectionInfoImpl('inactive', 'closed'),
     [TestAction.id],
     2,
-    4
+    0
 );
 const TestRoomNorthEast: Room = new RoomImpl(
     '7',
@@ -155,7 +155,7 @@ const TestRoomNorthEast: Room = new RoomImpl(
     new ConnectionInfoImpl('inactive', 'inactive'),
     [TestAction.id],
     3,
-    4
+    1
 );
 const TestCharacter: Character = new CharacterImpl(
     '1',

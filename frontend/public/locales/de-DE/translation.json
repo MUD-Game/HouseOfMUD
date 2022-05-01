@@ -75,7 +75,7 @@
     },
     "character_creator":{
         "pick_character": "Charakter auswählen",
-        "create_and_join": "Erstellen und Beitreten",
+        "create": "Charakter Erstellen",
         "new_character": "Neuen Charakter anlegen"
     },
     "user_settings": {

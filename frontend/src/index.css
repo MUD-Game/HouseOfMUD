@@ -123,7 +123,7 @@ a:hover {
 .btn {
   border-color: var(--accent);
 }
-.btn:hover {
+.btn:hover, .btn:focus {
   border-color: var(--accent);
 }
 
@@ -131,7 +131,8 @@ a:hover {
   width: 100%;
   color: var(--textcolor);
 }
-.btn-standard:hover {
+.btn-standard:hover,
+.btn-standard:focus {
   color: var(--textcolor);
   background-color: var(--accentlight);
 }
@@ -140,7 +141,7 @@ a:hover {
   color: white;
   background-color: var(--lightgreen);
 }
-.btn-green:hover {
+.btn-green:hover,.btn-green:focus {
   color: white;
   background-color: var(--green);
 }
@@ -149,7 +150,8 @@ a:hover {
   color: white;
   background-color: var(--lightred);
 }
-.btn-red:hover {
+
+.btn-red:hover, .btn-red:focus {
   color: white;
   background-color: var(--red);
 }

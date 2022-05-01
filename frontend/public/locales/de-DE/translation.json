@@ -10,7 +10,7 @@
             "text": "Mit einem Klick auf einen Raum wird dieser ausgewählt und kann im Formular darunter mit Leben befüllt werden"
         },
         "toggle_connections": {
-            "title": "Verbindungen zwsischen Räumen anpassen",
+            "title": "Verbindungen zwischen Räumen anpassen",
             "text": "Beim Erstellen werden verbindungen zwischen den Räumen automatisch erstellt. Diese Verbindungen können mit einem Klick geöffnet, geschlossen und deaktiviert werden."
         },
         "navigation":{
@@ -21,7 +21,8 @@
             "drag": {
                 "title": "Bewegen",
                 "text": "Die Map wird per Drag and Drop mit der Maus bewegt"
-            }
+            },
+            "refocus": "Position und Zoom zurücksetzen"
         }
     },
     "dashboard": {
@@ -78,6 +79,9 @@
         "new_character": "Neuen Charakter anlegen"
     },
     "user_settings": {
+        "title": "Benutzereinstellungen",
+        "profile": "Profil",
+        "account": "Account",
         "delete_user": {
             "button": "Benutzer löschen",
             "confirmation": {

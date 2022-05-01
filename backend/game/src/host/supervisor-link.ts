@@ -73,10 +73,10 @@ export class SupervisorLink {
             if (data.user !== undefined && data.dungeon !== undefined && data.character !== undefined && data.verifyToken !== undefined) {
                 let userID = data.user;
                 let dungeonID = data.dungeon;
-                let characterID = data.character;
+                let character = data.character;
                 let verifyToken = data.verifyToken;
 
-                this.forkHandler.setCharacterToken(userID, dungeonID, characterID, verifyToken);
+                this.forkHandler.setCharacterToken(userID, dungeonID, character, verifyToken);
             }
         });
 

@@ -21,7 +21,7 @@ export interface Dungeon {
   characterSpecies: {[id: string]: CharacterSpecies};
   characterClasses: {[id: string]: CharacterClass};
   characterGenders: {[id: string]: CharacterGender};
-  characters: {[id: string]: Character};
+  characters: {[name: string]: Character};
   rooms: {[id: string]: Room};
   blacklist: string[];
   actions: {[id: string]: ActionElement};
@@ -38,8 +38,7 @@ export interface Dungeon {
   getSpecies(speciesName: string): CharacterSpecies
   getClass(className: string): CharacterClass
   getGender(genderName: string): CharacterGender
-  getCharacter(characterId: string): Character
-  getCharacterByName(characterName: string): Character
+  getCharacter(characterName: string): Character
   getRoom(roomId: string): Room
   getRoomByCoordinates(x: number, y: number): Room
   getNorthernRoom(initialRoom: Room): Room
@@ -66,7 +65,7 @@ export class DungeonImpl implements Dungeon {
   characterSpecies: {[id: string]: CharacterSpecies};
   characterClasses: {[id: string]: CharacterClass};
   characterGenders: {[id: string]: CharacterGender};
-  characters: {[id: string]: Character};
+  characters: {[name: string]: Character};
   rooms: {[id: string]: Room};
   blacklist: string[];
   actions: {[id: string]: ActionElement};
@@ -128,21 +127,12 @@ export class DungeonImpl implements Dungeon {
     }
   }
 
-  getCharacter(characterId: string): Character {
-    let character: Character = this.characters[characterId]
+  getCharacter(characterName: string): Character {
+    let character: Character = this.characters[characterName]
     if (character === undefined) {
       throw new Error("Character does not exist");
     } else {
       return character
-    }
-  }
-
-  getCharacterByName(characterName: string): Character {
-    let character: Character | undefined = Object.values(this.characters).find(character => character.getName() === characterName)
-    if (character === undefined) {
-      throw new Error("Character does not exist");
-    } else {
-      return character;
     }
   }
 
@@ -167,7 +157,7 @@ export class DungeonImpl implements Dungeon {
   getNorthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
-      initialRoom.yCoordinate + 1
+      initialRoom.yCoordinate - 1
     );
   }
 
@@ -181,7 +171,7 @@ export class DungeonImpl implements Dungeon {
   getSouthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
-      initialRoom.yCoordinate - 1
+      initialRoom.yCoordinate + 1
     );
   }
 
@@ -264,7 +254,7 @@ export class DungeonImpl implements Dungeon {
     this.characterSpecies = arrayToMap(species);
     this.characterClasses = arrayToMap(classes);
     this.characterGenders = arrayToMap(genders);
-    this.characters = arrayToMap(characters);
+    this.characters = arrayToMapCharacters(characters);
     this.rooms = arrayToMap(rooms);
     this.blacklist = blacklist;
     this.actions = arrayToMap(actions);
@@ -278,6 +268,15 @@ function arrayToMap(array: any[]): any {
   array.forEach((obj: any) => {
       //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
       map[obj.id] = obj;
+  });
+  return map;
+}
+
+function arrayToMapCharacters(array: any[]): any {
+  let map: {[name: string]: any} = {};
+  array.forEach((obj: any) => {
+      //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
+      map[obj.name] = obj;
   });
   return map;
 }

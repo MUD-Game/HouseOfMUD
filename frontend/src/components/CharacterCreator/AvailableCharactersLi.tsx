@@ -25,7 +25,7 @@ export interface AvailableCharactersLiProps {
 const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character, characterAttributes, fetchCharacters }) => {
 
     const { user, token } = useAuth();
-    const { dungeon, setCharacterID, setVerifyToken, setCharacter } = useGame();
+    const { dungeon, setVerifyToken, setCharacter } = useGame();
     const navigate = useNavigate();
 
     const homosole = useMudConsole();
@@ -45,7 +45,6 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
         }
 
         supervisor.login(dungeon, body, (data) => {
-            setCharacterID(character.id);
             setCharacter(character.name);
             setVerifyToken(data.verifyToken);
             navigate("/game");

@@ -23,7 +23,7 @@ const dungeonID = process.argv[2];
 
 interface Tokens {
     [userID: string]: {
-        [characterID: string]: string;
+        [character: string]: string;
     };
 }
 
@@ -68,14 +68,14 @@ function handleHostMessages(dungeonController: DungeonController) {
         switch (action) {
             case 'setCharacterToken':
                 let userID = data.user;
-                let characterID = data.character;
+                let character = data.character;
                 let verifyToken = data.verifyToken;
 
                 if (!(userID in userTokens)) {
                     userTokens[userID] = {};
                 }
 
-                userTokens[userID][characterID] = verifyToken;
+                userTokens[userID][character] = verifyToken;
                 break;
             case 'stop':
                 // TODO: save Dungeon to database and stop process
@@ -179,8 +179,8 @@ function getDungeon(dungeonID: string): Dungeon {
     );
     const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
     const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
-        'active',
-        'active'
+        'open',
+        'open'
     );
     const TestAction: ActionElement = new ActionElementImpl(
         '1',
@@ -207,7 +207,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Der Raum im Norden',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfoImpl('inactive', 'active'),
+        new ConnectionInfoImpl('inactive', 'open'),
         [TestAction.id],
         2,
         3
@@ -240,7 +240,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Der Raum im Westen',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfoImpl('active', 'inactive'),
+        new ConnectionInfoImpl('open', 'inactive'),
         [TestAction.id],
         1,
         2

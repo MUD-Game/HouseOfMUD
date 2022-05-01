@@ -33,7 +33,7 @@ var payloadTemplate = {
 
 function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const { characterID, dungeon, verifyToken } = useGame();
+  const { character, dungeon, verifyToken } = useGame();
   
   let chatSubscriber: (message: string) => void = () => { };
 
@@ -97,7 +97,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
     payloadTemplate = {
       user: user,
-      character: characterID,
+      character: character,
       verifyToken: verifyToken,
     }
 
@@ -108,7 +108,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       data: {}
     };
     rabbit.onConnect = () => {
-      rabbit.subscribe(`/queue/${dungeon}-${characterID}`, (message: IMessage) => {
+      rabbit.subscribe(`/queue/${dungeon}-${character}`, (message: IMessage) => {
         processAction(message);
       }, { "auto-delete": "true" });
       setTimeout(() => {

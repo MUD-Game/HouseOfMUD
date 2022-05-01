@@ -25,23 +25,21 @@ export class PrivateMessageAction implements Action {
         args.shift()
         let messageBody: string = args.join(' ')
         try {
-            let recipientCharacter: Character = dungeon.getCharacterByName(recipientCharacterName)
-            let recipientCharacterId: string = recipientCharacter.getId()
+            let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
             if (user === '0') {
                 let responseMessage: string = `[privat] ${actionMessages.dmWhisper} -> ${recipientCharacterName}: ${messageBody}`
                 amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-                amqpAdapter.sendToClient(recipientCharacterId, {action: "message", data: {message: responseMessage}})
+                amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})
             } else {
                 let senderCharacter: Character = dungeon.getCharacter(user)
                 let senderCharacterName: string = senderCharacter.getName()
                 let roomId: string = senderCharacter.getPosition()
                 let room: Room = dungeon.getRoom(roomId)
-                let recipientCharacter: Character = dungeon.getCharacterByName(recipientCharacterName)
                 let recipientCharacterRoomId: string = recipientCharacter.getPosition()
                 if (recipientCharacterRoomId === room.getId()) {
                     let responseMessage: string = `[privat] ${senderCharacterName} -> ${recipientCharacterName}: ${messageBody}`
                     amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-                    amqpAdapter.sendToClient(recipientCharacterId, {action: "message", data: {message: responseMessage}})
+                    amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})
                 } else {
                     amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ${actionMessages.whisperCharacterNotInSameRoom}`}})
                 }

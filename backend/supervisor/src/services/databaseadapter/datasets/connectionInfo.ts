@@ -1,8 +1,8 @@
 export class ConnectionInfo {
-  east: "inactive" | "active" | "closed";
-  south: "inactive" | "active" | "closed";
+  east: "inactive" | "open" | "closed";
+  south: "inactive" | "open" | "closed";
 
-  constructor(east: "inactive" | "active" | "closed", south: "inactive" | "active" | "closed") {
+  constructor(east: "inactive" | "open" | "closed", south: "inactive" | "open" | "closed") {
     this.east = east;
     this.south = south;
   }

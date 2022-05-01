@@ -96,7 +96,7 @@ export class DatabaseAdapter {
         return {
             name: foundDungeon.name,
             description: foundDungeon.description,
-            creatorId: foundDungeon.description,
+            creatorId: foundDungeon.creatorId,
             masterId: foundDungeon.masterId,
             maxPlayers: foundDungeon.maxPlayers,
             blacklist: foundDungeon.blacklist,
@@ -238,12 +238,12 @@ export class DatabaseAdapter {
      * @param dungeonId the id of the dungeon dungeon in which the character should exist
      * @returns true if the character could be found inside the dungeon, false if not
      */
-    async characterExistsInDungeon(characterId: string, dungeonId: string) {
+    async characterExistsInDungeon(characterName: string, dungeonId: string) {
         var foundFlag = false
         const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
         const foundCharacters = (await foundDungeon!.populate('characters')).characters
-        foundCharacters.forEach((char: { id: string; }) => {
-            if (char.id == characterId) {
+        foundCharacters.forEach((char: { name: string; }) => {
+            if (char.name == characterName) {
                 foundFlag = true
             }
         })
@@ -297,13 +297,11 @@ export class DatabaseAdapter {
         if (foundDungeon == undefined) {
             return undefined
         }
-        const data = {
+        return {
             classes: (await foundDungeon.populate('characterClasses')).characterClasses,
             species: (await foundDungeon.populate('characterSpecies')).characterSpecies,
             genders: (await foundDungeon.populate('characterGenders')).characterGenders,
         }
-        return data;
-
     }
 
     /**

@@ -20,7 +20,6 @@ export class LookAction implements Action {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let dungeonId: string = dungeon.getId()
         let senderCharacter: Character = dungeon.getCharacter(user)
-        let senderCharacterId: string = senderCharacter.getId()
         let roomId: string = senderCharacter.getPosition()
         let room: Room = dungeon.getRoom(roomId)
         let roomName: string = room.getName()

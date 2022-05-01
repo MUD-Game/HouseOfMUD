@@ -96,18 +96,18 @@ export class API {
         // TODO: Create actual authentication
         // platform authentication
         app.post('/auth/login', this.authProvider.auth ,  (req, res) => {
-            res.json({ok:1});
+            res.status(200).json({ok:1});
         });
 
         app.delete('/auth/delete', this.authProvider.auth, this.authProvider.deleteUser, (req, res) => {
-            res.json({ok:1});
+            res.status(200).json({ok:1});
         });
 
         app.post('/auth/logout', this.authProvider.auth, this.authProvider.logout);
 
         // login to dungeon
         app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
-            res.json({ok:1, verifyToken: this.generateVerifyToken()});
+            res.status(200).json({ok:1, verifyToken: this.generateVerifyToken()});
             // let dungeonID: string = req.params.dungeonID;
             // let body: any = req.body;
             // if (body.user !== undefined && body.character !== undefined && body.authToken !== undefined) {
@@ -135,15 +135,15 @@ export class API {
             if (this.hostLink.dungeonExists(dungeonID)) {
                 try {
                     if (await this.hostLink.startDungeon(dungeonID)) {
-                        res.json({ ok: 1 });
+                        res.status(200).json({ ok: 1 });
                     } else {
-                        res.json({ ok: 0, error: 'Dungeon could not be created' });
+                        res.status(500).json({ ok: 0, error: 'internal' });
                     }
                 } catch (err) {
-                    res.json({ ok: 0, error: 'Something went wrong' });
+                    res.status(500).json({ ok: 0, error: 'internal' });
                 }
             } else {
-                res.json({ ok: 0, error: 'Dungeon does not exists' });
+                res.status(400).json({ ok: 0, error: 'internal' });
             }
         });
 
@@ -153,21 +153,21 @@ export class API {
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
                 this.hostLink.stopDungeon(dungeonID);
-                res.json({ ok: 1 });
+                res.status(200).json({ ok: 1 });
             } else {
-                res.json({ ok: 0, error: 'Dungeon does not exists' });
+                res.status(400).json({ ok: 0, error: 'dontexist' });
             }
         });
 
         // get dungeons
         app.get('/dungeons', this.authProvider.auth, (req, res) => {
-            res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons() });
         });
 
         // get my dungeons
         app.get('/myDungeons', this.authProvider.auth, async (req, res) => {
             let userID = req.cookies.userID; // TODO: get myDungeons based on user   
-            res.json({ ok: 1, dungeons: this.hostLink.getDungeons(userID) });
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons(userID) });
         });
 
         // create dungeon
@@ -181,12 +181,12 @@ export class API {
                 dungeonData.creatorId = userID;
                 this.dba.storeDungeon(dungeonData).then(dungeon => {
                     this.hostLink.addDungeon(dungeon._id.toString(), dungeonData);
-                    res.json({ ok: 1, dungeonID: dungeon._id.toString() });
+                    res.status(200).json({ ok: 1, dungeonID: dungeon._id.toString() });
                 }).catch(err => {
-                    res.json({ ok: 0, error: err });
+                    res.status(500).json({ ok: 0, error: err.message });
                 });
             }else{
-                res.json({ok : 0});
+                res.status(400).json({ok : 0, error: 'parameters'});
             }
         });
 
@@ -195,12 +195,12 @@ export class API {
             let dungeonID: string = req.params.dungeonID;
             if(dungeonID){
                 this.dba.getDungeon(dungeonID).then(dungeon => {
-                    res.json({ ok: 1, dungeon: dungeon });
+                    res.status(200).json({ ok: 1, dungeon: dungeon });
                 }).catch(err => {
-                    res.json({ ok: 0, error: err });
+                    res.status(500).json({ ok: 0, error: err.message });
                 });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 
@@ -210,7 +210,7 @@ export class API {
             let body: any = req.body;
             const {user, userID} = req.cookies;
             if(userID && !this.hostLink.isDungeonCreator(dungeonID, userID)){
-                res.json({ ok: 0, error: 'You cannot Edit this Dungeon!' });
+                res.status(401).json({ ok: 0, error: 'notcreator' });
             }else{
 
                 if (body.dungeonData !== undefined) {
@@ -220,17 +220,17 @@ export class API {
                         if(newDungeon){
                             this.hostLink.deleteDungeon(dungeonID);
                             this.hostLink.addDungeon(newDungeon._id.toString(), newDungeon); // DONT YOU DARE, TOUCH THIS LINE
-                            res.json({ ok: 1, dungeonID: newDungeon._id.toString() });
+                            res.status(200).json({ ok: 1, dungeonID: newDungeon._id.toString() });
                         }else{
-                            res.json({ ok: 0, error: 'Dungeon could not be updated' });
+                            res.status(500).json({ ok: 0, error: 'internal' });
                         }
 
                     }).catch(err => {
-                        res.json({ ok: 0, error: err.message });
+                        res.status(500).json({ ok: 0, error: err.message });
                     });
                 }
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                    res.status(200).json({ ok: 0, error: 'parameters' });
             }
         }
         });
@@ -243,15 +243,15 @@ export class API {
                 if(this.hostLink.isDungeonCreator(dungeonID, userID)){
                     this.hostLink.deleteDungeon(dungeonID);
                     this.dba.deleteDungeon(dungeonID).then(() => {
-                        res.json({ ok: 1 });
+                        res.status(200).json({ ok: 1 });
                     }).catch(err => {
-                        res.json({ ok: 0, error: err.message });
+                        res.status(500).json({ ok: 0, error: err.message });
                     });
                 }else{
-                    res.json({ ok: 0, error: 'You cannot delete this Dungeon!' });
+                    res.status(401).json({ ok: 0, error: 'notcreator' });
                 }
             }else{
-               res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 
@@ -259,10 +259,15 @@ export class API {
         app.get('/character/attributes/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let user = req.cookies.user!; // Cant be undefined because of auth middleware
-            res.json({
-                ok: 1,
-                ...await this.dba.getDungeonCharacterAttributes(dungeonID)
-            })
+            this.dba.getDungeonCharacterAttributes(dungeonID).then(attributes => {
+                res.status(200).json({
+                    ok: 1,
+                    ...attributes
+                })
+            }).catch(err => {
+                res.status(500).json({ ok: 0, error: err.message });
+            });
+            
         });
 
         // get user-characters for dungeon
@@ -271,9 +276,9 @@ export class API {
             const userID = req.cookies.userID; // Cant be undefined because of auth middleware
             //TODO: Get user-characters for dungeon
             this.dba.getAllCharactersFromUserInDungeon(userID!, dungeonID).then(characters => {
-                res.json({ ok: 1, characters: characters });
+                res.status(200).json({ ok: 1, characters: characters });
             }).catch(err => {
-                res.json({ ok: 0, error: err });
+                res.status(500).json({ ok: 0, error: err.message });
             })
         });
 
@@ -287,12 +292,12 @@ export class API {
                 characterData.userId = userID;
                 characterData.name = characterData.name;
                 this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
-                    res.json({ ok: 1, character: character });
+                    res.status(200).json({ ok: 1, character: character });
                 }).catch(err => {
-                    res.json({ ok: 0, error: err });
+                    res.status(500).json({ ok: 0, error: err.message });
                 });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 
@@ -303,9 +308,9 @@ export class API {
             if (body._id !== undefined) {
                 let characterID: any = body._id;
                 this.dba.deleteCharacter(characterID);
-                res.json({ ok: 1});
+                res.status(200).json({ ok: 1});
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
     }

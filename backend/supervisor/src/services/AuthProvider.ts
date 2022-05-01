@@ -122,13 +122,13 @@ export default class AuthProvider {
             } else {
                 res.status(400).send({
                     ok: 0,
-                    error: "invalid_token"
+                    error: "invalidtoken"
                 });
             }
         } else {
             res.status(400).send({
                 ok: 0,
-                error: "missing_token"
+                error: "missingtoken"
             });
         }
     }

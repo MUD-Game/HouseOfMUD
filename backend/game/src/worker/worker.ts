@@ -23,7 +23,7 @@ const dungeonID = process.argv[2];
 
 interface Tokens {
     [userID: string]: {
-        [characterID: string]: string;
+        [character: string]: string;
     };
 }
 
@@ -68,14 +68,14 @@ function handleHostMessages(dungeonController: DungeonController) {
         switch (action) {
             case 'setCharacterToken':
                 let userID = data.user;
-                let characterID = data.character;
+                let character = data.character;
                 let verifyToken = data.verifyToken;
 
                 if (!(userID in userTokens)) {
                     userTokens[userID] = {};
                 }
 
-                userTokens[userID][characterID] = verifyToken;
+                userTokens[userID][character] = verifyToken;
                 break;
             case 'stop':
                 // TODO: save Dungeon to database and stop process

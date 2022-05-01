@@ -49,10 +49,10 @@ export class ForkHandler {
         return Object.keys(this.dungeonWorker).map((dungeon: string) => { return { dungeonID: dungeon, currentPlayers: this.dungeonWorker[dungeon].currentPlayers }});
     }
 
-    public setCharacterToken(dungeon: string, userID: string, characterID: string, verifyToken: string): void {
+    public setCharacterToken(dungeon: string, userID: string, character: string, verifyToken: string): void {
         this.sendToWorker(dungeon, 'setCharacterToken', {
             user: userID,
-            character: characterID,
+            character: character,
             verifyToken: verifyToken
         });
     }

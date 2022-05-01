@@ -6,7 +6,6 @@ import i18next from 'i18next';
 
 i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
     fallbackLng: 'de-DE',
-    debug: true,
     detection: {
         order: ['cookie', 'queryString' , 'navigator', 'htmlTag', 'path', 'subdomain']
     },
@@ -16,9 +15,12 @@ i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
 });
 
 i18n.on('languageChanged', (lng: string) => {
-    document.cookie = `i18next=${lng}; path=/`;
-    if (i18next.services.languageDetector) {
-        console.log('languageChanged', lng);
+    // Set language cookie to de-DE if not exist
+    if (!document.cookie.includes('i18next')) {
+        document.cookie = `i18next=de-DE; path=/`;
+        i18next.services.languageDetector.cacheUserLanguage("de-DE");
+    }else{
+        document.cookie = `i18next=${lng}; path=/`;
         i18next.services.languageDetector.cacheUserLanguage(lng);
     }
 });

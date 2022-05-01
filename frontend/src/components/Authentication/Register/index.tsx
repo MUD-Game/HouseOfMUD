@@ -12,7 +12,7 @@
 
 
 import React from 'react'
-import { Container, Row } from 'react-bootstrap';
+import { Alert, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
@@ -26,9 +26,11 @@ interface LocationState {
 }
 const Register: React.FC<RegisterProps> = (props) => {
     const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState("");
+    const [info, setInfo] = React.useState("");
     let navigate = useNavigate();
     let auth = useAuth();
-    const homsole = useMudConsole();
+    
     const {t} = useTranslation();
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -39,11 +41,12 @@ const Register: React.FC<RegisterProps> = (props) => {
         let email = formData.get("email") as string;
         let password = formData.get("password") as string;
         auth.register(email, username, password, () => {
-            homsole.log("Erfolgreich registriert! Bitte bestätige deine Email-Adresse.");
-            navigate('/login');
-        }, () => {
             setIsLoading(false);
-            homsole.error("Fehler beim Registrieren! Versuchen Sie es erneut");
+            setInfo("verifyemail");
+        }, (err) => {
+            console.log(err);
+            setIsLoading(false);
+            setError(err.toLowerCase());
         });
     }
 
@@ -52,6 +55,18 @@ const Register: React.FC<RegisterProps> = (props) => {
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
+                {error !== "" ? <Alert variant="danger" dismissible onClose={() => setError("")}>
+                    <Alert.Heading>{t(`error.${error}.title`)}</Alert.Heading>
+                    <p>
+                        {t(`error.${error}.text`)}
+                    </p>
+                </Alert> : null}
+                {info !== "" ? <Alert variant="primary" dismissible onClose={() => setInfo("")}>
+                    <Alert.Heading>{t(`info.${info}.title`)}</Alert.Heading>
+                    <p>
+                        {t(`info.${info}.text`)}
+                    </p>
+                </Alert> : null}
                 {isLoading ? <Busy/> : 
                     <form onSubmit={handleSubmit}>
                         <div className="input-group py-2">

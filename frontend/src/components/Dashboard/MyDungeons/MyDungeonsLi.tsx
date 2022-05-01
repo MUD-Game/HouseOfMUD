@@ -8,8 +8,6 @@
  * ```
  */
 
-
-import { t } from "i18next";
 import React from "react"
 import { Row } from "react-bootstrap";
 import { CloudCheck, CloudSlash, Lock, Pencil, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";

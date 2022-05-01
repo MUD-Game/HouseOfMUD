@@ -44,5 +44,11 @@
 }
 
 canvas {
-    outline: 2px solid var(--accent);
+    border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
+    outline: var(--accent) solid 4px ;
+}
+
+/* RoomCanavas styling */
+.konvajs-content, canvas {
+    width: 100% !important;
 }

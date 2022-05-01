@@ -71,6 +71,7 @@
     },
     "dungeon_configurator":{
         "rooms":{
+            "title": "Räume",
             "create_room": "Neuen Raum anlegen",
             "save_room": "Raum speichern",
             "delete_room": "Raum löschen"

@@ -196,8 +196,24 @@
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch."
         },
+        "exists":{
+            "user": {
+                "title": "Ungültiger Nutzernamen",
+                "text": "Bitte wähle einen anderen Benutzernamen, dieser wird schon verwendet"
+            },
+            "email": {
+                "title": "Ungültige E-Mail-Adresse",
+                "text": "Diese E-Mail Adresse wird schon verwendet"
+            }
+        },
         "logout_failed": "Logout fehlgeschlagen",
         "login_failed": "Login fehlgeschlagen",
         "register_failed": "Registrierung fehlgeschlagen"
+    },
+    "info":{
+        "verifyemail":{
+            "title": "Registrierung erfolgreich",
+            "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst."
+        }
     }
 }

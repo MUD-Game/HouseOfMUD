@@ -35,7 +35,7 @@ const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: 
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            error({ok:0, error: errorText});
+            error({ ok: 0, error: xhr.responseJSON.error });
         }
     });
 }
@@ -59,7 +59,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            error({ ok: 0, error: errorThrown });
+            error({ ok: 0, error: xhr.responseJSON.error });
         }
     });
 }

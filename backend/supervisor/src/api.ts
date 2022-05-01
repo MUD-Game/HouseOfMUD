@@ -5,14 +5,12 @@ import { HostLink } from './host-link';
 import { TLS } from './types/tls';
 import * as comm from './types/api';
 import { GetDungeonResponse } from './types/api';
-import { mockauth, mockresponse } from './mock/api';
-import authProvider from './services/auth-provider';
-import auth from './middlewares/auth';
+import AuthProvider from './services/AuthProvider';
 import bodyParser from 'body-parser';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
-import { Dungeon } from './services/databaseadapter/datasets/dungeon';
-
-// import {DatabaseAdapter} from '@database/databaseAdapter';
+import crypto, { Hmac } from 'crypto';
+import nodemailer from 'nodemailer'
+import { CharacterDataset } from './services/databaseadapter/datasets/characterDataset';
 
 /**
  * client http-API
@@ -25,20 +23,20 @@ export class API {
     private tls: TLS;
     private hostLink: HostLink;
     private dba: DatabaseAdapter;
-
+    private authProvider:AuthProvider;
     /**
      * @param port api port 
      * @param tls TLS object
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any, cookiehost: string) {
         this.origin = origin;
-
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookiehost);
     }
 
     /**
@@ -91,25 +89,25 @@ export class API {
         });
 
         // platform registration
-        app.post('/register', (req, res) => {
-            let body: any = req.body;
-            if (body.user !== undefined && body.email !== undefined && body.password !== undefined) {
-                let user: string = body.user;
-                let email: string = body.email;
-                let password: string = body.password;
-                // TODO
-            }
-        });
+        app.post('/auth/register', this.authProvider.register);
+
+        app.post('/auth/verify', this.authProvider.verifyEmail);
 
         // TODO: Create actual authentication
         // platform authentication
-        app.post('/auth', auth ,  (req, res) => {
-            res.json({ok:1});
+        app.post('/auth/login', this.authProvider.auth ,  (req, res) => {
+            res.status(200).json({ok:1});
         });
 
+        app.delete('/auth/delete', this.authProvider.auth, this.authProvider.deleteUser, (req, res) => {
+            res.status(200).json({ok:1});
+        });
+
+        app.post('/auth/logout', this.authProvider.auth, this.authProvider.logout);
+
         // login to dungeon
-        app.post('/login/:dungeonID', auth, (req, res) => {
-            res.json({ok:1, verifyToken: this.generateVerifyToken()});
+        app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
+            res.status(200).json({ok:1, verifyToken: this.generateVerifyToken()});
             // let dungeonID: string = req.params.dungeonID;
             // let body: any = req.body;
             // if (body.user !== undefined && body.character !== undefined && body.authToken !== undefined) {
@@ -131,140 +129,188 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', /*auth,*/ (req, res) => {
+        app.post('/startDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
-                this.hostLink.startDungeon(dungeonID);
-                res.json({ ok: 1 });
+                try {
+                    if (await this.hostLink.startDungeon(dungeonID)) {
+                        res.status(200).json({ ok: 1 });
+                    } else {
+                        res.status(500).json({ ok: 0, error: 'internal' });
+                    }
+                } catch (err) {
+                    res.status(500).json({ ok: 0, error: 'internal' });
+                }
             } else {
-                res.json({ ok: 0, error: 'Dungeon does not exists' });
+                res.status(400).json({ ok: 0, error: 'internal' });
             }
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*auth,*/ (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
                 this.hostLink.stopDungeon(dungeonID);
-                res.json({ ok: 1 });
+                res.status(200).json({ ok: 1 });
             } else {
-                res.json({ ok: 0, error: 'Dungeon does not exists' });
+                res.status(400).json({ ok: 0, error: 'dontexist' });
             }
         });
 
         // get dungeons
-        app.get('/dungeons', auth, (req, res) => {
-            res.json({ ok: 1, dungeons: this.hostLink.getDungeons() });
+        app.get('/dungeons', this.authProvider.auth, (req, res) => {
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons() });
         });
 
         // get my dungeons
-        app.get('/myDungeons', auth, (req, res) => {
-            let user = req.cookies.user; // TODO: get myDungeons based on user   
-            res.json({ ok: 1, dungeons: mockresponse.getmydungeons });
+        app.get('/myDungeons', this.authProvider.auth, async (req, res) => {
+            let userID = req.cookies.userID; // TODO: get myDungeons based on user   
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons(userID) });
         });
 
         // create dungeon
-        app.post('/dungeon', auth,  (req, res) => {
+        app.post('/dungeon', this.authProvider.auth, async (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
-            let user = req.cookies.user; // TODO: get myDungeons based on user
-            // let dungeonID = this.hostLink.createDungeon(dungeonData, user);
-            console.log(JSON.stringify(dungeonData));
+            const {user, userID} = req.cookies;
+            // let dungeonID = this.h/ostLink.createDungeon(dungeonData, user);
             if(dungeonData){
-                this.hostLink.addDungeon(dungeonData.id, dungeonData);
-                this.dba.storeDungeon(dungeonData).then(dungeonID => {
-                    res.json({ ok: 1, dungeonID: dungeonID });
+                console.log(userID);
+                dungeonData.masterId = userID;
+                dungeonData.creatorId = userID;
+                this.dba.storeDungeon(dungeonData).then(dungeon => {
+                    this.hostLink.addDungeon(dungeon._id.toString(), dungeonData);
+                    res.status(200).json({ ok: 1, dungeonID: dungeon._id.toString() });
                 }).catch(err => {
-                    res.json({ ok: 0, error: err });
+                    res.status(500).json({ ok: 0, error: err.message });
                 });
             }else{
-                res.json({ok : 0});
+                res.status(400).json({ok : 0, error: 'parameters'});
             }
         });
 
         // get dungeon
-        app.get('/dungeon/:dungeonID', auth, (req, res) => {
-            let params: any = req.query;
-            if (params.user !== undefined && params.authToken !== undefined) {
-                let user: string = params.user;
-                let authToken: string = params.authToken;
-                // TODO
+        app.get('/dungeon/:dungeonID', this.authProvider.auth, (req, res) => {
+            let dungeonID: string = req.params.dungeonID;
+            if(dungeonID){
+                this.dba.getDungeon(dungeonID).then(dungeon => {
+                    res.status(200).json({ ok: 1, dungeon: dungeon });
+                }).catch(err => {
+                    res.status(500).json({ ok: 0, error: err.message });
+                });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 
         // edit dungeon
-        app.patch('/dungeon/:dungeonID', auth, (req, res) => {
+        app.patch('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.dungeonData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                let dungeonData: any = body.dungeonData;
-                // TODO
-            } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
-            }
-        });
+            const {user, userID} = req.cookies;
+            if(userID && !this.hostLink.isDungeonCreator(dungeonID, userID)){
+                res.status(401).json({ ok: 0, error: 'notcreator' });
+            }else{
 
-        // delete dungeon
-        app.delete('/dungeon/:dungeonID', auth, (req, res) => {
-            let dungeonID: string = req.params.dungeonID;
-            let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                // TODO
+                if (body.dungeonData !== undefined) {
+                    let dungeonData: any = body.dungeonData;
+                if (this.hostLink.dungeonExists(dungeonID)) {
+                    this.dba.updateDungeon(dungeonID, dungeonData).then((newDungeon) => {
+                        if(newDungeon){
+                            this.hostLink.deleteDungeon(dungeonID);
+                            this.hostLink.addDungeon(newDungeon._id.toString(), newDungeon); // DONT YOU DARE, TOUCH THIS LINE
+                            res.status(200).json({ ok: 1, dungeonID: newDungeon._id.toString() });
+                        }else{
+                            res.status(500).json({ ok: 0, error: 'internal' });
+                        }
+
+                    }).catch(err => {
+                        res.status(500).json({ ok: 0, error: err.message });
+                    });
+                }
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                    res.status(200).json({ ok: 0, error: 'parameters' });
+            }
+        }
+        });
+        
+        // delete dungeon
+        app.delete('/dungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
+            let dungeonID: string = req.params.dungeonID;
+            const {user, userID} = req.cookies;
+            if(userID){
+                if(this.hostLink.isDungeonCreator(dungeonID, userID)){
+                    this.hostLink.deleteDungeon(dungeonID);
+                    this.dba.deleteDungeon(dungeonID).then(() => {
+                        res.status(200).json({ ok: 1 });
+                    }).catch(err => {
+                        res.status(500).json({ ok: 0, error: err.message });
+                    });
+                }else{
+                    res.status(401).json({ ok: 0, error: 'notcreator' });
+                }
+            }else{
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 
         // get character attributes for dungeon
-        app.get('/character/attributes/:dungeonID', auth, (req, res) => {
+        app.get('/character/attributes/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let user = req.cookies.user!; // Cant be undefined because of auth middleware
-            res.json({
-                ok: 1,
-                ...mockresponse.getcharacterattributes
-            })
+            this.dba.getDungeonCharacterAttributes(dungeonID).then(attributes => {
+                res.status(200).json({
+                    ok: 1,
+                    ...attributes
+                })
+            }).catch(err => {
+                res.status(500).json({ ok: 0, error: err.message });
+            });
+            
         });
 
         // get user-characters for dungeon
-        app.get('/characters/:dungeonID', auth, (req, res) => {
+        app.get('/characters/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            let user = req.cookies.user!; // Cant be undefined because of auth middleware
+            const userID = req.cookies.userID; // Cant be undefined because of auth middleware
             //TODO: Get user-characters for dungeon
-            res.json({ ok: 1, characters: mockresponse.getcharacters });
+            this.dba.getAllCharactersFromUserInDungeon(userID!, dungeonID).then(characters => {
+                res.status(200).json({ ok: 1, characters: characters });
+            }).catch(err => {
+                res.status(500).json({ ok: 0, error: err.message });
+            })
         });
 
         // create character
-        app.post('/character/:dungeonID', auth, (req, res) => {
+        app.post('/character/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
+            const {userID, user} = req.cookies;
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.characterData !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                let characterData: any = body.characterData;
-                // TODO
+            if (body.characterData !== undefined) {
+                let characterData: CharacterDataset = body.characterData;
+                characterData.userId = userID;
+                characterData.name = characterData.name;
+                this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
+                    res.status(200).json({ ok: 1, character: character });
+                }).catch(err => {
+                    res.status(500).json({ ok: 0, error: err.message });
+                });
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 
         // delete character
-        app.delete('/character/:dungeonID', auth, (req, res) => {
+        app.delete('/character/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.user !== undefined && body.authToken !== undefined && body.character !== undefined) {
-                let user: string = body.user;
-                let authToken: string = body.authToken;
-                let characterID: any = body.character;
-                // TODO
+            if (body._id !== undefined) {
+                let characterID: any = body._id;
+                this.dba.deleteCharacter(characterID);
+                res.status(200).json({ ok: 1});
             } else {
-                res.json({ ok: 0, error: 'Invalid parameters' });
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
     }

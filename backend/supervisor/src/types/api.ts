@@ -10,9 +10,7 @@ export interface SupervisorResponse {
  * General Supervisor Request-Object. Its sent to the server and always contains a authToken
  * @category Request
  */
-export interface SupervisorRequest {
-    
-}
+export interface SupervisorRequest {}
 
 /**
  * Error-Response sent back to the client if there were any errors in the supervisor or the auth failed
@@ -44,10 +42,7 @@ export interface AuthenticateResponse extends SupervisorResponse {
  * Login to a dungeon via POST: /login/:dungeonId
  * @category Request
  */
-export interface LoginRequest extends SupervisorRequest {
-    user: string;
-    character: string;
-}
+export interface LoginRequest extends SupervisorRequest {}
 
 /**
  * @category Response Data
@@ -66,7 +61,7 @@ export interface LoginResponse extends SupervisorResponse , LoginResponseData {}
  * @category Request
  */
 export interface StartDungeonRequest extends SupervisorRequest {
-    user: string;
+    // user: string;
 }
 
 /**
@@ -78,10 +73,7 @@ export interface StartDungeonResponse extends SupervisorResponse { }
  * Stops a dungeon via POST: /stopDungeon
  * @category Request
  */
-export interface StopDungeonRequest {
-    user: string;
-    authToken: string;
-}
+export interface StopDungeonRequest {}
 
 /**
  * @category Response
@@ -91,16 +83,12 @@ export interface StopDungeonResponse extends SupervisorResponse { }
 /**
  * @category Request
  */
-export interface GetDungeonsRequest extends SupervisorRequest {
-    user: string;
-}
+export interface GetDungeonsRequest extends SupervisorRequest {}
 
 /**
  * @category Request
  */
-export interface GetDungeonRequest extends SupervisorRequest {
-    user: string;
-}
+export interface GetDungeonRequest extends SupervisorRequest {}
 
 /**
  * @category Response
@@ -162,9 +150,7 @@ export interface EditDungeonResponse extends CreateDungeonResponse { }
 /**
  * @category Request
  */
-export interface DeleteDungeonRequest extends SupervisorRequest {
-    user: string;
-}
+export interface DeleteDungeonRequest extends SupervisorRequest { }
 
 /**
  * @category Response
@@ -174,9 +160,7 @@ export interface DeleteDungeonResponse extends SupervisorResponse { }
 /**
  * @category Request
  */
-export interface GetCharacterAttributesRequest extends SupervisorRequest {
-    user: string;
-}
+export interface GetCharacterAttributesRequest extends SupervisorRequest {}
 
 
 /**
@@ -197,9 +181,12 @@ export interface GetCharactersRequest extends GetCharacterAttributesRequest { }
  * @category Response Data
  */
 export interface CharactersResponseData {
-    character: string;
+    characterClass: string;
+    characterGender: string;
+    characterSpecies: string;
+    id: string;
     name: string;
-    class: string;
+    _id: string;
 }
 
 /**
@@ -213,13 +200,13 @@ export interface GetCharactersResponse extends SupervisorResponse {
  * @category Request
  */
 export interface CreateCharacterRequest extends SupervisorRequest {
-    user: string;
     characterData: {
         name: string;
-        fullname: string;
-        class: string;
-        species: string;
-        gender: string;
+        characterClass: string;
+        characterSpecies: string;
+        characterGender: string;
+        position: string;
+        inventory: string[];
     };
 }
 
@@ -232,8 +219,7 @@ export interface CreateCharacterResponse extends SupervisorResponse { }
  * @category Request
  */
 export interface DeleteCharacterRequest extends SupervisorRequest {
-    user: string;
-    character: string;
+    _id: string;
 }
 
 /**

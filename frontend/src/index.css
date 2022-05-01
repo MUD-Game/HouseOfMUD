@@ -4,15 +4,44 @@
   --offcolor: #2e2e2e;
   --accentlight: #a7795b;
   --accent: #6b2a00;
+  --accent-darker: #4a1c00;
   --accent0:rgba(107, 43, 0, 0);
   --green: rgb(21, 115, 71);
   --lightgreen: rgb(37, 147, 95);
-  --red: rgb(187, 45, 59);
+  --red: rgb(197, 40, 56);
   --lightred: rgb(228, 61, 78);
+  --blue: #0051ff;
+  --lightblue: #2f71ff;
 
   --health: #ff0000;
-  --mana: #a600ff;
-  --damage: #bbbbbb;
+  --mana: #0096b1;
+  --damage: #6d6d6d;
+
+  /* Inactive Room (not yet created) */
+  /* Inactive Room (not yet 
+  created */
+
+  --room-background:#f0f0f0;
+
+  --room-fill: #ddd;
+  --room-stroke: #ccc;
+  
+  /* Created Rooms */
+  --room-active-fill: #8b4a20;
+  --room-active-stroke : #6b2a00;
+
+  --room-selected-fill: #753e1a; 
+  --room-selected-stroke: #441b00;
+
+  /* Start Room */
+  --room-start-fill: var(--lightgreen);
+  --room-start-stroke: var(--room-active-stroke);
+  --room-start-selected-fill:  var(--green);
+  --room-start-selected-stroke:  var(--room-selected-stroke);
+
+  --connection-closed: var(--red);
+  --connection-inactive: var(--room-stroke);
+  --connection-open: var(--room-active-stroke);
 }
 
 html, body {
@@ -30,6 +59,18 @@ html, body {
 
 h1, h2, h3, h4 {
   margin: .5rem 0 1rem 0;
+}
+
+.alert{
+  margin-bottom: 5px;
+}
+
+.alert p{
+  font-size: 0.9rem;
+}
+
+.alert-heading{
+  font-size: 1.2rem;
 }
 
 .headline {
@@ -56,7 +97,7 @@ a:hover {
 }
 
 #header-logo {
-  max-width: 350px;
+  max-width: 275px;
   width: 100%;
 }
 
@@ -94,7 +135,7 @@ a:hover {
 .btn {
   border-color: var(--accent);
 }
-.btn:hover {
+.btn:hover, .btn:focus {
   border-color: var(--accent);
 }
 
@@ -102,7 +143,8 @@ a:hover {
   width: 100%;
   color: var(--textcolor);
 }
-.btn-standard:hover {
+.btn-standard:hover,
+.btn-standard:focus {
   color: var(--textcolor);
   background-color: var(--accentlight);
 }
@@ -111,7 +153,7 @@ a:hover {
   color: white;
   background-color: var(--lightgreen);
 }
-.btn-green:hover {
+.btn-green:hover,.btn-green:focus {
   color: white;
   background-color: var(--green);
 }
@@ -120,9 +162,19 @@ a:hover {
   color: white;
   background-color: var(--lightred);
 }
-.btn-red:hover {
+
+.btn-red:hover, .btn-red:focus {
   color: white;
   background-color: var(--red);
+}
+
+.btn-blue {
+  color: white;
+  background-color: var(--lightblue);
+}
+.btn-blue:hover {
+  color: white;
+  background-color: var(--blue);
 }
 
 .btn-xpadding {
@@ -163,24 +215,107 @@ a:hover {
   border-radius: 1% 98% 1% 99% /99% 2% 50% 1%;
 }
 
-.dashboard-list, .character-list {
+.dashboard-list {
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
   border-width: 0 0 3px;
+  transition: background-color .1s ease-in;
+}
+
+/* Listen und Icons */
+#editIcon, #deleteIcon, #joinIcon {
+  margin-left: 5px;
+  transition: opacity .1s ease-in, transform .05s ease-in;
+}
+#deleteIcon {
+  cursor: pointer;
+  color: var(--red);
+}
+#joinIcon {
+  cursor: pointer;
+  color: var(--green);
+}
+#editIcon {
+  cursor: pointer;
+}
+
+.row:hover #editIcon, .row:hover #deleteIcon, .row:hover #joinIcon {
+  opacity: 1;
+}
+
+#editIcon:hover, #deleteIcon:hover, #joinIcon:hover {
+  transform: scale(1.2);
+}
+
+.configurator-item, .character-item {
+  border-radius: .3em;
+  transition: background-color .1s ease-in;
+}
+
+.configurator-item:hover, .character-item:hover, .dashboard-list:hover {
+  background-color: rgba(146, 144, 141, 0.4);
+  box-shadow: 0em 0em .3em rgb(146, 144, 141);
 }
 
 /* Game */
-.mock-placeholder.minimap {
-  width: 100%;
-  aspect-ratio: 1 / .7;
+.game-wrapper {
+  height: 100vh;
 }
-.mock-placeholder.inventory {
-  width: 100%;
-  aspect-ratio: 1 / 1;
+.game-header, .game-footer {
+  height: 8%;
 }
-.mock-placeholder.chat {
+.game-body {
+  height: 89%;
+}
+
+.game-body .col {
+  height: 100%;
+}
+
+.minimap {
   width: 100%;
-  aspect-ratio: 1 / .6;
+  height: 30%;
+}
+.inventory {
+  width: 100%;
+  height: 50%;
+}
+.onlineplayers {
+  height: 50%;
+}
+.chatqueue {
+  height: 45%;
+}
+.playerinfo {
+  height: 45%;
+}
+.chat-output-wrap {
+  height: 90%;
+}
+.chat-input-wrap {
+  height: 10%;
+}
+.chat {
+  height: 100%;
+}
+
+.chat-content {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.chat-content::-webkit-scrollbar {
+  width: 15px;
+}
+.chat-content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--accent);
+  background-color: var(--accentlight);
+  border-radius: 10px;
+}
+.chat-content::-webkit-scrollbar-thumb {    
+  background: var(--accent);
+  border-radius: 10px;
 }
 
 .progress {  
@@ -191,7 +326,7 @@ a:hover {
   background-color: transparent;
 }
 .progress-bar {
-  font-size: .6rem;
+  font-size: .7rem;
 }
 .bg-health {
   background-color: var(--health);
@@ -240,3 +375,70 @@ code {
   text-transform: capitalize;
 }
 /* Toasts END */
+
+/**
+ * KEYS.css
+ *
+ * A simple stylesheet for rendering beautiful keyboard-style elements.
+ *
+ * Author:  Michael Hüneburg
+ * Website: http://michaelhue.com/keyscss
+ * License: MIT License (see LICENSE.txt)
+ */
+
+/* Base style, essential for every key. */
+kbd,
+.key {
+  display: inline;
+  display: inline-block;
+  min-width: 1em;
+  padding: .2em .3em;
+  font: normal .85em/1 "Lucida Grande", Lucida, Arial, sans-serif;
+  text-align: center;
+  text-decoration: none;
+  -moz-border-radius: .3em;
+  -webkit-border-radius: .3em;
+  border-radius: .3em;
+  border: none;
+  cursor: default;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+kbd[title],
+.key[title] {
+  cursor: help;
+}
+
+/* Dark style for display on light background. This is the default style. */
+kbd,
+kbd.dark,
+.dark-keys kbd,
+.key,
+.key.dark,
+.dark-keys .key {
+  background: rgb(80, 80, 80);
+  background: -moz-linear-gradient(top, rgb(60, 60, 60), rgb(80, 80, 80));
+  background: -webkit-gradient(linear, left top, left bottom, from(rgb(60, 60, 60)), to(rgb(80, 80, 80)));
+  color: rgb(250, 250, 250);
+  text-shadow: -1px -1px 0 rgb(70, 70, 70);
+  -moz-box-shadow: inset 0 0 1px rgb(150, 150, 150), inset 0 -.05em .4em rgb(80, 80, 80), 0 .1em 0 rgb(30, 30, 30), 0 .1em .1em rgba(0, 0, 0, .3);
+  -webkit-box-shadow: inset 0 0 1px rgb(150, 150, 150), inset 0 -.05em .4em rgb(80, 80, 80), 0 .1em 0 rgb(30, 30, 30), 0 .1em .1em rgba(0, 0, 0, .3);
+  box-shadow: inset 0 0 1px rgb(150, 150, 150), inset 0 -.05em .4em rgb(80, 80, 80), 0 .1em 0 rgb(30, 30, 30), 0 .1em .1em rgba(0, 0, 0, .3);
+}
+
+/* Light style for display on dark background. */
+kbd.light,
+.light-keys kbd,
+.key.light,
+.light-keys .key {
+  background: rgb(250, 250, 250);
+  background: -moz-linear-gradient(top, rgb(210, 210, 210), rgb(255, 255, 255));
+  background: -webkit-gradient(linear, left top, left bottom, from(rgb(210, 210, 210)), to(rgb(255, 255, 255)));
+  color: rgb(50, 50, 50);
+  text-shadow: 0 0 2px rgb(255, 255, 255);
+  -moz-box-shadow: inset 0 0 1px rgb(255, 255, 255), inset 0 0 .4em rgb(200, 200, 200), 0 .1em 0 rgb(130, 130, 130), 0 .11em 0 rgba(0, 0, 0, .4), 0 .1em .11em rgba(0, 0, 0, .9);
+  -webkit-box-shadow: inset 0 0 1px rgb(255, 255, 255), inset 0 0 .4em rgb(200, 200, 200), 0 .1em 0 rgb(130, 130, 130), 0 .11em 0 rgba(0, 0, 0, .4), 0 .1em .11em rgba(0, 0, 0, .9);
+  box-shadow: inset 0 0 1px rgb(255, 255, 255), inset 0 0 .4em rgb(200, 200, 200), 0 .1em 0 rgb(130, 130, 130), 0 .11em 0 rgba(0, 0, 0, .4), 0 .1em .11em rgba(0, 0, 0, .9);
+}

@@ -1,0 +1,4 @@
+a:hover svg{
+    transform: translateY(-6px) rotate(180deg) !important;
+    transition: transform 0.4s;
+}

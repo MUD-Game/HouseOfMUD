@@ -35,7 +35,7 @@ const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: 
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            error({ok:0, error: errorText});
+            error({ ok: 0, error: xhr.responseJSON.error });
         }
     });
 }
@@ -59,8 +59,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             }
         },
         error: (xhr, errorText, errorThrown) => {
-            console.log(xhr,errorText,errorThrown);
-            // error({ ok: 0, error: errorText });
+            error({ ok: 0, error: xhr.responseJSON.error });
         }
     });
 }
@@ -73,7 +72,7 @@ const getSearchParamas = (params:any) => {
 
 const supervisor = {
     getDungeon(dungeonID: string, body: GetDungeonRequest, dataCallBack: (response: GetDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        genericGet(`/dungeon{dungeonID}`, body, dataCallBack, error, "dungeon");
+        genericGet(`/dungeon/${dungeonID}`, body, dataCallBack, error, "dungeon");
     },
 
     getDungeons(body: GetDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
@@ -93,7 +92,22 @@ const supervisor = {
     },
 
     authenticate(body: AuthenticateRequest, dataCallBack: (data: AuthenticateResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest("/auth", "POST", body, {}, dataCallBack, error);
+        genericRequest("/auth/login", "POST", body, {}, dataCallBack, error);
+    },
+
+    userLogout(dataCallBack: () => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/logout", "POST", {}, {}, dataCallBack, error);
+    },
+
+    deleteUser(dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/delete", "DELETE", {}, {}, dataCallBack, error);
+    },
+    register(email: string, user: string, password: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/register", "POST", {email, user, password}, {}, dataCallBack, error);
+    },
+
+    verify(token: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/verify", "POST", {token: token}, {}, dataCallBack, error);
     },
 
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
@@ -101,7 +115,7 @@ const supervisor = {
     },
 
     startDungeon(dungeonID: string, body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest(`/start/${dungeonID}`, "POST", body, {}, dataCallBack, error);
+        genericRequest(`/startDungeon/${dungeonID}`, "POST", body, {}, dataCallBack, error);
     },
 
     stopDungeon(dungeonID: string, body: StopDungeonRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {
@@ -112,7 +126,7 @@ const supervisor = {
         genericRequest(`/dungeon`, "POST", body, {}, dataCallBack, error);
     },
     editDungeon(dungeonID: string, body: EditDungeonRequest, dataCallBack: (data: EditDungeonResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest(`/dungeon`, "PATCH", body, {}, dataCallBack, error);
+        genericRequest(`/dungeon/${dungeonID}`, "PATCH", body, {}, dataCallBack, error);
     },
     deleteDungeon(dungeonID: string, body: DeleteDungeonRequest, dataCallBack: (data: DeleteDungeonResponse) => void, error: (error: ErrorResponse) => void) {
         genericRequest(`/dungeon/${dungeonID}`, "DELETE", body, {}, dataCallBack, error);

@@ -1,6 +1,6 @@
 
 api:
-  origin: http://127.0.0.1 
+  origin: http://localhost:3000
   port: 43210
 
 hostLink:
@@ -13,6 +13,14 @@ tls:
     key: /etc/letsencrypt/live/privkey.pem
     cert: /etc/letsencrypt/live/fullchain.pem
     ca: /etc/letsencrypt/live/chain.pem
+
+auth:
+  salt: secret
+  verifyLink: http://localhost:3000/verify
+  emailservice: gmail
+  emailadress: houseofmud2022@gmail.com
+  emailsecret: ...
+  cookiehost: .mud-ga.me
 
 mongodb:
   host: 127.0.0.1

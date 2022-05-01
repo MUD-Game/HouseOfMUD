@@ -9,23 +9,22 @@ export interface DungeonObjectListElementProps {
     item: AcceptedTypes;
     onEditElement: (key: number) => void;
     onDeleteElement: (key: number) => void;
-    displayKeys: { [key: string]: string };
+    displayKeys: string[];
 }
 
 const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ item, onEditElement, onDeleteElement, displayKeys }) => {
-
     return (
         <Row className="mb-2 py-1 configurator-item">
-            {Object.keys(displayKeys).map((key: string, iindex) => {
+            {displayKeys?.map((key: string, iindex) => {
                 return (
                     <div className="col" key={iindex}>
-                        {(item as any)[key]}
+                        {item && (item as any)[key]}
                     </div>
                 )
             })}
             <div className="col text-end">
-                <Pencil size={30} id="editIcon" className="mx-1" style={{ cursor: "pointer" }} onClick={() => onEditElement(parseInt(item.id))} />
-                <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} style={{ cursor: "pointer", color: "red" }} />
+                <Pencil size={30} id="editIcon" className="mx-1" onClick={() => onEditElement(parseInt(item.id))} />
+                <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} />
             </div>
         </Row>
     )

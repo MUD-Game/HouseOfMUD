@@ -16,14 +16,17 @@ import Inventory from './Inventory';
 import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Container, Row } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
+    const {t} = useTranslation();
     let homsole = useMudConsole();
+    let navigate = useNavigate();
 
     const rabbit = useRabbitMQ();
     const { isAbleToJoinGame } = useGame();
@@ -59,14 +62,19 @@ const Game: React.FC<GameProps> = ({ }) => {
 
 
     return (
-        <Container className="mb-5">
-            <Row>
-                <div className="col-3">
+        <Container fluid className="game-wrapper">
+            <Row className="game-header align-items-center">
+                <div className="col text-end">
+                    <button className="btn drawn-border btn-xpadding btn-red" onClick={() => navigate("/")}>{t("game.leave")}</button>
+                </div>
+            </Row>
+            <Row className="game-body">
+                <div className="col col-4 col-md-3 col-lg-2">
                     <Minimap mapData={null} />
                     <Inventory items={null} />
                     <HUD {...hudMock} />
                 </div>
-                <div className="col-9">
+                <div className="col col-8 col-md-9 col-lg-10">
                     <Chat />
                 </div>
             </Row>

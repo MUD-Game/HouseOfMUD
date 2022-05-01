@@ -1,23 +1,75 @@
-#editIcon, #deleteIcon {
-    opacity: 0.2;
-    margin-left: 5px;
-    transition: opacity .1s ease-in, transform .05s ease-in;
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
-.row:hover #editIcon, .row:hover #deleteIcon {
+.disabled svg {
+    display: none;
+}
+
+#refocus-button {
+    top:0;
+}
+
+#help-button{
+    top:0;
+    right:0;
+}
+
+
+#konva-buttons-container svg{
+    position: absolute;
+    transition: opacity 0.2s, transform 0.2s;
+    fill:var(--accent);
+    opacity: 0.5;
+}
+
+
+#konva-buttons-container svg:hover {
     opacity: 1;
 }
 
-#editIcon:hover, #deleteIcon:hover {
-    transform: scale(1.2);
+#refocus-button:hover{
+    transform: translateY(-2px);
 }
 
-.configurator-item {
-    border-radius: .3em;
-    transition: background-color .1s ease-in;
+#konva-buttons-container {
+    z-index: 2000;
+    display: flex;
+    position: relative;
+    top:20px;
+    left:5px;
 }
 
-.configurator-item:hover {
-    background-color: rgb(146, 144, 141);
-    box-shadow: 0em 0em .3em rgb(146, 144, 141);
+
+#konvacontainer{
+    border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
+    background-color: var(--room-background);
+    padding:0;
+}
+
+canvas {
+    border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
+    outline: var(--accent) solid 4px ;
+}
+
+
+#help-tooltip >.tooltip-inner{
+    background-color: var(--offcolor);
+}
+#help-tooltip>.tooltip-arrow::before{
+    border-left-color: var(--offcolor)
+}
+
+
+#help-tooltip >.tooltip-inner {
+    max-width: 100%;
+}
+#help-tooltip>.tooltip-inner div{
+    text-align: left;
+    max-width: 70vw;
+}
+
+#help-tooltip>.tooltip-inner h4{
+    text-align: center;
 }

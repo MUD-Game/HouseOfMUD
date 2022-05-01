@@ -81,7 +81,7 @@
         /* Ensure that casing is correct in imports. */
 
         /* Type Checking */
-        // "strict": true,
+        "strict": true,
         /* Enable all strict type-checking options. */
         // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied `any` type.. */
         // "strictNullChecks": true,                         /* When type checking, take into account `null` and `undefined`. */
@@ -105,5 +105,20 @@
         /* Completeness */
         // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
         "skipLibCheck": true /* Skip type checking all .d.ts files. */
-    }
+    },
+    "typedocOptions": {
+        "entryPoints": ["src/"],
+        "entryPointStrategy": "expand",
+        "out": "../../TypeDoc-Documentation/Backend-Data/",
+        "name": "Backend/Data",
+        "readme": "readme-typedoc.md",
+        "media": "typedoc-media/",
+        "umlClassDiagram": {
+          "type": "detailed",
+          "location": "remote",
+          "format": "svg",
+          "createPlantUmlFiles": true,
+          "verboseOutput": true
+        }
+      }
 }

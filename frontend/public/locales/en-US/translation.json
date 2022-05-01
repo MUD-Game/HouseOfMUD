@@ -1,0 +1,126 @@
+{
+    "dashboard": {
+        "title": "Dashboard",
+        "create_new_dungeon": "Create new dungeon",
+        "all_dungeons": "All dungeons",
+        "my_dungeons": "My dungeons",
+        "search_dungeon": "Search dungeon",
+        "already_in_dungeon": "You already started that dungeon"
+    },
+    "login": {
+        "password": "password",
+        "username": "username",
+        "email": "email-adress",
+        "no_account": "No account?",
+        "have_account": "Already have an account?",
+        "login_here": "Sign in here",
+        "register_here": "Sign up here"
+    },
+    "dungeon_keys": {
+        "name": "name",
+        "description": "description",
+        "players": "players",
+        "status": "status",
+        "class": "class",
+        "gender": "gender",
+        "species": "species",
+        "create_and_join": "create and join",
+        "command": "command",
+        "actions": "actions",
+        "items": "items",
+        "output": "output",
+        "itemsNeeded": "items needed",
+        "events": "events",
+        "maxhp": "max hp",
+        "maxmana": "max mana",
+        "maxdmg": "max dmg"
+    },
+    "character_creator": {
+        "pick_character": "pick a character",
+        "new_character": "create new character"
+    },
+    "user_settings": {
+        "delete_user": {
+            "button": "delete user",
+            "confirmation": {
+                "title": "delete user",
+                "text": "Are you sure you want to delete your account? This action cannot be undone."
+            }
+        },
+        "language": {
+            "label": "Language",
+            "en-US": "English",
+            "de-DE": "German"
+        }
+    },
+    "verify_email": {
+        "title": "Email-Verification",
+        "success": "Email-Verification successful, youre getting redirected to the login page in 3 seconds.",
+        "error": "Your email-verification-link is invalid or expired. Please try to resend the verification-email."
+    },
+    "dungeon_configurator": {
+        "title": "Configure dungeon",
+        "inputs": {
+            "name": {
+                "placeholder": "name"
+            },
+            "description": {
+                "placeholder": "description"
+            },
+            "maxPlayers": {
+                "placeholder": "max players"
+            },
+            "genders": {
+                "title": "genders",
+                "placeholder": "genders",
+                "emptyLabel": "Create new Gender..."
+            },
+            "species": {
+                "title": "species",
+                "placeholder": "species",
+                "emptyLabel": "Create new Species..."
+            }
+        },
+        "buttons": {
+            "create_class": "create new class",
+            "create_item": "create new item",
+            "create_action": "create new action"
+        }
+    },
+    "common": {
+        "select_items": "select items",
+        "select_events": "select events",
+        "404": "Page not found..."
+    },
+    "header": {
+        "welcome": "Welcome"
+    },
+    "button": {
+        "submit": "submit",
+        "ok": "O.K.",
+        "join": "join",
+        "start": "start",
+        "cancel": "cancel",
+        "create": "create",
+        "save": "save",
+        "remove": "remove",
+        "delete": "delete",
+        "preview": "preview",
+        "share": "share",
+        "update": "update",
+        "edit": "edit",
+        "yes": "yes",
+        "no": "no",
+        "close": "close",
+        "upload": "upload",
+        "download": "download",
+        "logout": "logout",
+        "login": "login",
+        "register": "register"
+    },
+    "error": {
+        "logout_failed": "Logout fehlgeschlagen",
+        "login_failed": "Login fehlgeschlagen",
+        "register_failed": "Registrierung fehlgeschlagen"
+    }
+}

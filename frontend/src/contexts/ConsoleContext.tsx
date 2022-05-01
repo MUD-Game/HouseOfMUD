@@ -38,10 +38,10 @@ function ConsoleProvider({ children }: { children: React.ReactNode }) {
   }
 
   const addToast = (type: 'danger' | 'warning' | 'info', message: string, location?: string) => {
-    location = location ? location : 'general';
-    setToastKey(toastKey + 1);
-    setToasts({ ...toasts, [toastKey]: { type, message, location } });
-    destroyToastSoon(toastKey);
+    // location = location ? location : 'general';
+    // setToastKey(toastKey + 1);
+    // setToasts({ ...toasts, [toastKey]: { type, message, location } });
+    // destroyToastSoon(toastKey);
   }
 
   const log = (message: string, location?: string) => {

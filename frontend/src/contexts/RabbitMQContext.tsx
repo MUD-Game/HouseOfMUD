@@ -21,14 +21,20 @@ export interface RabbitMQContextType {
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
 
+const rabbit = new Client({
+  brokerURL: process.env.REACT_APP_RABBITMQ || 'wss://mud-ga.me:15673/ws',
+});
+
+var payloadTemplate = {
+  user: '',
+  character: '',
+  verifyToken: ''
+}
+
 function RabbitMQProvider({ children }: { children: React.ReactNode }) {
-
   const { user } = useAuth();
-  const { characterID, dungeon, verifyToken } = useGame();
-
-  const rabbit = new Client({
-    brokerURL: process.env.REACT_APP_RABBITMQ || 'wss://mud-ga.me:15673/ws',
-  });
+  const { character, dungeon, verifyToken } = useGame();
+  
   let chatSubscriber: (message: string) => void = () => { };
 
   /**
@@ -42,12 +48,6 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   let hudSubscriber: (message: any) => void = () => { };
   let minimapSubscriber: (message: any) => void = () => { };
 
-  let payloadTemplate = {
-    user: '',
-    character: '',
-    verifyToken: ''
-  }
-
   const processAction = (message: IMessage) => {
     try {
       let jsonData = JSON.parse(message.body);
@@ -55,13 +55,13 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       if (jsonData['action'] === undefined) {
         errorSubscriber("RabbitMQ-Message is missing a action-key");
         return;
-      } else if (jsonData['body'] === undefined) {
-        errorSubscriber("RabbitMQ-Message is missing a body");
+      } else if (jsonData['data'] === undefined) {
+        errorSubscriber("RabbitMQ-Message is missing a data");
         return;
       }
       switch (jsonData.action) {
         case 'message':
-          chatSubscriber(jsonData.body); // atm only chats
+          chatSubscriber(jsonData.data); // atm only chats
           break;
         default:
           errorSubscriber("RabbitMQ-Action not implemented yet: " + jsonData.action);
@@ -97,7 +97,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
     payloadTemplate = {
       user: user,
-      character: characterID,
+      character: character,
       verifyToken: verifyToken,
     }
 
@@ -108,10 +108,12 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       data: {}
     };
     rabbit.onConnect = () => {
-      sendPayload(loginPayload);
-      rabbit.subscribe(`/queue/${dungeon}-${characterID}`, (message: IMessage) => {
+      rabbit.subscribe(`/queue/${dungeon}-${character}`, (message: IMessage) => {
         processAction(message);
-      });
+      }, { "auto-delete": "true" });
+      setTimeout(() => {
+        sendPayload(loginPayload);
+      }, 10);
     }
     rabbit.onStompError = (receipt: IFrame) => {
       errorSubscriber(receipt.body);
@@ -120,6 +122,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   let logout = (callback: VoidFunction, error: (error: string) => void) => {
+    console.log(rabbit.active + ' ' + rabbit.connected);
     if (!rabbit.active) {
       error('RabbitMQ is not connected');
       return;
@@ -135,6 +138,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   let sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+    console.log(rabbit.active + ' ' + rabbit.connected);
     if (!rabbit.connected) {
       error("RabbitMQ is not connected");
       return;

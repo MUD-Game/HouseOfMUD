@@ -8,7 +8,7 @@ async function main() {
     const config: Config | undefined = loadConfig();
 
     if (config !== undefined) {
-        const forkHandler = new ForkHandler(config.amqpAdapter);
+        const forkHandler = new ForkHandler(config.amqpAdapter, config.mongodb);
         const supervisorLink = new SupervisorLink(config.name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, forkHandler);
         supervisorLink.connect();
     } else {

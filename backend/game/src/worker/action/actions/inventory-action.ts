@@ -1,0 +1,30 @@
+import { Character } from "../../../data/interfaces/character";
+import { Dungeon } from "../../../data/interfaces/dungeon";
+import { Item } from "../../../data/interfaces/item";
+import { DungeonController } from "../../controller/dungeon-controller";
+import { Action } from "../action";
+import { triggers, actionMessages } from "./action-resources";
+
+export class InventoryAction implements Action {
+    trigger: string;
+    dungeonController: DungeonController
+
+    constructor(dungeonController: DungeonController) {
+        this.trigger = triggers.inventory;
+        this.dungeonController = dungeonController;
+    }
+    performAction(user: string, args: string[]) {
+        let dungeon: Dungeon = this.dungeonController.getDungeon()
+        let dungeonId: string = dungeon.getId()
+        let senderCharacter: Character = dungeon.getCharacter(user)
+        let characterInventory: string [] = senderCharacter.getInventory()
+        let inventoryMessage: string = actionMessages.inventory
+        characterInventory.forEach(itemId => {
+            let item: Item = dungeon.getItem(itemId)
+            let itemName: string = item.getName()
+            inventoryMessage += ` ${itemName}`
+        })
+        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inventoryMessage}})
+    }
+
+}

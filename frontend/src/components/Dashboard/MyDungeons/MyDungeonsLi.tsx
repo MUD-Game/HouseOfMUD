@@ -14,9 +14,11 @@ import { CloudCheck, CloudSlash, Lock, Pencil, Play, Stop, Trash, Unlock } from 
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Busy from "src/components/Busy";
 import ConfirmationDialog from "src/components/Modals/BasicModals/ConfirmationDialog";
 import { useGame } from "src/hooks/useGame";
 import { supervisor } from "src/services/supervisor";
+import "./index.css"
 
 
 
@@ -66,7 +68,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
 
     return (
         <>
-        <Row className={"dashboard-list align-items-center pt-1 pb-2 mb-2 " + (isBusy ? " disabled" : "")}>
+            <Row className={`dashboard-list ${isBusy ? " disabled" : ""} align-items-center pt-1 pb-2 mb-2`}>
             <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
             <div className="col-3">
                 <b>{name}</b>
@@ -82,25 +84,37 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                 {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}
 
             </div>
-            <div className="col-2 text-end">
+                {isBusy ?  <div className="col-2 text-end"> <Busy className="list-busy" /> </div>: <div className="col-2 text-end">
                 {status=== "offline" ?
                 <div className="">
                     <Play size={45} id="joinIcon" className="ms-1" onClick={startDemo} />
                     <Pencil size={30} id="editIcon" className="me-1" onClick={()=>{ navigate("/dungeon-configurator", {state: {dungeonId: id}}); }} />
                     <Trash size={30} id="deleteIcon" className="mx-1" onClick={()=>{
                         showConfirmation(t("dashboard.delete_dungeon.confirmation.title"), t("dashboard.delete_dungeon.confirmation.text"),
-                        ()=>{supervisor.deleteDungeon(id, {}, (data)=>{fetchMyDungeons()}, (error)=>{}); })
+                        ()=>{
+                            setIsBusy(true);
+                            supervisor.deleteDungeon(id, {}, (data)=>{
+                            setIsBusy(false);
+                            fetchMyDungeons();
+                        }, (error)=>{}); })
                     }} />
                     
                 </div>
                 :
                 <div>
-                    <Stop size={30} id="deleteIcon" className="mx-1" onClick={() => 
-                        supervisor.stopDungeon(id, {}, (data) => {fetchMyDungeons()}, (error) => {alert(error.error)})
-                    } />
+                    <Stop size={30} id="deleteIcon" className="mx-1" onClick={() => {
+                        setIsBusy(true);
+                        supervisor.stopDungeon(id, {}, (data) => {
+                            // setIsBusy(false);
+                            setTimeout(()=>{
+                                setIsBusy(false);
+                                fetchMyDungeons();
+                            }, 5000);
+                        }, (error) => {alert(error.error)})
+                    }} />
                 </div>
                 }
-            </div>
+            </div>}
         </Row>
         </>
     )

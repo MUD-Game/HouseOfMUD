@@ -43,7 +43,6 @@ const Register: React.FC<RegisterProps> = (props) => {
             navigate('/login');
         }, () => {
             setIsLoading(false);
-
             homsole.error("Fehler beim Registrieren! Versuchen Sie es erneut");
         });
     }

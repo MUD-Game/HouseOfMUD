@@ -21,6 +21,7 @@ import { supervisor } from "src/services/supervisor";
 import "./index.css"
 
 
+const DUNGEON_MASTER_NAME = "dungeonmaster";
 
 export interface MyDungeonsLiProps {
     id: string;
@@ -48,23 +49,26 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
         });
     }
 
-    let joinDungeon = () => {
-        game.setDungeon(id);
-        game.setDungeonName(name);
-        navigate("/select-character");
+    const join = ()=>{
+
+        supervisor.login(id, {}, (data) => {
+            game.setCharacter(DUNGEON_MASTER_NAME);
+            game.setVerifyToken(data.verifyToken);
+            navigate("/game");
+        }, (error) => {
+            // TODO: handle error in a better way
+        });
+
     }
 
-    let joinDemo = () => {
-        game.setDungeon(id);
-        game.setDungeonName(name);
-        navigate("/demo-join");
-    }
-
-    let startDemo = () => {
-        game.setDungeon(id);
-        game.setDungeonName(name);
-        navigate("/demo-start");
-    }
+    const startAndJoin = () => {
+        supervisor.startDungeon(id, {}, (data) => {
+            setTimeout(() => {
+                join();
+            }, 2000);
+        }, (error) => {
+        });
+    } 
 
     return (
         <>
@@ -87,7 +91,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                 {isBusy ?  <div className="col-2 text-end"> <Busy className="list-busy" /> </div>: <div className="col-2 text-end">
                 {status=== "offline" ?
                 <div className="">
-                    <Play size={45} id="joinIcon" className="ms-1" onClick={startDemo} />
+                    <Play size={45} id="joinIcon" className="ms-1" onClick={startAndJoin} />
                     <Pencil size={30} id="editIcon" className="me-1" onClick={()=>{ navigate("/dungeon-configurator", {state: {dungeonId: id}}); }} />
                     <Trash size={30} id="deleteIcon" className="mx-1" onClick={()=>{
                         showConfirmation(t("dashboard.delete_dungeon.confirmation.title"), t("dashboard.delete_dungeon.confirmation.text"),

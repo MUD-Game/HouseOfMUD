@@ -46,7 +46,6 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
         }
 
         supervisor.login(dungeon, body, (data) => {
-            game.setCharacterID(character);
             game.setCharacter(character);
             game.setVerifyToken(data.verifyToken);
             navigate("/game");
@@ -63,7 +62,7 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
         supervisor.startDungeon(dungeon, {}, (data) => {
             setTimeout(() => {
                 join();
-            }, 1000);
+            }, 2000);
         }, (error) => {
             homosole.error(error.error);
         });

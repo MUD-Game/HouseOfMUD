@@ -54,6 +54,8 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
         supervisor.login(id, {}, (data) => {
             game.setCharacter(DUNGEON_MASTER_NAME);
             game.setVerifyToken(data.verifyToken);
+            game.setDungeon(id);
+            game.setDungeonName(name);
             navigate("/game");
         }, (error) => {
             // TODO: handle error in a better way

@@ -106,7 +106,7 @@ function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefine
         let dungeonItems: Item[] = translateItemsFromDatabase(databaseDungeon)
         let dungeonNpcs: Npc[] = translateNpcsFromDatabase(databaseDungeon)
         let dungeonObject: Dungeon = new DungeonImpl(dungeonID, databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs)
-        console.log(dungeonObject)
+        // console.log(dungeonObject)
         return dungeonObject
     }
 }

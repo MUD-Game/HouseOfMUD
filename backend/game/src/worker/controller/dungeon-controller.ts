@@ -64,10 +64,10 @@ export class DungeonController {
             new CharacterStatsImpl(100, 20, 100),
             new CharacterStatsImpl(100, 20, 100),
             "0,0",
-            ["item1"]
+            []
         );
         this.dungeon.characters[name] = newCharacter;
-        console.log(this.dungeon)
+        // console.log(this.dungeon)
         return newCharacter;
     }
 

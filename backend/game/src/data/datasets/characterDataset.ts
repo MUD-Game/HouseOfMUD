@@ -2,7 +2,6 @@ import { Schema } from "mongoose";
 import { CharacterStats } from "./charcterStats";
 
 export interface CharacterDataset {
-  id: string;
   name: string;
   userId: string;
   dungeonId: string;
@@ -16,7 +15,6 @@ export interface CharacterDataset {
 }
 
 export const characterSchema = new Schema<CharacterDataset>({
-  id: { type: String, required: true },
   name: { type: String },
   userId: { type: String },
   dungeonId: { type: String },

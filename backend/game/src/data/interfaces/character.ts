@@ -1,7 +1,6 @@
 import { CharacterStats } from "./characterStats";
 
 export interface Character {
-    id: string;
     name: string;
     userId: string;
     dungeonId: string;
@@ -13,7 +12,6 @@ export interface Character {
     position: string;
     inventory: string[];
   
-    getId(): string
     getName(): string
     getPosition(): string
     modifyPosition(destinationRoom: string): any
@@ -21,7 +19,6 @@ export interface Character {
 }
   
 export class CharacterImpl implements Character {
-    id: string;
     name: string;
     userId: string;
     dungeonId: string;
@@ -34,7 +31,6 @@ export class CharacterImpl implements Character {
     inventory: string[];
 
     constructor(
-        id: string,
         userId: string,
         dungeonId: string,
         name: string,
@@ -46,7 +42,6 @@ export class CharacterImpl implements Character {
         position: string,
         inventory: string[]
     ) {
-        this.id = id;
         this.userId = userId;
         this.dungeonId = dungeonId;
         this.name = name;
@@ -57,10 +52,6 @@ export class CharacterImpl implements Character {
         this.currentStats = currentStats;
         this.position = position;
         this.inventory = inventory;
-    }
-
-    getId(): string {
-        return this.id;
     }
 
     getName(): string {

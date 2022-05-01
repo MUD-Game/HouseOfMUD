@@ -11,7 +11,7 @@
  */
 
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -31,16 +31,20 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
     const {t} = useTranslation();
     let auth = useAuth();
     let token = new URLSearchParams(location.search).get('token')!;
-    auth.verifyEmail(token, () => {
-        setIsVerifying(false);
-        setVerifyMessage(t("verify_email.success"));
-        setTimeout(() => {
-            navigate("/login");
-        }, 3000);
-    }, () => {
-        setIsVerifying(false);
-        setVerifyMessage(t("verify_email.error"));
-    });
+    useEffect(() => {
+        auth.verifyEmail(token, () => {
+            setIsVerifying(false);
+            setVerifyMessage(t("verify_email.success"));
+            setTimeout(() => {
+                navigate("/login");
+            }, 3000);
+        }, () => {
+            setIsVerifying(false);
+            setVerifyMessage(t("verify_email.error"));
+        });
+    }, []);
+
+   
 
 
     return (
@@ -52,7 +56,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
             </Row>
             <Row>
                 <p>
-                    {verifyMessage}
+                    {verifyMessage === "" ? <Busy/> : verifyMessage}
                 </p>
             </Row>
         </Container>

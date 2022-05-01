@@ -63,7 +63,7 @@ export class DungeonController {
             'gender1',
             new CharacterStatsImpl(100, 20, 100),
             new CharacterStatsImpl(100, 20, 100),
-            "room1",
+            "0,0",
             ["item1"]
         );
         this.dungeon.characters[name] = newCharacter;

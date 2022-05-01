@@ -8,40 +8,36 @@
 }
 
 #refocus-button {
-    position: absolute;
-    z-index: 2000;
-    transition: fill 0.2s;
+    top:0;
 }
 
-#refocus-button{
+#help-button{
+    top:0;
+    right:0;
+}
+
+
+#konva-buttons-container svg{
+    position: absolute;
     transition: opacity 0.2s, transform 0.2s;
     fill:var(--accent);
     opacity: 0.5;
 }
 
-#refocus-button:hover {
+
+#konva-buttons-container svg:hover {
     opacity: 1;
     transform: translateY(-2px);
 }
 
-#refocus-button-container {
+#konva-buttons-container {
+    z-index: 2000;
+    display: flex;
     position: relative;
-    top: 20px;
-    left: 14px;
+    top:20px;
+    left:5px;
 }
 
-
-
-#refocus-button-fill:hover {
-    opacity: 1;
-    transform: translateY(-5px);
-}
-
-#refocus-button-fill:hover+#refocus-button {
-    opacity: 0;
-    transform: translateY(-5px);
-
-}
 
 #konvacontainer{
     border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;

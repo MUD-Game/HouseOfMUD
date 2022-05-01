@@ -36,8 +36,9 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
     let user = auth.user;
     const homosole = useMudConsole();
     
+    const [character, setCharacter] = React.useState<string>("");
 
-    const join = (character: string) => {
+    const join = () => {
         console.log(`join ${character}`);
 
         let body: LoginRequest = {
@@ -47,27 +48,23 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
         supervisor.login(dungeon, body, (data) => {
             game.setCharacterID(character);
             game.setCharacter(character);
+            game.setVerifyToken(data.verifyToken);
             navigate("/game");
         }, (error) => {
             // TODO: handle error in a better way
-            homosole.error(error.error);
         });
     }
 
     const startAndJoin = (evt: FormEvent<HTMLFormElement>) => {
 
         evt.preventDefault();
-        let formData = new FormData(evt.currentTarget);
-        let character: string = formData.get('name') as string;
-
         console.log('starting Dungeon');
 
         supervisor.startDungeon(dungeon, {}, (data) => {
             setTimeout(() => {
-                join(character);
+                join();
             }, 1000);
         }, (error) => {
-            // TODO: handle error in a better way
             homosole.error(error.error);
         });
     }
@@ -77,8 +74,7 @@ const DemoStart: React.FC<DemoStartProps> = (props) => {
             <h2>{dungeonName}</h2>
             <form onSubmit={startAndJoin}>
                 <Row className="align-items-end g-2">
-                    <MudInput required colmd={8} name="name" type="text" placeholder="Charactername eingeben" />
-
+                    <MudInput required colmd={8} name="name" value={character} onChange={(event)=>setCharacter(event.target.value)} type="text" placeholder="Charactername eingeben" />
                     <div className="col-md-4">
                         <button className="btn w-100 drawn-border btn-green" type="submit">Dungeon starten und beitreten</button>
                     </div>

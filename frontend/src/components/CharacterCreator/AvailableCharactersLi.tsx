@@ -45,7 +45,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
         }
 
         supervisor.login(dungeon, body, (data) => {
-            setCharacterID(character.id);
+            setCharacterID(character.name);
             setCharacter(character.name);
             setVerifyToken(data.verifyToken);
             navigate("/game");

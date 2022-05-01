@@ -88,7 +88,7 @@ export interface DungeonConfiguratorContextMethods {
     setSelectedRoomNpcs: (npcs: Option[]) => void;
 
 
-    save: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    save: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, busyCallback: (busy: boolean)=>void) => void;
 }
 
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
@@ -499,8 +499,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         return valid;
     }
 
-    const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, busyCallback: (busy: boolean) => void) => {
         if (validateData()) {
+            busyCallback(true);
             let createBody: CreateDungeonRequest['dungeonData'] = {
                 id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                 name,
@@ -525,6 +526,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             };
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
+                    busyCallback(false);
                     if (data.ok) {
                         homosole.log("Dungeon Successfully created");
                         navigate("/");
@@ -545,6 +547,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                         homosole.error("Dungeon could not be created");
                     }
                 }, (error) => {
+                    busyCallback(false);
                     homosole.log(error.error, "Dungeon-Configurator");
                 });
             }

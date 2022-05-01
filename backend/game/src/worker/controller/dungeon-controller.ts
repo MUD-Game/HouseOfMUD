@@ -56,7 +56,6 @@ export class DungeonController {
     createCharacter(name: string): Character {
         let newCharacter: Character = new CharacterImpl(
             name,
-            name,
             '1',
             name,
             'Magier',

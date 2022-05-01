@@ -69,8 +69,8 @@ const TestItemDiscard: Item = new ItemImpl('2', 'Schwert', 'Schwertiges Schwert'
 const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
-    'active',
-    'active'
+    'open',
+    'open'
 );
 const TestAction: ActionElement = new ActionElementImpl(
     '1',
@@ -97,7 +97,7 @@ const TestRoomNorth: Room = new RoomImpl(
     'Der Raum im Norden',
     [TestNpc.id],
     [TestItem.id],
-    new ConnectionInfoImpl('inactive', 'active'),
+    new ConnectionInfoImpl('inactive', 'open'),
     [TestAction.id],
     2,
     3
@@ -130,7 +130,7 @@ const TestRoomWest: Room = new RoomImpl(
     'Der Raum im Westen',
     [TestNpc.id],
     [TestItem.id],
-    new ConnectionInfoImpl('active', 'inactive'),
+    new ConnectionInfoImpl('open', 'inactive'),
     [TestAction.id],
     1,
     2
@@ -160,7 +160,6 @@ const TestRoomNorthEast: Room = new RoomImpl(
 const TestCharacter: Character = new CharacterImpl(
     '1',
     '1',
-    '1',
     'Jeff',
     'Magier',
     '1',
@@ -171,7 +170,6 @@ const TestCharacter: Character = new CharacterImpl(
     [TestItem.id]
 );
 const TestCharacterSameRoom: Character = new CharacterImpl(
-    '2',
     '2',
     '1',
     'Spieler',
@@ -184,7 +182,6 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
     [TestItem.id]
 );
 const TestCharacterNotSameRoom: Character = new CharacterImpl(
-    '3',
     '3',
     '1',
     'Bob',
@@ -284,61 +281,61 @@ describe('ActionHandler', () => {
     })
 
     test('ActionHandler should call performAction on MessageAction with the correct parameters when it receives a "sag" action message', () => {
-        actionHandler.processAction('1', `${triggers.message} Hallo`);
-        expect(messageAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', `${triggers.message} Hallo`);
+        expect(messageAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Hallo',
         ]);
     });
     test('ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a "fluester" action message', () => {
-        actionHandler.processAction('1', `${triggers.whisper} Spieler Hallo`);
-        expect(privateMessageAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', `${triggers.whisper} Spieler Hallo`);
+        expect(privateMessageAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Spieler',
             'Hallo',
         ]);
     });
     test('ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a "ablegen" action message', () => {
-        actionHandler.processAction('1', `${triggers.discard} Apfel`);
-        expect(discardAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', `${triggers.discard} Apfel`);
+        expect(discardAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on InspectAction with the correct parameters when it receives a "untersuche" action message', () => {
-        actionHandler.processAction('1', `${triggers.inspect} Apfel`);
-        expect(inspectAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', `${triggers.inspect} Apfel`);
+        expect(inspectAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a "inv" action message', () => {
-        actionHandler.processAction('1', triggers.inventory);
-        expect(inventoryAction.performAction).toHaveBeenCalledWith('1', []);
+        actionHandler.processAction('Jeff', triggers.inventory);
+        expect(inventoryAction.performAction).toHaveBeenCalledWith('Jeff', []);
     });
     test('ActionHandler should call performAction on LookAction with the correct parameters when it receives a "umschauen" action message', () => {
-        actionHandler.processAction('1', triggers.look);
-        expect(lookAction.performAction).toHaveBeenCalledWith('1', []);
+        actionHandler.processAction('Jeff', triggers.look);
+        expect(lookAction.performAction).toHaveBeenCalledWith('Jeff', []);
     });
     test('ActionHandler should call performAction on MoveAction with the correct parameters when it receives a "gehe" action message', () => {
-        actionHandler.processAction('1', `${triggers.move} Norden`);
-        expect(moveAction.performAction).toHaveBeenCalledWith('1', ['Norden']);
+        actionHandler.processAction('Jeff', `${triggers.move} Norden`);
+        expect(moveAction.performAction).toHaveBeenCalledWith('Jeff', ['Norden']);
     });
     test('ActionHandler should call performAction on PickupAction with the correct parameters when it receives a "aufheben" action message', () => {
-        actionHandler.processAction('1', `${triggers.pickup} Apfel`);
-        expect(pickupAction.performAction).toHaveBeenCalledWith('1', ['Apfel']);
+        actionHandler.processAction('Jeff', `${triggers.pickup} Apfel`);
+        expect(pickupAction.performAction).toHaveBeenCalledWith('Jeff', ['Apfel']);
     });
     test('ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message', () => {
-        actionHandler.processAction('1', 'essen Apfel');
-        expect(dungeonAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', 'essen Apfel');
+        expect(dungeonAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master', () => {
-        actionHandler.processAction('1', `${triggers.unspecified} Test`);
-        expect(unspecifiedAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', `${triggers.unspecified} Test`);
+        expect(unspecifiedAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Test',
         ]);
     });
     test('ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message', () => {
-        actionHandler.processAction('1', 'angriff Monster');
-        expect(invalidAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', 'angriff Monster');
+        expect(invalidAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Monster',
         ]);
     });
@@ -352,12 +349,12 @@ describe('ActionHandler', () => {
         expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('0', ['Hallo'])
     })
     test('ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action', () => {
-        actionHandler.processAction('1', `${triggers.broadcast} Hallo`);
-        expect(invalidAction.performAction).toHaveBeenCalledWith('1', ['Hallo'])
+        actionHandler.processAction('Jeff', `${triggers.broadcast} Hallo`);
+        expect(invalidAction.performAction).toHaveBeenCalledWith('Jeff', ['Hallo'])
     })
     test('ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a "fluesterdm" action message', () => {
-        actionHandler.processAction('1', `${triggers.messageMaster} Hallo`);
-        expect(messageMasterAction.performAction).toHaveBeenCalledWith('1', [
+        actionHandler.processAction('Jeff', `${triggers.messageMaster} Hallo`);
+        expect(messageMasterAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Hallo',
         ]);
     });
@@ -369,7 +366,7 @@ describe('Actions', () => {
         console.log(TestDungeon)
     })
     beforeEach(() => {
-        TestDungeon.characters['1'].position = TestRoom.id;
+        TestDungeon.characters['Jeff'].position = TestRoom.id;
     });
     afterEach(() => {
         jest.clearAllMocks();
@@ -397,7 +394,7 @@ describe('Actions', () => {
     jest.useFakeTimers()
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
-        messageAction.performAction('1', [
+        messageAction.performAction('Jeff', [
             'Hallo',
             'zusammen!',
         ]);
@@ -408,15 +405,15 @@ describe('Actions', () => {
     });
 
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload', () => {
-        privateMessageAction.performAction('1', [
+        privateMessageAction.performAction('Jeff', [
             'Spieler',
             'Hallo',
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: '[privat] Jeff -> Spieler: Hallo' },
         });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('2', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
             action: 'message',
             data: { message: '[privat] Jeff -> Spieler: Hallo' },
         });
@@ -431,29 +428,29 @@ describe('Actions', () => {
             action: 'message',
             data: { message: `[privat] ${actionMessages.dmWhisper} -> Spieler: Hallo` },
         });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('2', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
             action: 'message',
             data: { message: `[privat] ${actionMessages.dmWhisper} -> Spieler: Hallo` },
         });
     });
 
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room', () => {
-        privateMessageAction.performAction('1', [
+        privateMessageAction.performAction('Jeff', [
             'Bob',
             'Hallo',
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Bob ${actionMessages.whisperCharacterNotInSameRoom}` },
         });
     });
 
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist', () => {
-        privateMessageAction.performAction('1', [
+        privateMessageAction.performAction('Jeff', [
             'Held',
             'Hallo',
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: {
                 message:
@@ -465,13 +462,13 @@ describe('Actions', () => {
     
     test(`MoveAction should modify the position, call the functions to bind the client queues 
     and call sendWithRouting on the AmqpAdapter when user moves to another room`, () => {
-        moveAction.performAction('1', ['Norden']);
-        expect(TestDungeon.characters['1'].position).toBe(TestRoomNorth.id);
+        moveAction.performAction('Jeff', ['Norden']);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id);
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith(
-            '1',
+            'Jeff',
             'room.1'
         );
-        expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('1', 'room.2');
+        expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('Jeff', 'room.2');
         jest.runAllTimers()
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
@@ -480,50 +477,50 @@ describe('Actions', () => {
     });
 
     test('MoveAction should modify the position to the room in the East when user moves east', () => {
-        moveAction.performAction('1', ['Osten']);
-        expect(TestDungeon.characters['1'].position).toBe(TestRoomEast.id);
+        moveAction.performAction('Jeff', ['Osten']);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomEast.id);
     });
 
     test('MoveAction should modify the position to the room in the South when user moves south', () => {
-        moveAction.performAction('1', ['Sueden']);
-        expect(TestDungeon.characters['1'].position).toBe(TestRoomSouth.id);
+        moveAction.performAction('Jeff', ['Sueden']);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomSouth.id);
     });
 
     test('MoveAction should modify the position to the room in the West when user moves west', () => {
-        moveAction.performAction('1', ['Westen']);
-        expect(TestDungeon.characters['1'].position).toBe(TestRoomWest.id);
+        moveAction.performAction('Jeff', ['Westen']);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomWest.id);
     });
 
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', () => {
-        TestDungeon.characters['1'].position = TestRoomNorth.id;
-        moveAction.performAction('1', ['Osten']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
+        moveAction.performAction('Jeff', ['Osten']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: actionMessages.movePathNotAvailable },
         });
     });
 
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', () => {
-        TestDungeon.characters['1'].position = TestRoomNorth.id;
-        moveAction.performAction('1', ['Nord-Sueden']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
+        moveAction.performAction('Jeff', ['Nord-Sueden']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: errorMessages.directionDoesNotExist },
         });
     });
 
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', () => {
-        TestDungeon.characters['1'].position = TestRoomNorth.id;
-        moveAction.performAction('1', ['Norden']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
+        moveAction.performAction('Jeff', ['Norden']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: actionMessages.moveRoomClosed },
         });
     });
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', () => {
-        TestDungeon.characters['1'].position = TestRoomNorthNorth.id;
-        moveAction.performAction('1', ['Osten']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        TestDungeon.characters['Jeff'].position = TestRoomNorthNorth.id;
+        moveAction.performAction('Jeff', ['Osten']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: actionMessages.movePathNotAvailable },
         });
@@ -531,8 +528,8 @@ describe('Actions', () => {
     //MOVEACTION TEST
 
     test('LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload', () => {
-        lookAction.performAction('1', []);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        lookAction.performAction('Jeff', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: {
                 message:
@@ -542,34 +539,34 @@ describe('Actions', () => {
     });
 
     test('InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload', () => {
-        inventoryAction.performAction('1', []);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        inventoryAction.performAction('Jeff', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `${actionMessages.inventory} Apfel` },
         });
     });
 
     test('InspectAction should call sendToClient on AmqpAdapter with the correct routingKey and payload', () => {
-        inspectAction.performAction('1', ['Apfel']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        inspectAction.performAction('Jeff', ['Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `${actionMessages.inspect} Apfel: Apfliger Apfel` },
         });
     });
 
     test('InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item', () => {
-        inspectAction.performAction('1', ['Birne']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        inspectAction.performAction('Jeff', ['Birne']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: errorMessages.itemNotOwned },
         });
     });
 
     test('MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload', () => {
-        messageMasterAction.performAction('1', [
+        messageMasterAction.performAction('Jeff', [
             'Hallo'
         ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `[privat] Jeff -> ${actionMessages.dmWhisper}: Hallo` },
         });
@@ -580,11 +577,11 @@ describe('Actions', () => {
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
-        TestDungeon.characters['1'].inventory.push(TestItemDiscard.id)
-        discardAction.performAction('1', ['Schwert']);
-        expect(TestDungeon.characters['1'].inventory).toStrictEqual([TestItem.id])
+        TestDungeon.characters['Jeff'].inventory.push(TestItemDiscard.id)
+        discardAction.performAction('Jeff', ['Schwert']);
+        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id])
         expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id, TestItemDiscard.id])
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `${actionMessages.discard}Schwert` },
         });
@@ -592,16 +589,16 @@ describe('Actions', () => {
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own', () => {
-        discardAction.performAction('1', ['Gold']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        discardAction.performAction('Jeff', ['Gold']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: errorMessages.itemNotOwned },
         });
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon', () => {
-        discardAction.performAction('1', ['Rubin']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        discardAction.performAction('Jeff', ['Rubin']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: errorMessages.itemNotOwned },
         });
@@ -609,27 +606,27 @@ describe('Actions', () => {
 
     test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
         TestDungeon.rooms[TestRoom.id].items.push(TestItemPickup.id)
-        pickupAction.performAction('1', ['Gold']);
-        expect(TestDungeon.characters['1'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
+        pickupAction.performAction('Jeff', ['Gold']);
+        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
         expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id])
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `${actionMessages.pickup}Gold` },
         });
-        TestDungeon.characters['1'].inventory.pop()
+        TestDungeon.characters['Jeff'].inventory.pop()
     })
 
     test('PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold', () => {
-        pickupAction.performAction('1', ['Schwert']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        pickupAction.performAction('Jeff', ['Schwert']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: errorMessages.itemNotInRoom },
         });
     })
 
     test('PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon', () => {
-        pickupAction.performAction('1', ['Rubin']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('1', {
+        pickupAction.performAction('Jeff', ['Rubin']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: errorMessages.itemNotInRoom },
         });

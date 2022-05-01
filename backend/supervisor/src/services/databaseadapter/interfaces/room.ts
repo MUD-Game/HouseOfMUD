@@ -14,8 +14,8 @@ export interface Room {
     getId(): string
     getName(): string
     getDescription(): string
-    getEastConnection(): "active" | "inactive" | "closed"
-    getSouthConnection(): "active" | "inactive" | "closed"
+    getEastConnection(): "open" | "inactive" | "closed"
+    getSouthConnection(): "open" | "inactive" | "closed"
     getItems(): string[]
     getNpcs(): string[]
     getActions(): string[]
@@ -66,11 +66,11 @@ export class RoomImpl implements Room {
         return this.description;
     }
 
-    getEastConnection(): "active" | "inactive" | "closed" {
+    getEastConnection(): "open" | "inactive" | "closed" {
         return this.connections.east;
     }
 
-    getSouthConnection(): "active" | "inactive" | "closed" {
+    getSouthConnection(): "open" | "inactive" | "closed" {
         return this.connections.south;
     }
 

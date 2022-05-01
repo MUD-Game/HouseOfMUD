@@ -1,5 +1,4 @@
 import { Schema } from "mongoose";
-import { Room } from "../interfaces/room";
 import { ConnectionInfo } from "./connectionInfo";
 
 export interface RoomDataset {

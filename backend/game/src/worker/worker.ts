@@ -179,8 +179,8 @@ function getDungeon(dungeonID: string): Dungeon {
     );
     const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
     const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
-        'active',
-        'active'
+        'open',
+        'open'
     );
     const TestAction: ActionElement = new ActionElementImpl(
         '1',
@@ -207,7 +207,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Der Raum im Norden',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfoImpl('inactive', 'active'),
+        new ConnectionInfoImpl('inactive', 'open'),
         [TestAction.id],
         2,
         3
@@ -240,7 +240,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Der Raum im Westen',
         [TestNpc.id],
         [TestItem.id],
-        new ConnectionInfoImpl('active', 'inactive'),
+        new ConnectionInfoImpl('open', 'inactive'),
         [TestAction.id],
         1,
         2

@@ -285,7 +285,7 @@ export class API {
             if (body.characterData !== undefined) {
                 let characterData: CharacterDataset = body.characterData;
                 characterData.userId = userID;
-                characterData.id = characterData.name;
+                characterData.name = characterData.name;
                 this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
                     res.json({ ok: 1, character: character });
                 }).catch(err => {

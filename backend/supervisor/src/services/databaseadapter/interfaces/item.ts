@@ -3,6 +3,7 @@ export interface Item {
     name: string;
     description: string;
   
+    getId(): string
     getName(): string
     getDescription(): string
 }
@@ -16,6 +17,10 @@ export class ItemImpl implements Item {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    getId(): string {
+        return this.id
     }
 
     getName(): string {

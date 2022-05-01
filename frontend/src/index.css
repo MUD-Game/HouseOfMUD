@@ -18,26 +18,30 @@
   --damage: #6d6d6d;
 
   /* Inactive Room (not yet created) */
-  /* Inactive Room (not yet created */
-  --room-fill: #f0f0f0;
-  --room-stroke: #000000;
+  /* Inactive Room (not yet 
+  created */
+
+  --room-background:#f0f0f0;
+
+  --room-fill: #ddd;
+  --room-stroke: #ccc;
   
   /* Created Rooms */
-  --room-active-fill: var(--accent);
-  --room-active-stroke : var(--accent-darker);
+  --room-active-fill: #8b4a20;
+  --room-active-stroke : #6b2a00;
 
-  --room-selected-fill:  var(--accent-darker); 
-  --room-selected-stroke: var(--red);
+  --room-selected-fill: #753e1a; 
+  --room-selected-stroke: #441b00;
 
   /* Start Room */
   --room-start-fill: var(--lightgreen);
-  --room-start-stroke:  var(--lightgreen);
+  --room-start-stroke: var(--room-active-stroke);
   --room-start-selected-fill:  var(--green);
-  --room-start-selected-stroke:  var(--red);
+  --room-start-selected-stroke:  var(--room-selected-stroke);
 
-  --connection-closed: var(--red);
-  --connection-inactive: rgb(202, 193, 176);
-  --connection-open: var(--green);
+  --connection-closed: var(--room-selected-stroke);
+  --connection-inactive: var(--room-stroke);
+  --connection-open: var(--room-active-stroke);
 }
 
 html, body {

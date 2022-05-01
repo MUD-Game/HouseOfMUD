@@ -257,6 +257,11 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
     async storeCharacterInDungeon(newCharacter: CharacterDataset, dungeonId: string) {
+        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'characterClasses');
+        const characterClasses = await foundDungeon!.populate('characterClasses');
+        const maxStats = characterClasses.characterClasses.find(c => c.id == newCharacter.characterClass)?.maxStats;
+        newCharacter.maxStats = maxStats!;
+        newCharacter.currentStats = maxStats!;
         return this.dungeon.updateOne({ _id: dungeonId }, { $push: { characters: await this.character.create(newCharacter) } })
     }
 
@@ -266,7 +271,7 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
     async deleteCharacter(characterId: string) {
-        return this.character.deleteOne({ id: characterId })
+        return this.character.deleteOne({ _id: characterId })
     }
 
     /**
@@ -285,6 +290,20 @@ export class DatabaseAdapter {
      */
     async updateRoom(room: RoomDataset) {
         return this.room.updateOne({ id: room.id }, room)
+    }
+
+    async getDungeonCharacterAttributes(dungeonId: string) {
+        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'characterClasses characterSpecies characterGenders');
+        if (foundDungeon == undefined) {
+            return undefined
+        }
+        const data = {
+            classes: (await foundDungeon.populate('characterClasses')).characterClasses,
+            species: (await foundDungeon.populate('characterSpecies')).characterSpecies,
+            genders: (await foundDungeon.populate('characterGenders')).characterGenders,
+        }
+        return data;
+
     }
 
     /**
@@ -338,10 +357,10 @@ export class DatabaseAdapter {
      * @param dungeonId the dungeon for which the characters were created
      * @returns an array of all characters from the specified user in the specified dungeon
      */
-    async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]>{
+    async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]> {
         var charactersFromUser: CharacterDataset[] = [];
         (await this.getAllCharactersFromDungeon(dungeonId)).forEach(char => {
-            if(char.userId === username){
+            if (char.userId === username) {
                 charactersFromUser.push(char)
             }
         })
@@ -353,7 +372,9 @@ export class DatabaseAdapter {
      * @param characterId the character id of the character to get
      * @returns  the found character
      */
-    async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null>{
-        return this.character.findOne({id: characterId})
+    async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null> {
+        return this.character.findOne({ id: characterId })
     }
+
+
 }

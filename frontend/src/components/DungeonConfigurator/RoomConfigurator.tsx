@@ -21,6 +21,8 @@ let bodyStyles = window.getComputedStyle(document.body);
 
 const roomStrokeWidth = 4;
 
+const background = bodyStyles.getPropertyValue('--room-background');
+
 const fillActive = bodyStyles.getPropertyValue('--room-active-fill');
 const strokeActive = bodyStyles.getPropertyValue('--room-active-stroke');
 const strokeActiveSelected = bodyStyles.getPropertyValue('--room-selected-stroke');
@@ -148,20 +150,24 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
     const handleConnectionClick = (event: any, coords: [number, number], south: boolean) => {
         toggleRoomConnection(coords, south); // handle in backend
-        switch (event.target.attrs.stroke) {
-            case connectionOpen:
+        switch (event.target.attrs["data-status"]) {
+            case 'open':
                 event.target.setAttrs({
-                    stroke: connectionClosed
+                    stroke: connectionClosed,
+                    "data-status": 'closed'
                 });
                 break;
-            case connectionInactive:
+            case 'inactive':
                 event.target.setAttrs({
-                    stroke: connectionOpen
+                    stroke: connectionOpen,
+                    "data-status": 'open'
+
                 });
                 break;
-            case connectionClosed:
+            case 'closed':
                 event.target.setAttrs({
-                    stroke: connectionInactive
+                    stroke: connectionInactive,
+                    "data-status": 'inactive'
                 });
         }
     }
@@ -170,7 +176,8 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     const tl = 'dungeon_configurator';
     const [isEdited, setIsEdited] = React.useState(false);
     return (
-        <div className="" ref={widthRef}>
+      <>
+        <div className="" id="konvacontainer" ref={widthRef}>
         <Row className="mt-5">
             <hr />
             <div className="col mb-3">
@@ -217,15 +224,17 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                                     yStrokeCol = connectionClosed;
                                     break;
                             }
+                            const xStatus = rooms[key].connections.east;
+                            const yStatus = rooms[key].connections.south;
 
                             const hasSouthRoom = rooms[x + ',' + (y + 1)] !== undefined;
                             const hasEastRoom = rooms[(x + 1) + ',' + y] !== undefined;
 
                             return (
                                 <Group key={key + "connections"}>
-                                    {hasEastRoom && <Line points={[x * roomOffset + roomSize + (roomStrokeWidth / 2), y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)]} stroke={xStrokeCol} onClick={(e) => handleConnectionClick(e, [x, y], false)} onTap={(e) => handleConnectionClick(e, [x, y], false)}  strokeWidth={connectionStrokeWidth} />}
+                                    {hasEastRoom && <Line points={[x * roomOffset + roomSize + (roomStrokeWidth / 2), y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)]} stroke={xStrokeCol} onClick={(e) => handleConnectionClick(e, [x, y], false)} onTap={(e) => handleConnectionClick(e, [x, y], false)}  strokeWidth={connectionStrokeWidth} data-status={xStatus} />}
 
-                                    {hasSouthRoom && <Line points={[x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + (roomStrokeWidth / 2), x * roomOffset + (roomSize / 2), (y + 1) * roomOffset]} stroke={yStrokeCol} onTap={(e) => handleConnectionClick(e, [x, y], true)} onClick={(e) => handleConnectionClick(e, [x, y], true)} strokeWidth={connectionStrokeWidth} />}
+                                    {hasSouthRoom && <Line points={[x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + (roomStrokeWidth / 2), x * roomOffset + (roomSize / 2), (y + 1) * roomOffset]} stroke={yStrokeCol} onTap={(e) => handleConnectionClick(e, [x, y], true)} onClick={(e) => handleConnectionClick(e, [x, y], true)} strokeWidth={connectionStrokeWidth} data-status={yStatus} />}
                                 </Group>
                             )
                         })}
@@ -283,6 +292,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                     </Group>
                 </Layer>
             </Stage>
+        </div>
         </Row>
             <form onSubmit={submitEditDungeon} onChange={() => {
                 if (!isEdited) {
@@ -363,7 +373,8 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                     </div>
                 </Row>
             </form>
-        </div>
+        </>
+
     )
 }
 

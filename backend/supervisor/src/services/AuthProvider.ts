@@ -1,7 +1,8 @@
-import { mockauth } from "../mock/api";
 import { DatabaseAdapter } from "./databaseadapter/databaseAdapter";
 import { User } from "./databaseadapter/datasets/userDataset";
 import crypto from 'crypto'
+
+const COOKIE_TIME = 1000 * 60 * 60 * 24 * 30;
 
 export default class AuthProvider {
 
@@ -35,6 +36,7 @@ export default class AuthProvider {
             delete this.sessioned_users[req.cookies.authToken];
             res.cookie('authToken', "", { domain: this.cookie_host, maxAge: 0 });
             res.cookie('user', "", { domain: this.cookie_host, maxAge: 0 });
+            res.cookie('userID', "", { domain: this.cookie_host, maxAge: 0 });
             res.status(200).send({
                 ok: 1
             });
@@ -136,24 +138,39 @@ export default class AuthProvider {
             let body: any = req.body || {};
             let authToken = req.cookies?.authToken;
             let user = req.cookies?.user;
+            let userID = req.cookies?.userID;
             let authStatus, backToken;
             if (authToken) {
-                authStatus = await this.validateToken(user || "", authToken);
+                authStatus = await this.validateToken(user || "", userID || "", authToken);
                 if (authStatus) backToken = authToken;
+                if(userID){
+                    userID = await this.dba.getUserId(user);
+                }
             } else if (body.user && body.password) {
                 user = body.user;
                 let password: string = body.password;
                 authStatus = await this.validatePassword(user, password);
                 if (authStatus){
                     backToken = this.generateVerifyToken()
-                    this.sessioned_users[backToken] = user;
+                    userID = await this.dba.getUserId(user);
+                    this.sessioned_users[backToken] = `${user}_${userID}`;
                 }
             }
 
-            res.cookie('authToken', backToken || "", { domain: this.cookie_host, maxAge: authStatus ? 3600 * 1000 : 0 });
-            res.cookie('user', user || "", { domain: this.cookie_host, maxAge: authStatus ? 3600 * 1000 : 0 });
-            authStatus || res.json({ ok: 0, error: 'Not Authorized' });
-            authStatus && next(); // Only go to the next one if the user is authenticated
+            if(authStatus){
+                res.cookie('authToken', backToken, { domain: this.cookie_host, maxAge: COOKIE_TIME });
+                res.cookie('user', user, { domain: this.cookie_host, maxAge: COOKIE_TIME });
+                res.cookie('userID', userID, { domain: this.cookie_host, maxAge:COOKIE_TIME });
+                next();
+            }else{
+                res.cookie('authToken', "", { domain: this.cookie_host, maxAge: 0 });
+                res.cookie('user',"", { domain: this.cookie_host, maxAge : 0 });
+                res.cookie('userID', "", { domain: this.cookie_host, maxAge:  0 });
+                res.status(401).send({
+                    ok: 0,
+                    error: "Unauthorized"
+                });
+            }
         } catch (error) {
             console.log(error);
             res.status(401).json({
@@ -162,8 +179,8 @@ export default class AuthProvider {
         }
     }
 
-    async validateToken(user: string, token: string) {
-        return (user && token) && (this.sessioned_users[token] === user);
+    async validateToken(user: string, userID: string, token: string) {
+        return (user && token && userID) && (this.sessioned_users[token] === `${user}_${userID}`);
     }
     async validatePassword(user: string, password: string) {
         // Fake wait

@@ -27,6 +27,9 @@
 
 #konva-buttons-container svg:hover {
     opacity: 1;
+}
+
+#refocus-button:hover{
     transform: translateY(-2px);
 }
 
@@ -48,4 +51,25 @@
 canvas {
     border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
     outline: var(--accent) solid 4px ;
+}
+
+
+#help-tooltip >.tooltip-inner{
+    background-color: var(--offcolor);
+}
+#help-tooltip>.tooltip-arrow::before{
+    border-left-color: var(--offcolor)
+}
+
+
+#help-tooltip >.tooltip-inner {
+    max-width: 100%;
+}
+#help-tooltip>.tooltip-inner div{
+    text-align: left;
+    max-width: 70vw;
+}
+
+#help-tooltip>.tooltip-inner h4{
+    text-align: center;
 }

@@ -1,4 +1,29 @@
 {
+    "room_tooltip":{
+        "title": "Raum Editor",
+        "add_room":{
+            "title": "Raum hinzufügen",
+            "text": "Mit einem Klick auf einen leeren Raum (grau) öffnet sich ein Dialog zum Hinzufügen eines Raums. Hier kannst du den Raumnamen und Beschreibung festlegen."
+        },
+        "edit_room":{
+            "title": "Raum bearbeiten",
+            "text": "Mit einem Klick auf einen Raum wird dieser ausgewählt und kann im Formular darunter mit Leben befüllt werden"
+        },
+        "toggle_connections": {
+            "title": "Verbindungen zwsischen Räumen anpassen",
+            "text": "Beim Erstellen werden verbindungen zwischen den Räumen automatisch erstellt. Diese Verbindungen können mit einem Klick geöffnet, geschlossen und deaktiviert werden."
+        },
+        "navigation":{
+            "title": "Navigation",
+            "scroll_wheel": "Mausrad",
+            "ctrl": "Strg",
+            "zoom_in_out": "Rein und Raus-zoomen",
+            "drag": {
+                "title": "Bewegen",
+                "text": "Die Map wird per Drag and Drop mit der Maus bewegt"
+            }
+        }
+    },
     "dashboard": {
         "title": "Dashboard",
         "create_new_dungeon": "Neuen Dungeon erstellen",
@@ -40,7 +65,12 @@
         "maxhp": "max HP",
         "maxmana": "max Mana",
         "maxdmg": "max Dmg",
-        "room": "Raum"
+        "room": "Raum",
+        "connections":{
+            "open": "Offen",
+            "closed": "Geschlossen",
+            "inactive": "Deaktiviert (Kein Durchgang)"
+        }
     },
     "character_creator":{
         "pick_character": "Charakter auswählen",

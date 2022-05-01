@@ -8,7 +8,10 @@ import MudInput from 'src/components/Custom/MudInupt';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/MudTypeahead';
 import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
-import { Row } from 'react-bootstrap';
+import { Col, Container, Overlay, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import connectionOpenPng from 'src/assets/connection_open.png';
+import connectionClosedPng from 'src/assets/connection_closed.png';
+import connectionInactivePng from 'src/assets/connection_inactive.png';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -48,9 +51,12 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
     const [width, setWidth] = React.useState(0);
     const [mapSize, setMapSize] = React.useState({ width: 10, height: 5 });
+    const [showOverlay, setShowOverlay] = React.useState(false);
     const widthRef = useRef<any>();
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
+    const overlayRef = useRef<any>();
+
     useEffect(() => {
         setWidth(widthRef.current.clientWidth);
     }, []);
@@ -171,8 +177,55 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 });
         }
     }
-
     const { t } = useTranslation();
+    const dt = "room_tooltip";
+    const renderTooltip = (props:any) => (
+        <Tooltip id="help-tooltip" {...props}>
+            <Container>
+            <div>
+            <h4>{t(`${dt}.title`)}</h4>
+                <h5>{t(`${dt}.add_room.title`)}</h5>
+                <p>{t(`${dt}.add_room.text`)}</p>
+                <h5>{t(`${dt}.edit_room.title`)}</h5>
+                <p>{t(`${dt}.edit_room.text`)}</p>
+                <h5>{t(`${dt}.toggle_connections.title`)}</h5>
+                <p>{t(`${dt}.toggle_connections.text`)}</p>
+                    <Row>
+                        <div className="col-md-3">
+                            <b>{t("dungeon_keys.connections.open")}</b>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={connectionOpenPng} width={100} alt="open" />
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-md-3">
+                            <b>{t("dungeon_keys.connections.closed")}</b>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={connectionClosedPng} width={100} alt="closed" />
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-md-3">
+                            <b>{t("dungeon_keys.connections.inactive")}</b>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={connectionInactivePng} width={100} alt="inactive" />
+                        </div>
+                    </Row>
+                <br/>
+
+                <h5>{t(`${dt}.navigation.title`)}</h5>
+                <p>
+                    <b>{t(`${dt}.navigation.zoom_in_out`)}:</b> <kbd className="light">{t(`${dt}.navigation.ctrl`)}</kbd> + <kbd className="light">{t(`${dt}.navigation.scroll_wheel`)} ↑↓</kbd><br/>
+                    <b>{t(`${dt}.navigation.drag.title`)}:</b> {t(`${dt}.navigation.drag.text`)}
+                </p>
+
+            </div>
+                </Container>
+        </Tooltip>
+    );
     const tl = 'dungeon_configurator';
     const [isEdited, setIsEdited] = React.useState(false);
     return (
@@ -187,16 +240,20 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
             <div id="konva-buttons-container">
                     <GeoAlt size={37} id="refocus-button" onClick={() => {
                 stageRef.current.scale({ x: 1, y: 1 });
-                
                 stageRef.current.position({ x: 0, y: 0 });
             }} />
-            <QuestionCircle id="help-button" size={37} onClick={() => {
-                
-            }} />
+                    <OverlayTrigger
+                        placement="left"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={renderTooltip}
+                    >
+                        <QuestionCircle id="help-button" size={37} onClick={() => {
+                        }} />
+                    </OverlayTrigger>
+            
             </div>
         </Row>
             <div id="konvacontainer" ref={widthRef}>
-
             <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width / 1.618} draggable offsetY={-(width / 1.618) / 2} offsetX={-width / 2}>
                 <Layer>
                     <Group name="connections">

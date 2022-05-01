@@ -17,11 +17,12 @@ import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Play, PlayCircle, Trash } from 'react-bootstrap-icons';
 
 export interface AvailableCharactersLiProps {
-    character: CharactersResponseData
-    characterAttributes:{characterClass: string, characterGender: string, characterSpecies: string}
+    character: CharactersResponseData;
+    characterAttributes:{characterClass: string, characterGender: string, characterSpecies: string};
+    fetchCharacters: () => void;
 }
 
-const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character, characterAttributes }) => {
+const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character, characterAttributes, fetchCharacters }) => {
 
     const { user, token } = useAuth();
     const { dungeon, setCharacterID, setVerifyToken, setCharacter } = useGame();
@@ -31,7 +32,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
 
     const onDelete = () => {
         supervisor.deleteCharacter(dungeon, { _id: character._id }, (data) => {
-            // navigate("/characters");
+            fetchCharacters();
         }, (error) => {
             homosole.error(error.error);
         })

@@ -286,7 +286,6 @@ export class API {
                 let characterData: CharacterDataset = body.characterData;
                 characterData.userId = userID;
                 characterData.id = characterData.name;
-                console.log(characterData);
                 this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
                     res.json({ ok: 1, character: character });
                 }).catch(err => {
@@ -301,9 +300,10 @@ export class API {
         app.delete('/character/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             let body: any = req.body;
-            if (body.character !== undefined) {
-                let characterID: any = body.character;
+            if (body._id !== undefined) {
+                let characterID: any = body._id;
                 this.dba.deleteCharacter(characterID);
+                res.json({ ok: 1});
             } else {
                 res.json({ ok: 0, error: 'Invalid parameters' });
             }

@@ -7,7 +7,8 @@ import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import MudInput from 'src/components/Custom/MudInupt';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/MudTypeahead';
-import { ArrowBarLeft, ArrowsFullscreen, Back, BorderCenter, Bullseye, GeoAlt, GeoAltFill, Play } from 'react-bootstrap-icons';
+import { GeoAlt } from 'react-bootstrap-icons';
+import { Row } from 'react-bootstrap';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -175,8 +176,14 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     const tl = 'dungeon_configurator';
     const [isEdited, setIsEdited] = React.useState(false);
     return (
-        <>
-        <div id="konvacontainer" ref={widthRef}>
+      <>
+        <Row className="mt-5">
+            <hr />
+            <div className="col mb-3">
+                <span className="headline">{ t("dungeon_configurator.rooms.title") }</span>
+            </div>
+        </Row>
+        <Row>
             <div id="refocus-button-container">
             <GeoAlt size={40} id="refocus-button" onClick={() => {
                 stageRef.current.scale({ x: 1, y: 1 });
@@ -184,6 +191,9 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 stageRef.current.position({ x: 0, y: 0 });
             }} />
             </div>
+        </Row>
+            <div id="konvacontainer" ref={widthRef}>
+
             <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width / 1.618} draggable offsetY={-(width / 1.618) / 2} offsetX={-width / 2}>
                 <Layer>
                     <Group name="connections">
@@ -284,88 +294,90 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                     </Group>
                 </Layer>
             </Stage>
-            </div>
+                </div>
 
-            <form className="row" onSubmit={submitEditDungeon} onChange={() => {
+            <form onSubmit={submitEditDungeon} onChange={() => {
                 if (!isEdited) {
                     setIsEdited(true);
                 }
             }}>
-                <MudInput colmd={6} placeholder={t("dungeon_keys.name")} key={currentRoom.id + "name"} name={"name"} defaultValue={currentRoom.name} />
-                <MudInput colmd={6} name="description" placeholder={t("dungeon_keys.description")} key={currentRoom.id + "descr"} defaultValue={currentRoom.description} />
-                <MudTypeahead
-                    colmd={12}
-                    title={t(`dungeon_keys.actions`)}
-                    id={"room-actions-typeahead"}
-                    labelKey={(option: any) => `${option.command}`}
-                    options={actions}
-                    multiple
-                    onChange={(e: any) => {
-                        setSelectedRoomActions(e);
-                        if (!isEdited) {
-                            setIsEdited(true);
-                        }
-                    }}
-                    placeholder={t(`common.select_actions`)}
-                    selected={selectedRoomActions}
-                />
-                <MudTypeahead
-                    colmd={12}
-                    title={t(`dungeon_keys.npcs`)}
-                    id={"room-npc-typeahead"}
-                    labelKey={(option: any) => `${option.name}`}
-                    options={npcs}
-                    multiple
-                    onChange={(e: any) => {
-                        setSelectedRoomNpcs(e);
-                        if (!isEdited) {
-                            setIsEdited(true);
-                        }
-                    }}
-                    placeholder={t(`common.select_npcs`)}
-                    selected={selectedRoomNpcs}
-                />
-                <MudTypeahead
-                    colmd={12}
-                    title={t(`dungeon_keys.items`)}
-                    id={"room-items-typeahead"}
-                    labelKey={(option: any) => `${option.name} (${option.description})`}
-                    options={items}
-                    multiple
-                    onChange={(e: any) => {
-                        setSelectedRoomItems(e);
-                        if (!isEdited) {
-                            setIsEdited(true);
-                        }
-                        let temp = selectedRoomItemValues;
-                        // e.forEach((element:any) => {
-                        //     if (selectedRoomItemValues[element.id] === undefined) {
-                        //         temp = { ...temp, [element.id]: 1};
-                        //     }
-                        // });
-                        const createdItem = e.filter((x: any) => !selectedRoomItems.includes(x))[0];
-                        const createdItemId = createdItem?.id;
-                        const deletedItemId = (selectedRoomItems.filter((x: any) => !e.includes(x))[0] as any)?.id;
-                        setSelectedRoomItemValues({ ...selectedRoomItemValues, [createdItemId || deletedItemId]: 1 });
-                    }}
-                    placeholder={t(`common.select_items`)}
-                    selected={selectedRoomItems}
-                />
-                {selectedRoomItems.map((item: any) => {
-                    return <MudInput colmd={2} type="number" placeholder={item.name + "-" + t("common.amount")} key={currentRoom.id + item.name} name={item.name} value={selectedRoomItemValues[item.id]} onChange={(event) => setSelectedRoomItemValues({ ...selectedRoomItemValues, [item.id]: event.target.value })} />
-                })}
-
-                <button className="btn btn-primary" disabled={!isEdited} type="submit">{t(`dungeon_configurator.rooms.save_room`)}</button>
-                <button onClick={() => deleteRoom()} disabled={currentRoom.id === "0,0"} className="btn btn-danger">{t(`dungeon_configurator.rooms.delete_room`)}</button>
+                <Row className="mt-2 g-1">
+                    <MudInput colmd={12} placeholder={t("dungeon_keys.name")} key={currentRoom.id + "name"} name={"name"} defaultValue={currentRoom.name} />
+                    <MudInput colmd={12} name="description" placeholder={t("dungeon_keys.description")} key={currentRoom.id + "descr"} defaultValue={currentRoom.description} />
+                    <MudTypeahead
+                        colmd={12}
+                        title={t(`dungeon_keys.actions`)}
+                        id={"room-actions-typeahead"}
+                        labelKey={(option: any) => `${option.command}`}
+                        options={actions}
+                        multiple
+                        onChange={(e: any) => {
+                            setSelectedRoomActions(e);
+                            if (!isEdited) {
+                                setIsEdited(true);
+                            }
+                        }}
+                        placeholder={t(`common.select_actions`)}
+                        selected={selectedRoomActions}
+                    />
+                    <MudTypeahead
+                        colmd={12}
+                        title={t(`dungeon_keys.npcs`)}
+                        id={"room-npc-typeahead"}
+                        labelKey={(option: any) => `${option.name}`}
+                        options={npcs}
+                        multiple
+                        onChange={(e: any) => {
+                            setSelectedRoomNpcs(e);
+                            if (!isEdited) {
+                                setIsEdited(true);
+                            }
+                        }}
+                        placeholder={t(`common.select_npcs`)}
+                        selected={selectedRoomNpcs}
+                    />
+                    <MudTypeahead
+                        colmd={12}
+                        title={t(`dungeon_keys.items`)}
+                        id={"room-items-typeahead"}
+                        labelKey={(option: any) => `${option.name} (${option.description})`}
+                        options={items}
+                        multiple
+                        onChange={(e: any) => {
+                            setSelectedRoomItems(e);
+                            if (!isEdited) {
+                                setIsEdited(true);
+                            }
+                            let temp = selectedRoomItemValues;
+                            // e.forEach((element:any) => {
+                            //     if (selectedRoomItemValues[element.id] === undefined) {
+                            //         temp = { ...temp, [element.id]: 1};
+                            //     }
+                            // });
+                            const createdItem = e.filter((x: any) => !selectedRoomItems.includes(x))[0];
+                            const createdItemId = createdItem?.id;
+                            const deletedItemId = (selectedRoomItems.filter((x: any) => !e.includes(x))[0] as any)?.id;
+                            setSelectedRoomItemValues({ ...selectedRoomItemValues, [createdItemId || deletedItemId]: 1 });
+                        }}
+                        placeholder={t(`common.select_items`)}
+                        selected={selectedRoomItems}
+                    />
+                    {selectedRoomItems.map((item: any) => {
+                        return <MudInput colmd={2} type="number" placeholder={item.name + "-" + t("common.amount")} key={currentRoom.id + item.name} name={item.name} value={selectedRoomItemValues[item.id]} onChange={(event) => setSelectedRoomItemValues({ ...selectedRoomItemValues, [item.id]: event.target.value })} />
+                    })}
+                </Row>
+                <Row className="mt-4">
+                    <div className="col-md-6">
+                        <button className="btn w-100 drawn-border btn-blue" disabled={!isEdited} type="submit">{t(`dungeon_configurator.rooms.save_room`)}</button>
+                    </div>
+                    <div className="col-md-6">
+                        <button onClick={() => deleteRoom()} disabled={currentRoom.id === "0,0"} className="btn w-100 drawn-border btn-red">{t(`dungeon_configurator.rooms.delete_room`)}</button>
+                    </div>
+                </Row>
             </form>
         </>
 
     )
-
-
-
 }
-
-
 
 export default RoomConfigurator;

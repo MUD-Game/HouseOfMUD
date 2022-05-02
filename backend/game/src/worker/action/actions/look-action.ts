@@ -1,3 +1,4 @@
+import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { ActionElement } from "../../../data/interfaces/actionElement";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
@@ -26,16 +27,17 @@ export class LookAction implements Action {
         let roomDescription: string = room.getDescription()
         let description: string = `${actionMessages.lookRoom} ${roomName}: ${roomDescription}. ${actionMessages.lookAround} `
 
-        let roomItems: string[] = room.getItems()
+        let roomItems: ItemInfo[] = room.getItemInfos()
         let itemString: string = actionMessages.lookItems
         if (roomItems.length === 0) {
             itemString += actionMessages.lookEmpty
         } else {
             try {
-                roomItems.forEach(itemId => {
-                    let item: Item = dungeon.getItem(itemId)
+                roomItems.forEach(itemInfo => {
+                    let item: Item = dungeon.getItem(itemInfo.item)
                     let itemName: string = item.getName()
-                    itemString += ` ${itemName}`
+                    let itemCount: number = itemInfo.count
+                    itemString += ` ${itemName} (${itemCount}x)`
                 })
             } catch(e) {
                 console.log(e)

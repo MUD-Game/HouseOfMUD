@@ -5,7 +5,7 @@ import { Item } from "../../../data/interfaces/item";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages, errorMessages, triggers } from "./action-resources";
+import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
 export class PickupAction implements Action {
     trigger: string;
@@ -40,13 +40,15 @@ export class PickupAction implements Action {
                     characterInventory.splice(indexOfitemToPickupInInventory, 1)
                     itemInInventory.count += 1
                     characterInventory.push(itemInInventory)
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: `${actionMessages.pickup}${nameOfItemToPickup}`}})
+                    this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
                 }
                 else{
                     itemInRoom.count = 1
                     characterInventory.push(itemInRoom)
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: `${actionMessages.pickup}${nameOfItemToPickup}`}})
+                    this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
                 }
+            } else {
+                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
             }
         } catch(e) {
             console.log(e)

@@ -5,7 +5,7 @@ import { Item } from "../../../data/interfaces/item";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages, errorMessages, triggers } from "./action-resources";
+import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
 export class DiscardAction implements Action {
     trigger: string;
@@ -46,7 +46,7 @@ export class DiscardAction implements Action {
                     itemInInventory.count = 1
                     roomItems.push(itemInInventory)
                 }
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: `${actionMessages.discard}${nameOfItemToDiscard}`}})
+                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.discard, nameOfItemToDiscard)}})
             } else {
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
             }

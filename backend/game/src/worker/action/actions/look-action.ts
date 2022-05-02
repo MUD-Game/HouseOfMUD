@@ -7,7 +7,7 @@ import { Npc } from "../../../data/interfaces/npc";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages } from "./action-resources";
+import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
 export class LookAction implements Action {
     trigger: string;
@@ -25,7 +25,7 @@ export class LookAction implements Action {
         let room: Room = dungeon.getRoom(roomId)
         let roomName: string = room.getName()
         let roomDescription: string = room.getDescription()
-        let description: string = `${actionMessages.lookRoom} ${roomName}: ${roomDescription}. ${actionMessages.lookAround} `
+        let description: string = parseResponseString(actionMessages.lookRoom, roomName, roomDescription)
 
         let roomItems: ItemInfo[] = room.getItemInfos()
         let itemString: string = actionMessages.lookItems

@@ -52,23 +52,25 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
     const join = ()=>{
 
         supervisor.login(id, {}, (data) => {
+            setIsBusy(false);
             game.setCharacter(DUNGEON_MASTER_NAME);
             game.setVerifyToken(data.verifyToken);
             game.setDungeon(id);
             game.setDungeonName(name);
             navigate("/game");
         }, (error) => {
+            setIsBusy(false);
             // TODO: handle error in a better way
         });
 
     }
 
     const startAndJoin = () => {
+        setIsBusy(true);
         supervisor.startDungeon(id, {}, (data) => {
-            setTimeout(() => {
-                join();
-            }, 2000);
+            join();
         }, (error) => {
+            setIsBusy(false);
         });
     } 
 
@@ -112,10 +114,9 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                         setIsBusy(true);
                         supervisor.stopDungeon(id, {}, (data) => {
                             // setIsBusy(false);
-                            setTimeout(()=>{
-                                setIsBusy(false);
-                                fetchMyDungeons();
-                            }, 5000);
+                            setIsBusy(false);
+                            fetchMyDungeons();
+                            // TODO: handle error correctly
                         }, (error) => {alert(error.error)})
                     }} />
                 </div>

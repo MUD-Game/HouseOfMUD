@@ -122,7 +122,6 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   let logout = (callback: VoidFunction, error: (error: string) => void) => {
-    console.log(rabbit.active + ' ' + rabbit.connected);
     if (!rabbit.active) {
       error('RabbitMQ is not connected');
       return;
@@ -138,7 +137,6 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   let sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
-    console.log(rabbit.active + ' ' + rabbit.connected);
     if (!rabbit.connected) {
       error("RabbitMQ is not connected");
       return;

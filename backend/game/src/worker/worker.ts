@@ -30,6 +30,15 @@ interface Tokens {
 
 const userTokens: Tokens = {};
 
+function sendToHost(hostAction: string, data: any): void {
+    if (process.send) {
+        process.send({
+            host_action: hostAction,
+            data: data
+        });
+    }
+}
+
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
     // TODO: get Dungeon from database
@@ -59,6 +68,10 @@ async function main() {
     dungeonController.init();
 
     handleHostMessages(dungeonController);
+
+    console.log(`Dungeon ${dungeonID} started`);
+
+    sendToHost('started', {});
 }
 
 function handleHostMessages(dungeonController: DungeonController) {

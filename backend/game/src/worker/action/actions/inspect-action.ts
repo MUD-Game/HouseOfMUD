@@ -1,3 +1,4 @@
+import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { Item } from "../../../data/interfaces/item";
@@ -20,12 +21,14 @@ export class InspectAction implements Action {
         let itemToInspect: string = args.join(' ')
         let userHasItem: boolean = false;
         let inspectMessage: string = ''
-        characterInventory.forEach(itemId => {
-            let item: Item = dungeon.getItem(itemId)
+        characterInventory.forEach(itemInfo => {
+            let item: Item = dungeon.getItem(itemInfo.item)
             let itemName: string = item.getName()
+            let itemCount: number = itemInfo.count
             if (itemName === itemToInspect) {
                 userHasItem = true
                 let itemDescription: string = item.getDescription()
+                // inspectMessage = `${actionMessages.inspect} ${itemName} (${itemCount}x): ${itemDescription}`
                 inspectMessage = parseResponseString(actionMessages.inspect, itemToInspect, itemDescription)
             }
         })

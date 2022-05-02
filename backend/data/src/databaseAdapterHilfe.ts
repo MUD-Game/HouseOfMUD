@@ -48,7 +48,10 @@ const testDungeon: DungeonDataset = {
                 "npc1"
             ],
             items: [
-                "item1"
+                {
+                    item: "item1",
+                    count: 1
+                }
             ],
             connections: {
                 east: "closed",
@@ -81,12 +84,12 @@ const testDungeon: DungeonDataset = {
 }
 
 async function execute() {
-    let databaseAdapter: DatabaseAdapter = new DatabaseAdapter("mongodb://root:Mud%21Gay%23me@mud-ga.me:27017", "test")
-    console.log(await databaseAdapter.storeDungeon(testDungeon))
-    // let receivedDungeon = await databaseAdapter.getDungeon("626aa3eea8183b0a09d74bc3")
+    let databaseAdapter: DatabaseAdapter = new DatabaseAdapter("mongodb://127.0.0.1:27017", "test")
+    //console.log(await databaseAdapter.storeDungeon(testDungeon))
+    let receivedDungeon = await databaseAdapter.getDungeon("627034b9e0fb3898fde88bab")
     // console.log(await databaseAdapter.getAllCharactersFromUserInDungeon("test1", "626aa3eea8183b0a09d74bc3"))
     // console.log(await databaseAdapter.getCharacterById("test2"))
-    // console.log(receivedDungeon)    
+    console.log(receivedDungeon?.rooms[0].items)    
 }
 
 execute()

@@ -11,6 +11,7 @@ import { CharacterStatsImpl } from '../data/interfaces/characterStats';
 import { ConnectionInfo, ConnectionInfoImpl } from '../data/interfaces/connectionInfo';
 import { Dungeon, DungeonImpl } from '../data/interfaces/dungeon';
 import { Item, ItemImpl } from '../data/interfaces/item';
+import { ItemInfo } from '../data/interfaces/itemInfo';
 import { Npc, NpcImpl } from '../data/interfaces/npc';
 import { Room, RoomImpl } from '../data/interfaces/room';
 import { AmqpAdapter } from "./amqp/amqp-adapter";
@@ -208,7 +209,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Raum-1',
         'Der Raum in dem alles begann',
         [TestNpc.id],
-        [TestItem.id],
+        [new ItemInfo(TestItem.id, 1)],
         TestConnections,
         [TestAction.id],
         2,
@@ -219,7 +220,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Raum-N',
         'Der Raum im Norden',
         [TestNpc.id],
-        [TestItem.id],
+        [new ItemInfo(TestItem.id, 1)],
         new ConnectionInfoImpl('inactive', 'open'),
         [TestAction.id],
         2,
@@ -230,7 +231,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Raum-O',
         'Der Raum im Osten',
         [TestNpc.id],
-        [TestItem.id],
+        [new ItemInfo(TestItem.id, 1)],
         new ConnectionInfoImpl('inactive', 'inactive'),
         [TestAction.id],
         3,
@@ -241,7 +242,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Raum-S',
         'Der Raum im Sueden',
         [TestNpc.id],
-        [TestItem.id],
+        [new ItemInfo(TestItem.id, 1)],
         new ConnectionInfoImpl('inactive', 'inactive'),
         [TestAction.id],
         2,
@@ -252,7 +253,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Raum-W',
         'Der Raum im Westen',
         [TestNpc.id],
-        [TestItem.id],
+        [new ItemInfo(TestItem.id, 1)],
         new ConnectionInfoImpl('open', 'inactive'),
         [TestAction.id],
         1,
@@ -263,7 +264,7 @@ function getDungeon(dungeonID: string): Dungeon {
         'Raum-NN',
         'Der Raum im Norden, Norden',
         [TestNpc.id],
-        [TestItem.id],
+        [new ItemInfo(TestItem.id, 1)],
         new ConnectionInfoImpl('inactive', 'closed'),
         [TestAction.id],
         2,

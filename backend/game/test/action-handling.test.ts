@@ -9,6 +9,7 @@ import { CharacterStatsImpl } from "../src/data/interfaces/characterStats";
 import { ConnectionInfo, ConnectionInfoImpl } from "../src/data/interfaces/connectionInfo";
 import { Dungeon, DungeonImpl } from "../src/data/interfaces/dungeon";
 import { Item, ItemImpl } from "../src/data/interfaces/item";
+import { ItemInfo } from "../src/data/interfaces/itemInfo";
 import { Npc, NpcImpl } from "../src/data/interfaces/npc";
 import { Room, RoomImpl } from "../src/data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
@@ -85,7 +86,7 @@ const TestRoom: Room = new RoomImpl(
     'Raum-1',
     'Der Raum in dem alles begann',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     TestConnections,
     [TestAction.id],
     2,
@@ -96,7 +97,7 @@ const TestRoomNorth: Room = new RoomImpl(
     'Raum-N',
     'Der Raum im Norden',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'open'),
     [TestAction.id],
     2,
@@ -107,7 +108,7 @@ const TestRoomEast: Room = new RoomImpl(
     'Raum-O',
     'Der Raum im Osten',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
     [TestAction.id],
     3,
@@ -118,7 +119,7 @@ const TestRoomSouth: Room = new RoomImpl(
     'Raum-S',
     'Der Raum im Sueden',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
     [TestAction.id],
     2,
@@ -129,7 +130,7 @@ const TestRoomWest: Room = new RoomImpl(
     'Raum-W',
     'Der Raum im Westen',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('open', 'inactive'),
     [TestAction.id],
     1,
@@ -140,7 +141,7 @@ const TestRoomNorthNorth: Room = new RoomImpl(
     'Raum-NN',
     'Der Raum im Norden, Norden',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'closed'),
     [TestAction.id],
     2,
@@ -151,7 +152,7 @@ const TestRoomNorthEast: Room = new RoomImpl(
     'Raum-NE',
     'Der Raum im Norden, dann Osten',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
     [TestAction.id],
     3,
@@ -167,7 +168,7 @@ const TestCharacter: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
-    [TestItem.id]
+    [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterSameRoom: Character = new CharacterImpl(
     '2',
@@ -179,7 +180,7 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
-    [TestItem.id]
+    [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterNotSameRoom: Character = new CharacterImpl(
     '3',
@@ -191,7 +192,7 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoomNorth.id,
-    [TestItem.id]
+    [new ItemInfo(TestItem.id,1)]
 );
 const TestDungeon: Dungeon = new DungeonImpl(
     '1',
@@ -581,7 +582,7 @@ describe('Actions', () => {
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
-        TestDungeon.characters['Jeff'].inventory.push(TestItemDiscard.id)
+        TestDungeon.characters['Jeff'].inventory.push({item: TestItemDiscard.id, count: 1})
         discardAction.performAction('Jeff', ['Schwert']);
         expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id])
         expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id, TestItemDiscard.id])
@@ -609,7 +610,7 @@ describe('Actions', () => {
     })
 
     test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
-        TestDungeon.rooms[TestRoom.id].items.push(TestItemPickup.id)
+        TestDungeon.rooms[TestRoom.id].items.push({item: TestItemPickup.id, count: 1})
         pickupAction.performAction('Jeff', ['Gold']);
         expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
         expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id])

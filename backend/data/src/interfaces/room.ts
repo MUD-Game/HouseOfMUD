@@ -1,11 +1,12 @@
 import { ConnectionInfo } from "./connectionInfo";
+import { ItemInfo } from "./itemInfo";
 
 export interface Room {
     id: string;
     name: string;
     description: string;
     npcs: string[];
-    items: string[];
+    items: ItemInfo[];
     connections: ConnectionInfo;
     actions: string[];
     xCoordinate: number;
@@ -16,7 +17,7 @@ export interface Room {
     getDescription(): string
     getEastConnection(): "open" | "inactive" | "closed"
     getSouthConnection(): "open" | "inactive" | "closed"
-    getItems(): string[]
+    getItemInfos(): ItemInfo[]
     getNpcs(): string[]
     getActions(): string[]
 }
@@ -26,7 +27,7 @@ export class RoomImpl implements Room {
     name: string;
     description: string;
     npcs: string[];
-    items: string[];
+    items: ItemInfo[];
     connections: ConnectionInfo;
     actions: string[];
     xCoordinate: number;
@@ -37,7 +38,7 @@ export class RoomImpl implements Room {
         name: string,
         description: string,
         npcs: string[],
-        items: string[],
+        items: ItemInfo[],
         connections: ConnectionInfo,
         actions: string[],
         xCoordinate: number,
@@ -74,7 +75,7 @@ export class RoomImpl implements Room {
         return this.connections.south;
     }
 
-    getItems(): string[] {
+    getItemInfos(): ItemInfo[] {
         return this.items
     }
 

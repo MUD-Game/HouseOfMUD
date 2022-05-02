@@ -290,9 +290,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         room.npcs = [];
         room.actions = [];
         selectedRoomItems.forEach((i: any) => {
-            for (let j = 0; j < selectedRoomItemValues[i.id]; j++) {
-                room.items.push(i.id);
-            }
+                room.items.push({item: i.id, count: selectedRoomItemValues[i.id]});
         });
         selectedRoomActions.forEach((i: any) => {
             room.actions.push(i.id);
@@ -327,22 +325,26 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             const items_array = rooms[key].items;
             const actions_array = rooms[key].actions;
             const npcs_array = rooms[key].npcs;
+            // {item: i.id, count: selectedRoomItemValues[i.id]}
             // select items
-            setSelectedRoomItems([...new Set(items_array)].map(i => {
+            setSelectedRoomItems(items_array.map((i: {
+                item: string;
+                count: number;
+            }) => {
                 return {
-                    name: items[parseInt(i)].name,
-                    description: items[parseInt(i)].description,
-                    id: items[parseInt(i)].id
+                    name: items[parseInt(i.item)].name,
+                    description: items[parseInt(i.item)].description,
+                    id: items[parseInt(i.item)].id
                 }
             }));
+      
             // Count how many of each item is in the room
             let temp: { [key: string]: number } = {};
-            items_array.forEach((i: string) => {
-                if (temp[i]) {
-                    temp[i]++;
-                } else {
-                    temp[i] = 1;
-                }
+            items_array.forEach((i: {
+                item: string;
+                count: number;
+            }) => {
+                temp[i.item] = i.count;
             });
             setSelectedRoomItemValues(temp);
             // select actions

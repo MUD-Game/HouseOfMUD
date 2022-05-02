@@ -1,7 +1,7 @@
 import { Dungeon } from '../../data/interfaces/dungeon';
 import { DungeonController } from '../controller/dungeon-controller';
 import { Action } from './action';
-import { triggers } from './actions/action-resources';
+import { extras, triggers } from './actions/action-resources';
 import { BroadcastMessageAction } from './actions/broadcast-message-action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';
@@ -86,7 +86,6 @@ export class ActionHandlerImpl implements ActionHandler {
 
     processAction(user: string, message: string) {
         let action: Action | undefined = undefined;
-        let commandString: string;
         if (this.userIsDungeonMaster(user)) {
             if (this.inputMatch(message, regExpression.forDungeonMaster)) {
                 action = this.getAction(message)
@@ -115,7 +114,7 @@ export class ActionHandlerImpl implements ActionHandler {
      * @returns True if character id of user is 0.
      */
     userIsDungeonMaster(user: string): boolean {
-        if (user === '0') {
+        if (user === extras.dungeonMasterId) {
             return true
         } else {
             return false

@@ -4,7 +4,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, errorMessages, actionMessages } from "./action-resources";
+import { triggers, errorMessages, actionMessages, parseResponseString } from "./action-resources";
 
 export class MoveAction implements Action {
     /**
@@ -27,7 +27,7 @@ export class MoveAction implements Action {
      * @param user Character id of user that sent the message.
      * @param args Arguments received by ActionHandler. In this case direction in which the player wants to move.
      */
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon();
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter();
         let direction: string = args[0];
@@ -95,16 +95,19 @@ export class MoveAction implements Action {
             } else if (destinationRoom !== undefined) {
                 let destinationRoomId: string = destinationRoom.getId();
                 let destinationRoomName: string = destinationRoom.getName();
+                let routingKeyOldRoom: string = `room.${currentRoomId}`
+                let routingKeyNewRoom: string = `room.${destinationRoomId}`;
+                await amqpAdapter.sendWithRouting(routingKeyOldRoom, {
+                    action: 'message',
+                    data: { message: parseResponseString(actionMessages.moveLeave, senderCharacterName, currentRoom.getName())},
+                });
                 senderCharacter.modifyPosition(destinationRoomId);
-                let routingKey: string = `room.${destinationRoomId}`;
-                amqpAdapter.unbindClientQueue(user, `room.${currentRoomId}`);
-                amqpAdapter.bindClientQueue(user, `room.${destinationRoomId}`);
-                setTimeout(() => {
-                    amqpAdapter.sendWithRouting(routingKey, {
-                        action: 'message',
-                        data: { message: `${senderCharacterName} ${actionMessages.move1} ${destinationRoomName} ${actionMessages.move2}` },
-                    });
-                }, 100);
+                await amqpAdapter.unbindClientQueue(user, routingKeyOldRoom);
+                await amqpAdapter.bindClientQueue(user, routingKeyNewRoom);
+                await amqpAdapter.sendWithRouting(routingKeyNewRoom, {
+                    action: 'message',
+                    data: { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)},
+                });
             }
         } catch (e) {
             console.log(e);

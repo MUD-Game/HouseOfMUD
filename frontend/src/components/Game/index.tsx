@@ -35,7 +35,15 @@ const Game: React.FC<GameProps> = ({ }) => {
 
     const [error, setError] = React.useState<string>("");
 
+    const onUnload = (e: any) => {
+        e.preventDefault();
+        rabbit.logout(() => { }, (error) => {
+            setError("rabbitmq.logout")
+        });
+    }
+
     useEffect(() => {
+        window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.login(() => {
@@ -45,6 +53,7 @@ const Game: React.FC<GameProps> = ({ }) => {
             });
         }
         return () => {
+            window.removeEventListener('unload', onUnload);
             rabbit.logout(() => { }, (error) => {
                 setError("rabbitmq.logout")
             });

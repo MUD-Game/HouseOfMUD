@@ -3,7 +3,7 @@ import { Dungeon } from "../../../data/interfaces/dungeon";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages, triggers } from "./action-resources";
+import { actionMessages, extras, parseResponseString, triggers } from "./action-resources";
 
 /**
  * Action that gets performed when user sends a "fluesterdm" message.
@@ -21,9 +21,9 @@ import { actionMessages, triggers } from "./action-resources";
         let senderCharacter: Character = dungeon.getCharacter(user)
         let senderCharacterName: string = senderCharacter.getName()
         let messageBody: string = args.join(' ')
-        let responseMessage: string = `[privat] ${senderCharacterName} -> ${actionMessages.dmWhisper}: ${messageBody}`
+        let responseMessage: string = parseResponseString(actionMessages.whisperToDm, senderCharacterName, messageBody)
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
         amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-        amqpAdapter.sendToClient('0', {action: "message", data: {message: responseMessage}})
+        amqpAdapter.sendToClient(extras.dungeonMasterId, {action: "message", data: {message: responseMessage}})
     }
 }

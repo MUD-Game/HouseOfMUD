@@ -4,7 +4,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages } from "./action-resources";
+import { triggers, actionMessages, errorMessages, parseResponseString, extras } from "./action-resources";
 
 /**
  * Action that gets performed when user sends a "fluester" message.
@@ -26,8 +26,8 @@ export class PrivateMessageAction implements Action {
         let messageBody: string = args.join(' ')
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-            if (user === '0') {
-                let responseMessage: string = `[privat] ${actionMessages.dmWhisper} -> ${recipientCharacterName}: ${messageBody}`
+            if (user === extras.dungeonMasterId) {
+                let responseMessage: string = parseResponseString(actionMessages.dmWhisper, recipientCharacterName, messageBody)
                 amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
                 amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})
             } else {
@@ -37,16 +37,16 @@ export class PrivateMessageAction implements Action {
                 let room: Room = dungeon.getRoom(roomId)
                 let recipientCharacterRoomId: string = recipientCharacter.getPosition()
                 if (recipientCharacterRoomId === room.getId()) {
-                    let responseMessage: string = `[privat] ${senderCharacterName} -> ${recipientCharacterName}: ${messageBody}`
+                    let responseMessage: string = parseResponseString(actionMessages.whisper, senderCharacterName, recipientCharacterName, messageBody)
                     amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
                     amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})
                 } else {
-                    amqpAdapter.sendToClient(user, {action: "message", data: {message: `${recipientCharacterName} ${actionMessages.whisperCharacterNotInSameRoom}`}})
+                    amqpAdapter.sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.whisperCharacterNotInSameRoom, recipientCharacterName)}})
                 }
             }
         } catch(e) {
             console.log(e)
-            amqpAdapter.sendToClient(user, {action: "message", data: {message: `${errorMessages.characterDoesNotExist1} ${recipientCharacterName} ${errorMessages.characterDoesNotExist2}`}})
+            amqpAdapter.sendToClient(user, {action: "message", data: {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName)}})
         }
     }
 }

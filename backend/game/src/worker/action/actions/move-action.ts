@@ -4,7 +4,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, errorMessages, actionMessages } from "./action-resources";
+import { triggers, errorMessages, actionMessages, parseResponseString } from "./action-resources";
 
 export class MoveAction implements Action {
     /**
@@ -95,14 +95,19 @@ export class MoveAction implements Action {
             } else if (destinationRoom !== undefined) {
                 let destinationRoomId: string = destinationRoom.getId();
                 let destinationRoomName: string = destinationRoom.getName();
+                let routingKeyOldRoom: string = `room.${currentRoomId}`
+                let routingKeyNewRoom: string = `room.${destinationRoomId}`;
+                amqpAdapter.sendWithRouting(routingKeyOldRoom, {
+                    action: 'message',
+                    data: { message: parseResponseString(actionMessages.move, senderCharacterName, destinationRoomName)},
+                });
                 senderCharacter.modifyPosition(destinationRoomId);
-                let routingKey: string = `room.${destinationRoomId}`;
-                amqpAdapter.unbindClientQueue(user, `room.${currentRoomId}`);
-                amqpAdapter.bindClientQueue(user, `room.${destinationRoomId}`);
+                amqpAdapter.unbindClientQueue(user, routingKeyOldRoom);
+                amqpAdapter.bindClientQueue(user, routingKeyNewRoom);
                 setTimeout(() => {
-                    amqpAdapter.sendWithRouting(routingKey, {
+                    amqpAdapter.sendWithRouting(routingKeyNewRoom, {
                         action: 'message',
-                        data: { message: `${senderCharacterName} ${actionMessages.move1} ${destinationRoomName} ${actionMessages.move2}` },
+                        data: { message: parseResponseString(actionMessages.move, senderCharacterName, destinationRoomName)},
                     });
                 }, 100);
             }

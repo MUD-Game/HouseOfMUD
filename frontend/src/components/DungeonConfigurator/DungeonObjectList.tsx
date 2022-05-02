@@ -1,6 +1,5 @@
-import React, { ButtonHTMLAttributes, DetailedHTMLProps, MouseEvent } from "react";
-import { Row, Table } from 'react-bootstrap';
-import { Pencil, Trash } from "react-bootstrap-icons";
+import React, { MouseEvent } from "react";
+import { Row } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
 import { MudCharacterClass, MudItem } from "src/types/dungeon";
 import { MudActionElement } from '../../types/dungeon';

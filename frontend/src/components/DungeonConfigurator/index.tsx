@@ -1,12 +1,19 @@
+/**
+ * @module DungeonConfigurator
+ * @category React Components
+ * @description DungeonConfigurator Component to display the DungeonConfigurator
+ * @author Raphael Sack
+ */
+
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import Busy from '../Busy';
-import MudInput from '../Custom/MudInupt';
-import MudTypeahead from '../Custom/MudTypeahead';
+import Alert from '../Custom/Alert';
+import MudInput from '../Custom/Input';
+import MudTypeahead from '../Custom/Typeahead';
 import DungeonObjectList from './DungeonObjectList';
 import RoomConfigurator from './RoomConfigurator';
 type Option = string | { [key: string]: any };
@@ -54,6 +61,9 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <RoomConfigurator />                
             </Row>
             <hr />
+            <Row>
+                <Alert type="error" message={dungeonConfig.error} setMessage={dungeonConfig.setError} />
+            </Row>
             <Row className="mt-3 justify-content-end">                
                 <div className="col-md-5">
                     <button className="btn w-100 btn-green drawn-border" onClick={(e)=>dungeonConfig.save(e,setIsBusy)}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>

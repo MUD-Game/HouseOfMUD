@@ -34,7 +34,7 @@ const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallb
         <form className="chat-input-wrap " onSubmit={sendInput}>
             <Row className="h-100 mt-3">
                 <div className="col-10">
-                    <input type="text" name="message" id="chat-input" required autoComplete='off' value={input} onChange={event => setInput(event.target.value)} />
+                    <input type="text" name="message" id="chat-input" className="input-standard drawn-border" required autoComplete='off' value={input} onChange={event => setInput(event.target.value)} />
                 </div>
                 <div className="col-2">
                     <button className="btn w-100 drawn-border btn-green" type="submit">

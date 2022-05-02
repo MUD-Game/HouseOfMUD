@@ -192,6 +192,10 @@
         "register": "Registrieren"
     },
     "error":{
+        "internal":{
+            "title": "Interner Server Fehler",
+            "text": "Es ist ein interner Server Fehler aufgetreten. Bitte versuche es später noch einmal, falls das Problem weiterhin besteht wenden Sie sich an einen Administrator."
+        },
         "unauthorized": {
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch!"

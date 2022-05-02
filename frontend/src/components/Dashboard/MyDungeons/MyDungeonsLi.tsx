@@ -19,6 +19,7 @@ import ConfirmationDialog from "src/components/Modals/BasicModals/ConfirmationDi
 import { useGame } from "src/hooks/useGame";
 import { supervisor } from "src/services/supervisor";
 import "./index.css"
+import { SendsMessagesProps } from '../../../types/misc';
 
 
 const DUNGEON_MASTER_NAME = "dungeonmaster";
@@ -34,7 +35,7 @@ export interface MyDungeonsLiProps {
     fetchMyDungeons: () => void;
 }
 
-const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status, fetchMyDungeons }) => {
+const MyDungeonsLi: React.FC<MyDungeonsLiProps & SendsMessagesProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status, fetchMyDungeons, messageCallback }) => {
 
     const game = useGame();
     const navigate = useNavigate();
@@ -70,6 +71,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
         supervisor.startDungeon(id, {}, (data) => {
             join();
         }, (error) => {
+            messageCallback(error.error);
             setIsBusy(false);
         });
     } 
@@ -104,7 +106,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                             supervisor.deleteDungeon(id, {}, (data)=>{
                             setIsBusy(false);
                             fetchMyDungeons();
-                        }, (error)=>{}); })
+                            }, (error) => { messageCallback(error.error) }); })
                     }} />
                     
                 </div>
@@ -117,7 +119,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                             setIsBusy(false);
                             fetchMyDungeons();
                             // TODO: handle error correctly
-                        }, (error) => {alert(error.error)})
+                        }, (error) => { messageCallback(error.error) })
                     }} />
                 </div>
                 }

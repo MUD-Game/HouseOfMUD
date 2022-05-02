@@ -23,7 +23,7 @@ export class DungeonController {
 
     init() {
         // comsume messages from clients
-        this.amqpAdapter.consume((consumeMessage: ConsumeMessage) => {
+        this.amqpAdapter.consume(async (consumeMessage: ConsumeMessage) => {
             try {
                 let data = JSON.parse(consumeMessage.content.toString());
                 console.log(data);
@@ -33,14 +33,12 @@ export class DungeonController {
                             /* temporary */
                             let character = this.createCharacter(data.character);
                             /* temporary */
-                            this.amqpAdapter.initClient(data.character);
-                            this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
-                            setTimeout(() => {
-                                this.amqpAdapter.broadcast({
-                                    action: 'message',
-                                    data: { message: `${data.character} ist dem Dungeon beigetreten!` },
-                                });
-                            }, 200);
+                            await this.amqpAdapter.initClient(data.character);
+                            await this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
+                            this.amqpAdapter.broadcast({
+                                action: 'message',
+                                data: { message: `${data.character} ist dem Dungeon beigetreten!` },
+                            });
                             break;
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);

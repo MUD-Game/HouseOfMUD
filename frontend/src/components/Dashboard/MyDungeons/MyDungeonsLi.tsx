@@ -52,21 +52,25 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
     const join = ()=>{
 
         supervisor.login(id, {}, (data) => {
+            setIsBusy(false);
             game.setCharacter(DUNGEON_MASTER_NAME);
             game.setVerifyToken(data.verifyToken);
             game.setDungeon(id);
             game.setDungeonName(name);
             navigate("/game");
         }, (error) => {
+            setIsBusy(false);
             // TODO: handle error in a better way
         });
 
     }
 
     const startAndJoin = () => {
+        setIsBusy(true);
         supervisor.startDungeon(id, {}, (data) => {
             join();
         }, (error) => {
+            setIsBusy(false);
         });
     } 
 

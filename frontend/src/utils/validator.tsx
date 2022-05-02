@@ -1,4 +1,4 @@
-// TODO: connect supervisor to the real supervisor
+// TODO: Actually Write an validator
 const validator = {
     maxPlayers: (maxPlayersString: string) => {
         if (isNaN(Number(maxPlayersString))) return 2;

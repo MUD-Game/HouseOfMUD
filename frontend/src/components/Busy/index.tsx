@@ -10,7 +10,7 @@ import { Container } from 'react-bootstrap'
 import Lama from '../../assets/Lama.png'
 import "./index.css"
 export interface BusyProps {
-    className?: string;
+    className?: 'list-busy';
  }
 
 const Busy: React.FC<BusyProps> = (props) => {

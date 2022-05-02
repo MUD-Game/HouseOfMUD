@@ -1,3 +1,9 @@
+/**
+ * @module i18n
+ * @author Raphael Sack
+ * @category Misc
+ */
+
 import i18n from 'i18next';
 import Backend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -15,7 +21,7 @@ i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
 });
 
 i18n.on('languageChanged', (lng: string) => {
-    // Set language cookie to de-DE if not exist
+    // Set language cookie to de-DE if not exist, fixes an bug where sometimes the language isnt set correctly at the first join
     if (!document.cookie.includes('i18next')) {
         document.cookie = `i18next=de-DE; path=/`;
         i18next.services.languageDetector.cacheUserLanguage("de-DE");

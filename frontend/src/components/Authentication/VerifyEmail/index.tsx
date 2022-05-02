@@ -1,13 +1,8 @@
 /**
  * @module VerifyEmail
  * @category React Components
- * @description Component to handle VerifyEmail-In
+ * @description Component to verify the email of a user and either redirects him to the login page or shows an error
  * @hooks {@linkcode useAuth}
- * ```jsx
- * <>
- *  <AvailableCharactersLi/>[]
- * </>
- * ```
  */
 
 

@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react';
-import { Modal, Button, ModalProps, Form, Container } from 'react-bootstrap';
-import { Typeahead } from 'react-bootstrap-typeahead';
-import MudInput from 'src/components/Custom/MudInupt';
+/**
+ * @module AddActionModal
+ * @description Modal for adding a new Action to the dungeon.
+ * @author Raphael Sack
+ * @category Modal
+ */
+
+import React from 'react';
+import { Modal, Button, Container } from 'react-bootstrap';
+import MudInput from 'src/components/Custom/Input';
 import { MudActionElement } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
-import { useMudConsole } from '../../../hooks/useMudConsole';
 import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
-import { MudItem, MudEvent } from '../../../types/dungeon';
-import MudTypeahead from '../../Custom/MudTypeahead';
-import MudSelect from 'src/components/Custom/MudSelect';
+import { MudEvent } from '../../../types/dungeon';
+import MudTypeahead from '../../Custom/Typeahead';
 import '../index.css'
 import { useTranslation } from 'react-i18next';
+import Alert from 'src/components/Custom/Alert';
 type Option = string | { [key: string]: any };
 
 //REFACTOR: Redunant Modal, make generic pls
@@ -62,8 +67,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     const [command, setCommand] = React.useState<string>(props.editData?.command || "");
     const [output, setOutput] = React.useState<string>(props.editData?.output || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const homosole = useMudConsole();
 
+    const [error, setError] = React.useState<string>("");
 
 
 
@@ -114,10 +119,11 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const onSubmit = () => {
         if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output)) {
-            homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
+            setError("failvalidation.action");
         } else {
             let action = deconstructToContextData();
-            if (!action) homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
+            if (!action) setError("failvalidation.action");
+            setError("");
             props.onSendAction(action);
             props.onHide();
         }
@@ -144,6 +150,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         {t(`${dt}.buttons.create_action`)}
                     </Modal.Title>
                 </Modal.Header>
+                <Alert type="error" message={error} setMessage={setError} />
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <MudInput autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />

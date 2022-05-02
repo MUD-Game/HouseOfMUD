@@ -4,9 +4,9 @@ import { Stage, Layer, Rect, Transformer, Circle, Group, Line, Image } from 'rea
 import Konva from 'konva';
 import './index.css'
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
-import MudInput from 'src/components/Custom/MudInupt';
+import MudInput from 'src/components/Custom/Input';
 import { useTranslation } from 'react-i18next';
-import MudTypeahead from '../Custom/MudTypeahead';
+import MudTypeahead from '../Custom/Typeahead';
 import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
 import { Col, Container, Overlay, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import connectionOpenPng from 'src/assets/connection_open.png';

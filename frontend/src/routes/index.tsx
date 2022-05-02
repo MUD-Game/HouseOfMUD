@@ -1,3 +1,9 @@
+/**
+ * @module App-Routes
+ * @description Routes for the app
+ * @author Raphael Sack
+ * @category Routes
+ */
 import React, { ReactElement } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "../components/Authentication/Login";
@@ -19,16 +25,13 @@ import DemoJoin from "src/components/DemoJoin";
 import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
 import UserSettings from "src/components/Authentication/UserSettings";
-import Busy from "src/components/Busy";
-
 
 
 const IndexRouter: React.FC = (): ReactElement => {
     return (
         <ConsoleProvider>
-
-                <BrowserRouter>
-            <AuthProvider>
+            <BrowserRouter>
+                <AuthProvider>
                     <Header />
                     <GameProvider>
                         <Routes>
@@ -61,7 +64,7 @@ const IndexRouter: React.FC = (): ReactElement => {
                         </Routes>
                     </GameProvider>
                 </AuthProvider>
-                </BrowserRouter>
+            </BrowserRouter>
         </ConsoleProvider>
     );
 };

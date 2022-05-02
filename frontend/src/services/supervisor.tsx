@@ -5,7 +5,7 @@
  * @category Service
  */
 
-import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData } from "@supervisor/api"; 
+import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData } from "@supervisor/api";
 import $ from "jquery";
 
 let connectionString = "";
@@ -23,7 +23,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
  * @param unpackKey Object key, if the data is packed object (e.g. {data:..., ok:0}) you can specify the key of the data to retrieve it in dataCallBack
  */
 const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
-    $.ajax(connectionString + path  + getSearchParamas(params), {
+    $.ajax(connectionString + path + getSearchParamas(params), {
         method: 'GET',
         dataType: 'json',
         contentType: "text/plain",
@@ -54,7 +54,7 @@ const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: 
  * @param error Callback function that handles the error
  * @param unpackKey If the data is packed in an object, you can specify the key of the data to retrieve it in dataCallBack (e.g. {data:..., ok:0}) => unpackKey = 'data'
  */
-const genericRequest = (path:string, method: string, body: {}, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
+const genericRequest = (path: string, method: string, body: {}, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
     let par = params ? getSearchParamas(params) : "";
     $.ajax(connectionString + path + par, {
         method: method,
@@ -65,7 +65,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
             withCredentials: true
         },
         success: (data: any) => {
-        if (data.ok) {
+            if (data.ok) {
                 unpackKey || dataCallBack(data);
                 unpackKey && dataCallBack(data[unpackKey]);
             } else {
@@ -83,7 +83,7 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
  * @param params search params as an object in key-value pairs (e.g. {name: 'test', maxPlayers: '10'})
  * @returns String with the search params (e.g ?name=test&maxPlayers=10)
  */
-const getSearchParamas = (params:any) => {
+const getSearchParamas = (params: any) => {
     return `?${Object.keys(params).map(key => key + '=' + params[key]).join('&')}`;
 }
 
@@ -98,11 +98,11 @@ const supervisor = {
     },
 
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
-       genericGet('/mydungeons', body, dataCallBack, error, "dungeons");
+        genericGet('/mydungeons', body, dataCallBack, error, "dungeons");
     },
-    
+
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {
-        genericGet(`/characters/${dungeonID}`, body, dataCallBack, error, "characters"); 
+        genericGet(`/characters/${dungeonID}`, body, dataCallBack, error, "characters");
     },
 
     getCharacterAttributes(dungeonID: string, body: GetCharacterAttributesRequest, dataCallBack: (data: GetCharacterAttributesResponse) => void, error: (error: ErrorResponse) => void) {
@@ -121,11 +121,11 @@ const supervisor = {
         genericRequest("/auth/delete", "DELETE", {}, {}, dataCallBack, error);
     },
     register(email: string, user: string, password: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest("/auth/register", "POST", {email, user, password}, {}, dataCallBack, error);
+        genericRequest("/auth/register", "POST", { email, user, password }, {}, dataCallBack, error);
     },
 
     verify(token: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
-        genericRequest("/auth/verify", "POST", {token: token}, {}, dataCallBack, error);
+        genericRequest("/auth/verify", "POST", { token: token }, {}, dataCallBack, error);
     },
 
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {

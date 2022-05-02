@@ -65,9 +65,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
 
     const startAndJoin = () => {
         supervisor.startDungeon(id, {}, (data) => {
-            setTimeout(() => {
-                join();
-            }, 2000);
+            join();
         }, (error) => {
         });
     } 
@@ -112,10 +110,9 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                         setIsBusy(true);
                         supervisor.stopDungeon(id, {}, (data) => {
                             // setIsBusy(false);
-                            setTimeout(()=>{
-                                setIsBusy(false);
-                                fetchMyDungeons();
-                            }, 5000);
+                            setIsBusy(false);
+                            fetchMyDungeons();
+                            // TODO: handle error correctly
                         }, (error) => {alert(error.error)})
                     }} />
                 </div>

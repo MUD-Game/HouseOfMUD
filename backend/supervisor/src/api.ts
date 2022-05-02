@@ -148,11 +148,11 @@ export class API {
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
-                this.hostLink.stopDungeon(dungeonID);
+                await this.hostLink.stopDungeon(dungeonID);
                 res.status(200).json({ ok: 1 });
             } else {
                 res.status(400).json({ ok: 0, error: 'dontexist' });

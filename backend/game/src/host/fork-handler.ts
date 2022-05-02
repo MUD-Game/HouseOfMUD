@@ -2,6 +2,8 @@ import { ChildProcess, fork, ForkOptions } from 'child_process';
 import path from 'path';
 import { AmqpAdapterConfig, MongodbConfig } from './types/config';
 
+const START_DUNGEON_TIMEOUT = 10000;
+
 const filePath: (file: string) => string = (file: string) => path.resolve(__dirname, file);
 
 /**
@@ -75,7 +77,6 @@ export class ForkHandler {
         if (dungeon in this.dungeonWorker) {
             let killTimeout = this.dungeonWorker[dungeon].killTimeout!;
             if (killTimeout !== undefined) {
-                console.log('clear timeout');
                 clearTimeout(killTimeout);
             }
             delete this.dungeonWorker[dungeon];
@@ -91,21 +92,35 @@ export class ForkHandler {
      * Creates a new child process, initializes connections to exchanges and binds message handler to process
      * @param dungeon Name of the dungeon that shall be created.
      */
-    startDungeon(dungeon: string): boolean {
-        if (!(dungeon in this.dungeonWorker)) {
-            const mongoConnString: string = `mongodb://${this.mongodbConfig.user}:${encodeURIComponent(this.mongodbConfig.password)}@${this.mongodbConfig.host}:${this.mongodbConfig.port}`;
-            let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange, mongoConnString, this.mongodbConfig.database];
-            let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
-            dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
-            dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));
-            this.dungeonWorker[dungeon] = {
-                fork: dungeonFork,
-                currentPlayers: 0
-            };
-            return true;
-        }
-        return false;
-        // else Dungeon already exists
+    async startDungeon(dungeon: string): Promise<boolean> {
+        return new Promise((resolve, rejcet) => {
+            if (!(dungeon in this.dungeonWorker)) {
+                const mongoConnString: string = `mongodb://${this.mongodbConfig.user}:${encodeURIComponent(this.mongodbConfig.password)}@${this.mongodbConfig.host}:${this.mongodbConfig.port}`;
+                let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange, mongoConnString, this.mongodbConfig.database];
+                let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
+                dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));
+                
+                const timer = setTimeout(() => {
+                    dungeonFork.kill();
+                    resolve(false);
+                }, START_DUNGEON_TIMEOUT);
+
+                dungeonFork.once('message', (data: any) => {
+                    if (data.host_action == 'started') {
+                        dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
+                        this.dungeonWorker[dungeon] = {
+                            fork: dungeonFork,
+                            currentPlayers: 0
+                        };
+
+                        clearTimeout(timer);
+                        resolve(true);
+                    }
+                });
+            } else {
+                resolve(false);
+            }
+        });
     }
 
     /**

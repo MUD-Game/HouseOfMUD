@@ -194,21 +194,58 @@
     "error":{
         "unauthorized": {
             "title": "Falsche Anmeldedaten",
-            "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch."
+            "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch!"
+        },
+        "failvalidation":{
+            "dungeon": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um einen Dungeon zu erstellen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung, Maximalanzahl der Spieler, Geschlechter, Spezies und Klasse!"
+            },
+            "room": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um einen neuen Raum zu erstellen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
+            },
+            "item": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um ein neues Item anzulegen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
+            },
+            "class": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um eine neue Klasse zu erstellen, muss es einen Eintrag in den folgenden Feldern haben: Name, Beschreibung, max HP, max Mana, max Dmg. Die Zahlenwerte dürfen dabei nicht 0 sein!"
+            },
+            "action": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um eine neue Aktion zu erstellen, muss es mindestens einen Eintrag in den folgenden Feldern haben: Name, Beschreibung, Ausgabe. Sowie in allen Event feldern!"
+            }
+        },
+        "rabbitmq":{
+            "login": {
+                "title": "Es konnte keine Verbindung zu RabbitMQ hergestellt werden",
+                "text": "Bitte versuche es erneut oder wende dich an einen Administrator!"
+            },
+            "logout":{
+                "title": "Die Verbindung zu RabbitMQ wurde getrennt",
+                "text": "Es wird versucht dich wieder zu verbinden, falls dies nicht funktioniert, wende dich an einen Administrator!"
+            },
+            "send":{
+                "title": "Dies hat nicht funktioniert",
+                "text": "Beim senden deiner Nachricht ist ein Fehler aufgetreten. Bitte versuche es erneut oder wende dich an einen Administrator, falls das Problem weiterhin besteht!"
+            }
         },
         "exists":{
             "user": {
                 "title": "Ungültiger Nutzernamen",
-                "text": "Bitte wähle einen anderen Benutzernamen, dieser wird schon verwendet"
+                "text": "Bitte wähle einen anderen Benutzernamen, dieser wird schon verwendet!"
             },
             "email": {
                 "title": "Ungültige E-Mail-Adresse",
-                "text": "Diese E-Mail Adresse wird schon verwendet"
+                "text": "Diese E-Mail Adresse wird schon verwendet!"
             }
         },
-        "logout_failed": "Logout fehlgeschlagen",
-        "login_failed": "Login fehlgeschlagen",
-        "register_failed": "Registrierung fehlgeschlagen"
+        "deletestartroom": {
+            "title": "Das geht nicht!",
+            "text": "Du kannst den Startraum nicht löschen!"
+        }
     },
     "info":{
         "verifyemail":{

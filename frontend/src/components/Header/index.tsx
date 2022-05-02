@@ -46,9 +46,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                             <button className="btn drawn-border btn-red btn-xpadding" onClick={() => {
                                 auth.logout(() => {
                                     navigate("/login");
-                                },()=>{
-                                    setError("logout");
-                                });
+                                },setError);
                             }}>{t(`button.logout`)}</button> 
                     </Col>
                 </Row>

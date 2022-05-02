@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationDialog, { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import { useAuth } from 'src/hooks/useAuth';
-import MudSelect from '../../Custom/MudSelect';
+import MudSelect from '../../Custom/Select';
 type UserSettingsProps = {}
 
 const UserSettings: React.FC<UserSettingsProps> = (props) => {

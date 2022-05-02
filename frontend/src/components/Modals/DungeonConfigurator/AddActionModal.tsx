@@ -7,12 +7,12 @@
 
 import React from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
-import MudInput from 'src/components/Custom/MudInupt';
+import MudInput from 'src/components/Custom/Input';
 import { MudActionElement } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 import { MudEvent } from '../../../types/dungeon';
-import MudTypeahead from '../../Custom/MudTypeahead';
+import MudTypeahead from '../../Custom/Typeahead';
 import '../index.css'
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';

@@ -11,8 +11,8 @@ import { supervisor } from 'src/services/supervisor';
 import { CreateCharacterRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';
-import MudInput from '../Custom/MudInupt';
-import MudSelect from '../Custom/MudSelect';
+import MudInput from '../Custom/Input';
+import MudSelect from '../Custom/Select';
 import { useTranslation } from 'react-i18next';
 import { SendsMessagesProps } from '../../types/misc';
 

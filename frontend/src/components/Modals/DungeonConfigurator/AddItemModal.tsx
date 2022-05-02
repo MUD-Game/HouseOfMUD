@@ -9,7 +9,7 @@ import React from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';
-import MudInput from 'src/components/Custom/MudInupt';
+import MudInput from 'src/components/Custom/Input';
 import { MudItem } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import '../index.css'

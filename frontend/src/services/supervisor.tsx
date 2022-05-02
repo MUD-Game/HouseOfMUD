@@ -1,4 +1,11 @@
-import { GetDungeonsRequest, GetDungeonsResponse, ErrorResponse, GetMyDungeonsRequest, GetMyDungeonsResponse, GetCharactersRequest, GetCharactersResponse, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData } from "@supervisor/api"; 
+/**
+ * @module Supervisor-Service-Interface
+ * @description Service interface for the supervisor
+ * @author Raphael Sack
+ * @category Service
+ */
+
+import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData } from "@supervisor/api"; 
 import $ from "jquery";
 
 let connectionString = "";
@@ -7,9 +14,6 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 } else {
     connectionString = process.env.REACT_APP_HOM_API || "https://mud-ga.me:43210";
 }
-// TODO: connect supervisor to the real supervisor
-// REFACTOR: Make it generic
-
 /**
  * 
  * @param path Path to the leading resource, starting after the connection string (e.g. /api/dungeons)
@@ -40,6 +44,16 @@ const genericGet = (path: string, params: { [key: string]: any }, dataCallBack: 
     });
 }
 
+/**
+ * 
+ * @param path Path to the leading resource, starting after the connection string (e.g. /api/dungeons)
+ * @param method HTTP-Method (e.g. GET, POST, PUT, DELETE)
+ * @param body Request body
+ * @param params search params as an object
+ * @param dataCallBack Callback function that handles the data that comes back
+ * @param error Callback function that handles the error
+ * @param unpackKey If the data is packed in an object, you can specify the key of the data to retrieve it in dataCallBack (e.g. {data:..., ok:0}) => unpackKey = 'data'
+ */
 const genericRequest = (path:string, method: string, body: {}, params: { [key: string]: any }, dataCallBack: (response: any) => void, error: (error: ErrorResponse) => void, unpackKey?: string) => {
     let par = params ? getSearchParamas(params) : "";
     $.ajax(connectionString + path + par, {
@@ -64,7 +78,11 @@ const genericRequest = (path:string, method: string, body: {}, params: { [key: s
     });
 }
 
-
+/**
+ * 
+ * @param params search params as an object in key-value pairs (e.g. {name: 'test', maxPlayers: '10'})
+ * @returns String with the search params (e.g ?name=test&maxPlayers=10)
+ */
 const getSearchParamas = (params:any) => {
     return `?${Object.keys(params).map(key => key + '=' + params[key]).join('&')}`;
 }

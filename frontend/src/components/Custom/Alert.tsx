@@ -13,15 +13,19 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
 
     useEffect(() => {
         alertRef?.current?.scrollIntoView({ behavior: 'smooth' });
+        const autoHide = setTimeout(() => {
+            setMessage('');
+        }, duration || 5000);
+
+        return () => {
+            clearTimeout(autoHide);
+        }
     }, [message])
 
     if (message === '') {
         return null;
     }
 
-    setTimeout(() => {
-        setMessage('');
-    }, duration || 5000);
 
     return (
         <ReactAlert transition={true} variant={variant} dismissible onClose={() => setMessage("")}>

@@ -1,13 +1,9 @@
 /**
  * @module UserSettings
  * @category React Components
- * @description Component to handle UserSettings-In
+ * @description Component to show and change the user-settings
+ * @author Raphael Sack
  * @hooks {@linkcode useAuth}
- * ```jsx
- * <>
- *  <AvailableCharactersLi/>[]
- * </>
- * ```
  */
 
 
@@ -21,9 +17,6 @@ import { useAuth } from 'src/hooks/useAuth';
 import MudSelect from '../../Custom/MudSelect';
 type UserSettingsProps = {}
 
-interface LocationState {
-    from: { pathname: string }
-}
 const UserSettings: React.FC<UserSettingsProps> = (props) => {
     let navigate = useNavigate();
     const { t, i18n } = useTranslation();

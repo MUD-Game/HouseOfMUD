@@ -6,6 +6,9 @@
  * @props {@linkcode GameProps}
  * ```jsx
  * <Minimap />
+ * <HUD />
+ * <Inventory />
+ * <Chat />
  * ```
  */
 
@@ -18,30 +21,32 @@ import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import Alert from '../Custom/Alert';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
-    const {t} = useTranslation();
-    let homsole = useMudConsole();
-    let navigate = useNavigate();
 
+    const {t} = useTranslation();
+    const navigate = useNavigate();
     const rabbit = useRabbitMQ();
     const { isAbleToJoinGame } = useGame();
+
+    const [error, setError] = React.useState<string>("");
+
     useEffect(() => {
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.login(() => {
-                homsole.log("Successful login");
+                
             }, (error) => {
-                homsole.error(error, "RabbitMQ");
+                setError("rabbitmq.login")
             });
         }
         return () => {
             rabbit.logout(() => { }, (error) => {
-                homsole.error(error, "RabbitMQ");
+                setError("rabbitmq.logout")
             });
         }
     }, [])
@@ -73,9 +78,10 @@ const Game: React.FC<GameProps> = ({ }) => {
                     <Minimap mapData={null} />
                     <Inventory items={null} />
                     <HUD {...hudMock} />
+                    <Alert type="error" message={error} setMessage={setError} />
                 </div>
                 <div className="col col-8 col-md-9 col-lg-10">
-                    <Chat />
+                    <Chat messageCallback={setError}/>
                 </div>
             </Row>
         </Container>

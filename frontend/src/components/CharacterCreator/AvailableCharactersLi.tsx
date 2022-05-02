@@ -2,6 +2,7 @@
  * @module AvailableCharactersLi
  * @category React Components
  * @description List item for the AvailableCharacters-List
+ * @hooks {@linkcode useAuth}, {@linkcode useGame}
  * @props {@linkcode AvailableCharactersLiProps}
  */
 
@@ -13,28 +14,27 @@ import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
 import { Row } from 'react-bootstrap';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Play, PlayCircle, Trash } from 'react-bootstrap-icons';
+import { SendsMessagesProps } from '../../types/misc';
 
 export interface AvailableCharactersLiProps {
     character: CharactersResponseData;
     characterAttributes:{characterClass: string, characterGender: string, characterSpecies: string};
+
     fetchCharacters: () => void;
 }
 
-const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character, characterAttributes, fetchCharacters }) => {
+const AvailableCharactersLi: React.FC<AvailableCharactersLiProps & SendsMessagesProps> = ({ character, characterAttributes, fetchCharacters, messageCallback: sendMessage }) => {
 
     const { user, token } = useAuth();
-    const { dungeon, setVerifyToken, setCharacter } = useGame();
     const navigate = useNavigate();
-
-    const homosole = useMudConsole();
+    const { dungeon, setVerifyToken, setCharacter } = useGame();
 
     const onDelete = () => {
         supervisor.deleteCharacter(dungeon, { _id: character._id }, (data) => {
             fetchCharacters();
         }, (error) => {
-            homosole.error(error.error);
+            sendMessage(error.error);
         })
     }
 
@@ -49,8 +49,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps> = ({ character
             setVerifyToken(data.verifyToken);
             navigate("/game");
         }, (error) => {
-            // TODO: handle error in a better way
-            homosole.error(error.error);
+            sendMessage(error.error);
         });
     }
 

@@ -20,8 +20,6 @@ import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
 import { ConsoleProvider } from "src/contexts/ConsoleContext";
 import DungeonConfigurator from '../components/DungeonConfigurator/index';
 import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorContext";
-import DemoStart from "src/components/DemoStart";
-import DemoJoin from "src/components/DemoJoin";
 import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
 import UserSettings from "src/components/Authentication/UserSettings";
@@ -41,8 +39,6 @@ const IndexRouter: React.FC = (): ReactElement => {
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
-                            <Route path="/demo-start" element={<RequireAuth><DemoStart /></RequireAuth>} />
-                            <Route path="/demo-join" element={<RequireAuth><DemoJoin /></RequireAuth>} />
                             <Route path="/dungeon-configurator" element={
                                 <RequireAuth>
                                     <DungeonConfiguratorProvider>

@@ -1,8 +1,8 @@
 /**
- * @module ChatOutput
+ * @module DungeonMaster-ChatOutput
  * @category React Components
  * @description ChatOutput Component to display the Chat-Feedback from RabbitMQ
- * @children {@linkcode ChatOutputOutput} {@linkcode ChatOutputInput}
+ * @children
  * @props {@linkcode ChatOutputProps}
  */
 

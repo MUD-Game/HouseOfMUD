@@ -1,8 +1,8 @@
 /**
- * @module ChatInput
+ * @module DungeonMaster-ChatInput
  * @category React Components
  * @description ChatInput Component to get the input from the user
- * @children {@linkcode ChatInputOutput} {@linkcode ChatInputInput}
+ * @children
  * @props {@linkcode ChatInputProps}
  */
 
@@ -11,21 +11,20 @@ import $ from "jquery";
 import { Row } from 'react-bootstrap';
 import { CloudArrowUp, Send } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";
-import { useMudConsole } from '../../../hooks/useMudConsole';
+import { SendsMessagesProps } from '../../../types/misc';
 export interface ChatInputProps { }
 
-const ChatInput: React.FC<ChatInputProps> = ({ }) => {
+const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallback}) => {
 
     const { sendMessage } = useRabbitMQ();
-    const homsole = useMudConsole();
     const sendInput = (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault()
         let formData = new FormData(evt.currentTarget);
         let message = formData.get('message') as string;
         sendMessage(message, () => {
-            homsole.log(message, "Message sent succesfully",);
+            // Success
         }, (error) => {
-            homsole.error(error, "RabbitMQ");
+            messageCallback("rabbitmq.send");
         })
         $("#chat-input").val("");
     }

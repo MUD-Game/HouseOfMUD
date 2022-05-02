@@ -1,9 +1,15 @@
+/**
+ * @module DungeonConfigurator
+ * @category React Components
+ * @description DungeonConfigurator Component to display the DungeonConfigurator
+ * @author Raphael Sack
+ */
+
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import Busy from '../Busy';
 import MudInput from '../Custom/MudInupt';
 import MudTypeahead from '../Custom/MudTypeahead';

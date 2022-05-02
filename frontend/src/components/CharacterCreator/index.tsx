@@ -16,45 +16,42 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useGame } from 'src/hooks/useGame'
 import { supervisor } from 'src/services/supervisor';
-import { useAuth } from 'src/hooks/useAuth';
-import { GetCharactersRequest, GetCharacterAttributesResponse } from '@supervisor/api';
+import { GetCharacterAttributesResponse } from '@supervisor/api';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
 import { Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import { useMudConsole } from '../../hooks/useMudConsole';
 import { CharactersResponseData } from '@supervisor/api';
+import Alert from '../Custom/Alert';
 export interface CharacterCreatorProps { }
 
 
 const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
 
-    const game = useGame();
-    const auth = useAuth();
-    const homsole = useMudConsole();
-    let dungeon = game.dungeon;
-    let dungeonName = game.dungeonName;
-    let user = auth.user;
+    const { dungeon, dungeonName, isAbleToPickCharacter } = useGame();
+
+    const [error, setError] = React.useState<string>("");
     const [characters, setCharacters] = React.useState<CharactersResponseData[]>([] as CharactersResponseData[]);
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
         if (!dungeon) return;
-        supervisor.getCharacterAttributes(dungeon, {}, setDungeonData, homsole.supervisorerror);
-        supervisor.getCharacters(dungeon, {}, setCharacters, homsole.supervisorerror);
+        supervisor.getCharacterAttributes(dungeon, {}, setDungeonData, error => setError(error.error));
+        supervisor.getCharacters(dungeon, {}, setCharacters, error => setError(error.error));
     }, []);
 
 
     const fetchNewCharacters = () => {
-        supervisor.getCharacters(dungeon, {}, setCharacters, homsole.supervisorerror);
+        supervisor.getCharacters(dungeon, {}, setCharacters, error => setError(error.error));
     }
 
-    if (!game.isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
+    if (!isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
     return (
         <Container className="mb-5">
             <h2>{dungeonName}</h2>
-            {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter onCreate={fetchNewCharacters} {...dungeonData} /> : null}
+            <Alert message={error} setMessage={setError} type="error" />
+            {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter messageCallback={setError} onCreate={fetchNewCharacters} {...dungeonData} /> : null}
             <br /><hr /><br />
-            {characters !== [] ? <AvailableCharacters characters={characters} fetchCharacters={fetchNewCharacters} characterAttributes={dungeonData}/> : null}
+            {characters !== [] ? <AvailableCharacters messageCallback={setError} characters={characters} fetchCharacters={fetchNewCharacters} characterAttributes={dungeonData}/> : null}
         </Container>
     )
 }

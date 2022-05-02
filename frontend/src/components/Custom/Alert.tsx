@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { DisplaysMessageProps } from 'src/types/misc';
 import { Alert as ReactAlert } from 'react-bootstrap';
 
-const Alert: React.FC<DisplaysMessageProps & {type: 'error' | 'info'}> = ({setMessage, message, type}) =>{
+const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?: number }> = ({ setMessage, message, type, duration }) =>{
 
     const { t } = useTranslation();
     const alertRef = useRef<any>();
@@ -19,8 +19,12 @@ const Alert: React.FC<DisplaysMessageProps & {type: 'error' | 'info'}> = ({setMe
         return null;
     }
 
+    setTimeout(() => {
+        setMessage('');
+    }, duration || 5000);
+
     return (
-        <ReactAlert variant={variant} dismissible onClose={() => setMessage("")}>
+        <ReactAlert transition={true} variant={variant} dismissible onClose={() => setMessage("")}>
             <ReactAlert.Heading>{t(`${type}.${message}.title`)}</ReactAlert.Heading>
             <p ref={alertRef}>
                 {t(`${type}.${message}.text`)}

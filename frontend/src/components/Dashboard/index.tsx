@@ -77,7 +77,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             </Row>
             <Row className="mb-4">
                 <div className="col-md-6">
-                    <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
+                    <input id="search-input" className="input-standard drawn-border" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
                 </div>
             </Row>
 
@@ -96,7 +96,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <MyDungeons fetchMyDungeons={fetchDungeons} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <MyDungeons messageCallback={setError} fetchMyDungeons={fetchDungeons} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )
 }

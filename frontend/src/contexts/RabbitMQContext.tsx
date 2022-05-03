@@ -19,7 +19,7 @@ export interface RabbitMQContextType {
   setChatSubscriber: (subscriber: (message: string) => void) => void;
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
-  setChangeRoomSubscriber: (subscriber: (roomId: string) => void) => void;
+  setRoomSubscriber: (subscriber: (roomId: string) => void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -42,7 +42,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   let errorSubscriber: (error: string) => void = (error) => { };
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
-  let minimapSubscriber: (message: any) => void = () => { };
+  let miniMapSubscriber: (message: any) => void = () => { };
   let roomSubscriber: (message: any) => void = () => { };
 
   const processAction = (message: IMessage) => {
@@ -56,12 +56,13 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
         errorSubscriber("RabbitMQ-Message is missing a data");
         return;
       }
-      switch (jsonData.action) {
+      const command = jsonData['action'].split('.');
+      switch (command[0]) {
         case 'message':
           chatSubscriber(jsonData.data); // atm only chats
           break;
         case 'minimap':
-          minimapSubscriber(jsonData.data);
+          minimapHandler(command.splice(1), jsonData.data);
           break;
         default:
           errorSubscriber("RabbitMQ-Action not implemented yet: " + jsonData.action);
@@ -88,8 +89,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let login = (callback: VoidFunction, error: (error: string) => void) => {
-
+  const login = (callback: VoidFunction, error: (error: string) => void) => {
     if (rabbit.active) {
       error('RabbitMQ is already connected');
       return;
@@ -121,7 +121,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     callback();
   }
 
-  let logout = (callback: VoidFunction, error: (error: string) => void) => {
+  const logout = (callback: VoidFunction, error: (error: string) => void) => {
     if (!rabbit.active) {
       error('RabbitMQ is not connected');
       return;
@@ -136,7 +136,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     callback();
   }
 
-  let sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+  const sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
     if (!rabbit.connected) {
       error("RabbitMQ is not connected");
       return;
@@ -158,15 +158,25 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   const setMiniMapSubscriber = (subscriber: (rooms: MiniMapData) => void) => {
-    minimapSubscriber = subscriber;
+    miniMapSubscriber = subscriber;
   }
 
-  const setChangeRoomSubscriber = (subscriber: (roomId: string) => void) => {
+  const setRoomSubscriber = (subscriber: (roomId: string) => void) => {
     roomSubscriber = subscriber;
   }
 
+  const minimapHandler = (command: string[], data: any) => {
+    switch(command[0]) {
+      case 'init':
+        miniMapSubscriber(data);
+        break;
+      case 'update':
+        roomSubscriber(data);
+        break;
+    }
+  }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setChangeRoomSubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

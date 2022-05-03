@@ -90,7 +90,7 @@ export interface MinimapProps extends MiniMapData {}
 
 const Minimap: React.FC<MinimapProps> = (props) => {
 
-    const { } = useRabbitMQ()
+    const { setRoomSubscriber } = useRabbitMQ()
 
     const sizeRef = useRef<any>();
     const stageRef = useRef<any>();
@@ -100,7 +100,12 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     useEffect(() => {
         setSize({ width: sizeRef.current.clientWidth, height: sizeRef.current.clientHeight });
-    }, [sizeRef])
+        setRoomSubscriber((id:string)=>{
+            setCurrentRoomId(id)
+            focusOnRoom(id);
+            console.log(id);
+        });
+    }, [])
 
     const focusOnRoom = (roomId?:string) => {
         if(stageRef.current){

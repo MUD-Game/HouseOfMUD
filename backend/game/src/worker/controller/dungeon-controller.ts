@@ -3,6 +3,7 @@ import { Character, CharacterImpl } from "../../data/interfaces/character";
 import { CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
+import { MiniMapData } from "../action/actions/action-resources";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
 
@@ -39,6 +40,8 @@ export class DungeonController {
                                 action: 'message',
                                 data: { message: `${data.character} ist dem Dungeon beigetreten!` },
                             });
+                            // Send MiniMap to Client...
+                            this.sendMiniMapData(data.character);
                             break;
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);
@@ -77,5 +80,24 @@ export class DungeonController {
         return this.amqpAdapter
     }
 
-    
+    sendMiniMapData(character: string) {
+        let rooms:MiniMapData["rooms"] = {};
+        for (let room in this.dungeon.rooms) {
+            rooms[room] = {
+                xCoordinate: this.dungeon.rooms[room].xCoordinate,
+                yCoordinate: this.dungeon.rooms[room].yCoordinate,
+                connections: this.dungeon.rooms[room].connections,
+                explored: true // TODO: Find a way to check if the room is explored
+            }
+        }
+        this.amqpAdapter.sendToClient(character,{
+            action: 'minimap.init',
+            data: {
+                rooms: rooms,
+                startRoom: "0,0" //TODO: Actually get the room the character is in at the start
+            }
+        } as unknown as MiniMapData);
+    }	
+
+
 }

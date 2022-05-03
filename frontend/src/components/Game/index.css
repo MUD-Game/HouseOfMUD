@@ -1,0 +1,7 @@
+#minimap{
+    height:50vh;
+}
+
+#minimap canvas{
+    border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
+}

@@ -46,16 +46,13 @@ const connectionInactive = bodyStyles.getPropertyValue('--connection-inactive');
 const connectionClosed = bodyStyles.getPropertyValue('--connection-closed');
 export interface RoomConfiguratorProps {
 }
-type Option = string | { [key: string]: any };
+
 const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
     const [width, setWidth] = React.useState(0);
-    const [mapSize, setMapSize] = React.useState({ width: 10, height: 5 });
-    const [showOverlay, setShowOverlay] = React.useState(false);
     const widthRef = useRef<any>();
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
-    const overlayRef = useRef<any>();
 
     useEffect(() => {
         setWidth(widthRef.current.clientWidth);
@@ -124,7 +121,6 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
         occupiedCoords.forEach(coord => {
             const [x, y] = coord.split(',').map(Number);
-            const room = rooms[coord];
             dirs.forEach(xOff => {
                 dirs.forEach(yOff => {
                     if (Math.abs(xOff + yOff) === 1) {

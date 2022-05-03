@@ -23,6 +23,7 @@ import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorCon
 import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
 import UserSettings from "src/components/Authentication/UserSettings";
+import Minimap from "src/components/Game/Minimap";
 
 
 const IndexRouter: React.FC = (): ReactElement => {

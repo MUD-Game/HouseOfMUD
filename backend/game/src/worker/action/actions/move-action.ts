@@ -108,6 +108,11 @@ export class MoveAction implements Action {
                     action: 'message',
                     data: { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)},
                 });
+                // Sends the new room id to the client.
+                await amqpAdapter.sendToClient(user, {
+                    action: 'minimap.move',
+                    data: destinationRoomId
+                });
             }
         } catch (e) {
             // console.log(e);

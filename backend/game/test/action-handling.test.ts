@@ -232,18 +232,18 @@ describe('ActionHandler', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions[triggers.message];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
-    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
-    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
-    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
-    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
-    const lookAction: LookAction = actionHandler.actions[triggers.look];
-    const moveAction: MoveAction = actionHandler.actions[triggers.move];
-    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast] as BroadcastMessageAction;
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
+    const lookAction: LookAction = actionHandler.actions[triggers.look] as LookAction;
+    const moveAction: MoveAction = actionHandler.actions[triggers.move] as MoveAction;
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup] as PickupAction;
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
     const invalidAction: InvalidAction = actionHandler.invalidAction;
     
     messageAction.performAction = jest.fn();
@@ -374,18 +374,19 @@ describe('Actions', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions[triggers.message];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
-    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
-    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
-    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
-    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
-    const lookAction: LookAction = actionHandler.actions[triggers.look];
-    const moveAction: MoveAction = actionHandler.actions[triggers.move];
-    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast] as BroadcastMessageAction;
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
+    const lookAction: LookAction = actionHandler.actions[triggers.look] as LookAction;
+    const moveAction: MoveAction = actionHandler.actions[triggers.move] as MoveAction;
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup] as PickupAction;
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
+    const invalidAction: InvalidAction = actionHandler.invalidAction;
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();

@@ -9,11 +9,12 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
-export class LookAction implements Action {
+export class LookAction extends Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
+        super();
         this.trigger = triggers.look;
         this.dungeonController = dungeonController
     }

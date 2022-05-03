@@ -7,11 +7,12 @@ import { triggers, actionMessages, parseResponseString, extras } from "./action-
 /**
  * Action that gets performed when user sends a "sag" message.
  */
-export class MessageAction implements Action {
+export class MessageAction extends Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
+        super();
         this.trigger = triggers.message;
         this.dungeonController = dungeonController;
     }

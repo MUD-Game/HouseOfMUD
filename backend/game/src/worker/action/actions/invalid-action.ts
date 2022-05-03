@@ -2,11 +2,12 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, errorMessages } from "./action-resources";
 
-export default class InvalidAction implements Action {
+export default class InvalidAction extends Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
+        super();
         this.trigger = triggers.invalid;
         this.dungeonController = dungeonController
     }

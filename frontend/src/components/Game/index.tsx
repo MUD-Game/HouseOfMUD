@@ -84,7 +84,7 @@ const Game: React.FC<GameProps> = ({ }) => {
             </Row>
             <Row className="game-body">
                 <div className="col col-4 col-md-3 col-lg-2">
-                    <Minimap mapData={null} />
+                    <Minimap />
                     <Inventory items={null} />
                     <HUD {...hudMock} />
                     <Alert type="error" message={error} setMessage={setError} />

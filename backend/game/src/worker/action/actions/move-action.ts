@@ -110,7 +110,7 @@ export class MoveAction implements Action {
                 });
             }
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             amqpAdapter.sendToClient(user, {
                 action: 'message',
                 data: { message: actionMessages.movePathNotAvailable },

@@ -34,9 +34,12 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
 
     const [error, setError] = React.useState<string>("");
 
+    const modalIsInvalid = () => {
+        return validator.isEmpty(name) || validator.isEmpty(description) || validator.isZero(hitPoints) || validator.isZero(mana) || validator.isZero(dmg);
+    }
     
     const onSubmit = () => {
-        if (validator.isEmpty(name) || validator.isEmpty(description) || validator.isZero(hitPoints) || validator.isZero(mana) || validator.isZero(dmg)) {
+        if (!modalIsInvalid()) {
             setError("failvalidation.class");
         } else {
             const stats: MudCharacterStats = {
@@ -56,7 +59,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }

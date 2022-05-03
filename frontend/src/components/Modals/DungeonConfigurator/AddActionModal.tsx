@@ -70,7 +70,9 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const [error, setError] = React.useState<string>("");
 
-
+    const modalIsInvalid = () => {
+        return validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output);
+    }
 
     const deconstructToContextData = () => {
         let allEvents: MudEvent[] = [];
@@ -118,7 +120,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
-        if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output)) {
+        if (modalIsInvalid()) {
             setError("failvalidation.action");
         } else {
             let action = deconstructToContextData();
@@ -130,7 +132,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }

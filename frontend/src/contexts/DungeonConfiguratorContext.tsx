@@ -21,6 +21,7 @@ import { CharacterSpecies } from '../../../backend/data/src/interfaces/character
 import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
 import { useTranslation } from 'react-i18next';
 import AddRoomModal from 'src/components/Modals/DungeonConfigurator/AddRoomModal';
+import AddNpcModal from 'src/components/Modals/DungeonConfigurator/AddNpcModal';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -77,6 +78,10 @@ export interface DungeonConfiguratorContextMethods {
     addItem: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     editItem: (key: number) => void;
     deleteItem: (key: number) => void;
+
+    addNpc: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    editNpc: (key: number) => void;
+    deleteNpc: (key: number) => void;
 
     addAction: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     editAction: (key: number) => void;
@@ -446,6 +451,24 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         });
     }
 
+    const addNpc = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setEditData(null);
+        setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey })
+        setShowAddNpcModal(true);
+    }
+    const editNpc = (key: number) => {
+        setEditData(npcs[key]);
+        setNpcsKey({ selected: key, nextKey: npcsKey.nextKey });
+        setShowAddNpcModal(true);
+    }
+
+    const deleteNpc = (key: number) => {
+        showConfirmation('delete_npc', () => {
+            let index = npcs.findIndex(c => c.id === key + "");
+            setNpcs(npcs.filter((n) => n.id !== key + ""));
+        });
+    }
+
     const addAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setEditData(null);
         setActionsKey({ ...actionsKey, selected: actionsKey.nextKey })
@@ -561,7 +584,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection
+        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection,addNpc, editNpc, deleteNpc
     }
 
     let fields: MudDungeon = {
@@ -616,6 +639,26 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             }
         }} show={showAddItemsModal} onHide={() => {
             setShowAddItemsModal(false);
+        }} />
+
+        <AddNpcModal editData={editData as MudNpc} key={"Npc:" + npcsKey.selected} onSendNpc={(cc) => {
+            if (npcsKey.selected === npcsKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
+                cc.id = npcsKey.nextKey + "";
+                setNpcs([...npcs, cc]);
+                setShowAddNpcModal(false);
+                setNpcsKey({ nextKey: npcsKey.nextKey + 1, selected: npcsKey.selected + 1 });
+            } else {
+                // User is editing
+                cc.id = npcsKey.selected + "";
+                // Set the key to a new id
+                setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey });
+                let temp = npcs;
+                let index = temp.findIndex((c) => c.id === cc.id);
+                temp[index] = cc;
+                setNpcs(temp);
+            }
+        }} show={showAddNpcModal} onHide={() => {
+            setShowAddNpcModal(false);
         }} />
 
         <AddRoomModal coordinates={roomCoordiantes} key={"Room:" + roomsKey} onSendRoom={(cc: MudRoom) => {

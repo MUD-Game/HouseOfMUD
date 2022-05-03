@@ -18,7 +18,7 @@ const roomMargin = 40
 const roomOffset = roomSize + roomMargin;
 const connectionStrokeWidth = 8;
 const connectionBlobRadius = connectionStrokeWidth;
-const scale = 0.4;
+var scale = 0.4;
 
 const sizeX = 20;
 const sizeY = 20;
@@ -81,7 +81,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             let tempRooms = rooms;
             tempRooms[id].explored = true;
             setRooms(tempRooms);
-            focusOnRoom(id, false);
+            focusOnRoom(id, true);
         });
     }, [isAnchored]);
 
@@ -101,13 +101,13 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         // how to scale? Zoom in? Or zoom out?
         let direction = e.evt.deltaY > 0 ? -1 : 1;
 
-        var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-        newScale = Math.min(Math.max(newScale, 0.2), 1);
-        stage.scale({ x: newScale, y: newScale });
+        scale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+        scale = Math.min(Math.max(scale, 0.2), 1);
+        stage.scale({ x: scale, y: scale });
 
         var newPos = {
-            x: pointer.x - mousePointTo.x * newScale,
-            y: pointer.y - mousePointTo.y * newScale,
+            x: pointer.x - mousePointTo.x * scale,
+            y: pointer.y - mousePointTo.y * scale,
         };
         stage.position(newPos);
     }
@@ -117,11 +117,13 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         if(isAnc && stageRef.current){
             const xc = parseInt((roomId || currentRoomId).split(",")[0]);
             const yc = parseInt((roomId || currentRoomId).split(",")[1]);
-            const x = -xc * roomOffset*scale; 
-            const y = -yc * roomOffset*scale;
+            const x = -xc * roomOffset* stageRef.current.attrs.scaleX; 
+            const y = -yc * roomOffset* stageRef.current.attrs.scaleY;
 
-            stageRef.current.position({ x: x, y: y });
-            stageRef.current.scale({ x: scale, y: scale });
+            console.log(stageRef.current.attrs);
+
+            // stageRef.current.position({ x: x, y: y });
+            stageRef.current.to({ x: x, y: y, duration: 0.2 });
         }
     }
 

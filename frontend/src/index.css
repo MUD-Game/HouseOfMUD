@@ -24,9 +24,10 @@
   --room-background:#f0f0f0;
 
   --room-fill: #ddd;
-  --room-stroke: #ccc;
+  --room-stroke: rgb(170, 170, 170);
   
   /* Created Rooms */
+  --room-current-fill: #2bde64;
   --room-active-fill: #8b4a20;
   --room-active-stroke : #6b2a00;
 

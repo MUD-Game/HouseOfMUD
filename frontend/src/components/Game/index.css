@@ -35,10 +35,6 @@
     }
 }
 
-#minimap{
-    height:50vh;
-}
-
 #minimap canvas{
     border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
 }
@@ -55,7 +51,6 @@
     width: 100px;
     position: relative;
     right: 20px;
-    opacity: 1 !important;
 }
 
 #compass {

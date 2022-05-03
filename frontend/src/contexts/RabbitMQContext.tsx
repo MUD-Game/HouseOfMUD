@@ -170,7 +170,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       case 'init':
         miniMapSubscriber(data);
         break;
-      case 'update':
+      case 'move':
         roomSubscriber(data);
         break;
     }

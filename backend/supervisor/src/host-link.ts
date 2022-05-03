@@ -105,11 +105,9 @@ export class HostLink {
                     });
 
                     socket.on('dungeonState', (data: any): void => {
-                        for (let dungeonStats of data) {
-                            if (dungeonStats.dungeonID in this.dungeons) {
-                                this.dungeons[dungeonStats.dungeonID].status = 'online';
-                                this.dungeons[dungeonStats.dungeonID].currentPlayers = data.currentPlayers;
-                            }
+                        if (data.dungeonID in this.dungeons) {
+                            // this.dungeons[data.dungeonID].status = 'online';
+                            this.dungeons[data.dungeonID].currentPlayers = data.currentPlayers;
                         }
                     });
 

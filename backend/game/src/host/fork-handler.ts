@@ -26,6 +26,7 @@ type DungeonAction = 'setCharacterToken' | 'stop';
 export class ForkHandler {
 
     public workerExitCallback: ((dungeon: string) => void) | undefined;
+    public dungeonStateCallback: ((dungeonID: string, currentPlayers: number) => void) | undefined;
     
     private amqpConfig: AmqpAdapterConfig;
     private mongodbConfig: MongodbConfig;
@@ -65,7 +66,21 @@ export class ForkHandler {
      * @param message Message from dungeon worker.
      */
     private workerMessageHandler(dungeon: string, message: any): void {
-        // TODO: currentPlayers update
+        if (message.host_action && message.data) {
+            let host_action = message.host_action;
+            let data = message.data;
+
+            switch (host_action) {
+                case 'dungeonState':
+                    if (this.dungeonStateCallback !== undefined && data.currentPlayers !== undefined) {
+                        if (dungeon in this.dungeonWorker) {
+                            this.dungeonWorker[dungeon].currentPlayers = data.currentPlayers;
+                        }
+                        this.dungeonStateCallback(dungeon, data.currentPlayers);
+                    }
+                    break;
+            }
+        }
     }
 
     /**

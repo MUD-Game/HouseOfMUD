@@ -1,14 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { MudConnectionInfo, MudRoom } from 'src/types/dungeon';
 import { Stage, Layer, Rect, Transformer, Circle, Group, Line, Image } from 'react-konva';
-import Konva from 'konva';
 import './index.css'
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import MudInput from 'src/components/Custom/Input';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/Typeahead';
 import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
-import { Col, Container, Overlay, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import {Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import connectionOpenPng from 'src/assets/connection_open.png';
 import connectionClosedPng from 'src/assets/connection_closed.png';
 import connectionInactivePng from 'src/assets/connection_inactive.png';
@@ -46,16 +45,13 @@ const connectionInactive = bodyStyles.getPropertyValue('--connection-inactive');
 const connectionClosed = bodyStyles.getPropertyValue('--connection-closed');
 export interface RoomConfiguratorProps {
 }
-type Option = string | { [key: string]: any };
+
 const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
     const [width, setWidth] = React.useState(0);
-    const [mapSize, setMapSize] = React.useState({ width: 10, height: 5 });
-    const [showOverlay, setShowOverlay] = React.useState(false);
     const widthRef = useRef<any>();
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
-    const overlayRef = useRef<any>();
 
     useEffect(() => {
         setWidth(widthRef.current.clientWidth);
@@ -124,7 +120,6 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
         occupiedCoords.forEach(coord => {
             const [x, y] = coord.split(',').map(Number);
-            const room = rooms[coord];
             dirs.forEach(xOff => {
                 dirs.forEach(yOff => {
                     if (Math.abs(xOff + yOff) === 1) {

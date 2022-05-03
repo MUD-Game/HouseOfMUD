@@ -65,6 +65,7 @@ export interface MiniMapData {
         connections: Room['connections'],
         explored: boolean
     }};
+    startRoom: string;
 }
 
 export function parseResponseString(str: string, ...args: string[]): string {

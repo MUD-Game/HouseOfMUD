@@ -78,6 +78,10 @@ export interface DungeonConfiguratorContextMethods {
     editItem: (key: number) => void;
     deleteItem: (key: number) => void;
 
+    addNpc: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    editNpc: (key: number) => void;
+    deleteNpc: (key: number) => void;
+
     addAction: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     editAction: (key: number) => void;
     deleteAction: (key: number) => void;
@@ -446,6 +450,24 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         });
     }
 
+    const addNpc = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setEditData(null);
+        setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey })
+        setShowAddNpcModal(true);
+    }
+    const editNpc = (key: number) => {
+        setEditData(npcs[key]);
+        setNpcsKey({ selected: key, nextKey: npcsKey.nextKey });
+        setShowAddNpcModal(true);
+    }
+
+    const deleteNpc = (key: number) => {
+        showConfirmation('delete_npc', () => {
+            let index = npcs.findIndex(c => c.id === key + "");
+            setNpcs(npcs.filter((n) => n.id !== key + ""));
+        });
+    }
+
     const addAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setEditData(null);
         setActionsKey({ ...actionsKey, selected: actionsKey.nextKey })
@@ -561,7 +583,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection
+        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection,addNpc, editNpc, deleteNpc
     }
 
     let fields: MudDungeon = {

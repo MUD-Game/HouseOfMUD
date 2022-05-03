@@ -392,7 +392,6 @@ describe('Actions', () => {
     amqpAdapter.broadcast = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
-    jest.useFakeTimers()
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
         messageAction.performAction('Jeff', [
@@ -462,69 +461,68 @@ describe('Actions', () => {
 
     
     test(`MoveAction should modify the position, call the functions to bind the client queues 
-    and call sendWithRouting on the AmqpAdapter when user moves to another room`, () => {
-        moveAction.performAction('Jeff', ['Norden']);
+    and call sendWithRouting on the AmqpAdapter when user moves to another room`, async () => {
+        await moveAction.performAction('Jeff', ['Norden']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `Jeff ist Raum-N beigetreten!` },
+            data: { message: `Jeff hat Raum-1 verlassen!` },
         });
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith(
             'Jeff',
             'room.1'
         );
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('Jeff', 'room.2');
-        jest.runAllTimers()
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
             data: { message: `Jeff ist Raum-N beigetreten!` },
         });
     });
 
-    test('MoveAction should modify the position to the room in the East when user moves east', () => {
-        moveAction.performAction('Jeff', ['Osten']);
+    test('MoveAction should modify the position to the room in the East when user moves east', async () => {
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomEast.id);
     });
 
-    test('MoveAction should modify the position to the room in the South when user moves south', () => {
-        moveAction.performAction('Jeff', ['Sueden']);
+    test('MoveAction should modify the position to the room in the South when user moves south', async () => {
+        await moveAction.performAction('Jeff', ['Sueden']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomSouth.id);
     });
 
-    test('MoveAction should modify the position to the room in the West when user moves west', () => {
-        moveAction.performAction('Jeff', ['Westen']);
+    test('MoveAction should modify the position to the room in the West when user moves west', async () => {
+        await moveAction.performAction('Jeff', ['Westen']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomWest.id);
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Osten']);
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "In diese Richtung geht es nicht weiter!" },
         });
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', async() => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Nord-Sueden']);
+        await moveAction.performAction('Jeff', ['Nord-Sueden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "Diese Richtung existiert nicht!" },
         });
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Norden']);
+        await moveAction.performAction('Jeff', ['Norden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "In diese Richtung ist der Raum geschlossen!" },
         });
     });
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorthNorth.id;
-        moveAction.performAction('Jeff', ['Osten']);
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "In diese Richtung geht es nicht weiter!" },
@@ -538,7 +536,7 @@ describe('Actions', () => {
             action: 'message',
             data: {
                 message:
-                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel. Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. Du kannst in diesem Raum folgende Aktionen ausfuehren: essen Apfel. In diesem Raum befinden sich folgende Spieler: Jeff Spieler Bob. ',
+                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel (1x). Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. Du kannst in diesem Raum folgende Aktionen ausfuehren: essen Apfel. In diesem Raum befinden sich folgende Spieler: Jeff Spieler Bob. ',
             },
         });
     });
@@ -547,7 +545,7 @@ describe('Actions', () => {
         inventoryAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du hast folgende Items im Inventar: Apfel` },
+            data: { message: `Du hast folgende Items im Inventar: Apfel (1x)` },
         });
     });
 
@@ -584,8 +582,8 @@ describe('Actions', () => {
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
         TestDungeon.characters['Jeff'].inventory.push({item: TestItemDiscard.id, count: 1})
         discardAction.performAction('Jeff', ['Schwert']);
-        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id])
-        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id, TestItemDiscard.id])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}])
+        expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemDiscard.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item abgelegt: Schwert` },
@@ -612,8 +610,8 @@ describe('Actions', () => {
     test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
         TestDungeon.rooms[TestRoom.id].items.push({item: TestItemPickup.id, count: 1})
         pickupAction.performAction('Jeff', ['Gold']);
-        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
-        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemPickup.id}])
+        expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item aufgehoben: Gold` },

@@ -30,7 +30,7 @@ interface Tokens {
 
 const userTokens: Tokens = {};
 
-export function sendToHost(hostAction: string, data: any): void {
+function sendToHost(hostAction: string, data: any): void {
     if (process.send) {
         process.send({
             host_action: hostAction,

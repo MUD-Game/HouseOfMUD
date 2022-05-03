@@ -4,8 +4,15 @@ import { CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
-import { sendToHost } from "../worker";
 
+function sendToHost(hostAction: string, data: any): void {
+    if (process.send) {
+        process.send({
+            host_action: hostAction,
+            data: data
+        });
+    }
+}
 
 export class DungeonController {
 

@@ -17,7 +17,7 @@ export class InspectAction implements Action {
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)
-        let characterInventory: string [] = senderCharacter.getInventory()
+        let characterInventory: ItemInfo[] = senderCharacter.getInventory()
         let itemToInspect: string = args.join(' ')
         let userHasItem: boolean = false;
         let inspectMessage: string = ''

@@ -45,6 +45,7 @@ export class DungeonController {
                             sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
 
                             await this.sendMiniMapData(data.character);
+                            await this.sendInventoryData(data.character);
                             break;
                         case 'logout':
                             // TODO: Refactor
@@ -107,6 +108,12 @@ export class DungeonController {
             }
         } as unknown as MiniMapData);
     }	
+
+    async sendInventoryData(character: string) {
+        this.amqpAdapter.sendToClient(character, {action: "inventory", data: this.dungeon.characters[character].inventory.map(item => {
+            return { item:this.dungeon.items[item.item].name, count:item.count }
+        })})
+    }
 
 
 }

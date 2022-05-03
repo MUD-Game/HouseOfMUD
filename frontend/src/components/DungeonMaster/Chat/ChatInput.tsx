@@ -33,7 +33,7 @@ const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallb
         <form className="chat-input-wrap " onSubmit={sendInput}>
             <Row className="h-100 mt-3">
                 <div className="col-10">
-                    <input type="text" name="message" id="chat-input" required autoComplete='off' />
+                    <input className="input-standard drawn-border" type="text" name="message" id="chat-input" required autoComplete='off' />
                 </div>
                 <div className="col-1">
                     <button className="btn px-0 w-100 drawn-border btn-blue" type="submit">

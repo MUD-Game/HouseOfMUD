@@ -46,6 +46,7 @@ export class DiscardAction implements Action {
                     roomItems.push(new ItemInfo(itemInInventory.item, 1))
                 }
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.discard, nameOfItemToDiscard)}})
+                this.dungeonController.sendInventoryData(user)
             } else {
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
             }

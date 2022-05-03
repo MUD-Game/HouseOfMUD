@@ -12,6 +12,7 @@ import { Client, IFrame, IMessage } from '@stomp/stompjs';
 import { RabbitMQPayload } from 'src/types/rabbitMQ';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/Game/Minimap';
+import { InventoryProps } from 'src/components/Game/Inventory';
 
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
@@ -21,6 +22,7 @@ export interface RabbitMQContextType {
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
   setRoomSubscriber: (subscriber: (roomId: string) => void) => void;
+  setInventorySubscriber: (subscriber: (items: InventoryProps["inventoryData"]) => void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -67,6 +69,9 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'minimap':
           minimapHandler(command.splice(1), jsonData.data);
+          break;
+        case 'inventory':
+          inventorySubscriber(jsonData.data);
           break;
         default:
           errorSubscriber("RabbitMQ-Action not implemented yet: " + jsonData.action);
@@ -181,6 +186,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     roomSubscriber = subscriber;
   }
 
+  const setInventorySubscriber = (subscriber: (items: InventoryProps["inventoryData"]) => void) => {
+    inventorySubscriber = subscriber;
+  }
+
   const minimapHandler = (command: string[], data: any) => {
     switch(command[0]) {
       case 'init':
@@ -192,7 +201,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

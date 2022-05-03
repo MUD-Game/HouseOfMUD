@@ -10,7 +10,8 @@ import { MudRoom } from 'src/types/dungeon';
 import { useRabbitMQ } from '../../hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import './index.css'
-import { GeoAlt } from 'react-bootstrap-icons';
+import { Compass, GeoAlt } from 'react-bootstrap-icons';
+import compassPng from 'src/assets/compass.png';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -28,7 +29,7 @@ const background = bodyStyles.getPropertyValue('--room-background');
 const fillActive = bodyStyles.getPropertyValue('--room-active-fill');
 const strokeActive = bodyStyles.getPropertyValue('--room-active-stroke');
 const strokeActiveSelected = bodyStyles.getPropertyValue('--room-selected-stroke');
-const fillActiveSelected = bodyStyles.getPropertyValue('--room-selected-fill');
+const fillCurrentRoom = bodyStyles.getPropertyValue('--room-current-fill');
 
 const fillStartSelected = bodyStyles.getPropertyValue('--room-start-selected-fill');
 const fillStart = bodyStyles.getPropertyValue('--room-start-fill');  // Start-Room color
@@ -81,64 +82,43 @@ export interface MiniMapData {
             explored: boolean
         }
     };
+    startRoom: string;
 }
 
 
-export interface MinimapProps {
-}
+export interface MinimapProps extends MiniMapData {}
 
-const Minimap: React.FC<MinimapProps> = () => {
+const Minimap: React.FC<MinimapProps> = (props) => {
 
     const { } = useRabbitMQ()
 
     const sizeRef = useRef<any>();
     const stageRef = useRef<any>();
-    const [currentRoomId, setCurrentRoomId] = React.useState<string>("-1,1");
-    const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>({
-        "0,0": {
-            xCoordinate: 0,
-            yCoordinate: 0,
-            connections: { east: "inactive", south: "open" },
-            explored: true
-        },
-        "0,1": {
-            xCoordinate: 0,
-            yCoordinate: 1,
-            connections: { east: "inactive", south: "inactive" },
-            explored: true
-        },
-        "-1,1": {
-            xCoordinate: -1,
-            yCoordinate: 1,
-            connections: { east: "open", south: "inactive" },
-            explored: false
-        },
-        "-2,1":{
-            xCoordinate: -2,
-            yCoordinate: 1,
-            connections: { east: "open", south: "inactive" },
-            explored: true
-        }
-    });
+    const [currentRoomId, setCurrentRoomId] = React.useState<string>(props.startRoom);
+    const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     const [size, setSize] = React.useState<{ width: number, height: number }>({ width: 0, height: 0 });
 
     useEffect(() => {
         setSize({ width: sizeRef.current.clientWidth, height: sizeRef.current.clientHeight });
     }, [sizeRef])
 
+    const focusOnRoom = (roomId?:string) => {
+        if(stageRef.current){
+            const xc = parseInt((roomId || currentRoomId).split(",")[0]);
+            const yc = parseInt((roomId || currentRoomId).split(",")[1]);
+            const x = -xc * roomOffset; 
+            const y = -yc * roomOffset;
+            stageRef.current.scale({ x: 1, y: 1 });
+            stageRef.current.position({ x: x, y: y });
+        }
+    }
 
     return (
         <>
             <div id="konva-buttons-container">
-                <GeoAlt size={37} id="refocus-button" onClick={() => {
-                    const xc = parseInt(currentRoomId.split(",")[0]);
-                    const yc = parseInt(currentRoomId.split(",")[1]);
-                    const x = -xc * roomOffset;
-                    const y = -yc * roomOffset;
-                    stageRef.current.scale({ x: 1, y: 1 });
-                    stageRef.current.position({ x:x,y:y });
+                <img src={compassPng} alt="compass" id="compass" onClick={() => {
+                    focusOnRoom();
                 }} />
-
             </div>
             <div id="minimap" ref={sizeRef}>
                 <Stage ref={stageRef} onWheel={onWheelHandle} width={size.width} height={size.height} draggable offsetY={-size.height / 2 + roomSize / 2} offsetX={-size.width / 2 + roomSize / 2}>
@@ -147,7 +127,7 @@ const Minimap: React.FC<MinimapProps> = () => {
                             {Object.keys(rooms).map(key => {
                                 const room = rooms[key];
                                 // used if this room isnt explored to draw the connections to the other rooms
-                                let eastExplored = true; 
+                                let eastExplored = true;
                                 let southExplored = true;
                                 const eastRoom = rooms[`${room.xCoordinate + 1},${room.yCoordinate}`];
                                 const southRoom = rooms[`${room.xCoordinate},${room.yCoordinate + 1}`];
@@ -183,11 +163,12 @@ const Minimap: React.FC<MinimapProps> = () => {
                                 const yStatus = rooms[key].connections.south;
 
 
-                                const connectionSizex = eastExplored ? roomSize + (roomMargin / 2) /2 : roomSize;
-                                const connectionSizey = southExplored ? roomSize + (roomMargin/2)  : roomSize;
-                                const xPoints = [x * roomOffset + connectionSizex  + (roomStrokeWidth / 2), y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)];
+                                const xPoints = [x * roomOffset + roomSize + 2, y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)];
 
-                                const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + (roomStrokeWidth / 2), x * roomOffset + (roomSize / 2), (y + 1) * roomOffset];
+                                const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + 2, x * roomOffset + (roomSize / 2), (y + 1) * roomOffset];
+                                if(!room.explored && !eastExplored && !southExplored){
+                                    return null;
+                                }
                                 return (
                                     <Group key={key + "connections"}>
                                         {(eastRoom || eastExplored) && <Line points={xPoints} stroke={xStrokeCol} strokeWidth={connectionStrokeWidth} data-status={xStatus} />}
@@ -201,16 +182,13 @@ const Minimap: React.FC<MinimapProps> = () => {
                             {Object.keys(rooms).map((roomkey, index) => {
                                 const room = rooms[roomkey];
                                 if (!room.explored) return null;
-                                let fillColor = roomkey === "0,0" ? fillStart : fillActive;
-                                let strokeColor = roomkey === "0,0" ? strokeStart : strokeActive;
+                                let fillColor = fillActive;
+                                let strokeColor = strokeActive;
                                 if (roomkey === currentRoomId) {
-                                    fillColor = roomkey === "0,0" ? fillStartSelected : fillActiveSelected;
-                                    strokeColor = roomkey === "0,0" ? strokeStartSelected : strokeSelected;
+                                    fillColor = fillCurrentRoom;
                                 }
                                 let x = room.xCoordinate * roomOffset;
                                 let y = room.yCoordinate * roomOffset;
-                                let fill = roomkey === "0,0" ? fillStart : fillActive;
-                                let stroke = roomkey === "0,0" ? strokeStart : strokeActive;
                                 return (
                                     <Rect key={roomkey}
                                         x={x}
@@ -218,9 +196,9 @@ const Minimap: React.FC<MinimapProps> = () => {
                                         data-coordinates={[room.xCoordinate, room.yCoordinate]}
                                         width={roomSize}
                                         height={roomSize}
-                                        fill={fill}
+                                        fill={fillColor}
                                         strokeWidth={roomStrokeWidth}
-                                        stroke={stroke}
+                                        stroke={strokeColor}
                                     />
                                 )
                             })}
@@ -228,6 +206,7 @@ const Minimap: React.FC<MinimapProps> = () => {
                     </Layer>
                 </Stage>
             </div>
+            
         </>
     )
 }

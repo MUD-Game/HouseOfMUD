@@ -1,14 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { MudConnectionInfo, MudRoom } from 'src/types/dungeon';
 import { Stage, Layer, Rect, Transformer, Circle, Group, Line, Image } from 'react-konva';
-import Konva from 'konva';
 import './index.css'
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import MudInput from 'src/components/Custom/Input';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/Typeahead';
 import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
-import { Col, Container, Overlay, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import {Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import connectionOpenPng from 'src/assets/connection_open.png';
 import connectionClosedPng from 'src/assets/connection_closed.png';
 import connectionInactivePng from 'src/assets/connection_inactive.png';

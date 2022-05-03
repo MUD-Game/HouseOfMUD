@@ -57,7 +57,6 @@ const IndexRouter: React.FC = (): ReactElement => {
                                 </RabbitMQProvider>
                             </RequireAuth>} />
                             <Route path="/verify" element={<VerifyEmail />} />
-                            <Route path="/map" element={<Minimap/>} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </GameProvider>

@@ -5,6 +5,7 @@ import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { MiniMapData } from "../action/actions/action-resources";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
+import { sendToHost } from "../worker";
 
 
 export class DungeonController {
@@ -31,6 +32,7 @@ export class DungeonController {
                 if (data.action !== undefined && data.character !== undefined && data.data !== undefined) {
                     switch (data.action) {
                         case 'login':
+                            // TODO: Refactor
                             /* temporary */
                             let character = this.createCharacter(data.character);
                             /* temporary */
@@ -40,8 +42,13 @@ export class DungeonController {
                                 action: 'message',
                                 data: { message: `${data.character} ist dem Dungeon beigetreten!` },
                             });
-                            // Send MiniMap to Client...
+                            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
                             this.sendMiniMapData(data.character);
+                            break;
+                        case 'logout':
+                            // TODO: Refactor
+                            delete this.dungeon.characters[data.character];
+                            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
                             break;
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);

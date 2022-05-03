@@ -10,6 +10,7 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Client, IFrame, IMessage } from '@stomp/stompjs';
 import { RabbitMQPayload } from 'src/types/rabbitMQ';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/Game/Minimap';
 
 export interface RabbitMQContextType {
@@ -28,6 +29,8 @@ const rabbit = new Client({
   brokerURL: process.env.REACT_APP_RABBITMQ || 'wss://mud-ga.me:15673/ws',
 });
 
+// rabbit.debug = console.log;
+
 var payloadTemplate = {
   user: '',
   character: '',
@@ -36,6 +39,7 @@ var payloadTemplate = {
 
 function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { character, dungeon, verifyToken } = useGame();
   
   let chatSubscriber: (message: string) => void = () => { };
@@ -107,13 +111,25 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       ...payloadTemplate,
       data: {}
     };
+
+    let firstConnect = true;
+
     rabbit.onConnect = () => {
-      rabbit.subscribe(`/queue/${dungeon}-${character}`, (message: IMessage) => {
-        processAction(message);
-      }, { "auto-delete": "true" });
-      setTimeout(() => {
+      if (firstConnect) {
+        rabbit.subscribe(`/queue/${dungeon}-${character}`, (message: IMessage) => {
+          processAction(message);
+        }, { "auto-delete": "true" });
+
         sendPayload(loginPayload);
-      }, 10);
+        firstConnect = false;
+      } else {
+        logout(() => { }, (error) => {
+          errorSubscriber("rabbitmq.logout");
+        });
+        rabbit.forceDisconnect();
+        // TODO: show idle timeout error 
+        navigate('/');
+      }
     }
     rabbit.onStompError = (receipt: IFrame) => {
       errorSubscriber(receipt.body);

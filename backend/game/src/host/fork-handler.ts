@@ -73,6 +73,9 @@ export class ForkHandler {
             switch (host_action) {
                 case 'dungeonState':
                     if (this.dungeonStateCallback !== undefined && data.currentPlayers !== undefined) {
+                        if (dungeon in this.dungeonWorker) {
+                            this.dungeonWorker[dungeon].currentPlayers = data.currentPlayers;
+                        }
                         this.dungeonStateCallback(dungeon, data.currentPlayers);
                     }
                     break;

@@ -20,7 +20,7 @@ type Option = string | { [key: string]: any };
 export interface AddNpcModalProps {
     show: boolean;
     onHide: () => void;
-    onSendItem: (npc: MudNpc) => void;
+    onSendNpc: (npc: MudNpc) => void;
     editData?: MudNpc;
 }
 
@@ -44,9 +44,12 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
 
     const [error, setError] = React.useState<string>("");
 
+    const modalIsInvalid = ()=>{
+        return validator.isEmpty(name) || validator.isEmpty(description) || speciesSelection.length === 0;
+    }
 
     const onSubmit = () => {
-        if (validator.isEmpty(name) || validator.isEmpty(description) || speciesSelection.length === 0) {
+        if (modalIsInvalid()) {
             setError("failvalidation.npc"); //TODO: add failvalidation.npc error
         } else {
             setError("");
@@ -55,13 +58,13 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
                 description,
                 species: (speciesSelection[0] as unknown as MudNpc).id,
             } as MudNpc;
-            props.onSendItem(characterItem);
+            props.onSendNpc(characterItem);
             props.onHide();
         }
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }
@@ -86,7 +89,7 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
                     <Alert message={error} type="error" setMessage={setError} />
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <Typeahead options={species} colmd={6} title={t(`dungeon_keys.species`)} selected={speciesSelection} onChange={(event) => setSpeciesSelection(event)} />
+                    <Typeahead id={"typeahead-npc-species"} options={species} colmd={6} title={t(`dungeon_keys.species`)} selected={speciesSelection} onChange={(event) => setSpeciesSelection(event)} placeholder={t(`common.select_species`)} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

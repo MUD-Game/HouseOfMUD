@@ -21,6 +21,7 @@ import { CharacterSpecies } from '../../../backend/data/src/interfaces/character
 import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
 import { useTranslation } from 'react-i18next';
 import AddRoomModal from 'src/components/Modals/DungeonConfigurator/AddRoomModal';
+import AddNpcModal from 'src/components/Modals/DungeonConfigurator/AddNpcModal';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -638,6 +639,26 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             }
         }} show={showAddItemsModal} onHide={() => {
             setShowAddItemsModal(false);
+        }} />
+
+        <AddNpcModal editData={editData as MudNpc} key={"Npc:" + npcsKey.selected} onSendNpc={(cc) => {
+            if (npcsKey.selected === npcsKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
+                cc.id = npcsKey.nextKey + "";
+                setNpcs([...npcs, cc]);
+                setShowAddNpcModal(false);
+                setNpcsKey({ nextKey: npcsKey.nextKey + 1, selected: npcsKey.selected + 1 });
+            } else {
+                // User is editing
+                cc.id = npcsKey.selected + "";
+                // Set the key to a new id
+                setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey });
+                let temp = npcs;
+                let index = temp.findIndex((c) => c.id === cc.id);
+                temp[index] = cc;
+                setNpcs(temp);
+            }
+        }} show={showAddNpcModal} onHide={() => {
+            setShowAddNpcModal(false);
         }} />
 
         <AddRoomModal coordinates={roomCoordiantes} key={"Room:" + roomsKey} onSendRoom={(cc: MudRoom) => {

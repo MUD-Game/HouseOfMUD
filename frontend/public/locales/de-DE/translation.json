@@ -51,6 +51,7 @@
     "dungeon_keys": {
         "name": "Name",
         "description": "Beschreibung",
+        "npc": "NPC",
         "players": "Spieler",
         "status": "Status",
         "class": "Klasse",
@@ -153,6 +154,7 @@
         "buttons":{
             "create_class": "neue Klasse anlegen",
             "create_item": "neues Item erstellen",
+            "create_npc": "neuen NPC erstellen",
             "create_action": "neue Aktion anlegen"
         }
         
@@ -161,6 +163,7 @@
         "select_items": "Items auswählen",
         "select_npcs": "NPCs auswählen",
         "select_actions": "Aktionen auswählen",
+        "select_species": "Spezies auswählen",
         "select_events": "Events auswählen",
         "404": "Seite nicht gefunden...",
         "amount": "Anzahl"

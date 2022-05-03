@@ -31,9 +31,12 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
 
     const [error, setError] = React.useState<string>("");
 
+    const modalIsInvalid = () => {
+        return validator.isEmpty(name) || validator.isEmpty(description);
+    }
 
     const onSubmit = () => {
-        if (validator.isEmpty(name) || validator.isEmpty(description)) {
+        if (modalIsInvalid()) {
             setError("failvalidation.item");
         } else {
             setError("");
@@ -47,7 +50,7 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }

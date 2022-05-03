@@ -32,9 +32,6 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
     const [isBusy, setIsBusy] = React.useState(false);
     let dungeonId = (location.state as LocationState)?.dungeonId || undefined;
 
-    //TODO: Add a way to edit a dungeon that is already created
-
-
     return (
 
         <Container className="mb-5">
@@ -53,6 +50,8 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
             <DungeonObjectList disabled={dungeonId ? true : false} identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={["name", "description"]} onAdd={dungeonConfig.addItem} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_item`)} />
+
+            <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editNpc} onDeleteElement={dungeonConfig.deleteNpc} data={dungeonConfig.npcs} displayKeys={["name", "description"]} onAdd={dungeonConfig.addNpc} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_npc`)} />
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editAction} onDeleteElement={dungeonConfig.deleteAction} data={dungeonConfig.actions} displayKeys={["command", "description"]} onAdd={dungeonConfig.addAction} title={t(`dungeon_keys.actions`)} buttonText={t(`${tl}.buttons.create_action`)} />
             

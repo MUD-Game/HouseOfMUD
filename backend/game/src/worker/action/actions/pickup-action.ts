@@ -48,6 +48,7 @@ export class PickupAction implements Action {
                     characterInventory.push(new ItemInfo(itemInRoom.item, 1))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
                 }
+                this.dungeonController.sendInventoryData(user)
             } else {
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
             }

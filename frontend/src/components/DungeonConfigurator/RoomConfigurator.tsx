@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { MudConnectionInfo, MudRoom } from 'src/types/dungeon';
 import { Stage, Layer, Rect, Transformer, Circle, Group, Line, Image } from 'react-konva';
 import './index.css'
@@ -12,6 +12,7 @@ import connectionOpenPng from 'src/assets/connection_open.png';
 import connectionClosedPng from 'src/assets/connection_closed.png';
 import connectionInactivePng from 'src/assets/connection_inactive.png';
 import Konva from 'konva';
+import { useRefSize } from 'src/hooks/useRefSize';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -49,14 +50,18 @@ export interface RoomConfiguratorProps {
 
 const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
 
-    const [width, setWidth] = React.useState(0);
     const widthRef = useRef<any>();
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
-
+    const [width, height] = useRefSize(widthRef);
+    
     useEffect(() => {
-        setWidth(widthRef.current.clientWidth);
+        // setWidth(widthRef.current.clientWidth);
+        
     }, []);
+
+    
+
     const { rooms, currentRoom, items, npcs, actions, editRoom, addRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItemValues, setSelectedRoomItems, setSelectedRoomNpcs, selectedRoomActions, selectedRoomItems, selectedRoomItemValues, selectedRoomNpcs, toggleRoomConnection } = useDungeonConfigurator();
 
 

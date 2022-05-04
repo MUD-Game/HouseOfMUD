@@ -21,7 +21,10 @@ export const triggers = {
     //dungeonmaster
     addDamage: "adddmg",
     addHp: "addhp",
-    addMana: "addhp"
+    addMana: "addhp",
+    removeMana: "remmana",
+    removeHp: "remhp",
+    removeDamage: "remdmg"
 }
 
 export const actionMessages = {
@@ -62,7 +65,10 @@ export const errorMessages = {
 export const dungeonMasterSendMessages = {
     addDmg: "Du hast %s Schaden erhalten",
     addHp: "Du hast %s Leben erhalten",
-    addMana: "Du hast %s Mana erhalten"
+    addMana: "Du hast %s Mana erhalten",
+    removeMana: "Du hast %s Mana verloren",
+    removeDmg: "Du hast %s Schaden verloren",
+    removeHp: "Du hast %s Leben verloren",
 }
 
 export const extras = {

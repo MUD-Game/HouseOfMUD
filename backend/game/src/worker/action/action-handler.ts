@@ -18,6 +18,9 @@ import UnspecifiedAction from './actions/unspecified-action';
 import { AddDamage } from './dmactions/addDamage-action';
 import { AddHp } from './dmactions/addHp-action';
 import { AddMana } from './dmactions/addMana-action';
+import { RemoveHp } from './dmactions/removeHp-action';
+import { RemoveDamage } from './dmactions/removeDamage-action';
+import { RemoveMana } from './dmactions/removeMana-action';
 
 
 const regExpression = {
@@ -96,7 +99,10 @@ export class ActionHandlerImpl implements ActionHandler {
         let dmActions: Action[] = [
            new AddDamage(dungeonController),
            new AddHp(dungeonController),
-           new AddMana(dungeonController)
+           new AddMana(dungeonController),
+           new RemoveMana(dungeonController),
+           new RemoveDamage(dungeonController),
+           new RemoveHp(dungeonController)
         ];
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;

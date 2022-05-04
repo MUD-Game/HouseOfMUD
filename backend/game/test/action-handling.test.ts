@@ -29,6 +29,7 @@ import UnspecifiedAction from "../src/worker/action/actions/unspecified-action";
 import { AddDamage } from "../src/worker/action/dmactions/addDamage-action";
 import { AddHp } from "../src/worker/action/dmactions/addHp-action";
 import { AddMana } from "../src/worker/action/dmactions/addMana-action";
+import { RemoveHp } from "../src/worker/action/dmactions/removeHp-action";
 import { AmqpAdapter } from "../src/worker/amqp/amqp-adapter";
 import { DungeonController } from "../src/worker/controller/dungeon-controller";
 
@@ -765,6 +766,7 @@ describe("DungeonMaster Actions", () => {
     const addDamage: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage;
     const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
     const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
+    const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
 
 
     amqpAdapter.sendToClient = jest.fn();
@@ -823,5 +825,24 @@ describe("DungeonMaster Actions", () => {
                 test('Jeff should get so much mana so that he reaches his max mana', async () => {
                     await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
+                });
+
+                
+            test('dungeonmaster should remove hp from player', () => {
+                removeHp.performAction('dungeonmaster', ['Jeff' , '2']);
+                expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+                    action: 'message',
+                    data: { message: "Du hast 2 Leben verloren" },
+                });
+            });
+        
+                test('Jeff should lose 2 Hp and then have 48 in total', async () => {
+                    await removeHp.performAction('dungeonmaster', ['Jeff' ,'2']);
+                    expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(48);
+                });
+        
+                test('Jeff should lose so much hp so that he reaches 0', async () => {
+                    await removeHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+                    expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(0);
                 });
 })

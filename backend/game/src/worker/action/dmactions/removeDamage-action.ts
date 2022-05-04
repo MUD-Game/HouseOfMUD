@@ -6,12 +6,12 @@ import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, par
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 
 
-export class RemoveHp implements Action {
+export class RemoveDamage implements Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.removeHp;
+        this.trigger = triggers.removeDamage;
         this.dungeonController = dungeonController
     }
     performAction(user: string, args: string[]) {
@@ -24,22 +24,22 @@ export class RemoveHp implements Action {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
 
 
-            let actualHp: number = recipientCharacter.getCharakterStats().getHp()
-            let maxHp: number = recipientCharacter.getMaxStats().getHp()
+            let actualDmg: number = recipientCharacter.getCharakterStats().getDmg()
+            let maxDmg: number = recipientCharacter.getMaxStats().getDmg()
             try {
-                let hpCount: number = +args[0]
+                let dmgCount: number = +args[0]
          
-                if (actualHp - hpCount <= 0) {
-                    recipientCharacter.getCharakterStats().setHp(0)
+                if (actualDmg - dmgCount <= 0) {
+                    recipientCharacter.getCharakterStats().setDmg(0)
                     //sterbefunktion ? 
-                    lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, (actualHp).toString())
+                    lifestring = parseResponseString(dungeonMasterSendMessages.removeDmg, (actualDmg).toString())
+                 
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: lifestring } })
 
-                } else if (actualHp - hpCount > 0) {
-                    actualHp = actualHp - hpCount 
-                    recipientCharacter.getCharakterStats().setHp(actualHp)
-                    lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, args.join(' '))
-                    
+                } else if (actualDmg - dmgCount > 0) {
+                    actualDmg = actualDmg - dmgCount 
+                    recipientCharacter.getCharakterStats().setDmg(actualDmg)
+                    lifestring = parseResponseString(dungeonMasterSendMessages.removeDmg, args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: lifestring } })
                 }
 

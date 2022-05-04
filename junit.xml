@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Unit Tests" tests="49" failures="0" errors="0" time="3.162">
-  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="0" skipped="48" timestamp="2022-05-04T12:10:13" time="3.051" tests="49">
+<testsuites name="Unit Tests" tests="52" failures="0" errors="0" time="3.215">
+  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="0" skipped="51" timestamp="2022-05-04T16:07:18" time="3.099" tests="52">
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast" time="0">
       <skipped/>
     </testcase>
@@ -146,7 +146,16 @@
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0">
       <skipped/>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0.002">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose 2 Hp and then have 48 in total" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he reaches 0" time="0.002">
     </testcase>
   </testsuite>
 </testsuites>

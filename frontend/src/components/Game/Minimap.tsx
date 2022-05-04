@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import './index.css'
 import { Compass, GeoAlt } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
+import Konva from 'konva';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -123,7 +124,8 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             console.log(stageRef.current.attrs);
 
             // stageRef.current.position({ x: x, y: y });
-            stageRef.current.to({ x: x, y: y, duration: 0.2 });
+            console.log(stageRef.current.to)
+            stageRef.current.to({ x: x, y: y, duration: 0.2, easing: Konva.Easings.EaseInOut});
         }
     }
 

@@ -4,16 +4,10 @@ import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 
-export class DieAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController
-    regEx: RegExp
+export class DieAction extends Action {
 
-    constructor(trigger: string, dungeonController: DungeonController) {
-        this.trigger = "";
-        this.dungeonController = dungeonController
-        let stringForRegEx: string = `^(${trigger})`
-        this.regEx = new RegExp(stringForRegEx)
+    constructor(dungeonController: DungeonController) {
+        super("", dungeonController)
     }
 
     performAction(user: string, args: string[]) {
@@ -22,6 +16,7 @@ export class DieAction implements Action {
         let currentPosition: string = characterToDie.getPosition()
         let inventoryItems: ItemInfo[] = characterToDie.getInventory()
 
+        //remove items from inventory and add them to the current room
         let roomItems: ItemInfo[] = dungeon.getRoom(currentPosition).items
         let characterInventory: ItemInfo[] = characterToDie.getInventory()
         
@@ -38,6 +33,10 @@ export class DieAction implements Action {
                 itemInInventory.count -= 1
             }
         })
+        //set position to start room
         characterToDie.modifyPosition("0,0")
+
+        //reset the stats to start amount
+        characterToDie.currentStats = characterToDie.maxStats
     }
 }

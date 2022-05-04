@@ -15,6 +15,7 @@ import { Room, RoomImpl } from "../src/data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
 import { actionMessages, errorMessages, triggers } from "../src/worker/action/actions/action-resources";
 import { BroadcastMessageAction } from "../src/worker/action/actions/broadcast-message-action";
+import { DieAction } from "../src/worker/action/actions/die-action";
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
 import { InspectAction } from "../src/worker/action/actions/inspect-action";
@@ -277,6 +278,18 @@ const TestCharacterDungeonActions: Character = new CharacterImpl(
     TestRoomActions.id,
     [new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
 );
+const TestCharacterToDie: Character = new CharacterImpl(
+    '4',
+    '1',
+    'Jochen',
+    'Magier',
+    '1',
+    '1',
+    TestMaxStats,
+    TestStartStats,
+    TestRoomNorth.id,
+    [new ItemInfo(TestItem.id,1)]
+);
 const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     'TestDungeon1',
@@ -288,7 +301,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     [TestSpecies],
     [TestClass],
     [TestGender],
-    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions],
+    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions, TestCharacterToDie],
     [
         TestRoom,
         TestRoomNorth,
@@ -452,6 +465,8 @@ describe('Actions', () => {
     })
     beforeEach(() => {
         TestDungeon.characters['Jeff'].position = TestRoom.id;
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,1)];
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id, 1)]
     });
     afterEach(() => {
         jest.clearAllMocks();
@@ -471,12 +486,19 @@ describe('Actions', () => {
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
     const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
     const invalidAction: InvalidAction = actionHandler.invalidAction;
+    const dieAction: DieAction = new DieAction(TestDungeonController);
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();
     amqpAdapter.broadcast = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
+
+    test('DieAction should remove all items from character, add them to the current room and reset position and stats to start values', () => {
+        dieAction.performAction('Jochen', []);
+        expect(TestDungeon.characters['Jochen'].getInventory()).toEqual<ItemInfo[]>([]);
+        expect(TestDungeon.rooms['1'].getItemInfos()).toEqual<ItemInfo[]>([new ItemInfo(TestItem.id, 2)]);
+    });
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
         messageAction.performAction('Jeff', [

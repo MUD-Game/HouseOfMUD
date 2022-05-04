@@ -17,8 +17,11 @@ export interface Character {
     getPosition(): string
     modifyPosition(destinationRoom: string): any
     getInventory(): ItemInfo[]
+    isDead(): boolean
 }
   
+//TODO: IN ANDERE INTERFACE ORDNER KOPIEREN
+
 export class CharacterImpl implements Character {
     name: string;
     userId: string;
@@ -69,5 +72,14 @@ export class CharacterImpl implements Character {
 
     getInventory(): ItemInfo[] {
         return this.inventory
+    }
+
+    isDead(): boolean {
+        if(this.currentStats.hp > 0){
+            return false
+        }
+        else {
+            return true
+        }
     }
 }

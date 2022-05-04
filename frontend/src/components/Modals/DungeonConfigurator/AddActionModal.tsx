@@ -169,7 +169,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         selected={itemsNeeded}
                     />
                     <MudTypeahead
-                        colmd={7}
+                        colmd={9}
                         title={t(`dungeon_keys.events`)}
                         id="typeahead-events"
                         labelKey="events"
@@ -179,13 +179,11 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         placeholder={t(`common.select_events`)}
                         selected={selectedEvents}
                     />
-                    <div className="col-md-5">
-                        <Row>
-                        <label htmlFor="isglobal"><b>{t(`common.isglobal`)}</b></label>
-                        </Row>
-                        <Row>
-                        <input type="checkbox" name="isglobal" />
-                        </Row>
+                    <div className="col-md-3 align-self-end text-end">
+                        <div className="form-check form-switch p-0">
+                        <label className="form-check-label" htmlFor="isglobal"><b>{t(`common.isglobal`)}</b></label> <br />
+                        <input className="form-check-input float-end isglobal-input" type="checkbox" role="switch" id="isglobal" />
+                        </div>
                     </div>
                     {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {
                         if (mudEvent as string === 'additem' || mudEvent as string === 'removeitem') {

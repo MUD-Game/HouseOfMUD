@@ -55,6 +55,7 @@ const Game: React.FC<GameProps> = ({ }) => {
             rabbit.setErrorSubscriber(console.error);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.setInventorySubscriber(setInventoryData);
+            rabbit.setHudSubscriber(setHudData);
             rabbit.login(() => {
                 
             }, (error) => {

@@ -78,7 +78,7 @@ export class ActionHandlerImpl implements ActionHandler {
         let dungeon: Dungeon = dungeonController.getDungeon();
         let dungeonActionElements = dungeon.getActions();
         dungeonActionElements.forEach(action => {
-            let dungeonAction: DungeonAction = new DungeonAction(action.command, dungeonController)
+            let dungeonAction: DungeonAction = new DungeonAction(action.command, dungeonController, action.events)
             this.dungeonActions[dungeonAction.trigger] = dungeonAction
         });
         this.invalidAction = new InvalidAction(dungeonController)

@@ -68,19 +68,79 @@ const TestNpc: Npc = new NpcImpl(
 const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
 const TestItemDiscard: Item = new ItemImpl('2', 'Schwert', 'Schwertiges Schwert');
 const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
+const TestItemRemoveHp: Item = new ItemImpl('4', 'Giftpilz', 'Test');
+const TestItemAddHp: Item = new ItemImpl('5', 'Manatrank', 'Test');
+const TestItemRemoveItem: Item = new ItemImpl('6', 'Stein', 'Test');
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
     'open',
     'open'
 );
-const TestAction: ActionElement = new ActionElementImpl(
+const TestActionAddHp: ActionElement = new ActionElementImpl(
     '1',
     'essen Apfel',
-    'gegessen',
-    'essen aktion',
+    'Du hast einen Apfel gegessen!',
+    'test',
     [new ActionEventImpl('addhp', '10')],
     ['1']
 );
+const TestActionRemoveHp: ActionElement = new ActionElementImpl(
+    '2',
+    'essen Giftpilz',
+    'Du hast einen Giftpilz gegessen!',
+    'test',
+    [new ActionEventImpl('removehp', '20')],
+    ['4']
+);
+const TestActionAddMana: ActionElement = new ActionElementImpl(
+    '3',
+    'trinken Manatrank',
+    'Du hast einen Manatrank getrunken!',
+    'test',
+    [new ActionEventImpl('addmana', '10')],
+    ['5']
+);
+const TestActionRemoveMana: ActionElement = new ActionElementImpl(
+    '4',
+    'trinke aus dem Brunnen',
+    'Du hast aus dem Brunnen getrunken!',
+    'test',
+    [new ActionEventImpl('removemana', '20')],
+    []
+);
+const TestActionAddDamage: ActionElement = new ActionElementImpl(
+    '5',
+    'trinke Bier',
+    'Du hast ein Bier getrunken!',
+    'test',
+    [new ActionEventImpl('adddmg', '10')],
+    []
+);
+const TestActionRemoveDamage: ActionElement = new ActionElementImpl(
+    '6',
+    'nahkampf',
+    'Du wechselst in den Nahkampf!',
+    'test',
+    [new ActionEventImpl('removedmg', '20')],
+    []
+);
+const TestActionRemoveItem: ActionElement = new ActionElementImpl(
+    '7',
+    'werfe Stein',
+    'Du hast einen Stein geworfen!',
+    'test',
+    [new ActionEventImpl('removeItem', '6')],
+    ['6']
+);
+const TestActionAddItem: ActionElement = new ActionElementImpl(
+    '8',
+    'oeffne Truhe',
+    'Du hast die Truhe geoeffnet!',
+    'test',
+    [new ActionEventImpl('additem', '3')],
+    []
+);
+
 const TestRoom: Room = new RoomImpl(
     '1',
     'Raum-1',
@@ -88,7 +148,7 @@ const TestRoom: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     TestConnections,
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     2
 );
@@ -99,7 +159,7 @@ const TestRoomNorth: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'open'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     1
 );
@@ -110,7 +170,7 @@ const TestRoomEast: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     3,
     2
 );
@@ -121,7 +181,7 @@ const TestRoomSouth: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     3
 );
@@ -132,7 +192,7 @@ const TestRoomWest: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('open', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     1,
     2
 );
@@ -143,7 +203,7 @@ const TestRoomNorthNorth: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'closed'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     0
 );
@@ -154,9 +214,20 @@ const TestRoomNorthEast: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     3,
     1
+);
+const TestRoomActions: Room = new RoomImpl(
+    '8',
+    'Raum-A',
+    'Der Raum zum Testen der dungeonspezifischen Aktionen',
+    [TestNpc.id],
+    [new ItemInfo(TestItem.id,1)],
+    new ConnectionInfoImpl('inactive', 'inactive'),
+    [TestActionAddHp.id, TestActionRemoveHp.id, TestActionAddMana.id, TestActionRemoveMana.id, TestActionAddDamage.id, TestActionRemoveDamage.id, TestActionAddItem.id, TestActionRemoveItem.id],
+    10,
+    10
 );
 const TestCharacter: Character = new CharacterImpl(
     '1',
@@ -194,6 +265,18 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     TestRoomNorth.id,
     [new ItemInfo(TestItem.id,1)]
 );
+const TestCharacterDungeonActions: Character = new CharacterImpl(
+    '4',
+    '1',
+    'CoolerTyp',
+    'Magier',
+    '1',
+    '1',
+    TestMaxStats,
+    TestStartStats,
+    TestRoomActions.id,
+    [new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
+);
 const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     'TestDungeon1',
@@ -205,7 +288,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     [TestSpecies],
     [TestClass],
     [TestGender],
-    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
+    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions],
     [
         TestRoom,
         TestRoomNorth,
@@ -213,11 +296,12 @@ const TestDungeon: Dungeon = new DungeonImpl(
         TestRoomSouth,
         TestRoomWest,
         TestRoomNorthNorth,
-        TestRoomNorthEast
+        TestRoomNorthEast,
+        TestRoomActions
     ],
     ['abc'],
-    [TestAction],
-    [TestItem, TestItemDiscard, TestItemPickup],
+    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem],
+    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddHp, TestItemRemoveHp, TestItemRemoveItem],
     [TestNpc]
 );
 const TestDungeonController: DungeonController = new DungeonController(
@@ -384,7 +468,6 @@ describe('Actions', () => {
     const lookAction: LookAction = actionHandler.actions[triggers.look];
     const moveAction: MoveAction = actionHandler.actions[triggers.move];
     const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
-    const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
     const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
 
     amqpAdapter.sendWithRouting = jest.fn();
@@ -635,3 +718,29 @@ describe('Actions', () => {
         });
     })
 });
+
+describe("Dungeon Actions", () => {
+    beforeEach(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+    })
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    afterAll(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+    })
+
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
+    const dungeonActionAddHp: DungeonAction = actionHandler.dungeonActions[TestActionAddHp.command];
+    const dungeonActionRemoveHp: DungeonAction = actionHandler.dungeonActions[TestActionRemoveHp.command];
+    const dungeonActionAddMana: DungeonAction = actionHandler.dungeonActions[TestActionAddMana.command];
+    const dungeonActionRemoveMana: DungeonAction = actionHandler.dungeonActions[TestActionRemoveMana.command];
+    const dungeonActionAddDamage: DungeonAction = actionHandler.dungeonActions[TestActionAddDamage.command];
+    const dungeonActionRemoveDamage: DungeonAction = actionHandler.dungeonActions[TestActionRemoveDamage.command];
+    const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
+    const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
+
+
+    amqpAdapter.sendToClient = jest.fn();
+
+})

@@ -98,7 +98,8 @@
     },
     "game":{
         "leave": "Verlassen",
-        "queue": "Warteschlange"
+        "queue": "Warteschlange",
+        "inventory": "Inventar"
     },
     "verify_email":{
         "title": "Email-Verifizierung",

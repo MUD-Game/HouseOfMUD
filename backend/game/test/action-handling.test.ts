@@ -1166,49 +1166,49 @@ describe("DungeonMaster Actions", () => {
         });
     });
 
-        test('Jeff should get 1 Attack and then have 11 in total', async () => {
-            await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
-            expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
-        });
+//         test('Jeff should get 1 Attack and then have 11 in total', async () => {
+//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
+//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
+//         });
 
-        test('Jeff should get so much attack so that he reaches his max Attack', async () => {
-            await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
-            expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
-        });
+//         test('Jeff should get so much attack so that he reaches his max Attack', async () => {
+//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
+//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
+//         });
 
-        test('dungeonmaster should add amount of actual HP to a Charakter', () => {
-            addHp.performAction('dungeonmaster', ['Jeff' , '1']);
-            expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-                action: 'message',
-                data: { message: "Du hast 1 Leben erhalten" },
-            });
-        });
+//         test('dungeonmaster should add amount of actual HP to a Charakter', () => {
+//             addHp.performAction('dungeonmaster', ['Jeff' , '1']);
+//             expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+//                 action: 'message',
+//                 data: { message: "Du hast 1 Leben erhalten" },
+//             });
+//         });
     
-            test('Jeff should get 1 HP and then have 51 in total', async () => {
-                await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
-                expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
-            });
+//             test('Jeff should get 1 HP and then have 51 in total', async () => {
+//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
+//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
+//             });
     
-            test('Jeff should get so much life so that he reaches his max life', async () => {
-                await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
-                expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
-            });
+//             test('Jeff should get so much life so that he reaches his max life', async () => {
+//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
+//             });
 
-            test('dungeonmaster should add amount of actual Mana to a Charakter', () => {
-                addMana.performAction('dungeonmaster', ['Jeff' , '1']);
-                expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-                    action: 'message',
-                    data: { message: "Du hast 1 Mana erhalten" },
-                });
-            });
+//             test('dungeonmaster should add amount of actual Mana to a Charakter', () => {
+//                 addMana.performAction('dungeonmaster', ['Jeff' , '1']);
+//                 expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+//                     action: 'message',
+//                     data: { message: "Du hast 1 Mana erhalten" },
+//                 });
+//             });
         
-                test('Jeff should get 1 mana and then have 51 in total', async () => {
-                    await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
-                    expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
-                });
+//                 test('Jeff should get 1 mana and then have 51 in total', async () => {
+//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
+//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
+//                 });
         
-                test('Jeff should get so much mana so that he reaches his max mana', async () => {
-                    await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
-                    expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
-                });
-})
+//                 test('Jeff should get so much mana so that he reaches his max mana', async () => {
+//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
+//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
+//                 });
+// })

@@ -12,6 +12,8 @@ import { useEffect } from 'react';
 import './index.css'
 import { Compass, GeoAlt } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
+import Konva from 'konva';
+import { useRefSize } from '../../hooks/useRefSize';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -72,10 +74,9 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     const [currentRoomId, setCurrentRoomId] = React.useState<string>(props.startRoom);
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     const [isAnchored, setIsAnchored] = React.useState<boolean>(true);
-    const [size, setSize] = React.useState<{ width: number, height: number }>({ width: 0, height: 0 });
+    const [width, height] = useRefSize(sizeRef);
 
     useEffect(() => {
-        setSize({ width: sizeRef.current.clientWidth, height: sizeRef.current.clientHeight });
         setRoomSubscriber((id:string)=>{
             setCurrentRoomId(id)
             let tempRooms = rooms;
@@ -120,10 +121,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             const x = -xc * roomOffset* stageRef.current.attrs.scaleX; 
             const y = -yc * roomOffset* stageRef.current.attrs.scaleY;
 
-            console.log(stageRef.current.attrs);
-
-            // stageRef.current.position({ x: x, y: y });
-            stageRef.current.to({ x: x, y: y, duration: 0.2 });
+            stageRef.current.to({ x: x, y: y, duration: 0.2, easing: Konva.Easings.EaseInOut});
         }
     }
 
@@ -138,7 +136,10 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                 }} />
             </div>
             <div id="minimap"  ref={sizeRef}>
-                <Stage scale={{ x: scale, y: scale }} onDragMove={() => setIsAnchored(false)} ref={stageRef} onWheel={onWheelHandle} width={size.width} height={size.width} draggable offsetY={(-size.width / 2)/scale+ (roomSize /2)} offsetX={(-size.width / 2)/scale + (roomSize /2)}>
+                <Stage scale={{ x: scale, y: scale }} onDragMove={(evt) => {
+                    setIsAnchored(false);
+                    
+                    }} ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable offsetY={(-width / 2)/scale+ (roomSize /2)} offsetX={(-width / 2)/scale + (roomSize /2)}>
                     <Layer>
                         <Group name="connections">
                             {Object.keys(rooms).map(key => {

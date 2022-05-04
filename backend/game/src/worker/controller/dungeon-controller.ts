@@ -1,6 +1,6 @@
 import { ConsumeMessage } from "amqplib";
 import { Character, CharacterImpl } from "../../data/interfaces/character";
-import { CharacterStatsImpl } from "../../data/interfaces/characterStats";
+import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { MiniMapData } from "../action/actions/action-resources";
@@ -117,5 +117,23 @@ export class DungeonController {
         this.amqpAdapter.sendActionToClient(character, "inventory", this.dungeon.characters[character].inventory.map(item => {
             return { item:this.dungeon.items[item.item].name, count:item.count }
         }));
+    }
+
+    async sendStatsData(character: string) {
+        let currentCharacterStats: CharacterStats = this.dungeon.characters[character].getCharakterStats()
+        let maxCharacterStats: CharacterStats = this.dungeon.characters[character].getMaxStats()
+        let data = {
+            currentStats: {
+                hp: currentCharacterStats.getHp(),
+                dmg: currentCharacterStats.getDmg(),
+                mana: currentCharacterStats.getMana()
+            },
+            maxStats: {
+                hp: maxCharacterStats.getHp(),
+                dmg: maxCharacterStats.getDmg(),
+                mana: maxCharacterStats.getMana()
+            }
+        }
+        this.amqpAdapter.sendActionToClient(character, "stats", data);
     }
 }

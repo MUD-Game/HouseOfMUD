@@ -21,7 +21,7 @@ export class DungeonAction extends Action {
         this.actionElement = actionElement
     }
 
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)
@@ -60,9 +60,9 @@ export class DungeonAction extends Action {
                     }
                 })
                 // WENN CHARAKTER TOT NOCH IMPLEMENTIEREN
-                //this.dungeonController.sendStatsData(user) // NOCH IMPLEMENTIEREN
-                //this.dungeonController.sendInventoryData(user)
-                amqpAdapter.sendActionToClient(user, 'message', { message: this.actionElement.output });
+                await this.dungeonController.sendStatsData(user)
+                await this.dungeonController.sendInventoryData(user)
+                await amqpAdapter.sendActionToClient(user, 'message', { message: this.actionElement.output });
             } else {
                 let itemsMissingString: string = actionMessages.dungeonActionItemsMissing
                 missingItems.forEach(missingItem => {
@@ -71,10 +71,10 @@ export class DungeonAction extends Action {
                     let itemCount: number = missingItem.count
                     itemsMissingString += ` ${itemName} (${itemCount}x)`
                 })
-                amqpAdapter.sendActionToClient(user, 'message', { message: itemsMissingString });
+                await amqpAdapter.sendActionToClient(user, 'message', { message: itemsMissingString });
             }
         } else {
-            amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.actionDoesNotExist });
+            await amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.actionDoesNotExist });
         }
     }
 

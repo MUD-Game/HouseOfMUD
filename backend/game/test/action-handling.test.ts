@@ -767,192 +767,372 @@ describe("Dungeon Actions", () => {
 
     amqpAdapter.sendToClient = jest.fn();
 
-    test('DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action', () => {
-        dungeonActionItemMissing.performAction('CoolerTyp', ['leben']);
+    test('DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action', async () => {
+        await dungeonActionItemMissing.performAction('CoolerTyp', ['leben']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Dir fehlen folgende Items fuer die Aktion: Gold (1x)" },
         })
     })
 
-    test('DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room', () => {
-        dungeonActionInOtherRoom.performAction('CoolerTyp', []);
+    test('DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room', async () => {
+        await dungeonActionInOtherRoom.performAction('CoolerTyp', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Diese Aktion ist nicht möglich!" },
         })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp", () => {
-        dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp", async () => {
+        await dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(60)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 60,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast einen Apfel gegessen!" },
         })
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'stats',
-        //     data: { 
-        //         currentStats: {
-        //             hp: 60,
-        //             dmg: 10,
-        //             mana: 50
-        //         }, 
-        //         maxStats: {
-        //             hp: 100,
-        //             dmg: 20,
-        //             mana: 100
-        //         } 
-        //     },
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp", () => {
-        dungeonActionRemoveHp.performAction('CoolerTyp', ['Giftpilz']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp", async () => {
+        await dungeonActionRemoveHp.performAction('CoolerTyp', ['Giftpilz']);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(30)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 30,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 1,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast einen Giftpilz gegessen!" },
         })
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'stats',
-        //     data: { 
-        //         currentStats: {
-        //             hp: 30,
-        //             dmg: 10,
-        //             mana: 50
-        //         }, 
-        //         maxStats: {
-        //             hp: 100,
-        //             dmg: 20,
-        //             mana: 100
-        //         } 
-        //     },
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana", () => {
-        dungeonActionAddMana.performAction('CoolerTyp', ['Manatrank']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana", async () => {
+        await dungeonActionAddMana.performAction('CoolerTyp', ['Manatrank']);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(60)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 60
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast einen Manatrank getrunken!" },
         })
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'stats',
-        //     data: { 
-        //         currentStats: {
-        //             hp: 50,
-        //             dmg: 10,
-        //             mana: 60
-        //         }, 
-        //         maxStats: {
-        //             hp: 100,
-        //             dmg: 20,
-        //             mana: 100
-        //         } 
-        //     },
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana", () => {
-        dungeonActionRemoveMana.performAction('CoolerTyp', ['aus dem Brunnen']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana", async () => {
+        await dungeonActionRemoveMana.performAction('CoolerTyp', ['aus dem Brunnen']);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(30)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 30
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast aus dem Brunnen getrunken!" },
         })
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'stats',
-        //     data: { 
-        //         currentStats: {
-        //             hp: 50,
-        //             dmg: 10,
-        //             mana: 30
-        //         }, 
-        //         maxStats: {
-        //             hp: 100,
-        //             dmg: 20,
-        //             mana: 100
-        //         } 
-        //     },
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg", () => {
-        dungeonActionAddDamage.performAction('CoolerTyp', ['Bier']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg", async () => {
+        await dungeonActionAddDamage.performAction('CoolerTyp', ['Bier']);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(20)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 20,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast ein Bier getrunken!" },
         })
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'stats',
-        //     data: { 
-        //         currentStats: {
-        //             hp: 50,
-        //             dmg: 20,
-        //             mana: 50
-        //         }, 
-        //         maxStats: {
-        //             hp: 100,
-        //             dmg: 20,
-        //             mana: 100
-        //         } 
-        //     },
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg", () => {
-        dungeonActionRemoveDamage.performAction('CoolerTyp', []);
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg", async () => {
+        await dungeonActionRemoveDamage.performAction('CoolerTyp', []);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(5)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 5,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du wechselst in den Nahkampf!" },
         })
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'stats',
-        //     data: { 
-        //         currentStats: {
-        //             hp: 50,
-        //             dmg: 5,
-        //             mana: 50
-        //         }, 
-        //         maxStats: {
-        //             hp: 100,
-        //             dmg: 20,
-        //             mana: 100
-        //         } 
-        //     },
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem", () => {
-        dungeonActionAddItem.performAction('CoolerTyp', ['Truhe']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem", async () => {
+        await dungeonActionAddItem.performAction('CoolerTyp', ['Truhe']);
         expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1), new ItemInfo(TestItemPickup.id, 1)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+                {
+                    count: 1,
+                    item: "Gold"
+                },
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast die Truhe geoeffnet!" },
         })
-        // HIER NOCH EINF
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'inventory',
-        //     data: {},
-        // })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem", () => {
-        dungeonActionRemoveItem.performAction('CoolerTyp', ['Stein']);
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem", async () => {
+        await dungeonActionRemoveItem.performAction('CoolerTyp', ['Stein']);
         expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                }
+            ],
+        })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast einen Stein geworfen!" },
         })
-        // HIER NOCH EINF
-        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-        //     action: 'inventory',
-        //     data: {},
-        // })
     })
 })
 

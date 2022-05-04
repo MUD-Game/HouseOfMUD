@@ -48,6 +48,7 @@ export class DungeonController {
                             this.amqpAdapter.broadcastAction('message', { message: `${data.character} ist dem Dungeon beigetreten!` });
                             sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
 
+                            await this.sendStatsData(data.character)
                             await this.sendMiniMapData(data.character);
                             await this.sendInventoryData(data.character);
                             break;

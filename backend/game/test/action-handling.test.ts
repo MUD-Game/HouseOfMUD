@@ -1,11 +1,10 @@
-import { CharacterStats } from "../src/data/datasets/charcterStats";
 import { ActionElement, ActionElementImpl } from "../src/data/interfaces/actionElement";
 import { ActionEventImpl } from "../src/data/interfaces/actionEvent";
 import { Character, CharacterImpl } from "../src/data/interfaces/character";
 import { CharacterClass, CharacterClassImpl } from "../src/data/interfaces/characterClass";
 import { CharacterGender, CharacterGenderImpl } from "../src/data/interfaces/characterGender";
 import { CharacterSpecies, CharacterSpeciesImpl } from "../src/data/interfaces/characterSpecies";
-import { CharacterStatsImpl } from "../src/data/interfaces/characterStats";
+import { CharacterStats, CharacterStatsImpl } from "../src/data/interfaces/characterStats";
 import { ConnectionInfo, ConnectionInfoImpl } from "../src/data/interfaces/connectionInfo";
 import { Dungeon, DungeonImpl } from "../src/data/interfaces/dungeon";
 import { Item, ItemImpl } from "../src/data/interfaces/item";
@@ -27,6 +26,9 @@ import { MoveAction } from "../src/worker/action/actions/move-action";
 import { PickupAction } from "../src/worker/action/actions/pickup-action";
 import { PrivateMessageAction } from "../src/worker/action/actions/private-message-action";
 import UnspecifiedAction from "../src/worker/action/actions/unspecified-action";
+import { AddDamage } from "../src/worker/action/dmactions/addDamage-action";
+import { AddHp } from "../src/worker/action/dmactions/addHp-action";
+import { AddMana } from "../src/worker/action/dmactions/addMana-action";
 import { AmqpAdapter } from "../src/worker/amqp/amqp-adapter";
 import { DungeonController } from "../src/worker/controller/dungeon-controller";
 
@@ -45,7 +47,7 @@ const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(
     'Hexer',
     'Hexiger Hexer'
 );
-const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
+const TestStartStats: CharacterStats = new CharacterStatsImpl(50, 10, 50);
 const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
 const TestGender: CharacterGender = new CharacterGenderImpl(
     '1',
@@ -745,4 +747,81 @@ describe("Dungeon Actions", () => {
 
     amqpAdapter.sendToClient = jest.fn();
 
+})
+
+describe("DungeonMaster Actions", () => {
+    beforeEach(() => {
+        TestDungeon.characters['Jeff'].position = TestRoom.id;
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+    })
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    afterAll(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats //(100, 20, 100);
+    })
+
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
+    const addDamage: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage;
+    const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
+    const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
+
+
+    amqpAdapter.sendToClient = jest.fn();
+
+    
+
+    test('dungeonmaster should add amount of actual Damage to a Charakter', () => {
+        addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Du hast 1 Schaden erhalten" },
+        });
+    });
+
+        test('Jeff should get 1 Attack and then have 11 in total', async () => {
+            await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
+            expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
+        });
+
+        test('Jeff should get so much attack so that he reaches his max Attack', async () => {
+            await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
+            expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
+        });
+
+        test('dungeonmaster should add amount of actual HP to a Charakter', () => {
+            addHp.performAction('dungeonmaster', ['Jeff' , '1']);
+            expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+                action: 'message',
+                data: { message: "Du hast 1 Leben erhalten" },
+            });
+        });
+    
+            test('Jeff should get 1 HP and then have 51 in total', async () => {
+                await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
+                expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
+            });
+    
+            test('Jeff should get so much life so that he reaches his max life', async () => {
+                await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+                expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
+            });
+
+            test('dungeonmaster should add amount of actual Mana to a Charakter', () => {
+                addMana.performAction('dungeonmaster', ['Jeff' , '1']);
+                expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+                    action: 'message',
+                    data: { message: "Du hast 1 Mana erhalten" },
+                });
+            });
+        
+                test('Jeff should get 1 mana and then have 51 in total', async () => {
+                    await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
+                    expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
+                });
+        
+                test('Jeff should get so much mana so that he reaches his max mana', async () => {
+                    await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
+                    expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
+                });
 })

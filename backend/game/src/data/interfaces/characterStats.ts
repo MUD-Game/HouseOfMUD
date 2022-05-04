@@ -6,6 +6,9 @@ export interface CharacterStats {
     getHp(): number
     getDmg(): number
     getMana(): number
+    setHp(hpnew: number):void
+    setDmg(dmgnew: number):void
+    setMana(mananew: number):void
 }
   
 export class CharacterStatsImpl implements CharacterStats {
@@ -28,4 +31,14 @@ export class CharacterStatsImpl implements CharacterStats {
     getMana(): number {
         return this.mana
     }
+    setDmg(dmgnew: number):void {
+        this.dmg = dmgnew
+    }
+    setHp(hpnew: number):void {
+        this.hp = hpnew
+    }
+    setMana(mananew: number):void {
+        this.mana = mananew
+    }
+        
 }

@@ -6,7 +6,7 @@
  * @props {@linkcode GameProps}
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
@@ -26,6 +26,7 @@ const Game: React.FC<GameProps> = ({ }) => {
     let navigate = useNavigate();
 
     const rabbit = useRabbitMQ();
+    const [messageQueue, setMessageQueue] = useState<string[]>([]);
     const { isAbleToJoinGame } = useGame();
     const [error, setError] = React.useState<string>("");
     useEffect(() => {
@@ -48,6 +49,15 @@ const Game: React.FC<GameProps> = ({ }) => {
         return <Navigate to="/" />
     }
 
+    const addMessage = (queueMessage:string) => {
+        setMessageQueue([...messageQueue,queueMessage])
+    }
+    const sendQueue = () => {
+        messageQueue.forEach(queueMessage => {
+            rabbit.sendMessage(queueMessage, ()=>{}, setError);
+        });
+        setMessageQueue([])
+    }
 
 
 
@@ -65,10 +75,10 @@ const Game: React.FC<GameProps> = ({ }) => {
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>
                 <div className="col col-md-6 col-lg-8">
-                    <Chat messageCallback={setError}/>
+                    <Chat onSendCommand={addMessage} messageCallback={setError}/>
                 </div>
                 <div className="col col-md-3 col-lg-2">
-                    <ChatQueue commands={null} />
+                    <ChatQueue commandQueue={messageQueue} onSendQueue={sendQueue} />
                     <PlayerInfo player={null} />
                 </div>
             </Row>

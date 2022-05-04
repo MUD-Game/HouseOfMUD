@@ -10,13 +10,15 @@ import React from 'react'
 import ChatInput from './ChatInput';
 import ChatOutput from './ChatOutput';
 import { SendsMessagesProps } from '../../../types/misc';
-export interface ChatProps { }
+export interface ChatProps {
+    onSendCommand: (command:string) => void;
+}
 
-const Chat: React.FC<ChatProps & SendsMessagesProps> = ({ messageCallback }) => {
+const Chat: React.FC<ChatProps & SendsMessagesProps> = ({ messageCallback, onSendCommand }) => {
     return (
         <>
             <ChatOutput/>
-            <ChatInput messageCallback={messageCallback} />
+            <ChatInput onSendCommand={onSendCommand} messageCallback={messageCallback} />
         </>
     )
 }

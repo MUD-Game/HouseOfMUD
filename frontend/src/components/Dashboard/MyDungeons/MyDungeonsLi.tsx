@@ -58,7 +58,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps & SendsMessagesProps> = ({ id, na
             game.setVerifyToken(data.verifyToken);
             game.setDungeon(id);
             game.setDungeonName(name);
-            navigate("/game");
+            navigate("/dungeon-master");
         }, (error) => {
             setIsBusy(false);
             // TODO: handle error in a better way

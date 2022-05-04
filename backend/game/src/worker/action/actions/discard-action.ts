@@ -45,14 +45,14 @@ export class DiscardAction implements Action {
                 else{
                     roomItems.push(new ItemInfo(itemInInventory.item, 1))
                 }
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.discard, nameOfItemToDiscard)}})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(actionMessages.discard, nameOfItemToDiscard)})
                 this.dungeonController.sendInventoryData(user)
             } else {
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
             }
         } catch(e) {
             console.log(e)
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
         }
     }
 

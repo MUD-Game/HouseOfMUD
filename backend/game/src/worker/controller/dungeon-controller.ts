@@ -1,6 +1,6 @@
 import { ConsumeMessage } from "amqplib";
 import { Character, CharacterImpl } from "../../data/interfaces/character";
-import { CharacterStatsImpl } from "../../data/interfaces/characterStats";
+import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { MiniMapData } from "../action/actions/action-resources";
@@ -45,10 +45,7 @@ export class DungeonController {
                             /* temporary */
                             await this.amqpAdapter.initClient(data.character);
                             await this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
-                            this.amqpAdapter.broadcast({
-                                action: 'message',
-                                data: { message: `${data.character} ist dem Dungeon beigetreten!` },
-                            });
+                            this.amqpAdapter.broadcastAction('message', { message: `${data.character} ist dem Dungeon beigetreten!` });
                             sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
 
                             await this.sendMiniMapData(data.character);
@@ -61,6 +58,9 @@ export class DungeonController {
                             break;
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);
+                            break;
+                        case 'dmMessage':
+                            //dmaction
                             break;
                     }
                 }
@@ -107,20 +107,33 @@ export class DungeonController {
             }
         }
         rooms["0,0"].explored = true;
-        await this.amqpAdapter.sendToClient(character,{
-            action: 'minimap.init',
-            data: {
+        await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
                 startRoom: "0,0" //TODO: Actually get the room the character is in at the start
-            }
-        } as unknown as MiniMapData);
+            } as MiniMapData);
     }	
 
     async sendInventoryData(character: string) {
-        this.amqpAdapter.sendToClient(character, {action: "inventory", data: this.dungeon.characters[character].inventory.map(item => {
+        this.amqpAdapter.sendActionToClient(character, "inventory", this.dungeon.characters[character].inventory.map(item => {
             return { item:this.dungeon.items[item.item].name, count:item.count }
-        })})
+        }));
     }
 
-
+    async sendStatsData(character: string) {
+        let currentCharacterStats: CharacterStats = this.dungeon.characters[character].getCharakterStats()
+        let maxCharacterStats: CharacterStats = this.dungeon.characters[character].getMaxStats()
+        let data = {
+            currentStats: {
+                hp: currentCharacterStats.getHp(),
+                dmg: currentCharacterStats.getDmg(),
+                mana: currentCharacterStats.getMana()
+            },
+            maxStats: {
+                hp: maxCharacterStats.getHp(),
+                dmg: maxCharacterStats.getDmg(),
+                mana: maxCharacterStats.getMana()
+            }
+        }
+        this.amqpAdapter.sendActionToClient(character, "stats", data);
+    }
 }

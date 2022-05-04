@@ -17,7 +17,12 @@ export interface Character {
     getPosition(): string
     modifyPosition(destinationRoom: string): any
     getInventory(): ItemInfo[]
+<<<<<<< HEAD
     isDead(): boolean
+=======
+    getCharakterStats(): CharacterStats
+    getMaxStats(): CharacterStats
+>>>>>>> dev
 }
 
 export class CharacterImpl implements Character {
@@ -71,6 +76,7 @@ export class CharacterImpl implements Character {
     getInventory(): ItemInfo[] {
         return this.inventory
     }
+<<<<<<< HEAD
 
     isDead(): boolean {
         if(this.currentStats.hp > 0){
@@ -79,5 +85,12 @@ export class CharacterImpl implements Character {
         else {
             return true
         }
+=======
+    getCharakterStats(): CharacterStats {
+        return this.currentStats
+    }
+    getMaxStats(): CharacterStats {
+        return this.maxStats
+>>>>>>> dev
     }
 }

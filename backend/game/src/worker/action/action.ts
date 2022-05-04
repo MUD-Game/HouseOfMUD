@@ -16,7 +16,7 @@ export class Action {
     }
     /**
      * Performs the action based on the given arguments. Overriden by action type.
-     * @param user Character of the user that sent the action message.
+     * @param user Character name of the user that sent the action message.
      * @param args Arguments received by the ActionHandler.
      */
     performAction(user: string, args: string[]): any {}

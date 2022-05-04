@@ -93,17 +93,17 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             let yHalf = (newY * roomOffset - roomMargin / 2);
             const yFull = (newY * roomOffset + roomSize / 2);
             if(newX>oldX){ // Left to right
-                xHalf = (newX * roomOffset - roomMargin / 2)
+                xHalf = (newX * roomOffset - roomMargin / 2);
                 yHalf = yFull;
             }else if(newX<oldX){ // Right to left
-                xHalf = (newX * roomOffset + roomMargin / 2)
+                xHalf = (oldX * roomOffset - roomMargin / 2);
                 yHalf = yFull;
             }else if(newY>oldY){ // Top to bottom
                 xHalf = xFull;
-                yHalf = (newY * roomOffset - roomMargin / 2)
+                yHalf = (newY * roomOffset - roomMargin / 2);
             }else if(newY<oldY){ // Bottom to top
                 xHalf = xFull;
-                yHalf = (newY * roomOffset + roomSize / 2)
+                yHalf = (oldY * roomOffset - roomMargin / 2);
             }else{
                 return;
             }

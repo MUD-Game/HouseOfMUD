@@ -366,12 +366,17 @@ export class DatabaseAdapter {
     }
 
     /**
-     * gets a character with specified character id from database
-     * @param characterId the character id of the character to get
-     * @returns  the found character
+     * gets a specified character from dungeon from database
+     * @param characterName the character name of the character to get
+     * @returns the found character
      */
-    async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null> {
-        return this.character.findOne({ id: characterId })
+    async getCharacterFromDungeon(characterName: string, dungeonId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null> {
+        (await this.character.find({ name: characterName })).forEach(c => {
+            if(c.dungeonId == dungeonId){
+                return c
+            }
+        })
+        return null
     }
 
 

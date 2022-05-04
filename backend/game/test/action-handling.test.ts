@@ -249,7 +249,6 @@ const TestRoomActions: Room = new RoomImpl(
 );
 const TestCharacter: Character = new CharacterImpl(
     '1',
-    '1',
     'Jeff',
     'Magier',
     '1',
@@ -261,7 +260,6 @@ const TestCharacter: Character = new CharacterImpl(
 );
 const TestCharacterSameRoom: Character = new CharacterImpl(
     '2',
-    '1',
     'Spieler',
     'Magier',
     '1',
@@ -273,7 +271,6 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
 );
 const TestCharacterNotSameRoom: Character = new CharacterImpl(
     '3',
-    '1',
     'Bob',
     'Magier',
     '1',
@@ -285,7 +282,6 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
 );
 const TestCharacterDungeonActions: Character = new CharacterImpl(
     '4',
-    '1',
     'CoolerTyp',
     'Magier',
     '1',

@@ -46,8 +46,9 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
             </Row>
 
             {props.data.length > 0 && props.data.map((item: any, index) => {
+
                 return (
-                    <DungeonObjectListElement key={index} item={props.data[item.id]} {...props} />
+                    <DungeonObjectListElement key={`${props.title}-li-${item[props.identifier]}`} item={item} {...props} />
                 )
             })}
 

@@ -13,6 +13,7 @@ export interface DungeonObjectListElementProps {
 }
 
 const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ item, onEditElement, onDeleteElement, displayKeys }) => {
+
     return (
         <Row className="mb-2 py-1 configurator-item">
             {displayKeys?.map((key: string, iindex) => {

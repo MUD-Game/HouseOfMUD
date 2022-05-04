@@ -445,9 +445,10 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const deleteItem = (key: number) => {
         showConfirmation('delete_item', () => {
             let index = items.findIndex(c => c.id === key + "");
+            console.log(index);
             let newItems = items;
-            newItems.splice(index, 1);
-            setItems(newItems);
+            // delete item at index and set it
+            setItems(newItems.filter((_, i) => i !== index));
         });
     }
 

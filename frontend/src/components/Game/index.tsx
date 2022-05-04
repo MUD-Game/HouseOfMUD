@@ -36,6 +36,7 @@ const Game: React.FC<GameProps> = ({ }) => {
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
     const [inventoryData, setInventoryData] = React.useState<InventoryProps["inventoryData"]>([]);
+    const [hudData, setHudData] = React.useState<HUDProps | null>(null);
 
     const onUnload = (e: any) => {
         e.preventDefault();
@@ -71,14 +72,6 @@ const Game: React.FC<GameProps> = ({ }) => {
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
     }
-    const hudMock: HUDProps = {
-        health: 50,
-        maxHealth: 100,
-        mana: 100,
-        maxMana: 100,
-        damage: 10,
-        maxDamage: 100
-    }
 
 
 
@@ -94,7 +87,7 @@ const Game: React.FC<GameProps> = ({ }) => {
                 <div className="col col-4 col-md-3 col-lg-2">
                     {miniMapData ? <Minimap {...miniMapData} /> : null}
                     <Inventory inventoryData={inventoryData} />
-                    <HUD {...hudMock} />
+                    {hudData && <HUD {...hudData} />}
                     <Alert type="error" message={error} setMessage={setError} />
                 </div>
                 <div className="col col-8 col-md-9 col-lg-10">

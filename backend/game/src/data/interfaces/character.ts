@@ -4,7 +4,6 @@ import { ItemInfo } from "./itemInfo";
 export interface Character {
     name: string;
     userId: string;
-    dungeonId: string;
     characterClass: string;
     characterSpecies: string;
     characterGender: string;
@@ -28,7 +27,6 @@ export interface Character {
 export class CharacterImpl implements Character {
     name: string;
     userId: string;
-    dungeonId: string;
     characterClass: string;
     characterSpecies: string;
     characterGender: string;
@@ -39,7 +37,6 @@ export class CharacterImpl implements Character {
 
     constructor(
         userId: string,
-        dungeonId: string,
         name: string,
         className: string,
         species: string,
@@ -50,7 +47,6 @@ export class CharacterImpl implements Character {
         inventory: ItemInfo[]
     ) {
         this.userId = userId;
-        this.dungeonId = dungeonId;
         this.name = name;
         this.characterClass = className;
         this.characterSpecies = species; 

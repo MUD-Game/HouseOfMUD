@@ -97,7 +97,8 @@
         }
     },
     "game":{
-        "leave": "Verlassen"
+        "leave": "Verlassen",
+        "queue": "Warteschlange"
     },
     "verify_email":{
         "title": "Email-Verifizierung",

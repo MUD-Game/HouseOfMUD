@@ -13,6 +13,7 @@ import { RabbitMQPayload } from 'src/types/rabbitMQ';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/Game/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
+import { HUDProps } from 'src/components/Game/HUD';
 
 const debug = true;
 
@@ -25,6 +26,7 @@ export interface RabbitMQContextType {
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
   setRoomSubscriber: (subscriber: (roomId: string) => void) => void;
   setInventorySubscriber: (subscriber: (items: InventoryProps["inventoryData"]) => void) => void;
+  setHudSubscriber: (subscriber: (hud: HUDProps) => void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -75,6 +77,9 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'inventory':
           inventorySubscriber(jsonData.data);
+          break;
+        case 'stats':
+          hudSubscriber(jsonData.data);
           break;
         default:
           errorSubscriber("RabbitMQ-Action not implemented yet: ", jsonData.action);
@@ -193,6 +198,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     inventorySubscriber = subscriber;
   }
 
+  const setHudSubscriber = (subscriber: (hud: HUDProps) => void) => {
+    hudSubscriber = subscriber;
+  }
+
   const minimapHandler = (command: string[], data: any) => {
     switch(command[0]) {
       case 'init':
@@ -204,7 +213,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

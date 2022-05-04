@@ -40,7 +40,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
         if (modalIsInvalid()) {
             setError("failvalidation.room");
         } else {
-            setError("failvalidation.room");
+            setError("");
             const [x,y] = props.coordinates;
             const characterRoom: MudRoom = {
                 id: String(props.coordinates),

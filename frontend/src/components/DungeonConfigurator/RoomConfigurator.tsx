@@ -55,14 +55,15 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     const stageRef = useRef<any>();
     const [width, height] = useRefSize(widthRef);
     
-    useEffect(() => {
-        // setWidth(widthRef.current.clientWidth);
-        
-    }, []);
-
+    
     
 
     const { rooms, currentRoom, items, npcs, actions, editRoom, addRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItemValues, setSelectedRoomItems, setSelectedRoomNpcs, selectedRoomActions, selectedRoomItems, selectedRoomItemValues, selectedRoomNpcs, toggleRoomConnection } = useDungeonConfigurator();
+
+    useEffect(() => {
+        // setWidth(widthRef.current.clientWidth);
+        selectRoom([0,0]);
+    }, []);
 
 
     const [selectedRoomObject, setSelectedRoomObject] = React.useState<any>(null);
@@ -366,10 +367,10 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                                         data-coordinates={[room.xCoordinate, room.yCoordinate]}
                                         width={roomSize}
                                         height={roomSize}
-                                        fill={fill}
+                                        fill={fillColor}
                                         strokeWidth={roomStrokeWidth}
                                         name={name}
-                                        stroke={stroke}
+                                        stroke={strokeColor}
                                     />
 
                                 )

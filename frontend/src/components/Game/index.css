@@ -48,9 +48,9 @@
 
 #compass {
     animation: compassrotate 20s infinite;
-    width: 30%;
+    width: 25%;
     position: relative;
-    right: 15%;
+    right: 3%;
 }
 
 #compass {

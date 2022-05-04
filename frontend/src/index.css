@@ -27,7 +27,7 @@
   --room-stroke: rgb(170, 170, 170);
   
   /* Created Rooms */
-  --room-current-fill: #2bde64;
+  --room-current-fill: var(--lightgreen);
   --room-active-fill: #8b4a20;
   --room-active-stroke : #6b2a00;
 

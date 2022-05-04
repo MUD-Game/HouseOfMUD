@@ -1,7 +1,6 @@
 import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
-import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionMessages } from "./action-resources";
@@ -51,7 +50,8 @@ export class DieAction extends Action {
             data: "0,0"
         });
         this.dungeonController.sendInventoryData(user)
+        this.dungeonController.sendStatsData(user)
         const description = actionMessages.die
-        amqpAdapter.sendToClient(user, {action: "message", data: {message: description}})
+        amqpAdapter.sendActionToClient(user, "message", {message: description})
     }
 }

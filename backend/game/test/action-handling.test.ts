@@ -277,7 +277,6 @@ const TestCharacterDungeonActions: Character = new CharacterImpl(
 );
 const TestCharacterToDie: Character = new CharacterImpl(
     '4',
-    '1',
     'Jochen',
     'Magier',
     '1',

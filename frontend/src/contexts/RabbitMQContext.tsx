@@ -14,6 +14,8 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/Game/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
 
+const debug = true;
+
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
@@ -45,7 +47,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { character, dungeon, verifyToken } = useGame();
   
   let chatSubscriber: (message: string) => void = () => { };
-  let errorSubscriber: (error: string) => void = (error) => { };
+  let errorSubscriber: (error: string, ...optionalParams: any[]) => void = (error) => { };
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
   let miniMapSubscriber: (message: any) => void = () => { };
@@ -55,6 +57,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     try {
       let jsonData: {action:string, data:any} = JSON.parse(message.body);
       //TODO: Decide what type of message we received
+      debug && console.log(jsonData);
       if (jsonData['action'] === undefined) {
         errorSubscriber("RabbitMQ-Message is missing a action-key");
         return;
@@ -74,7 +77,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
           inventorySubscriber(jsonData.data);
           break;
         default:
-          errorSubscriber("RabbitMQ-Action not implemented yet: " + jsonData.action);
+          errorSubscriber("RabbitMQ-Action not implemented yet: ", jsonData.action);
       }
     } catch (err) {
       if (err instanceof SyntaxError) {

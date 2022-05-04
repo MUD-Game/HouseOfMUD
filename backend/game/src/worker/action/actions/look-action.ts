@@ -9,14 +9,12 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
-export class LookAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController;
+export class LookAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.look;
-        this.dungeonController = dungeonController
+        super(triggers.look, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let dungeonId: string = dungeon.getId()
@@ -117,12 +115,14 @@ export class LookAction implements Action {
         actionString += ". "
         description += actionString
 
-        let roomPlayers: Character[] = Object.values(dungeon.characters)
+        let dungeonCharacters: Character[] = Object.values(dungeon.characters)
         let playersString: string = actionMessages.lookPlayers
         try {
-            roomPlayers.forEach(character => {
-                let characterName: string = character.getName()
-                playersString += ` ${characterName}`
+            dungeonCharacters.forEach(character => {
+                if (character.getPosition() === roomId) {
+                    let characterName: string = character.getName()
+                    playersString += ` ${characterName}`
+                }
             })
         } catch(e) {
             console.log(e)

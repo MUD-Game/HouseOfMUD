@@ -17,6 +17,8 @@ export interface Character {
     getPosition(): string
     modifyPosition(destinationRoom: string): any
     getInventory(): ItemInfo[]
+    getCharakterStats(): CharacterStats
+    getMaxStats(): CharacterStats
 }
   
 export class CharacterImpl implements Character {
@@ -69,5 +71,11 @@ export class CharacterImpl implements Character {
 
     getInventory(): ItemInfo[] {
         return this.inventory
+    }
+    getCharakterStats(): CharacterStats {
+        return this.currentStats
+    }
+    getMaxStats(): CharacterStats {
+        return this.maxStats
     }
 }

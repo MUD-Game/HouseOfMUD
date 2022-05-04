@@ -16,7 +16,12 @@ export const triggers = {
     whisper: "fluester",
     messageMaster: "fluesterdm",
     unspecified: "dm",
-    invalid: "invalid"
+    invalid: "invalid",
+
+    //dungeonmaster
+    addDamage: "adddmg",
+    addHp: "addhp",
+    addMana: "addhp"
 }
 
 export const actionMessages = {
@@ -42,7 +47,8 @@ export const actionMessages = {
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
     whisperToDm: "[privat] %s -> Dungeon Master: %s",
     discard: "Du hast folgendes Item abgelegt: %s",
-    pickup: "Du hast folgendes Item aufgehoben: %s"
+    pickup: "Du hast folgendes Item aufgehoben: %s",
+    dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:"
 }
 
 export const errorMessages = {
@@ -50,12 +56,40 @@ export const errorMessages = {
     itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion existiert nicht!",
+    actionDoesNotExist: "Diese Aktion ist nicht möglich!",
     lookError: " Fehler!",
+}
+
+export const dungeonMasterSendMessages = {
+    addDmg: "Du hast %s Schaden erhalten",
+    addHp: "Du hast %s Leben erhalten",
+    addMana: "Du hast %s Mana erhalten"
 }
 
 export const extras = {
     dungeonMasterId: '0'
+}
+
+export const eventCases: { [event: string]: number } = {
+    "addhp": 1,
+    "removehp": 2,
+    "addmana": 3,
+    "removemana": 4,
+    "adddmg": 5,
+    "removedmg": 6,
+    "additem": 7,
+    "removeItem": 8
+}
+
+export const characterStats = {
+    hp: "hp",
+    mana: "mana",
+    dmg: "dmg"
+}
+
+export const operations = {
+    add: "add",
+    remove: "remove"
 }
 
 export interface MiniMapData {

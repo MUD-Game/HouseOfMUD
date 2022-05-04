@@ -7,13 +7,10 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
-export class PickupAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController;
+export class PickupAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.pickup;
-        this.dungeonController = dungeonController
+        super(triggers.pickup, dungeonController);
     }
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()

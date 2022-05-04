@@ -1,4 +1,5 @@
 import { ActionEvent } from "./actionEvent";
+import { ItemInfo } from "./itemInfo";
 
 export interface ActionElement {
     id: string;
@@ -6,7 +7,7 @@ export interface ActionElement {
     output: string;
     description: string;
     events: ActionEvent[];
-    itemsneeded: string[];
+    itemsneeded: ItemInfo[];
   
     getCommand(): string
 }
@@ -17,7 +18,7 @@ export class ActionElementImpl implements ActionElement {
     output: string;
     description: string;
     events: ActionEvent[];
-    itemsneeded: string[];
+    itemsneeded: ItemInfo[];
 
     constructor(
     id: string,
@@ -25,7 +26,7 @@ export class ActionElementImpl implements ActionElement {
     output: string,
     description: string,
     events: ActionEvent[],
-    itemsneeded: string[]
+    itemsneeded: ItemInfo[]
     ) {
     (this.id = id),
         (this.command = command),

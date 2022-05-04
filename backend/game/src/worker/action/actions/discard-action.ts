@@ -7,13 +7,10 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
-export class DiscardAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController
+export class DiscardAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.discard;
-        this.dungeonController = dungeonController;
+        super(triggers.discard, dungeonController);
     }
 
     performAction(user: string, args: string[]) {

@@ -78,26 +78,45 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     useEffect(() => {
         setRoomSubscriber((id:string)=>{
-            const oldId = currentRoomId;
             setCurrentRoomId(id);
             let tempRooms = rooms;
             tempRooms[id].explored = true;
             setRooms(tempRooms);
             // Check if we move on the x or y axis
-            const xAxisMove:boolean = oldId.split('-')[0] !== id.split('-')[0];
-            const xHalf = (rooms[id].xCoordinate * roomOffset - roomMargin / 2);
-            const xFull = (rooms[id].xCoordinate * roomOffset + roomSize / 2);
-            const yHalf = (rooms[id].yCoordinate * roomOffset - roomMargin / 2);
-            const yFull = (rooms[id].yCoordinate * roomOffset + roomSize / 2);
+            const oldId = currentPositionCircleRef.current.attrs["data-id"];
+            currentPositionCircleRef.current.attrs["data-id"] = id;
+            const [oldX, oldY] = oldId.split(',').map((x:any)=>parseInt(x));
+            const [newX, newY] = id.split(',').map(x=>parseInt(x));
+            // initially for ltr
+            let xHalf = (newX * roomOffset - roomMargin / 2);
+            const xFull = (newX * roomOffset + roomSize / 2);
+            let yHalf = (newY * roomOffset - roomMargin / 2);
+            const yFull = (newY * roomOffset + roomSize / 2);
+            if(newX>oldX){ // Left to right
+                xHalf = (newX * roomOffset - roomMargin / 2)
+                yHalf = yFull;
+            }else if(newX<oldX){ // Right to left
+                xHalf = (newX * roomOffset + roomMargin / 2)
+                yHalf = yFull;
+            }else if(newY>oldY){ // Top to bottom
+                xHalf = xFull;
+                yHalf = (newY * roomOffset - roomMargin / 2)
+            }else if(newY<oldY){ // Bottom to top
+                xHalf = xFull;
+                yHalf = (newY * roomOffset + roomSize / 2)
+            }else{
+                return;
+            }
+            stageRef.current.to({ x: -rooms[id].xCoordinate * roomOffset * initialScale, y: -rooms[id].yCoordinate * roomOffset * initialScale, duration: 1, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
             currentPositionCircleRef.current.to({
-                duration: 0.4,
+                duration: 0.5,
                 radius: roomSize / 16,
-                x: xAxisMove ? xHalf : xFull,
-                y: xAxisMove ? yFull : yHalf,
+                x: xHalf,
+                y: yHalf,
                 easing: Konva.Easings.EaseIn,
                 onFinish: () => {
                     currentPositionCircleRef.current.to({
-                        duration: 0.4,
+                        duration: 0.5,
                         radius: roomSize / 4,
                         x: xFull,
                         y: yFull,
@@ -144,7 +163,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             const yc = parseInt((roomId || currentRoomId).split(",")[1]);
             const x = -xc * roomOffset * initialScale;
             const y = -yc * roomOffset * initialScale;
-            stageRef.current.to({ x: x, y: y, duration: 0.4,scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.BackEaseOut});
+            stageRef.current.to({ x: x, y: y, duration: 0.4,scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut});
         }
     }
 
@@ -327,7 +346,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     </Group>
                                 )
                             })}
-                            {<Circle ref={currentPositionCircleRef} x={0 * roomOffset + (roomSize / 2)} y={0 * roomOffset + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />}
+                            {<Circle ref={currentPositionCircleRef} data-id="0,0" x={0 * roomOffset + (roomSize / 2)} y={0 * roomOffset + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />}
                         </Group>
                     </Layer>
                 </Stage>

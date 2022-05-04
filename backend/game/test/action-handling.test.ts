@@ -121,7 +121,7 @@ const TestActionRemoveDamage: ActionElement = new ActionElementImpl(
     'nahkampf',
     'Du wechselst in den Nahkampf!',
     'test',
-    [new ActionEventImpl('removedmg', '20')],
+    [new ActionEventImpl('removedmg', '5')],
     []
 );
 const TestActionRemoveItem: ActionElement = new ActionElementImpl(
@@ -746,18 +746,22 @@ describe("Dungeon Actions", () => {
     amqpAdapter.sendToClient = jest.fn();
 
     test('DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action', () => {
-
+        dungeonActionAddHp.performAction('CoolerTyp', ['Test']); // hierfuer noch test aktion anlegen!
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Dir fehlt das Item fuer die Aktion!" },
+        })
     })
 
-    test("DungeonAction.performAction should call sendToClient with the correct output  and add hp to character when the event type id addhp", () => {
+    test("DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp", () => {
         dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(110)
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(60)
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast einen Apfel gegessen!" },
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats.update',
+            action: 'stats',
             data: { 
                 currentStats: {
                     hp: 60,
@@ -773,4 +777,151 @@ describe("Dungeon Actions", () => {
         })
     })
 
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp", () => {
+        dungeonActionRemoveHp.performAction('CoolerTyp', ['Giftpilz']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(30)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Giftpilz gegessen!" },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 30,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana", () => {
+        dungeonActionAddMana.performAction('CoolerTyp', ['Manatrank']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(60)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Manatrank getrunken!" },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 60
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana", () => {
+        dungeonActionRemoveMana.performAction('CoolerTyp', ['aus dem Brunnen']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(30)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast aus dem Brunnen getrunken!" },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 30
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg", () => {
+        dungeonActionAddDamage.performAction('CoolerTyp', ['Bier']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(20)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast ein Bier getrunken!" },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 20,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg", () => {
+        dungeonActionRemoveDamage.performAction('CoolerTyp', []);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(5)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du wechselst in den Nahkampf!" },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 5,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem", () => {
+        dungeonActionAddItem.performAction('CoolerTyp', ['Truhe']);
+        expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1), new ItemInfo(TestItemPickup.id, 1)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast die Truhe geoeffnet!" },
+        })
+        // HIER NOCH EINF
+        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+        //     action: 'inventory',
+        //     data: {},
+        // })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem", () => {
+        dungeonActionRemoveItem.performAction('CoolerTyp', ['Stein']);
+        expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Stein geworfen!" },
+        })
+        // HIER NOCH EINF
+        // expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+        //     action: 'inventory',
+        //     data: {},
+        // })
+    })
 })

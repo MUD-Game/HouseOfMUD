@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Unit Tests" tests="41" failures="0" errors="0" time="18.161">
-  <testsuite name="jest.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-04T06:35:15" time="9.547" tests="1">
-    <testcase classname="Test - Jenkins Pipeline" name="Test jenkins pipeline" time="0.005">
+<testsuites name="Unit Tests" tests="50" failures="9" errors="0" time="28.645">
+  <testsuite name="jest.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-04T08:50:00" time="16.843" tests="1">
+    <testcase classname="Test - Jenkins Pipeline" name="Test jenkins pipeline" time="0.018">
     </testcase>
   </testsuite>
-  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-04T06:35:15" time="15.787" tests="40">
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast" time="0.009">
+  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="9" skipped="0" timestamp="2022-05-04T08:50:00" time="24.817" tests="49">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast" time="0.012">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.066">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.124">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.003">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.005">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0.002">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.003">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.001">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.002">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action" time="0">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action" time="0.001">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a &quot;fluesterdm&quot; action message" time="0.001">
     </testcase>
@@ -41,20 +41,20 @@
     </testcase>
     <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0.003">
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0.002">
     </testcase>
     <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.098">
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.119">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position, call the functions to bind the client queues 
-    and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0.015">
+    and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0.006">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the East when user moves east" time="0.001">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the South when user moves south" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.002">
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.001">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0.001">
     </testcase>
@@ -64,27 +64,198 @@
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.002">
+    <testcase classname="Test - Actions" name="LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.004">
     </testcase>
-    <testcase classname="Test - Actions" name="InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.001">
+    <testcase classname="Test - Actions" name="InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.002">
     </testcase>
     <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item" time="0">
+    <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0.001">
+    <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.003">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.004">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.016">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.026">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0.006">
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0.01">
     </testcase>
     <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon" time="0.005">
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon" time="0.014">
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action" time="0.002">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:749:28)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp" time="0">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:757:28)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp" time="0">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:781:31)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana" time="0.003">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:805:30)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana" time="0">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:829:33)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg" time="0">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:853:32)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg" time="0">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:877:35)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem" time="0.001">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:901:30)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem" time="0.002">
+      <failure>Error: Method not implemented.
+    at DungeonAction.performAction (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\src\worker\action\actions\dungeon-action.ts:17:15)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:915:33)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
     </testcase>
   </testsuite>
 </testsuites>

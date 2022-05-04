@@ -47,7 +47,8 @@ export const actionMessages = {
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
     whisperToDm: "[privat] %s -> Dungeon Master: %s",
     discard: "Du hast folgendes Item abgelegt: %s",
-    pickup: "Du hast folgendes Item aufgehoben: %s"
+    pickup: "Du hast folgendes Item aufgehoben: %s",
+    dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:"
 }
 
 export const errorMessages = {
@@ -67,6 +68,28 @@ export const dungeonMasterSendMessages = {
 
 export const extras = {
     dungeonMasterId: '0'
+}
+
+export const eventCases: { [event: string]: number } = {
+    "addhp": 1,
+    "removehp": 2,
+    "addmana": 3,
+    "removemana": 4,
+    "adddmg": 5,
+    "removedmg": 6,
+    "additem": 7,
+    "removeItem": 8
+}
+
+export const characterStats = {
+    hp: "hp",
+    mana: "mana",
+    dmg: "dmg"
+}
+
+export const operations = {
+    add: "add",
+    remove: "remove"
 }
 
 export interface MiniMapData {

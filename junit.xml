@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Unit Tests" tests="49" failures="0" errors="0" time="3.162">
-  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="0" skipped="48" timestamp="2022-05-04T12:10:13" time="3.051" tests="49">
+<testsuites name="Unit Tests" tests="59" failures="1" errors="0" time="11.752">
+  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="1" skipped="58" timestamp="2022-05-04T17:26:06" time="11.133" tests="59">
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast" time="0">
       <skipped/>
     </testcase>
@@ -122,6 +122,55 @@
     <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon" time="0">
       <skipped/>
     </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp" time="0.148">
+      <failure>Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 60
+Received: 50
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:786:69)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at TestRunner.runTests (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\index.js:101:12)
+    at TestScheduler.scheduleTests (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\@jest\core\build\TestScheduler.js:333:13)
+    at runJest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\@jest\core\build\runJest.js:404:19)</failure>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem" time="0">
+      <skipped/>
+    </testcase>
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem" time="0">
+      <skipped/>
+    </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0">
       <skipped/>
     </testcase>
@@ -146,7 +195,8 @@
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0">
       <skipped/>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0.002">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0">
+      <skipped/>
     </testcase>
   </testsuite>
 </testsuites>

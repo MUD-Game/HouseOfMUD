@@ -78,15 +78,33 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     useEffect(() => {
         setRoomSubscriber((id:string)=>{
+            const oldId = currentRoomId;
             setCurrentRoomId(id);
             let tempRooms = rooms;
             tempRooms[id].explored = true;
             setRooms(tempRooms);
+            // Check if we move on the x or y axis
+            const xAxisMove:boolean = oldId.split('-')[0] !== id.split('-')[0];
+            const xHalf = (rooms[id].xCoordinate * roomOffset - roomMargin / 2);
+            const xFull = (rooms[id].xCoordinate * roomOffset + roomSize / 2);
+            const yHalf = (rooms[id].yCoordinate * roomOffset - roomMargin / 2);
+            const yFull = (rooms[id].yCoordinate * roomOffset + roomSize / 2);
             currentPositionCircleRef.current.to({
-                duration: 0.5,
-                x: rooms[id].xCoordinate * roomOffset + roomSize/2,
-                y: rooms[id].yCoordinate * roomOffset + roomSize/2,
-                easing: Konva.Easings.EaseInOut
+                duration: 0.4,
+                radius: roomSize / 16,
+                x: xAxisMove ? xHalf : xFull,
+                y: xAxisMove ? yFull : yHalf,
+                easing: Konva.Easings.EaseIn,
+                onFinish: () => {
+                    currentPositionCircleRef.current.to({
+                        duration: 0.4,
+                        radius: roomSize / 4,
+                        x: xFull,
+                        y: yFull,
+                        easing: Konva.Easings.EaseOut
+                    })
+                }
+          
             })
         });
         focusOnRoom("0,0", true);

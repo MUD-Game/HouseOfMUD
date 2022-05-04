@@ -28,6 +28,9 @@ export class DiscardAction extends Action {
                 let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == idOfItemToDiscard)[0]
                 if (itemInInventory.count > 1){
                     itemInInventory.count -= 1
+                } else {
+                    let indexOfItemToDiscardInInventory: number = characterInventory.indexOf(itemInInventory)
+                    characterInventory.splice(indexOfItemToDiscardInInventory, 1)
                 }
                 if (roomItems.some(it => it.item == idOfItemToDiscard)) {
                     let itemInRoom: ItemInfo = roomItems.filter(it => it.item == idOfItemToDiscard)[0]

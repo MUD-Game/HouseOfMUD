@@ -687,7 +687,7 @@ describe('Actions', () => {
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
-        TestDungeon.characters['Jeff'].inventory.push({item: TestItemDiscard.id, count: 1})
+        TestDungeon.characters['Jeff'].inventory.push(new ItemInfo(TestItemDiscard.id, 1))
         discardAction.performAction('Jeff', ['Schwert']);
         expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}])
         expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemDiscard.id}])

@@ -11,6 +11,7 @@ import {Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import connectionOpenPng from 'src/assets/connection_open.png';
 import connectionClosedPng from 'src/assets/connection_closed.png';
 import connectionInactivePng from 'src/assets/connection_inactive.png';
+import Konva from 'konva';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -255,8 +256,9 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
             <Row>
                 <div id="konva-buttons-container">
                     <GeoAlt size={37} id="refocus-button" onClick={() => {
-                        stageRef.current.scale({ x: 1, y: 1 });
-                        stageRef.current.position({ x: 0, y: 0 });
+                        // stageRef.current.scale({ x: 1, y: 1 });
+                        stageRef.current.to({ x: 0, y: 0, scaleX: 1, scaleY:1, duration: 0.2, easing: Konva.Easings.EaseInOut });
+                        // stageRef.current.position({ x: 0, y: 0 });
                     }} />
                     <OverlayTrigger
                         placement="left"

@@ -167,6 +167,7 @@
         "select_actions": "Aktionen auswählen",
         "select_species": "Spezies auswählen",
         "select_events": "Events auswählen",
+        "isglobal": "Globale Aktion?",
         "404": "Seite nicht gefunden...",
         "amount": "Anzahl"
     },

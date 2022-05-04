@@ -132,11 +132,24 @@ export class AmqpAdapter {
     }
 
     /**
+     * Sends action to specified client.
+     * @param user Client that receives message.
+     * @param action Action to send.
+     * @param data Data to send.
+     */
+    async sendActionToClient(user: string, action: string, data: any) {
+        this.sendToClient(user, {
+            action: action,
+            data: data
+        });
+    }
+
+    /**
      * Sends message to specified client.
      * @param user Client that receives message.
      * @param msg Message to send.
      */
-    async sendToClient(user: string, msg: any): Promise<void> {
+     async sendToClient(user: string, msg: any): Promise<void> {
         if (this.isConnected()) {
             try {
                 // this.clientChannel.publish(this.clientExchange, `${fork}.broadcast`, Buffer.from(msg));
@@ -145,6 +158,18 @@ export class AmqpAdapter {
                 throw err;
             }
         }
+    }
+
+    /**
+     * Sends action to everyone in dungeon.
+     * @param action Action to send.
+     * @param data Data to send.
+     */
+    async broadcastAction(action: string, data: any) {
+        this.broadcast({
+            action: action,
+            data: data
+        });
     }
 
     /**
@@ -162,12 +187,25 @@ export class AmqpAdapter {
     }
 
     /**
+     * Sends action to ClientExchange with a routingKey.
+     * @param routingKey Key that specifies receiver(s) (e.g. roomID).
+     * @param action Action to send.
+     * @param data Data to send.
+     */
+     async sendActionWithRouting(routingKey: string, action: string, data: any) {
+        this.sendWithRouting(routingKey, {
+            action: action,
+            data: data
+        });
+    }
+
+    /**
      * Sends message to ClientExchange with a routingKey.
      * The routingKey is used to determine which clients receive the message.
      * @param routingKey Key that specifies receiver(s) (e.g. roomID).
      * @param msg Message to send.
      */
-    async sendWithRouting(routingKey: string, msg: any): Promise<void> {
+     async sendWithRouting(routingKey: string, msg: any): Promise<void> {
         if (this.isConnected()) {
             try {
                 this.channel!.publish(this.clientExchange, `${this.dungeonID}.${routingKey}`, Buffer.from(JSON.stringify(msg)));

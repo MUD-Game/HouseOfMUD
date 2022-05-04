@@ -105,7 +105,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         scale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
         scale = Math.min(Math.max(scale, 0.2), 1);
         stage.scale({ x: scale, y: scale });
-
+        
         var newPos = {
             x: pointer.x - mousePointTo.x * scale,
             y: pointer.y - mousePointTo.y * scale,
@@ -118,9 +118,11 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         if(isAnc && stageRef.current){
             const xc = parseInt((roomId || currentRoomId).split(",")[0]);
             const yc = parseInt((roomId || currentRoomId).split(",")[1]);
-            const x = -xc * roomOffset* stageRef.current.attrs.scaleX; 
-            const y = -yc * roomOffset* stageRef.current.attrs.scaleY;
-
+            const offsetX = (width / 2) - (roomSize / 2) * scale;
+            const offsetY = (width / 2) - (roomSize / 2) * scale;
+            const x = -xc * roomOffset* stageRef.current.attrs.scaleX + offsetX; 
+            const y = -yc * roomOffset* stageRef.current.attrs.scaleY + offsetY;
+            
             stageRef.current.to({ x: x, y: y, duration: 0.2, easing: Konva.Easings.EaseInOut});
         }
     }
@@ -137,9 +139,8 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             </div>
             <div id="minimap"  ref={sizeRef}>
                 <Stage scale={{ x: scale, y: scale }} onDragMove={(evt) => {
-                    setIsAnchored(false);
-                    
-                    }} ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable offsetY={(-width / 2)/scale+ (roomSize /2)} offsetX={(-width / 2)/scale + (roomSize /2)}>
+                        setIsAnchored(false);
+                    }} ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable x={(width / 2) - (roomSize / 2) * scale} y={(width / 2) - (roomSize / 2) * scale}>
                     <Layer>
                         <Group name="connections">
                             {Object.keys(rooms).map(key => {
@@ -292,7 +293,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     connections.push(<Circle key={`${roomkey}-connection-explored-south`} x={x * roomOffset + (roomSize / 2)} y={y * roomOffset + roomSize + 2} stroke={yStrokeCol} radius={connectionBlobRadius} fill={yStrokeCol} data-status={yStatus} />);
                                 }else{
                                     // Put a line
-                                    connections.push(<Line key={`${roomkey}-connection-explored-east`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
+                                    connections.push(<Line key={`${roomkey}-connection-explored-south`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
                                     }
                                 }
 

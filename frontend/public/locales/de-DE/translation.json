@@ -204,6 +204,10 @@
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch!"
         },
+        "reference_in_action": {
+            "title": "Du kannst dieses Item nicht löschen",
+            "text": "Es existiert mindestens eine Aktion die auf dieses Item drauf zugreift, löse den Konflikt und versuche es erneut!"
+        },
         "failvalidation":{
             "dungeon": {
                 "title": "Bitte gebe alle geforderten Daten ein",

@@ -7,7 +7,7 @@
 
 import React, { useEffect } from 'react';
 import { MudActionElement, MudCharacterGender, MudCharacterSpecies, MudDungeon, MudItem, MudNpc, MudRoom } from 'src/types/dungeon'
-import { MudCharacterClass } from '../types/dungeon';
+import { MudCharacterClass, MudEvent } from '../types/dungeon';
 import { validator } from 'src/utils/validator';
 import AddClassModal from 'src/components/Modals/DungeonConfigurator/AddClassModal';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
@@ -148,23 +148,23 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         }
     });
 
-    
+
     // States for configure Classes
     const [showCharacterClassModal, setShowCharacterClassModal] = React.useState<boolean>(false);
     const [characterClassKey, setCharacterClassKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-    
+
     // States for configure Items
     const [showAddItemsModal, setShowAddItemsModal] = React.useState<boolean>(false);
     const [itemsKey, setItemsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-    
+
     // States for configure Actions
     const [showAddActionsModal, setShowAddActionsModal] = React.useState<boolean>(false);
     const [actionsKey, setActionsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-    
+
     // States for NPC
     const [showAddNpcModal, setShowAddNpcModal] = React.useState<boolean>(false);
     const [npcsKey, setNpcsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
-    
+
     // Used to configure Rooms
     const [showAddRoomModal, setShowAddRoomModal] = React.useState<boolean>(false);
     const [roomsKey, setRoomsKey] = React.useState<string>("0,0");
@@ -174,9 +174,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const [selectedRoomItemValues, setSelectedRoomItemValues] = React.useState<{ [key: string]: any }>({});
     const [selectedRoomActions, setSelectedRoomActions] = React.useState<Option[]>([]);
     const [selectedRoomNpcs, setSelectedRoomNpcs] = React.useState<Option[]>([]);
-    
+
     const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
-    
+
     // If the Configurator is called with a dungeonId in the location-State it means that the dungeon is here for editing.
     const dungeonId = (location.state as any)?.dungeonId || undefined;
 
@@ -190,6 +190,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         // If the dungeonID exists we load the dungeon in the background and fill the states with the data.
         if (dungeonId) {
             supervisor.getDungeon(dungeonId, {}, (dungeon: any) => {
+                console.log(dungeon);
                 setName(dungeon.name);
                 setDescription(dungeon.description);
                 setMaxPlayers(dungeon.maxPlayers);
@@ -199,7 +200,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length });
                 setActions(processAfterReceive(dungeon.actions));
                 setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length });
-                
+
                 setRooms(arrayToMap(dungeon.rooms));
                 setRoomsKey("0,0");
                 setRoomCoordiantes([0, 0]);
@@ -295,7 +296,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         room.npcs = [];
         room.actions = [];
         selectedRoomItems.forEach((i: any) => {
-                room.items.push({item: i.id, count: selectedRoomItemValues[i.id]});
+            room.items.push({ item: i.id, count: selectedRoomItemValues[i.id] });
         });
         selectedRoomActions.forEach((i: any) => {
             room.actions.push(i.id);
@@ -332,6 +333,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             const npcs_array = rooms[key].npcs;
             // {item: i.id, count: selectedRoomItemValues[i.id]}
             // select items
+            console.log(items_array);
             setSelectedRoomItems(items_array.map((i: {
                 item: string;
                 count: number;
@@ -342,7 +344,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                     id: items[parseInt(i.item)].id
                 }
             }));
-      
+
             // Count how many of each item is in the room
             let temp: { [key: string]: number } = {};
             items_array.forEach((i: {
@@ -437,19 +439,54 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setShowAddItemsModal(true);
     }
     const editItem = (key: number) => {
-        setEditData(items[key]);
-        setItemsKey({ selected: key, nextKey: itemsKey.nextKey });
+        const editIndex = items.findIndex(i => i.id === key + "");
+        setEditData(items[editIndex]);
+        console.log(items[editIndex]);
+        setItemsKey({ selected: editIndex, nextKey: itemsKey.nextKey });
         setShowAddItemsModal(true);
     }
 
-    const deleteItem = (key: number) => {
-        showConfirmation('delete_item', () => {
-            let index = items.findIndex(c => c.id === key + "");
-            console.log(index);
-            let newItems = items;
-            // delete item at index and set it
-            setItems(newItems.filter((_, i) => i !== index));
+    const deleteItem = (itemkey: number) => {
+
+        let newActions = actions;
+        // check if the items are used in any action
+        let usedInActions = false;
+        actions.forEach((a: MudActionElement) => {
+            if (a.itemsneeded.includes(itemkey)) {
+                usedInActions = true;
+            }
+            a.events.forEach((e: MudEvent) => {
+                if ((e.eventType === "additem" || e.eventType === "removeitem") && e.value === itemkey) {
+                    usedInActions = true;
+                }
+            });
         });
+        if (usedInActions) {
+            setError("reference_in_action");
+        } else {
+
+            showConfirmation('delete_item', () => {
+                let index = items.findIndex(c => c.id === itemkey + "");
+                console.log(index);
+                let newItems = items;
+                setItems(newItems.filter((_, i) => i !== index));
+                // Delete from selectedItems
+                let newSelectedItems = selectedRoomItems;
+                console.log(newSelectedItems)
+                newSelectedItems = newSelectedItems.filter((i: any) => i.id !== itemkey);
+                setSelectedRoomItems(newSelectedItems);
+                let temprooms = rooms;
+                Object.keys(temprooms).forEach((roomKey: string) => {
+                    let room = temprooms[roomKey];
+                    room.items = room.items.filter((i: any) => i.item !== itemkey + "");
+                    temprooms[roomKey] = room;
+                });
+                setRooms(temprooms);
+                selectRoom(roomCoordiantes);
+
+
+            });
+        }
     }
 
     const addNpc = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -478,8 +515,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         // setClasses([...classes, mockupClass]);
     }
     const editAction = (key: number) => {
-        setEditData(actions[key]);
-        setActionsKey({ selected: key, nextKey: actionsKey.nextKey });
+        const editIndex = actions.findIndex(i => i.id === key + "");
+        setEditData(actions[editIndex]);
+        setActionsKey({ selected: editIndex, nextKey: actionsKey.nextKey });
         setShowAddActionsModal(true);
     }
     const deleteAction = (key: number) => {
@@ -585,7 +623,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection,addNpc, editNpc, deleteNpc
+        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc
     }
 
     let fields: MudDungeon = {
@@ -601,7 +639,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
     // REFACTOR: Somehow make the Modals more Readable...
-    return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, error, setError ,npcs, items, currentRoom, selectedRoomActions, selectedRoomItemValues, selectedRoomItems, selectedRoomNpcs }}>
+    return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, error, setError, npcs, items, currentRoom, selectedRoomActions, selectedRoomItemValues, selectedRoomItems, selectedRoomNpcs }}>
         <AddClassModal editData={editData as MudCharacterClass} key={"Class-" + characterClassKey.selected} onSendCharacterClass={(cc) => {
             if (characterClassKey.selected === characterClassKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
                 cc.id = characterClassKey.nextKey + "";
@@ -642,12 +680,13 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             setShowAddItemsModal(false);
         }} />
 
-        <AddNpcModal editData={editData as MudNpc} key={"Npc:" + npcsKey.selected} onSendNpc={(cc) => {
+        <AddNpcModal editData={editData as MudNpc} key={"Npc:" + npcsKey.selected} onSendNpc={(cc: MudNpc) => {
             if (npcsKey.selected === npcsKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
                 cc.id = npcsKey.nextKey + "";
                 setNpcs([...npcs, cc]);
                 setShowAddNpcModal(false);
                 setNpcsKey({ nextKey: npcsKey.nextKey + 1, selected: npcsKey.selected + 1 });
+                setEditData(null);
             } else {
                 // User is editing
                 cc.id = npcsKey.selected + "";
@@ -670,6 +709,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             setShowAddRoomModal(false);
             setInitialRoomConnections(newKey);
             selectRoom(newKey);
+            setEditData(null);
         }} show={showAddRoomModal} onHide={() => {
             setShowAddRoomModal(false);
         }} />
@@ -680,6 +720,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setActions([...actions, cc]);
                 setShowAddActionsModal(false);
                 setActionsKey({ nextKey: actionsKey.nextKey + 1, selected: actionsKey.selected + 1 });
+                setEditData(null);
             } else {
                 // User is editing
                 cc.id = actionsKey.selected + "";

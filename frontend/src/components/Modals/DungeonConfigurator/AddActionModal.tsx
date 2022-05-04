@@ -29,14 +29,14 @@ export interface AddActionModalProps {
 const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const dconf = useDungeonConfigurator();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const dt = 'dungeon_configurator';
     let initialItemsNeeded: Option[] = [];
     let initialRemoveItems: Option[] = [];
     let initialAddItems: Option[] = [];
     let initialEvents: Option[] = [];
     let initialEventValues: { [key: string]: number } = {};
-   
+
     const constructToModalData = () => {
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
         props.editData?.itemsneeded?.forEach((item: number) => {
@@ -53,8 +53,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             }
         });
 
-       
-        
+
+
 
     }
     constructToModalData();
@@ -71,7 +71,21 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     const [error, setError] = React.useState<string>("");
 
     const modalIsInvalid = () => {
-        return validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output);
+        let status = validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output);
+        selectedEvents.forEach((event: any) => {
+            if (event === "additem") {
+                if (addItems.length === 0) {
+                    status = true;
+                }
+            } else if (event === "removeitem") {
+                if (removeItems.length === 0) {
+                    status = true;
+                }
+            } else {
+                if (eventValues[event] === undefined) status = true;
+            }
+        });
+        return status;
     }
 
     const deconstructToContextData = () => {
@@ -159,7 +173,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                     <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
                     <MudTypeahead
                         colmd={12}
-                        title={ t(`dungeon_keys.itemsNeeded`) }
+                        title={t(`dungeon_keys.itemsNeeded`)}
                         id={"typeahead-items-needed"}
                         labelKey={(option: any) => `${option.name} (${option.description})`}
                         options={dconf.items}

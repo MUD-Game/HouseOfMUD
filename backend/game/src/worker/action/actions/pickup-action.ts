@@ -7,11 +7,12 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
-export class PickupAction implements Action {
+export class PickupAction extends Action {
     trigger: string;
     dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
+        super();
         this.trigger = triggers.pickup;
         this.dungeonController = dungeonController
     }
@@ -28,25 +29,27 @@ export class PickupAction implements Action {
             let idOfitemToPickup: string = itemToPickup.getId()
             if (roomItems.some(it => it.item == idOfitemToPickup)) {
                 let itemInRoom: ItemInfo = roomItems.filter(it => it.item == idOfitemToPickup)[0]
+                console.log(itemInRoom)
                 let indexOfitemToPickupInRoom: number = roomItems.indexOf(itemInRoom)
                 roomItems.splice(indexOfitemToPickupInRoom, 1)
                 if (itemInRoom.count > 1){
                     itemInRoom.count -= 1
+                    console.log(itemInRoom)
                     roomItems.push(itemInRoom) 
                 }
                 if (characterInventory.some(it => it.item == idOfitemToPickup)) {
                     let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == idOfitemToPickup)[0]
                     let indexOfitemToPickupInInventory: number = roomItems.indexOf(itemInInventory)
-                    characterInventory.splice(indexOfitemToPickupInInventory, 1)
+                    //characterInventory.splice(indexOfitemToPickupInInventory, 1)
                     itemInInventory.count += 1
-                    characterInventory.push(itemInInventory)
+                    //characterInventory.push(itemInInventory)
                     this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
                 }
                 else{
-                    itemInRoom.count = 1
-                    characterInventory.push(itemInRoom)
+                    characterInventory.push(new ItemInfo(itemInRoom.item, 1))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
                 }
+                this.dungeonController.sendInventoryData(user)
             } else {
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
             }

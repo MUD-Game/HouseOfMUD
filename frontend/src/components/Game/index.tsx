@@ -15,8 +15,8 @@
 import React from 'react'
 import Chat from './Chat';
 import HUD, { HUDProps } from './HUD';
-import Inventory from './Inventory';
-import Minimap from './Minimap';
+import Inventory, { InventoryProps } from './Inventory';
+import Minimap, { MinimapProps } from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -34,6 +34,8 @@ const Game: React.FC<GameProps> = ({ }) => {
     const { isAbleToJoinGame } = useGame();
 
     const [error, setError] = React.useState<string>("");
+    const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
+    const [inventoryData, setInventoryData] = React.useState<InventoryProps["inventoryData"]>([]);
 
     const onUnload = (e: any) => {
         e.preventDefault();
@@ -42,10 +44,16 @@ const Game: React.FC<GameProps> = ({ }) => {
         });
     }
 
+    const miniMapSubscriber = (roomData: MinimapProps) => {
+        setMiniMapData(roomData);
+    }
+
     useEffect(() => {
         window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
+            rabbit.setMiniMapSubscriber(miniMapSubscriber);
+            rabbit.setInventorySubscriber(setInventoryData);
             rabbit.login(() => {
                 
             }, (error) => {
@@ -84,8 +92,8 @@ const Game: React.FC<GameProps> = ({ }) => {
             </Row>
             <Row className="game-body">
                 <div className="col col-4 col-md-3 col-lg-2">
-                    <Minimap mapData={null} />
-                    <Inventory items={null} />
+                    {miniMapData ? <Minimap {...miniMapData} /> : null}
+                    <Inventory inventoryData={inventoryData} />
                     <HUD {...hudMock} />
                     <Alert type="error" message={error} setMessage={setError} />
                 </div>

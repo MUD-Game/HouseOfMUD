@@ -7,11 +7,12 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
-export class DiscardAction implements Action {
+export class DiscardAction extends Action {
     trigger: string;
     dungeonController: DungeonController
 
     constructor(dungeonController: DungeonController) {
+        super();
         this.trigger = triggers.discard;
         this.dungeonController = dungeonController;
     }
@@ -43,10 +44,10 @@ export class DiscardAction implements Action {
                     roomItems.push(itemInRoom)
                 }
                 else{
-                    itemInInventory.count = 1
-                    roomItems.push(itemInInventory)
+                    roomItems.push(new ItemInfo(itemInInventory.item, 1))
                 }
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.discard, nameOfItemToDiscard)}})
+                this.dungeonController.sendInventoryData(user)
             } else {
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
             }

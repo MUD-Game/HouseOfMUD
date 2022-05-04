@@ -39,7 +39,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     }
     
     const onSubmit = () => {
-        if (!modalIsInvalid()) {
+        if (modalIsInvalid()) {
             setError("failvalidation.class");
         } else {
             const stats: MudCharacterStats = {
@@ -59,7 +59,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && modalIsInvalid()) {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }

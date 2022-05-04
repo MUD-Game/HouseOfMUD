@@ -2,6 +2,8 @@
  * File that holds all necessary string resources.
  */
 
+import { Room } from "../../../data/interfaces/room";
+
 export const triggers = {
     discard: "ablegen",
     inspect: "untersuche",
@@ -54,6 +56,16 @@ export const errorMessages = {
 
 export const extras = {
     dungeonMasterId: '0'
+}
+
+export interface MiniMapData {
+    rooms: {[key:string]: {
+        xCoordinate: Room['xCoordinate'],
+        yCoordinate: Room['yCoordinate'],
+        connections: Room['connections'],
+        explored: boolean
+    }};
+    startRoom: string;
 }
 
 export function parseResponseString(str: string, ...args: string[]): string {

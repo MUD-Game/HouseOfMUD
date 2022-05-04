@@ -73,7 +73,7 @@ export class ActionHandlerImpl implements ActionHandler {
             new MessageMasterAction(dungeonController)
         ];
         actions.forEach(action => {
-            this.actions[action.trigger] = action;
+            this.actions[action.trigger!] = action;
         });
         let dungeon: Dungeon = dungeonController.getDungeon();
         let dungeonActionElements = dungeon.getActions();

@@ -16,7 +16,12 @@ export const triggers = {
     whisper: "fluester",
     messageMaster: "fluesterdm",
     unspecified: "dm",
-    invalid: "invalid"
+    invalid: "invalid",
+
+    //dungeonmaster
+    addDamage: "adddmg",
+    addHp: "addhp",
+    addMana: "addhp"
 }
 
 export const actionMessages = {
@@ -52,6 +57,12 @@ export const errorMessages = {
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
     actionDoesNotExist: "Diese Aktion ist nicht möglich!",
     lookError: " Fehler!",
+}
+
+export const dungeonMasterSendMessages = {
+    addDmg: "Du hast %s Schaden erhalten",
+    addHp: "Du hast %s Leben erhalten",
+    addMana: "Du hast %s Mana erhalten"
 }
 
 export const extras = {

@@ -59,6 +59,9 @@ export class DungeonController {
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);
                             break;
+                        case 'dmMessage':
+                            //dmaction
+                            break;
                     }
                 }
             } catch (err) {

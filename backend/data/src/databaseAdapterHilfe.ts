@@ -89,7 +89,7 @@ async function execute() {
     let receivedDungeon = await databaseAdapter.getDungeon("627034b9e0fb3898fde88bab")
     // console.log(await databaseAdapter.getAllCharactersFromUserInDungeon("test1", "626aa3eea8183b0a09d74bc3"))
     // console.log(await databaseAdapter.getCharacterById("test2"))
-    console.log(receivedDungeon?.rooms[0].items)    
+    console.log(receivedDungeon?.rooms[0].items)
 }
 
 execute()

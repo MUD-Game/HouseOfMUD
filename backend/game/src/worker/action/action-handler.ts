@@ -15,6 +15,9 @@ import { MoveAction } from './actions/move-action';
 import { PickupAction } from './actions/pickup-action';
 import { PrivateMessageAction } from './actions/private-message-action';
 import UnspecifiedAction from './actions/unspecified-action';
+import { AddDamage } from './dmactions/addDamage-action';
+import { AddHp } from './dmactions/addHp-action';
+import { AddMana } from './dmactions/addMana-action';
 
 
 const regExpression = {
@@ -42,6 +45,12 @@ export interface ActionHandler {
     invalidAction: InvalidAction;
 
     /**
+     * Predefined Dungeon Master Actions types to call performAction on.
+     */
+     dmActions: { [trigger: string]: Action };
+
+
+    /**
      * Based on the received data in the message the ActionHandler performs the action on the corresponding action type.
      * @param user User that sent the action message.
      * @param message Message data the user sent. Processes the data into arguments.
@@ -53,6 +62,7 @@ export class ActionHandlerImpl implements ActionHandler {
     actions: { [trigger: string]: Action } = {};
     dungeonActions: { [trigger: string]: DungeonAction } = {};
     invalidAction: InvalidAction;
+    dmActions:{ [trigger: string]: Action } = {};
 
     /**
      * Creates an instance of ActionHandler with its necessary actions.
@@ -70,7 +80,7 @@ export class ActionHandlerImpl implements ActionHandler {
             new PrivateMessageAction(dungeonController),
             new BroadcastMessageAction(dungeonController),
             new UnspecifiedAction(dungeonController),
-            new MessageMasterAction(dungeonController)
+            new MessageMasterAction(dungeonController),
         ];
         actions.forEach(action => {
             this.actions[action.trigger!] = action;
@@ -81,7 +91,17 @@ export class ActionHandlerImpl implements ActionHandler {
             let dungeonAction: DungeonAction = new DungeonAction(action.command, dungeonController, action.events)
             this.dungeonActions[dungeonAction.trigger] = dungeonAction
         });
-        this.invalidAction = new InvalidAction(dungeonController)
+        this.invalidAction = new InvalidAction(dungeonController);
+
+        let dmActions: Action[] = [
+           new AddDamage(dungeonController),
+           new AddHp(dungeonController),
+           new AddMana(dungeonController)
+        ];
+        dmActions.forEach(dmaction => {
+            this.dmActions[dmaction.trigger!] = dmaction;
+        });
+
     }
 
     processAction(user: string, message: string) {
@@ -106,6 +126,26 @@ export class ActionHandlerImpl implements ActionHandler {
         let actionArguments: string[] = this.getActionArguments(message)
         action.performAction(user, actionArguments);
         return action;
+    }
+
+    processDmAction(user: string, message: string) { //not finished
+        let dmaction: Action | undefined = undefined;
+        if (this.userIsDungeonMaster(user)) {
+            let dungeonActions: DungeonAction[] = Object.values(this.dungeonActions)
+            dmaction = dungeonActions.find(dungeonAction => this.inputMatch(message, dungeonAction.regEx))
+            if (dmaction === undefined) {
+                if (this.inputMatch(message, regExpression.predefinedActions)) {
+                    dmaction = this.getAction(message)
+                } else {
+                    dmaction = this.invalidAction
+                }
+            }
+        } else {
+            dmaction = this.invalidAction;
+        }
+        let actionArguments: string[] = this.getActionArguments(message)
+        dmaction.performAction(user, actionArguments);
+        return dmaction;
     }
 
     /**

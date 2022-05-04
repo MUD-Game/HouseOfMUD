@@ -178,7 +178,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                      focusOnRoom(currentRoomId, true);
                 }} />
             </div>
-            <div id="minimap"  ref={sizeRef}>
+            <div id="minimap" className="mb-2" ref={sizeRef}>
                 <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable offsetY={(-width / 2) / initialScale + (roomSize / 2)} offsetX={(-width / 2) / initialScale + (roomSize / 2)}>
                     <Layer>
                         <Group name="connections">

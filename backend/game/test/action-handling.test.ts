@@ -1211,4 +1211,4 @@ describe("DungeonMaster Actions", () => {
 //                     await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
 //                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
 //                 });
-// })
+})

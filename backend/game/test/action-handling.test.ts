@@ -316,6 +316,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
 const TestDungeonController: DungeonController = new DungeonController(
     '1',
     amqpAdapter,
+    null,
     TestDungeon
 );
 

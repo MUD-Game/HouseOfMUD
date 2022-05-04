@@ -63,6 +63,7 @@ async function main() {
     let dungeonController: DungeonController = new DungeonController(
         dungeonID,
         amqpAdapter,
+        dba,
         dungeon
     );
     dungeonController.init();

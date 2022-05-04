@@ -14,7 +14,9 @@ export const triggers = {
     whisper: "fluester",
     messageMaster: "fluesterdm",
     unspecified: "dm",
-    invalid: "invalid"
+    invalid: "invalid",
+
+    addDamage: "adddmg"
 }
 
 export const actionMessages = {

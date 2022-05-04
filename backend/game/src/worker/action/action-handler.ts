@@ -15,6 +15,7 @@ import { MoveAction } from './actions/move-action';
 import { PickupAction } from './actions/pickup-action';
 import { PrivateMessageAction } from './actions/private-message-action';
 import UnspecifiedAction from './actions/unspecified-action';
+import { AddDamage } from './dmactions/addDamage-action';
 
 
 const regExpression = {
@@ -70,7 +71,9 @@ export class ActionHandlerImpl implements ActionHandler {
             new PrivateMessageAction(dungeonController),
             new BroadcastMessageAction(dungeonController),
             new UnspecifiedAction(dungeonController),
-            new MessageMasterAction(dungeonController)
+            new MessageMasterAction(dungeonController),
+
+            new AddDamage(dungeonController)
         ];
         actions.forEach(action => {
             this.actions[action.trigger] = action;

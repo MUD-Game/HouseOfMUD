@@ -45,7 +45,7 @@ const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(
     'Hexer',
     'Hexiger Hexer'
 );
-const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
+const TestStartStats: CharacterStats = new CharacterStatsImpl(50, 10, 50);
 const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
 const TestGender: CharacterGender = new CharacterGenderImpl(
     '1',
@@ -724,6 +724,7 @@ describe('Actions', () => {
 describe("Dungeon Actions", () => {
     beforeEach(() => {
         TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+        TestDungeon.characters[TestCharacterDungeonActions.name].inventory = [new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
     })
     afterEach(() => {
         jest.clearAllMocks();
@@ -742,7 +743,34 @@ describe("Dungeon Actions", () => {
     const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
     const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
 
-
     amqpAdapter.sendToClient = jest.fn();
+
+    test('DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action', () => {
+
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output  and add hp to character when the event type id addhp", () => {
+        dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(110)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Apfel gegessen!" },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats.update',
+            data: { 
+                currentStats: {
+                    hp: 60,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+    })
 
 })

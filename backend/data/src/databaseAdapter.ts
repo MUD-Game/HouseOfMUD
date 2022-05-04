@@ -371,13 +371,11 @@ export class DatabaseAdapter {
      * @returns the found character
      */
     async getCharacterFromDungeon(characterName: string, dungeonId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null> {
-        (await this.character.find({ name: characterName })).forEach(c => {
-            if(c.dungeonId == dungeonId){
+        (await this.getAllCharactersFromDungeon(dungeonId)).forEach(c => {
+            if(c.name == characterName){
                 return c
             }
         })
         return null
     }
-
-
 }

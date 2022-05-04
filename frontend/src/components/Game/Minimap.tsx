@@ -292,7 +292,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     connections.push(<Circle key={`${roomkey}-connection-explored-south`} x={x * roomOffset + (roomSize / 2)} y={y * roomOffset + roomSize + 2} stroke={yStrokeCol} radius={connectionBlobRadius} fill={yStrokeCol} data-status={yStatus} />);
                                 }else{
                                     // Put a line
-                                    connections.push(<Line key={`${roomkey}-connection-explored-east`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
+                                    connections.push(<Line key={`${roomkey}-connection-explored-south`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
                                     }
                                 }
 

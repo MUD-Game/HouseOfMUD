@@ -1,3 +1,4 @@
+import { Stats } from "fs";
 import { CharacterStats } from "../src/data/datasets/charcterStats";
 import { ActionElement, ActionElementImpl } from "../src/data/interfaces/actionElement";
 import { ActionEventImpl } from "../src/data/interfaces/actionEvent";
@@ -495,9 +496,12 @@ describe('Actions', () => {
     amqpAdapter.unbindClientQueue = jest.fn();
 
     test('DieAction should remove all items from character, add them to the current room and reset position and stats to start values', () => {
+        //decrement stats and die automatically
         dieAction.performAction('Jochen', []);
         expect(TestDungeon.characters['Jochen'].getInventory()).toEqual<ItemInfo[]>([]);
-        expect(TestDungeon.rooms['1'].getItemInfos()).toEqual<ItemInfo[]>([new ItemInfo(TestItem.id, 2)]);
+        expect(TestDungeon.rooms['2'].getItemInfos()).toEqual<ItemInfo[]>([new ItemInfo(TestItem.id, 2)]);
+        expect(TestCharacterToDie.position).toEqual('0,0')
+        expect(TestCharacterToDie.currentStats).toEqual(new CharacterStatsImpl(100, 20, 100))
     });
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {

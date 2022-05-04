@@ -19,8 +19,6 @@ export interface Character {
     getInventory(): ItemInfo[]
     isDead(): boolean
 }
-  
-//TODO: IN ANDERE INTERFACE ORDNER KOPIEREN
 
 export class CharacterImpl implements Character {
     name: string;

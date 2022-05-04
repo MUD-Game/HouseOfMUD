@@ -18,9 +18,9 @@ export class DieAction extends Action {
 
         //remove items from inventory and add them to the current room
         let roomItems: ItemInfo[] = dungeon.getRoom(currentPosition).items
-        let characterInventory: ItemInfo[] = characterToDie.getInventory()
         
         inventoryItems.forEach(item => {
+            //add the item to the room or increment cound
             if (roomItems.some(it => it.item == item.item)) {
                 let itemInRoom: ItemInfo = roomItems.filter(it => it.item == item.item)[0]
                 itemInRoom.count += item.count
@@ -28,9 +28,14 @@ export class DieAction extends Action {
             else{
                 roomItems.push(item)
             }
-            let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == item.item)[0]
+            //remove item from inventory or decrement count
+            let itemInInventory: ItemInfo = inventoryItems.filter(it => it.item == item.item)[0]
             if (itemInInventory.count > 1){
                 itemInInventory.count -= 1
+            }
+            else {
+                let indexOfItemToDiscardInInventory: number = inventoryItems.indexOf(itemInInventory)
+                inventoryItems.splice(indexOfItemToDiscardInInventory, 1)
             }
         })
         //set position to start room

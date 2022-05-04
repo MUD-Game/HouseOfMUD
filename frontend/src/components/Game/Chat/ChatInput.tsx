@@ -2,7 +2,6 @@
  * @module ChatInput
  * @category React Components
  * @description ChatInput Component to get the input from the user
- * @children {@linkcode ChatInputOutput} {@linkcode ChatInputInput}
  * @props {@linkcode ChatInputProps}
  */
 
@@ -11,30 +10,31 @@ import $ from "jquery";
 import { Row } from 'react-bootstrap';
 import { Send } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";
-import { useMudConsole } from '../../../hooks/useMudConsole';
+import { SendsMessagesProps } from '../../../types/misc';
 export interface ChatInputProps { }
 
-const ChatInput: React.FC<ChatInputProps> = ({ }) => {
+const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallback}) => {
 
+    
     const { sendMessage } = useRabbitMQ();
-    const homsole = useMudConsole();
+
+    const [input, setInput] = React.useState("");
+
     const sendInput = (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault()
-        let formData = new FormData(evt.currentTarget);
-        let message = formData.get('message') as string;
-        sendMessage(message, () => {
-            homsole.log(message, "Message sent succesfully",);
+        sendMessage(input, () => {
+            // On Success
         }, (error) => {
-            homsole.error(error, "RabbitMQ");
+            messageCallback("rabbitmq.send");
         })
-        $("#chat-input").val("");
+        setInput("");
     }
 
     return (
         <form className="chat-input-wrap " onSubmit={sendInput}>
             <Row className="h-100 mt-3">
                 <div className="col-10">
-                    <input type="text" name="message" id="chat-input" required autoComplete='off' />
+                    <input type="text" name="message" id="chat-input" className="input-standard drawn-border" required autoComplete='off' value={input} onChange={event => setInput(event.target.value)} />
                 </div>
                 <div className="col-2">
                     <button className="btn w-100 drawn-border btn-green" type="submit">

@@ -1,3 +1,4 @@
+import { create } from 'domain';
 import { io } from 'socket.io-client';
 import { ForkHandler } from './fork-handler';
 
@@ -50,12 +51,16 @@ export class SupervisorLink {
             callback(this.forkHandler.getDungeons());
         });
 
-        socket.on('start', (data: any, callback: (created: boolean) => {}) => {
+        socket.on('start', async (data: any, callback: (created: boolean) => {}) => {
             if (data.dungeonID !== undefined) {
-                let created: boolean = this.forkHandler.startDungeon(data.dungeonID);
+                let created: boolean = await this.forkHandler.startDungeon(data.dungeonID);
                 callback(created);
             }
         });
+
+        this.forkHandler.dungeonStateCallback = (dungeonID: string, currentPlayers: number) => {
+            socket.emit('dungeonState', { dungeonID: dungeonID, currentPlayers: currentPlayers });
+        }
 
         socket.on('stop', (data: any) => {
             if (data.dungeonID !== undefined) {
@@ -66,7 +71,8 @@ export class SupervisorLink {
         this.forkHandler.workerExitCallback = (dungeon: string) => {
             socket.emit('exit', {
                 dungeonID: dungeon
-            });   
+            });
+            socket.emit(`exit-${dungeon}`);  
         };
 
         socket.on('setCharacterToken', (data: any) => {

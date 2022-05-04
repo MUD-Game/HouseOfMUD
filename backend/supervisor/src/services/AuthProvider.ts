@@ -12,16 +12,16 @@ export default class AuthProvider {
     private verifyLink: string;
     private unverified_users: { [token: string]: User } = {};
     private sessioned_users: { [token: string] : string} = {};
-    private cookie_host: string;
+    private cookiehost: string;
     
 
-    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, cookie_host: string) {
+    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, cookiehost: string) {
 
         this.dba = dba;
         this.salt = salt;
         this.transporter = transporter;
         this.verifyLink = verifyLink;
-        this.cookie_host = cookie_host;
+        this.cookiehost = cookiehost;
         this.register = this.register.bind(this);
         this.verifyEmail = this.verifyEmail.bind(this);
         this.auth = this.auth.bind(this);
@@ -34,9 +34,9 @@ export default class AuthProvider {
     async logout(req:any, res:any){
         if (req.cookies.authToken) {
             delete this.sessioned_users[req.cookies.authToken];
-            res.cookie('authToken', "", { domain: this.cookie_host, maxAge: 0 });
-            res.cookie('user', "", { domain: this.cookie_host, maxAge: 0 });
-            res.cookie('userID', "", { domain: this.cookie_host, maxAge: 0 });
+            res.cookie('authToken', "", { domain: this.cookiehost, maxAge: 0 });
+            res.cookie('user', "", { domain: this.cookiehost, maxAge: 0 });
+            res.cookie('userID', "", { domain: this.cookiehost, maxAge: 0 });
             res.status(200).send({
                 ok: 1
             });
@@ -140,6 +140,14 @@ export default class AuthProvider {
             let user = req.cookies?.user;
             let userID = req.cookies?.userID;
             let authStatus, backToken;
+            
+            /* ----------------------------------------- */
+            if (user == 'mockuser') {
+                res.cookie('authToken', "", { maxAge: 0 });
+                res.cookie('user',"", { maxAge : 0 });
+            }
+            /* ----------------------------------------- */
+
             if (authToken) {
                 authStatus = await this.validateToken(user || "", userID || "", authToken);
                 if (authStatus) backToken = authToken;
@@ -158,14 +166,14 @@ export default class AuthProvider {
             }
 
             if(authStatus){
-                res.cookie('authToken', backToken, { domain: this.cookie_host, maxAge: COOKIE_TIME });
-                res.cookie('user', user, { domain: this.cookie_host, maxAge: COOKIE_TIME });
-                res.cookie('userID', userID, { domain: this.cookie_host, maxAge:COOKIE_TIME });
+                res.cookie('authToken', backToken, { domain: this.cookiehost, maxAge: COOKIE_TIME });
+                res.cookie('user', user, { domain: this.cookiehost, maxAge: COOKIE_TIME });
+                res.cookie('userID', userID, { domain: this.cookiehost, maxAge:COOKIE_TIME });
                 next();
             }else{
-                res.cookie('authToken', "", { domain: this.cookie_host, maxAge: 0 });
-                res.cookie('user',"", { domain: this.cookie_host, maxAge : 0 });
-                res.cookie('userID', "", { domain: this.cookie_host, maxAge:  0 });
+                res.cookie('authToken', "", { domain: this.cookiehost, maxAge: 0 });
+                res.cookie('user',"", { domain: this.cookiehost, maxAge : 0 });
+                res.cookie('userID', "", { domain: this.cookiehost, maxAge:  0 });
                 res.status(401).send({
                     ok: 0,
                     error: "unauthorized"

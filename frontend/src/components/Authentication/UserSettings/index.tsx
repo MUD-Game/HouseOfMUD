@@ -1,13 +1,9 @@
 /**
  * @module UserSettings
  * @category React Components
- * @description Component to handle UserSettings-In
+ * @description Component to show and change the user-settings
+ * @author Raphael Sack
  * @hooks {@linkcode useAuth}
- * ```jsx
- * <>
- *  <AvailableCharactersLi/>[]
- * </>
- * ```
  */
 
 
@@ -18,12 +14,9 @@ import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationDialog, { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import { useAuth } from 'src/hooks/useAuth';
-import MudSelect from '../../Custom/MudSelect';
+import MudSelect from '../../Custom/Select';
 type UserSettingsProps = {}
 
-interface LocationState {
-    from: { pathname: string }
-}
 const UserSettings: React.FC<UserSettingsProps> = (props) => {
     let navigate = useNavigate();
     const { t, i18n } = useTranslation();

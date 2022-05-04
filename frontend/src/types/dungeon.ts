@@ -104,7 +104,7 @@ export interface MudRoom {
     name: string;
     description: string;
     npcs: string[];
-    items: string[];
+    items: {item: string, count: number}[];
     connections: MudConnectionInfo;
     actions: string[];
     xCoordinate: number;

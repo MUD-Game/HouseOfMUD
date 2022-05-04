@@ -1,5 +1,5 @@
 /**
- * @module Minimap
+ * @module DungeonMaster-Minimap
  * @category React Components
  * @description Minimap Component to display the currently visible Minimap
  * @props {@linkcode MinimapProps}

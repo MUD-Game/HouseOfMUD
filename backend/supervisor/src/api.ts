@@ -30,13 +30,13 @@ export class API {
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any, cookie_host: string) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any, cookiehost: string) {
         this.origin = origin;
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
-        this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookie_host);
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookiehost);
     }
 
     /**
@@ -148,11 +148,11 @@ export class API {
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
-                this.hostLink.stopDungeon(dungeonID);
+                await this.hostLink.stopDungeon(dungeonID);
                 res.status(200).json({ ok: 1 });
             } else {
                 res.status(400).json({ ok: 0, error: 'dontexist' });

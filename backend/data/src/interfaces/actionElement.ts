@@ -1,4 +1,5 @@
 import { ActionEvent } from "./actionEvent";
+import { ItemInfo } from "./itemInfo";
 
 export interface ActionElement {
     id: string;

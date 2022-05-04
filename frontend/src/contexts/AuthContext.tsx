@@ -1,7 +1,13 @@
+/**
+ * @module AuthContext
+ * @description Context for the Global Authentication, handles register/login an checkup if the user is logged in.
+ * @author Raphael Sack
+ * @category React Context
+ */
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
 import Cookies from 'universal-cookie';
 
@@ -23,7 +29,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   let [token, setToken] = React.useState<string>('');
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const homosole = useMudConsole();
   let isAuthenticated = (success: VoidFunction, error: (error: string) => void) => {
     supervisor.authenticate({ user: user, password: token }, (data: any) => {
         let c = new Cookies();

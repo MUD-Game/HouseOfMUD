@@ -1,3 +1,4 @@
+import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { ActionElement } from "../../../data/interfaces/actionElement";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
@@ -6,16 +7,14 @@ import { Npc } from "../../../data/interfaces/npc";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages } from "./action-resources";
+import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
-export class LookAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController;
+export class LookAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.look;
-        this.dungeonController = dungeonController
+        super(triggers.look, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let dungeonId: string = dungeon.getId()
@@ -24,18 +23,19 @@ export class LookAction implements Action {
         let room: Room = dungeon.getRoom(roomId)
         let roomName: string = room.getName()
         let roomDescription: string = room.getDescription()
-        let description: string = `${actionMessages.lookRoom} ${roomName}: ${roomDescription}. ${actionMessages.lookAround} `
+        let description: string = parseResponseString(actionMessages.lookRoom, roomName, roomDescription)
 
-        let roomItems: string[] = room.getItems()
+        let roomItems: ItemInfo[] = room.getItemInfos()
         let itemString: string = actionMessages.lookItems
         if (roomItems.length === 0) {
             itemString += actionMessages.lookEmpty
         } else {
             try {
-                roomItems.forEach(itemId => {
-                    let item: Item = dungeon.getItem(itemId)
+                roomItems.forEach(itemInfo => {
+                    let item: Item = dungeon.getItem(itemInfo.item)
                     let itemName: string = item.getName()
-                    itemString += ` ${itemName}`
+                    let itemCount: number = itemInfo.count
+                    itemString += ` ${itemName} (${itemCount}x)`
                 })
             } catch(e) {
                 console.log(e)
@@ -115,12 +115,14 @@ export class LookAction implements Action {
         actionString += ". "
         description += actionString
 
-        let roomPlayers: Character[] = Object.values(dungeon.characters)
+        let dungeonCharacters: Character[] = Object.values(dungeon.characters)
         let playersString: string = actionMessages.lookPlayers
         try {
-            roomPlayers.forEach(character => {
-                let characterName: string = character.getName()
-                playersString += ` ${characterName}`
+            dungeonCharacters.forEach(character => {
+                if (character.getPosition() === roomId) {
+                    let characterName: string = character.getName()
+                    playersString += ` ${characterName}`
+                }
             })
         } catch(e) {
             console.log(e)

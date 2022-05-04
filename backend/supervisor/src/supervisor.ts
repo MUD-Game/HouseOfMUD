@@ -33,7 +33,7 @@ function main() {
         const mongoConnString: string = `mongodb://${config.mongodb.user}:${encodeURIComponent(config.mongodb.password)}@${config.mongodb.host}:${config.mongodb.port}`;
         const databaseAdapter = new DatabaseAdapter(mongoConnString, config.mongodb.database);
         const hostLink = new HostLink(config.hostLink.port, { use: config.tls.use, cert: cert }, config.hostLink.hostAuthKey, databaseAdapter);
-        const api = new API(config.api.origin, config.api.port, { use: config.tls.use, cert: cert }, hostLink, databaseAdapter, config.auth.salt, config.auth.verifyLink, transporter, config.auth.cookie_host);
+        const api = new API(config.api.origin, config.api.port, { use: config.tls.use, cert: cert }, hostLink, databaseAdapter, config.auth.salt, config.auth.verifyLink, transporter, config.auth.cookiehost);
         hostLink.init();
         api.init(); 
     }

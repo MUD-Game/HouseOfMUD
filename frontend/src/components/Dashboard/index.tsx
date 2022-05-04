@@ -11,16 +11,16 @@
  * </>
  * ```
  */
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Nav, Row } from 'react-bootstrap';
 import { useAuth } from 'src/hooks/useAuth';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData, GetDungeonsRequest } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
 import { useNavigate } from 'react-router-dom';
 import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
+import Alert from '../Custom/Alert';
 
 
 export type DashboardProps = {
@@ -30,16 +30,16 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     
     const {t} = useTranslation();
     const auth = useAuth();
-    const homsole = useMudConsole();
     const navigate = useNavigate();
-    let [allDungeons, setAllDungeons] = React.useState<DungeonResponseData[]>();
-    let [myDungeons, setMyDungeons] = React.useState<DungeonResponseData[]>();
-    let [dungeonView, setDungeonView] = React.useState<"all" | "my">("all");
-    let [searchTerm, setSearchTerm] = React.useState<string>('');
+    const [allDungeons, setAllDungeons] = useState<DungeonResponseData[]>();
+    const [myDungeons, setMyDungeons] = useState<DungeonResponseData[]>();
+    const [dungeonView, setDungeonView] = useState<"all" | "my">("all");
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
+    const[error, setError] = useState<string>("");
 
     useEffect(() => {
-        supervisor.getDungeons({}, setAllDungeons, homsole.supervisorerror)
-        supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
+        fetchDungeons();
     }, [])
 
     const handleSelect = (eventKey: string | null) => {
@@ -50,12 +50,21 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         }
         setSearchTerm('');
     }
+
+    const fetchDungeons = () => {
+        supervisor.getDungeons({}, setAllDungeons, error => setError(error.error))
+        supervisor.getMyDungeons({}, setMyDungeons, error => setError(error.error));
+    }
+
     const handleSearch = (event: any) => {
         setSearchTerm(event.target.value);
     }
 
     return (
         <Container className="mb-5">
+            <Row>
+                <Alert message={error} setMessage={setError} type="error" />
+            </Row>
             <Row className="align-items-center mb-3">
                 <div className="col-8">
                     <h2 className='my-3'>{t("dashboard.title")}</h2>
@@ -68,7 +77,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             </Row>
             <Row className="mb-4">
                 <div className="col-md-6">
-                    <input id="search-input" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
+                    <input id="search-input" className="input-standard drawn-border" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
                 </div>
             </Row>
 
@@ -87,10 +96,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
 
             {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
-            {dungeonView === "my" && myDungeons ? <MyDungeons fetchMyDungeons={()=>{
-                supervisor.getMyDungeons({}, setMyDungeons, homsole.supervisorerror);
-                supervisor.getDungeons({}, setAllDungeons, homsole.supervisorerror);
-            }} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
+            {dungeonView === "my" && myDungeons ? <MyDungeons messageCallback={setError} fetchMyDungeons={fetchDungeons} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )
 }

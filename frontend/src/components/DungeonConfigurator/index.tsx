@@ -1,12 +1,19 @@
+/**
+ * @module DungeonConfigurator
+ * @category React Components
+ * @description DungeonConfigurator Component to display the DungeonConfigurator
+ * @author Raphael Sack
+ */
+
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import Busy from '../Busy';
-import MudInput from '../Custom/MudInupt';
-import MudTypeahead from '../Custom/MudTypeahead';
+import Alert from '../Custom/Alert';
+import MudInput from '../Custom/Input';
+import MudTypeahead from '../Custom/Typeahead';
 import DungeonObjectList from './DungeonObjectList';
 import RoomConfigurator from './RoomConfigurator';
 type Option = string | { [key: string]: any };
@@ -25,9 +32,6 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
     const [isBusy, setIsBusy] = React.useState(false);
     let dungeonId = (location.state as LocationState)?.dungeonId || undefined;
 
-    //TODO: Add a way to edit a dungeon that is already created
-
-
     return (
 
         <Container className="mb-5">
@@ -43,9 +47,11 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <MudTypeahead disabled={dungeonId ? true : false} title={t(`${tl}.inputs.species.title`)} options={[]} allowNew colmd={12} multiple id='index-species-typeahead' placeholder={t(`${tl}.inputs.species.placeholder`)} emptyLabel={t(`${tl}.inputs.species.emptyLabel`)} onChange={dungeonConfig.setSpecies as unknown as (a: Option[]) => void} selected={dungeonConfig.species} />
                 </Row>
 
-            <DungeonObjectList disabled={dungeonId ? true : false} identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description", "maxhp"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
+            <DungeonObjectList disabled={dungeonId ? true : false} identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={["name", "description"]} onAdd={dungeonConfig.addItem} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_item`)} />
+
+            <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editNpc} onDeleteElement={dungeonConfig.deleteNpc} data={dungeonConfig.npcs} displayKeys={["name", "description"]} onAdd={dungeonConfig.addNpc} title={t(`dungeon_keys.npc`)} buttonText={t(`${tl}.buttons.create_npc`)} />
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editAction} onDeleteElement={dungeonConfig.deleteAction} data={dungeonConfig.actions} displayKeys={["command", "description"]} onAdd={dungeonConfig.addAction} title={t(`dungeon_keys.actions`)} buttonText={t(`${tl}.buttons.create_action`)} />
             
@@ -54,6 +60,9 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <RoomConfigurator />                
             </Row>
             <hr />
+            <Row>
+                <Alert type="error" message={dungeonConfig.error} setMessage={dungeonConfig.setError} />
+            </Row>
             <Row className="mt-3 justify-content-end">                
                 <div className="col-md-5">
                     <button className="btn w-100 btn-green drawn-border" onClick={(e)=>dungeonConfig.save(e,setIsBusy)}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>

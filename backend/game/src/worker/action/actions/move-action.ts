@@ -4,22 +4,12 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, errorMessages, actionMessages } from "./action-resources";
+import { triggers, errorMessages, actionMessages, parseResponseString } from "./action-resources";
 
-export class MoveAction implements Action {
-    /**
-     * Chat command to trigger the action.
-     */
-    trigger: string;
-
-    /**
-     * DungeonController which holds the relevant AmqpAdapter and Dungeon data.
-     */
-    dungeonController: DungeonController;
+export class MoveAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.move;
-        this.dungeonController = dungeonController;
+        super(triggers.move, dungeonController);
     }
 
     /**
@@ -27,7 +17,7 @@ export class MoveAction implements Action {
      * @param user Character id of user that sent the message.
      * @param args Arguments received by ActionHandler. In this case direction in which the player wants to move.
      */
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon();
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter();
         let direction: string = args[0];
@@ -78,40 +68,27 @@ export class MoveAction implements Action {
                     break;
             }
             if (invalidDirection) {
-                amqpAdapter.sendToClient(user, {
-                    action: 'message',
-                    data: { message: errorMessages.directionDoesNotExist },
-                });
+                amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.directionDoesNotExist });
             } else if (closedPath) {
-                amqpAdapter.sendToClient(user, {
-                    action: 'message',
-                    data: { message: actionMessages.moveRoomClosed },
-                });
+                amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.moveRoomClosed });
             } else if (inactivePath) {
-                amqpAdapter.sendToClient(user, {
-                    action: 'message',
-                    data: { message: actionMessages.movePathNotAvailable },
-                });
+                amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.movePathNotAvailable });
             } else if (destinationRoom !== undefined) {
                 let destinationRoomId: string = destinationRoom.getId();
                 let destinationRoomName: string = destinationRoom.getName();
+                let routingKeyOldRoom: string = `room.${currentRoomId}`
+                let routingKeyNewRoom: string = `room.${destinationRoomId}`;
+                await amqpAdapter.sendActionWithRouting(routingKeyOldRoom, 'message', { message: parseResponseString(actionMessages.moveLeave, senderCharacterName, currentRoom.getName()) });
                 senderCharacter.modifyPosition(destinationRoomId);
-                let routingKey: string = `room.${destinationRoomId}`;
-                amqpAdapter.unbindClientQueue(user, `room.${currentRoomId}`);
-                amqpAdapter.bindClientQueue(user, `room.${destinationRoomId}`);
-                setTimeout(() => {
-                    amqpAdapter.sendWithRouting(routingKey, {
-                        action: 'message',
-                        data: { message: `${senderCharacterName} ${actionMessages.move1} ${destinationRoomName} ${actionMessages.move2}` },
-                    });
-                }, 100);
+                await amqpAdapter.unbindClientQueue(user, routingKeyOldRoom);
+                await amqpAdapter.bindClientQueue(user, routingKeyNewRoom);
+                await amqpAdapter.sendActionWithRouting(routingKeyNewRoom, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)});
+                // Sends the new room id to the client.
+                await amqpAdapter.sendActionToClient(user, 'minimap.move', destinationRoomId);
             }
         } catch (e) {
-            console.log(e);
-            amqpAdapter.sendToClient(user, {
-                action: 'message',
-                data: { message: actionMessages.movePathNotAvailable },
-            });
+            // console.log(e);
+            amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.movePathNotAvailable });
         }
     }
 }

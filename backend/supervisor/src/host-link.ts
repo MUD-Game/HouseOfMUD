@@ -4,6 +4,7 @@ import http from 'http';
 import { TLS } from './types/tls';
 import { DatabaseAdapter } from './services/databaseadapter/databaseAdapter';
 
+const DUNGEON_EXIT_TIMEOUT = 5000;
 
 interface Host {
     socket: Socket;
@@ -104,11 +105,9 @@ export class HostLink {
                     });
 
                     socket.on('dungeonState', (data: any): void => {
-                        for (let dungeonStats of data) {
-                            if (dungeonStats.dungeonID in this.dungeons) {
-                                this.dungeons[dungeonStats.dungeonID].status = 'online';
-                                this.dungeons[dungeonStats.dungeonID].currentPlayers = data.currentPlayers;
-                            }
+                        if (data.dungeonID in this.dungeons) {
+                            // this.dungeons[data.dungeonID].status = 'online';
+                            this.dungeons[data.dungeonID].currentPlayers = data.currentPlayers;
                         }
                     });
 
@@ -284,10 +283,16 @@ export class HostLink {
      * sends a dungeon stop event to a host
      * @param dungeonID dungeon id
      */
-    public stopDungeon(dungeonID: string): void {
+    public async stopDungeon(dungeonID: string): Promise<void> {
         const host: Host | undefined = this.getHostFromDungeon(dungeonID);
         if (host !== undefined) {
             host.socket.emit('stop', { dungeonID: dungeonID });
+            return new Promise((resolve, reject) => {
+                host.socket.once(`exit-${dungeonID}`, () => {
+                    resolve();
+                });
+                setTimeout(resolve, DUNGEON_EXIT_TIMEOUT);
+            });
         }
     }
 

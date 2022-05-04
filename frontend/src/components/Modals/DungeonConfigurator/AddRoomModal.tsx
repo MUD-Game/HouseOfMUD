@@ -1,13 +1,20 @@
+/**
+ * @module AddRoomModal
+ * @description Modal for adding a new room to the dungeon.
+ * @author Raphael Sack
+ * @category Modal
+ */
+
 import React from 'react';
 import { Modal, Button, ModalProps, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import MudInput from 'src/components/Custom/MudInupt';
+import Alert from 'src/components/Custom/Alert';
+import MudInput from 'src/components/Custom/Input';
 import { MudRoom } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
-import { useMudConsole } from '../../../hooks/useMudConsole';
 import '../index.css'
 //REFACTOR: Redunant Modal, make generic pls
-export interface AddRoomModalProps {
+export interface AddRoomModalProps{
     show: boolean;
     onHide: () => void;
     onSendRoom: (item: MudRoom) => void;
@@ -20,15 +27,20 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
     const dt = 'dungeon_configurator';
 
     const [name, setName] = React.useState<string>( "");
-    const [description, setDescription] = React.useState<string>( "");
-    const homosole = useMudConsole();
+    const [description, setDescription] = React.useState<string>("");
+
+    const [error, setError] = React.useState<string>("");
 
 
+    const modalIsInvalid = () => {
+        return validator.isEmpty(name) || validator.isEmpty(description);
+    }
 
     const onSubmit = () => {
-        if (validator.isEmpty(name) || validator.isEmpty(description)) {
-            homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddRoomModal");
+        if (modalIsInvalid()) {
+            setError("failvalidation.room");
         } else {
+            setError("failvalidation.room");
             const [x,y] = props.coordinates;
             const characterRoom: MudRoom = {
                 id: String(props.coordinates),
@@ -47,7 +59,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
     }
     
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }
@@ -68,6 +80,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
+                    <Alert message={error} type="error" setMessage={setError} />
                     <MudInput colmd={6} placeholder="x" value={props.coordinates[0]} disabled />
                     <MudInput colmd={6} placeholder="y" value={props.coordinates[1]} disabled />
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />

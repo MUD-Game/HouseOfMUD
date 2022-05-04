@@ -1,8 +1,10 @@
 import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
+import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
+import { actionMessages } from "./action-resources";
 
 export class DieAction extends Action {
 
@@ -10,7 +12,7 @@ export class DieAction extends Action {
         super("", dungeonController)
     }
 
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let characterToDie: Character = dungeon.getCharacter(user)
         let currentPosition: string = characterToDie.getPosition()
@@ -41,7 +43,15 @@ export class DieAction extends Action {
         //set position to start room
         characterToDie.modifyPosition("0,0")
 
+        const amqpAdapter = this.dungeonController.getAmqpAdapter()
         //reset the stats to start amount
         characterToDie.currentStats = characterToDie.maxStats
+        await amqpAdapter.sendToClient(user, {
+            action: 'minimap.move',
+            data: "0,0"
+        });
+        this.dungeonController.sendInventoryData(user)
+        const description = actionMessages.die
+        amqpAdapter.sendToClient(user, {action: "message", data: {message: description}})
     }
 }

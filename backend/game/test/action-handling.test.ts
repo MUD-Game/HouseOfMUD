@@ -496,7 +496,7 @@ describe('Actions', () => {
     amqpAdapter.unbindClientQueue = jest.fn();
 
     test('DieAction should remove all items from character, add them to the current room and reset position and stats to start values', () => {
-        //decrement stats and die automatically
+        TestCharacterToDie.currentStats.hp = 0;
         dieAction.performAction('Jochen', []);
         expect(TestDungeon.characters['Jochen'].getInventory()).toEqual<ItemInfo[]>([]);
         expect(TestDungeon.rooms['2'].getItemInfos()).toEqual<ItemInfo[]>([new ItemInfo(TestItem.id, 2)]);

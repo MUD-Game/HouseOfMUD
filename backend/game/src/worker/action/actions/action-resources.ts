@@ -50,7 +50,7 @@ export const errorMessages = {
     itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion existiert nicht!",
+    actionDoesNotExist: "Diese Aktion ist nicht möglich!",
     lookError: " Fehler!",
 }
 
@@ -65,6 +65,7 @@ export interface MiniMapData {
         connections: Room['connections'],
         explored: boolean
     }};
+    startRoom: string;
 }
 
 export function parseResponseString(str: string, ...args: string[]): string {

@@ -6,14 +6,12 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, actionMessages } from "./action-resources";
 
-export class InventoryAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController
+export class InventoryAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.inventory;
-        this.dungeonController = dungeonController;
+        super(triggers.inventory, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let dungeonId: string = dungeon.getId()

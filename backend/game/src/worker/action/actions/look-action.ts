@@ -118,12 +118,14 @@ export class LookAction extends Action {
         actionString += ". "
         description += actionString
 
-        let roomPlayers: Character[] = Object.values(dungeon.characters)
+        let dungeonCharacters: Character[] = Object.values(dungeon.characters)
         let playersString: string = actionMessages.lookPlayers
         try {
-            roomPlayers.forEach(character => {
-                let characterName: string = character.getName()
-                playersString += ` ${characterName}`
+            dungeonCharacters.forEach(character => {
+                if (character.getPosition() === roomId) {
+                    let characterName: string = character.getName()
+                    playersString += ` ${characterName}`
+                }
             })
         } catch(e) {
             console.log(e)

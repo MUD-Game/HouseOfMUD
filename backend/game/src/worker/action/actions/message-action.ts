@@ -8,14 +8,11 @@ import { triggers, actionMessages, parseResponseString, extras } from "./action-
  * Action that gets performed when user sends a "sag" message.
  */
 export class MessageAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.message;
-        this.dungeonController = dungeonController;
+        super(triggers.message, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let messageBody: string = args.join(' ')
         let senderCharacter: Character = this.dungeonController.getDungeon().getCharacter(user)

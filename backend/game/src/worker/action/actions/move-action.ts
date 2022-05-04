@@ -7,20 +7,9 @@ import { Action } from "../action";
 import { triggers, errorMessages, actionMessages, parseResponseString } from "./action-resources";
 
 export class MoveAction extends Action {
-    /**
-     * Chat command to trigger the action.
-     */
-    trigger: string;
-
-    /**
-     * DungeonController which holds the relevant AmqpAdapter and Dungeon data.
-     */
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.move;
-        this.dungeonController = dungeonController;
+        super(triggers.move, dungeonController);
     }
 
     /**

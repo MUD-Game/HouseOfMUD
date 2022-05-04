@@ -8,13 +8,9 @@ import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
 export class DiscardAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.discard;
-        this.dungeonController = dungeonController;
+        super(triggers.discard, dungeonController);
     }
 
     performAction(user: string, args: string[]) {

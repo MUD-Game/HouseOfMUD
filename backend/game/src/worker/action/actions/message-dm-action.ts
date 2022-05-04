@@ -9,14 +9,11 @@ import { actionMessages, extras, parseResponseString, triggers } from "./action-
  * Action that gets performed when user sends a "fluesterdm" message.
  */
  export class MessageMasterAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.messageMaster;
-        this.dungeonController = dungeonController;
+        super(triggers.messageMaster, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)

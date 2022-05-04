@@ -10,14 +10,11 @@ import { Action } from "../action";
 import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
 export class LookAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.look;
-        this.dungeonController = dungeonController
+        super(triggers.look, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let dungeonId: string = dungeon.getId()

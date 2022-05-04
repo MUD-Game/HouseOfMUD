@@ -8,13 +8,9 @@ import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
 export class PickupAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.pickup;
-        this.dungeonController = dungeonController
+        super(triggers.pickup, dungeonController);
     }
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()

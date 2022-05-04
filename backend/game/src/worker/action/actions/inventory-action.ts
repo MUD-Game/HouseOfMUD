@@ -7,14 +7,11 @@ import { Action } from "../action";
 import { triggers, actionMessages } from "./action-resources";
 
 export class InventoryAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.inventory;
-        this.dungeonController = dungeonController;
+        super(triggers.inventory, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let dungeonId: string = dungeon.getId()

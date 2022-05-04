@@ -10,13 +10,9 @@ import { triggers, actionMessages, errorMessages, parseResponseString, extras } 
  * Action that gets performed when user sends a "fluester" message.
  */
 export class PrivateMessageAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.whisper;
-        this.dungeonController = dungeonController
+        super(triggers.whisper, dungeonController);
     }
     
     performAction(user: string, args: string[]) {

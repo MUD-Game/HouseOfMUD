@@ -4,13 +4,9 @@ import { Action } from "../action";
 import { triggers } from "./action-resources";
 
 export class BroadcastMessageAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.broadcast;
-        this.dungeonController = dungeonController;
+        super(triggers.broadcast, dungeonController);
     }
     
     performAction(user: string, args: string[]) {

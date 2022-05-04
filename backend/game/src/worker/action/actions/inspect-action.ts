@@ -7,13 +7,9 @@ import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
 export class InspectAction extends Action {
-    trigger: string;
-    dungeonController: DungeonController;
 
     constructor(dungeonController: DungeonController) {
-        super();
-        this.trigger = triggers.inspect;
-        this.dungeonController = dungeonController
+        super(triggers.inspect, dungeonController);
     }
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()

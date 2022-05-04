@@ -7,7 +7,7 @@ export interface ActionElement {
     output: string;
     description: string;
     events: ActionEvent[];
-    itemsneeded: ItemInfo[];
+    itemsneeded: string[];
   
     getCommand(): string
 }
@@ -18,7 +18,7 @@ export class ActionElementImpl implements ActionElement {
     output: string;
     description: string;
     events: ActionEvent[];
-    itemsneeded: ItemInfo[];
+    itemsneeded: string[];
 
     constructor(
     id: string,
@@ -26,7 +26,7 @@ export class ActionElementImpl implements ActionElement {
     output: string,
     description: string,
     events: ActionEvent[],
-    itemsneeded: ItemInfo[]
+    itemsneeded: string[]
     ) {
     (this.id = id),
         (this.command = command),

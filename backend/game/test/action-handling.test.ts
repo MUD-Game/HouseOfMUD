@@ -84,7 +84,7 @@ const TestActionAddHp: ActionElement = new ActionElementImpl(
     'Du hast einen Apfel gegessen!',
     'test',
     [new ActionEventImpl('addhp', '10')],
-    [new ItemInfo(TestItem.id, 1)]
+    [TestItem.id]
 );
 const TestActionRemoveHp: ActionElement = new ActionElementImpl(
     '2',
@@ -92,7 +92,7 @@ const TestActionRemoveHp: ActionElement = new ActionElementImpl(
     'Du hast einen Giftpilz gegessen!',
     'test',
     [new ActionEventImpl('removehp', '20')],
-    [new ItemInfo(TestItemRemoveHp.id, 1)]
+    [TestItemRemoveHp.id]
 );
 const TestActionAddMana: ActionElement = new ActionElementImpl(
     '3',
@@ -100,7 +100,7 @@ const TestActionAddMana: ActionElement = new ActionElementImpl(
     'Du hast einen Manatrank getrunken!',
     'test',
     [new ActionEventImpl('addmana', '10')],
-    [new ItemInfo(TestItemAddMana.id, 1)]
+    [TestItemAddMana.id]
 );
 const TestActionRemoveMana: ActionElement = new ActionElementImpl(
     '4',
@@ -132,7 +132,7 @@ const TestActionRemoveItem: ActionElement = new ActionElementImpl(
     'Du hast einen Stein geworfen!',
     'test',
     [new ActionEventImpl('removeItem', '6')],
-    [new ItemInfo(TestItemRemoveItem.id, 1)]
+    [TestItemRemoveItem.id]
 );
 const TestActionAddItem: ActionElement = new ActionElementImpl(
     '8',
@@ -156,7 +156,7 @@ const TestActionItemMissing: ActionElement = new ActionElementImpl(
     'test',
     'test',
     [new ActionEventImpl('addhp', '3')],
-    [new ItemInfo(TestItemPickup.id, 1)]
+    [TestItemPickup.id]
 );
 
 const TestRoom: Room = new RoomImpl(
@@ -249,7 +249,6 @@ const TestRoomActions: Room = new RoomImpl(
 );
 const TestCharacter: Character = new CharacterImpl(
     '1',
-    '1',
     'Jeff',
     'Magier',
     '1',
@@ -261,7 +260,6 @@ const TestCharacter: Character = new CharacterImpl(
 );
 const TestCharacterSameRoom: Character = new CharacterImpl(
     '2',
-    '1',
     'Spieler',
     'Magier',
     '1',
@@ -273,7 +271,6 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
 );
 const TestCharacterNotSameRoom: Character = new CharacterImpl(
     '3',
-    '1',
     'Bob',
     'Magier',
     '1',
@@ -285,7 +282,6 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
 );
 const TestCharacterDungeonActions: Character = new CharacterImpl(
     '4',
-    '1',
     'CoolerTyp',
     'Magier',
     '1',
@@ -771,7 +767,7 @@ describe("Dungeon Actions", () => {
         await dungeonActionItemMissing.performAction('CoolerTyp', ['leben']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Dir fehlen folgende Items fuer die Aktion: Gold (1x)" },
+            data: { message: "Dir fehlen folgende Items fuer die Aktion: Gold" },
         })
     })
 

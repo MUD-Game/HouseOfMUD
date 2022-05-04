@@ -30,12 +30,12 @@ export class DungeonAction extends Action {
         let roomActions: string[] = room.getActions()
         if (roomActions.includes(this.actionElement.id)) {
             let characterInventory: ItemInfo[] = senderCharacter.getInventory()
-            let missingItems: ItemInfo[] = this.returnMissingItems(characterInventory)
+            let missingItems: string[] = this.returnMissingItems(characterInventory)
             if (missingItems.length === 0) {
                 this.actionElement.itemsneeded.forEach(itemNeeded => {
-                    let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == itemNeeded.item)[0]
-                    if (itemInInventory.count > itemNeeded.count){
-                        itemInInventory.count -= itemNeeded.count
+                    let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == itemNeeded)[0]
+                    if (itemInInventory.count > 1){
+                        itemInInventory.count -= 1
                     } else {
                         let indexOfItemToDiscardInInventory: number = characterInventory.indexOf(itemInInventory)
                         characterInventory.splice(indexOfItemToDiscardInInventory, 1)
@@ -66,10 +66,9 @@ export class DungeonAction extends Action {
             } else {
                 let itemsMissingString: string = actionMessages.dungeonActionItemsMissing
                 missingItems.forEach(missingItem => {
-                    let item: Item = dungeon.getItem(missingItem.item)
+                    let item: Item = dungeon.getItem(missingItem)
                     let itemName: string = item.getName()
-                    let itemCount: number = missingItem.count
-                    itemsMissingString += ` ${itemName} (${itemCount}x)`
+                    itemsMissingString += ` ${itemName}`
                 })
                 await amqpAdapter.sendActionToClient(user, 'message', { message: itemsMissingString });
             }
@@ -78,10 +77,10 @@ export class DungeonAction extends Action {
         }
     }
 
-    returnMissingItems(characterInventory: ItemInfo[]): ItemInfo[] {
-        let missingItems: ItemInfo[] = []
+    returnMissingItems(characterInventory: ItemInfo[]): string[] {
+        let missingItems: string[] = []
         this.actionElement.itemsneeded.forEach(item => {
-            if (characterInventory.some(itemInInventory => itemInInventory.item === item.item && itemInInventory.count >= item.count)) {
+            if (characterInventory.some(itemInInventory => itemInInventory.item === item)) {
                 return;
             } else {
                 missingItems.push(item)

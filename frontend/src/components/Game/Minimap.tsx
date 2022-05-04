@@ -88,6 +88,11 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             const [oldX, oldY] = oldId.split(',').map((x:any)=>parseInt(x));
             const [newX, newY] = id.split(',').map(x=>parseInt(x));
             // initially for ltr
+            if(Math.abs(oldX-newX) > 1){
+                // Its a move that isnt only one room
+                stageRef.current.to({ x: -rooms[id].xCoordinate * roomOffset * initialScale, y: -rooms[id].yCoordinate * roomOffset * initialScale, duration: 1, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
+                return;
+            }
             let xHalf = (newX * roomOffset - roomMargin / 2);
             const xFull = (newX * roomOffset + roomSize / 2);
             let yHalf = (newY * roomOffset - roomMargin / 2);
@@ -157,7 +162,6 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
 
     const focusOnRoom = (roomId:string, isAnc:boolean) => {
-        console.log("focus")
         if(isAnc && stageRef.current){
             const xc = parseInt((roomId || currentRoomId).split(",")[0]);
             const yc = parseInt((roomId || currentRoomId).split(",")[1]);

@@ -58,6 +58,10 @@ export class SupervisorLink {
             }
         });
 
+        this.forkHandler.dungeonStateCallback = (dungeonID: string, currentPlayers: number) => {
+            socket.emit('dungeonState', { dungeonID: dungeonID, currentPlayers: currentPlayers });
+        }
+
         socket.on('stop', (data: any) => {
             if (data.dungeonID !== undefined) {
                 this.forkHandler.stopDungeon(data.dungeonID);

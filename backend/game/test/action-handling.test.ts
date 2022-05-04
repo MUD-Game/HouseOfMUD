@@ -68,19 +68,79 @@ const TestNpc: Npc = new NpcImpl(
 const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
 const TestItemDiscard: Item = new ItemImpl('2', 'Schwert', 'Schwertiges Schwert');
 const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
+const TestItemRemoveHp: Item = new ItemImpl('4', 'Giftpilz', 'Test');
+const TestItemAddHp: Item = new ItemImpl('5', 'Manatrank', 'Test');
+const TestItemRemoveItem: Item = new ItemImpl('6', 'Stein', 'Test');
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
     'open',
     'open'
 );
-const TestAction: ActionElement = new ActionElementImpl(
+const TestActionAddHp: ActionElement = new ActionElementImpl(
     '1',
     'essen Apfel',
-    'gegessen',
-    'essen aktion',
+    'Du hast einen Apfel gegessen!',
+    'test',
     [new ActionEventImpl('addhp', '10')],
     ['1']
 );
+const TestActionRemoveHp: ActionElement = new ActionElementImpl(
+    '2',
+    'essen Giftpilz',
+    'Du hast einen Giftpilz gegessen!',
+    'test',
+    [new ActionEventImpl('removehp', '20')],
+    ['4']
+);
+const TestActionAddMana: ActionElement = new ActionElementImpl(
+    '3',
+    'trinken Manatrank',
+    'Du hast einen Manatrank getrunken!',
+    'test',
+    [new ActionEventImpl('addmana', '10')],
+    ['5']
+);
+const TestActionRemoveMana: ActionElement = new ActionElementImpl(
+    '4',
+    'trinke aus dem Brunnen',
+    'Du hast aus dem Brunnen getrunken!',
+    'test',
+    [new ActionEventImpl('removemana', '20')],
+    []
+);
+const TestActionAddDamage: ActionElement = new ActionElementImpl(
+    '5',
+    'trinke Bier',
+    'Du hast ein Bier getrunken!',
+    'test',
+    [new ActionEventImpl('adddmg', '10')],
+    []
+);
+const TestActionRemoveDamage: ActionElement = new ActionElementImpl(
+    '6',
+    'nahkampf',
+    'Du wechselst in den Nahkampf!',
+    'test',
+    [new ActionEventImpl('removedmg', '20')],
+    []
+);
+const TestActionRemoveItem: ActionElement = new ActionElementImpl(
+    '7',
+    'werfe Stein',
+    'Du hast einen Stein geworfen!',
+    'test',
+    [new ActionEventImpl('removeItem', '6')],
+    ['6']
+);
+const TestActionAddItem: ActionElement = new ActionElementImpl(
+    '8',
+    'oeffne Truhe',
+    'Du hast die Truhe geoeffnet!',
+    'test',
+    [new ActionEventImpl('additem', '3')],
+    []
+);
+
 const TestRoom: Room = new RoomImpl(
     '1',
     'Raum-1',
@@ -88,7 +148,7 @@ const TestRoom: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     TestConnections,
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     2
 );
@@ -99,7 +159,7 @@ const TestRoomNorth: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'open'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     1
 );
@@ -110,7 +170,7 @@ const TestRoomEast: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     3,
     2
 );
@@ -121,7 +181,7 @@ const TestRoomSouth: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     3
 );
@@ -132,7 +192,7 @@ const TestRoomWest: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('open', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     1,
     2
 );
@@ -143,7 +203,7 @@ const TestRoomNorthNorth: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'closed'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     0
 );
@@ -154,9 +214,20 @@ const TestRoomNorthEast: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     3,
     1
+);
+const TestRoomActions: Room = new RoomImpl(
+    '8',
+    'Raum-A',
+    'Der Raum zum Testen der dungeonspezifischen Aktionen',
+    [TestNpc.id],
+    [new ItemInfo(TestItem.id,1)],
+    new ConnectionInfoImpl('inactive', 'inactive'),
+    [TestActionAddHp.id, TestActionRemoveHp.id, TestActionAddMana.id, TestActionRemoveMana.id, TestActionAddDamage.id, TestActionRemoveDamage.id, TestActionAddItem.id, TestActionRemoveItem.id],
+    10,
+    10
 );
 const TestCharacter: Character = new CharacterImpl(
     '1',
@@ -194,6 +265,18 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     TestRoomNorth.id,
     [new ItemInfo(TestItem.id,1)]
 );
+const TestCharacterDungeonActions: Character = new CharacterImpl(
+    '4',
+    '1',
+    'CoolerTyp',
+    'Magier',
+    '1',
+    '1',
+    TestMaxStats,
+    TestStartStats,
+    TestRoomActions.id,
+    [new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
+);
 const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     'TestDungeon1',
@@ -205,7 +288,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     [TestSpecies],
     [TestClass],
     [TestGender],
-    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
+    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions],
     [
         TestRoom,
         TestRoomNorth,
@@ -213,11 +296,12 @@ const TestDungeon: Dungeon = new DungeonImpl(
         TestRoomSouth,
         TestRoomWest,
         TestRoomNorthNorth,
-        TestRoomNorthEast
+        TestRoomNorthEast,
+        TestRoomActions
     ],
     ['abc'],
-    [TestAction],
-    [TestItem, TestItemDiscard, TestItemPickup],
+    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem],
+    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddHp, TestItemRemoveHp, TestItemRemoveItem],
     [TestNpc]
 );
 const TestDungeonController: DungeonController = new DungeonController(
@@ -232,18 +316,18 @@ describe('ActionHandler', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions[triggers.message];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
-    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
-    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
-    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
-    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
-    const lookAction: LookAction = actionHandler.actions[triggers.look];
-    const moveAction: MoveAction = actionHandler.actions[triggers.move];
-    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast] as BroadcastMessageAction;
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
+    const lookAction: LookAction = actionHandler.actions[triggers.look] as LookAction;
+    const moveAction: MoveAction = actionHandler.actions[triggers.move] as MoveAction;
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup] as PickupAction;
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
     const invalidAction: InvalidAction = actionHandler.invalidAction;
     
     messageAction.performAction = jest.fn();
@@ -374,25 +458,25 @@ describe('Actions', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions[triggers.message];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
-    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
-    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
-    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
-    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
-    const lookAction: LookAction = actionHandler.actions[triggers.look];
-    const moveAction: MoveAction = actionHandler.actions[triggers.move];
-    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast] as BroadcastMessageAction;
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
+    const lookAction: LookAction = actionHandler.actions[triggers.look] as LookAction;
+    const moveAction: MoveAction = actionHandler.actions[triggers.move] as MoveAction;
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup] as PickupAction;
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
+    const invalidAction: InvalidAction = actionHandler.invalidAction;
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();
     amqpAdapter.broadcast = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
-    jest.useFakeTimers()
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
         messageAction.performAction('Jeff', [
@@ -462,69 +546,68 @@ describe('Actions', () => {
 
     
     test(`MoveAction should modify the position, call the functions to bind the client queues 
-    and call sendWithRouting on the AmqpAdapter when user moves to another room`, () => {
-        moveAction.performAction('Jeff', ['Norden']);
+    and call sendWithRouting on the AmqpAdapter when user moves to another room`, async () => {
+        await moveAction.performAction('Jeff', ['Norden']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `Jeff ist Raum-N beigetreten!` },
+            data: { message: `Jeff hat Raum-1 verlassen!` },
         });
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith(
             'Jeff',
             'room.1'
         );
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('Jeff', 'room.2');
-        jest.runAllTimers()
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
             data: { message: `Jeff ist Raum-N beigetreten!` },
         });
     });
 
-    test('MoveAction should modify the position to the room in the East when user moves east', () => {
-        moveAction.performAction('Jeff', ['Osten']);
+    test('MoveAction should modify the position to the room in the East when user moves east', async () => {
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomEast.id);
     });
 
-    test('MoveAction should modify the position to the room in the South when user moves south', () => {
-        moveAction.performAction('Jeff', ['Sueden']);
+    test('MoveAction should modify the position to the room in the South when user moves south', async () => {
+        await moveAction.performAction('Jeff', ['Sueden']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomSouth.id);
     });
 
-    test('MoveAction should modify the position to the room in the West when user moves west', () => {
-        moveAction.performAction('Jeff', ['Westen']);
+    test('MoveAction should modify the position to the room in the West when user moves west', async () => {
+        await moveAction.performAction('Jeff', ['Westen']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomWest.id);
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Osten']);
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "In diese Richtung geht es nicht weiter!" },
         });
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', async() => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Nord-Sueden']);
+        await moveAction.performAction('Jeff', ['Nord-Sueden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "Diese Richtung existiert nicht!" },
         });
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Norden']);
+        await moveAction.performAction('Jeff', ['Norden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "In diese Richtung ist der Raum geschlossen!" },
         });
     });
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorthNorth.id;
-        moveAction.performAction('Jeff', ['Osten']);
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: "In diese Richtung geht es nicht weiter!" },
@@ -538,7 +621,7 @@ describe('Actions', () => {
             action: 'message',
             data: {
                 message:
-                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel. Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. Du kannst in diesem Raum folgende Aktionen ausfuehren: essen Apfel. In diesem Raum befinden sich folgende Spieler: Jeff Spieler Bob. ',
+                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel (1x). Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. Du kannst in diesem Raum folgende Aktionen ausfuehren: essen Apfel. In diesem Raum befinden sich folgende Spieler: Jeff Spieler. ',
             },
         });
     });
@@ -547,7 +630,7 @@ describe('Actions', () => {
         inventoryAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du hast folgende Items im Inventar: Apfel` },
+            data: { message: `Du hast folgende Items im Inventar: Apfel (1x)` },
         });
     });
 
@@ -584,8 +667,8 @@ describe('Actions', () => {
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
         TestDungeon.characters['Jeff'].inventory.push({item: TestItemDiscard.id, count: 1})
         discardAction.performAction('Jeff', ['Schwert']);
-        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id])
-        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id, TestItemDiscard.id])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}])
+        expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemDiscard.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item abgelegt: Schwert` },
@@ -612,8 +695,8 @@ describe('Actions', () => {
     test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
         TestDungeon.rooms[TestRoom.id].items.push({item: TestItemPickup.id, count: 1})
         pickupAction.performAction('Jeff', ['Gold']);
-        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
-        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemPickup.id}])
+        expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item aufgehoben: Gold` },
@@ -637,3 +720,29 @@ describe('Actions', () => {
         });
     })
 });
+
+describe("Dungeon Actions", () => {
+    beforeEach(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+    })
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    afterAll(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+    })
+
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
+    const dungeonActionAddHp: DungeonAction = actionHandler.dungeonActions[TestActionAddHp.command];
+    const dungeonActionRemoveHp: DungeonAction = actionHandler.dungeonActions[TestActionRemoveHp.command];
+    const dungeonActionAddMana: DungeonAction = actionHandler.dungeonActions[TestActionAddMana.command];
+    const dungeonActionRemoveMana: DungeonAction = actionHandler.dungeonActions[TestActionRemoveMana.command];
+    const dungeonActionAddDamage: DungeonAction = actionHandler.dungeonActions[TestActionAddDamage.command];
+    const dungeonActionRemoveDamage: DungeonAction = actionHandler.dungeonActions[TestActionRemoveDamage.command];
+    const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
+    const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
+
+
+    amqpAdapter.sendToClient = jest.fn();
+
+})

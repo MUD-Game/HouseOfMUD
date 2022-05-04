@@ -6,15 +6,22 @@
  * @props {@linkcode InventoryProps}
  */
 
-import React from 'react'
+import React, { useState } from 'react'
+import { useRabbitMQ } from '../../hooks/useRabbitMQ';
 export interface InventoryProps {
-    items: any; //TODO: define item data
+    inventoryData: { item: string
+        count: number; }[]; //TODO: define item data
 }
 
-const Inventory: React.FC<InventoryProps> = ({ items }) => {
+const Inventory: React.FC<InventoryProps> = ({ inventoryData }) => {
+
     return (
         <div className="inventory drawn-border mb-2">
-            <p className='text-center pt-5'>Inventory</p>
+            <ul>
+                {inventoryData.map(itemName => {
+                    return ( <li key={itemName.item}> {itemName.item} [{itemName.count}] </li> )
+                })}
+            </ul>
         </div>
     )
 }

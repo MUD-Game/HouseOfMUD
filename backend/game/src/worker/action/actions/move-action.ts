@@ -6,20 +6,10 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, errorMessages, actionMessages, parseResponseString } from "./action-resources";
 
-export class MoveAction implements Action {
-    /**
-     * Chat command to trigger the action.
-     */
-    trigger: string;
-
-    /**
-     * DungeonController which holds the relevant AmqpAdapter and Dungeon data.
-     */
-    dungeonController: DungeonController;
+export class MoveAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.move;
-        this.dungeonController = dungeonController;
+        super(triggers.move, dungeonController);
     }
 
     /**
@@ -108,9 +98,14 @@ export class MoveAction implements Action {
                     action: 'message',
                     data: { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)},
                 });
+                // Sends the new room id to the client.
+                await amqpAdapter.sendToClient(user, {
+                    action: 'minimap.move',
+                    data: destinationRoomId
+                });
             }
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             amqpAdapter.sendToClient(user, {
                 action: 'message',
                 data: { message: actionMessages.movePathNotAvailable },

@@ -6,13 +6,10 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionMessages, errorMessages, parseResponseString, triggers } from "./action-resources";
 
-export class InspectAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController;
+export class InspectAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.inspect;
-        this.dungeonController = dungeonController
+        super(triggers.inspect, dungeonController);
     }
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()

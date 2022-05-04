@@ -1,15 +1,15 @@
+import { ActionEvent } from "../../../data/interfaces/actionEvent";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 
-export class DungeonAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController
+export class DungeonAction extends Action {
+    actionEvents: ActionEvent[]
     regEx: RegExp
 
-    constructor(trigger: string, dungeonController: DungeonController) {
-        this.trigger = trigger;
-        this.dungeonController = dungeonController
-        let stringForRegEx: string = `^(${trigger})`
+    constructor(trigger: string, dungeonController: DungeonController, actionEvents: ActionEvent[]) {
+        super(trigger, dungeonController);
+        this.actionEvents = actionEvents
+        let stringForRegEx: string = `^(${trigger})$`
         this.regEx = new RegExp(stringForRegEx)
     }
 

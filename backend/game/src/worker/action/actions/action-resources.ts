@@ -2,6 +2,8 @@
  * File that holds all necessary string resources.
  */
 
+import { Room } from "../../../data/interfaces/room";
+
 export const triggers = {
     discard: "ablegen",
     inspect: "untersuche",
@@ -50,12 +52,22 @@ export const errorMessages = {
     itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion existiert nicht!",
+    actionDoesNotExist: "Diese Aktion ist nicht möglich!",
     lookError: " Fehler!",
 }
 
 export const extras = {
     dungeonMasterId: '0'
+}
+
+export interface MiniMapData {
+    rooms: {[key:string]: {
+        xCoordinate: Room['xCoordinate'],
+        yCoordinate: Room['yCoordinate'],
+        connections: Room['connections'],
+        explored: boolean
+    }};
+    startRoom: string;
 }
 
 export function parseResponseString(str: string, ...args: string[]): string {

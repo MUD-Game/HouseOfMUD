@@ -21,7 +21,7 @@ export const triggers = {
     //dungeonmaster
     addDamage: "adddmg",
     addHp: "addhp",
-    addMana: "addhp",
+    addMana: "addmana",
     removeMana: "remmana",
     removeHp: "remhp",
     removeDamage: "remdmg"

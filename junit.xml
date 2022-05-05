@@ -1,137 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Unit Tests" tests="52" failures="1" errors="0" time="3.279">
-  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="1" skipped="51" timestamp="2022-05-05T16:07:32" time="3.159" tests="52">
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast" time="0">
-      <skipped/>
+<testsuites name="Unit Tests" tests="53" failures="8" errors="0" time="43.492">
+  <testsuite name="jest.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-05T16:13:23" time="19.368" tests="1">
+    <testcase classname="Test - Jenkins Pipeline" name="Test jenkins pipeline" time="0.008">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0">
-      <skipped/>
+  </testsuite>
+  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="8" skipped="0" timestamp="2022-05-05T16:13:23" time="39.51" tests="52">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast" time="0.017">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.2">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.005">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0.008">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.004">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.004">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0.006">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a &quot;fluesterdm&quot; action message" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0">
-      <skipped/>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a &quot;fluesterdm&quot; action message" time="0.004">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0.003">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0.214">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+- Expected
++ Received
+
+  &quot;0&quot;,
+  Object {
+    &quot;action&quot;: &quot;message&quot;,
+    &quot;data&quot;: Object {
+-     &quot;message&quot;: &quot;[privat] Dungeon Master -&gt; Spieler: Hallo&quot;,
++     &quot;message&quot;: &quot;Der Charakter Spieler existiert nicht in diesem Dungeon!&quot;,
+    },
+  },
+
+Number of calls: 1
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:515:42)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room" time="0.003">
+    </testcase>
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.003">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position, call the functions to bind the client queues 
-    and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0">
-      <skipped/>
+    and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0.007">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the East when user moves east" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the East when user moves east" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the South when user moves south" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the South when user moves south" time="0.004">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.003">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist" time="0.003">
     </testcase>
-    <testcase classname="Test - Actions" name="LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="LookAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.007">
     </testcase>
-    <testcase classname="Test - Actions" name="InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="InventoryAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter with the correct routingKey and payload" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.009">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.022">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0.007">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon" time="0">
-      <skipped/>
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon" time="0.01">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 Attack and then have 11 in total" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 Attack and then have 11 in total" time="0.005">
+      <failure>Error: expect(received).toEqual(expected) // deep equality
+
+Expected: 11
+Received: 12
+    at C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:786:76
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much attack so that he reaches his max Attack" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much attack so that he reaches his max Attack" time="0.001">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual HP to a Charakter" time="0.007">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual HP to a Charakter" time="0.012">
       <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
 
 Expected: &quot;dungeonmaster&quot;, {&quot;action&quot;: &quot;message&quot;, &quot;data&quot;: {&quot;message&quot;: &quot;Jeff hat 1 Leben erhalten&quot;}}
@@ -156,46 +155,108 @@ Received
           },
 
 Number of calls: 2
-    at Object.&lt;anonymous&gt; (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\backend\game\test\action-handling.test.ts:796:46)
-    at Promise.then.completed (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:796:46)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
     at new Promise (&lt;anonymous&gt;)
-    at callAsyncCircusFn (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
-    at _callCircusTest (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
-    at _runTest (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
-    at _runTestsForDescribeBlock (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
-    at _runTestsForDescribeBlock (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
-    at run (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
-    at runAndTransformResultsToJestFormat (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
-    at jestAdapter (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
-    at runTestInternal (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
-    at runTest (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
-    at TestRunner.runTests (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\jest-runner\build\index.js:101:12)
-    at TestScheduler.scheduleTests (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\@jest\core\build\TestScheduler.js:333:13)
-    at runJest (C:\Users\lucan\Desktop\programming\VSC\MUD\HouseOfMud\HouseOfMUD\node_modules\@jest\core\build\runJest.js:404:19)</failure>
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 HP and then have 51 in total" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 HP and then have 51 in total" time="0.002">
+      <failure>Error: expect(received).toEqual(expected) // deep equality
+
+Expected: 51
+Received: 50
+    at C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:804:79
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much life so that he reaches his max life" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much life so that he reaches his max life" time="0.001">
+      <failure>Error: expect(received).toEqual(expected) // deep equality
+
+Expected: 100
+Received: 50
+    at C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:809:79
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Mana to a Charakter" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Mana to a Charakter" time="0.006">
+      <failure>Error: expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+Expected: &quot;dungeonmaster&quot;, {&quot;action&quot;: &quot;message&quot;, &quot;data&quot;: {&quot;message&quot;: &quot;Jeff hat 1 Mana erhalten&quot;}}
+Received
+       1
+          &quot;Jeff&quot;,
+          Object {
+            &quot;action&quot;: &quot;message&quot;,
+            &quot;data&quot;: Object {
+        -     &quot;message&quot;: &quot;Jeff hat 1 Mana erhalten&quot;,
+        +     &quot;message&quot;: &quot;Du hast 0 Mana erhalten&quot;,
+            },
+          },
+       2
+          &quot;dungeonmaster&quot;,
+          Object {
+            &quot;action&quot;: &quot;message&quot;,
+            &quot;data&quot;: Object {
+        -     &quot;message&quot;: &quot;Jeff hat 1 Mana erhalten&quot;,
+        +     &quot;message&quot;: &quot;Jeff hat 0 Mana erhalten&quot;,
+            },
+          },
+
+Number of calls: 2
+    at Object.&lt;anonymous&gt; (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:814:50)
+    at Promise.then.completed (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:391:28)
+    at new Promise (&lt;anonymous&gt;)
+    at callAsyncCircusFn (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\utils.js:316:10)
+    at _callCircusTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:218:40)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at _runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:155:3)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:66:9)
+    at _runTestsForDescribeBlock (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:60:9)
+    at run (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\run.js:25:3)
+    at runAndTransformResultsToJestFormat (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapterInit.js:170:21)
+    at jestAdapter (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-circus\build\legacy-code-todo-rewrite\jestAdapter.js:82:19)
+    at runTestInternal (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:389:16)
+    at runTest (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\runTest.js:475:34)
+    at Object.worker (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\node_modules\jest-runner\build\testWorker.js:133:12)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0.003">
+      <failure>Error: expect(received).toEqual(expected) // deep equality
+
+Expected: 51
+Received: 100
+    at C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:822:85
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0.003">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose 2 Hp and then have 48 in total" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose 2 Hp and then have 48 in total" time="0.002">
+      <failure>Error: expect(received).toEqual(expected) // deep equality
+
+Expected: 48
+Received: 46
+    at C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:841:83
+    at Generator.next (&lt;anonymous&gt;)
+    at fulfilled (C:\Users\sperl\HouseOfMUDBitteFunktionier\HouseOfMUD\backend\game\test\action-handling.test.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)</failure>
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he reaches 0" time="0">
-      <skipped/>
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he reaches 0" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>

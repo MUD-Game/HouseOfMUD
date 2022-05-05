@@ -22,14 +22,13 @@ export class AddHp implements Action {
         let hpstring: string = ''
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let maxHp: number = recipientCharacter.getMaxStats().getHp()
             try {
                 let hpCount: number = +args[0]
-         
                 if (maxHp - actualHp >= hpCount) {
-                    actualHp = actualHp + hpCount 
+                    actualHp = actualHp + hpCount
+                    console.log(actualHp) 
                     recipientCharacter.getCharakterStats().setHp(actualHp)
                    
                     hpstring = parseResponseString(dungeonMasterSendMessages.addHp, args.join(' '))

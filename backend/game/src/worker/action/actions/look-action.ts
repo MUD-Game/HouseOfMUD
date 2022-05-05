@@ -17,7 +17,6 @@ export class LookAction extends Action {
 
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
-        let dungeonId: string = dungeon.getId()
         let senderCharacter: Character = dungeon.getCharacter(user)
         let roomId: string = senderCharacter.getPosition()
         let room: Room = dungeon.getRoom(roomId)
@@ -95,25 +94,6 @@ export class LookAction extends Action {
         } catch(e) {
             console.log(e)
         }
-
-        let roomActions: string[] = room.getActions()
-        let actionString: string = actionMessages.lookActions
-        if (roomActions.length === 0) {
-            actionString += actionMessages.lookEmpty
-        } else {
-            try {
-                roomActions.forEach(actionId => {
-                    let action: ActionElement = dungeon.getAction(actionId)
-                    let actionCommand: string = action.getCommand()
-                    actionString += ` ${actionCommand}`
-                })
-            } catch(e) {
-                console.log(e)
-                actionString += errorMessages.lookError
-            }
-        }
-        actionString += ". "
-        description += actionString
 
         let dungeonCharacters: Character[] = Object.values(dungeon.characters)
         let playersString: string = actionMessages.lookPlayers

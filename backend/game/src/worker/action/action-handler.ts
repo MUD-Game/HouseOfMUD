@@ -5,6 +5,7 @@ import { extras, triggers } from './actions/action-resources';
 import { BroadcastMessageAction } from './actions/broadcast-message-action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';
+import { HelpAction } from './actions/help-action';
 import { InspectAction } from './actions/inspect-action';
 import InvalidAction from './actions/invalid-action';
 import { InventoryAction } from './actions/inventory-action';
@@ -14,6 +15,7 @@ import { MessageMasterAction } from './actions/message-dm-action';
 import { MoveAction } from './actions/move-action';
 import { PickupAction } from './actions/pickup-action';
 import { PrivateMessageAction } from './actions/private-message-action';
+import { ShowActions } from './actions/show-actions';
 import UnspecifiedAction from './actions/unspecified-action';
 import { AddDamage } from './dmactions/addDamage-action';
 import { AddHp } from './dmactions/addHp-action';
@@ -22,7 +24,7 @@ import { AddMana } from './dmactions/addMana-action';
 
 const regExpression = {
     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
-    predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified}))`, "i")
+    predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i")
 }
 /**
  * Processes Actions received by the dungeon controller.
@@ -81,6 +83,8 @@ export class ActionHandlerImpl implements ActionHandler {
             new BroadcastMessageAction(dungeonController),
             new UnspecifiedAction(dungeonController),
             new MessageMasterAction(dungeonController),
+            new HelpAction(dungeonController),
+            new ShowActions(dungeonController)
         ];
         actions.forEach(action => {
             this.actions[action.trigger!] = action;

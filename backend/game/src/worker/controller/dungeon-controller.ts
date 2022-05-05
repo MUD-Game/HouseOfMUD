@@ -4,7 +4,7 @@ import { Character, CharacterImpl } from "../../data/interfaces/character";
 import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
-import { MiniMapData } from "../action/actions/action-resources";
+import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
 function sendToHost(hostAction: string, data: any): void {
@@ -52,7 +52,9 @@ export class DungeonController {
                             await this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
                             this.amqpAdapter.broadcastAction('message', { message: `${data.character} ist dem Dungeon beigetreten!` });
                             sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-
+                            if (data.character !== 'dungeonmaster') {
+                                await this.amqpAdapter.sendActionToClient(data.character, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
+                            }
                             await this.sendStatsData(data.character)
                             await this.sendMiniMapData(data.character);
                             await this.sendInventoryData(data.character);

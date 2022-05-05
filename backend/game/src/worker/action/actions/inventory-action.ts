@@ -14,7 +14,6 @@ export class InventoryAction extends Action {
 
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
-        let dungeonId: string = dungeon.getId()
         let senderCharacter: Character = dungeon.getCharacter(user)
         let characterInventory: ItemInfo [] = senderCharacter.getInventory()
         let inventoryMessage: string = actionMessages.inventory

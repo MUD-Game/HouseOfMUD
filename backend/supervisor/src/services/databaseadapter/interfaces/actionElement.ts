@@ -10,6 +10,7 @@ export interface ActionElement {
     itemsneeded: string[];
   
     getCommand(): string
+    getDescription(): string
 }
   
 export class ActionElementImpl implements ActionElement {
@@ -38,5 +39,9 @@ export class ActionElementImpl implements ActionElement {
 
     getCommand(): string {
         return this.command
+    }
+
+    getDescription(): string {
+        return this.description
     }
 }

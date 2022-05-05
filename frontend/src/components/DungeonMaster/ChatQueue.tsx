@@ -26,7 +26,7 @@ const ChatQueue: React.FC<ChatQueueProps> = ({ commandQueue, onSendQueue }) => {
                         <li key={index}>{ command }</li>
                     )}
                 </ul>
-                { commandQueue !== [] ?
+                { commandQueue.length != 0 ?
                 <div className="p-2">
                     <button className='btn drawn-border btn-green w-100' onClick={ onSendQueue }>
                         <Send />

@@ -17,10 +17,9 @@ export interface Character {
     getPosition(): string
     modifyPosition(destinationRoom: string): any
     getInventory(): ItemInfo[]
-    getCharakterStats(): CharacterStats
-    getMaxStats(): CharacterStats
+    isDead(): boolean
 }
-  
+
 export class CharacterImpl implements Character {
     name: string;
     userId: string;
@@ -72,10 +71,13 @@ export class CharacterImpl implements Character {
     getInventory(): ItemInfo[] {
         return this.inventory
     }
-    getCharakterStats(): CharacterStats {
-        return this.currentStats
-    }
-    getMaxStats(): CharacterStats {
-        return this.maxStats
+
+    isDead(): boolean {
+        if(this.currentStats.hp > 0){
+            return false
+        }
+        else {
+            return true
+        }
     }
 }

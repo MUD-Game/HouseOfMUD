@@ -1,10 +1,12 @@
+import { Stats } from "fs";
+import { CharacterStats } from "../src/data/datasets/charcterStats";
 import { ActionElement, ActionElementImpl } from "../src/data/interfaces/actionElement";
 import { ActionEventImpl } from "../src/data/interfaces/actionEvent";
 import { Character, CharacterImpl } from "../src/data/interfaces/character";
 import { CharacterClass, CharacterClassImpl } from "../src/data/interfaces/characterClass";
 import { CharacterGender, CharacterGenderImpl } from "../src/data/interfaces/characterGender";
 import { CharacterSpecies, CharacterSpeciesImpl } from "../src/data/interfaces/characterSpecies";
-import { CharacterStats, CharacterStatsImpl } from "../src/data/interfaces/characterStats";
+import { CharacterStatsImpl } from "../src/data/interfaces/characterStats";
 import { ConnectionInfo, ConnectionInfoImpl } from "../src/data/interfaces/connectionInfo";
 import { Dungeon, DungeonImpl } from "../src/data/interfaces/dungeon";
 import { Item, ItemImpl } from "../src/data/interfaces/item";
@@ -14,6 +16,7 @@ import { Room, RoomImpl } from "../src/data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
 import { actionMessages, errorMessages, triggers } from "../src/worker/action/actions/action-resources";
 import { BroadcastMessageAction } from "../src/worker/action/actions/broadcast-message-action";
+import { DieAction } from "../src/worker/action/actions/die-action";
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
 import { InspectAction } from "../src/worker/action/actions/inspect-action";
@@ -26,9 +29,6 @@ import { MoveAction } from "../src/worker/action/actions/move-action";
 import { PickupAction } from "../src/worker/action/actions/pickup-action";
 import { PrivateMessageAction } from "../src/worker/action/actions/private-message-action";
 import UnspecifiedAction from "../src/worker/action/actions/unspecified-action";
-import { AddDamage } from "../src/worker/action/dmactions/addDamage-action";
-import { AddHp } from "../src/worker/action/dmactions/addHp-action";
-import { AddMana } from "../src/worker/action/dmactions/addMana-action";
 import { AmqpAdapter } from "../src/worker/amqp/amqp-adapter";
 import { DungeonController } from "../src/worker/controller/dungeon-controller";
 
@@ -47,7 +47,7 @@ const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(
     'Hexer',
     'Hexiger Hexer'
 );
-const TestStartStats: CharacterStats = new CharacterStatsImpl(50, 10, 50);
+const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
 const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
 const TestGender: CharacterGender = new CharacterGenderImpl(
     '1',
@@ -71,7 +71,7 @@ const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
 const TestItemDiscard: Item = new ItemImpl('2', 'Schwert', 'Schwertiges Schwert');
 const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
 const TestItemRemoveHp: Item = new ItemImpl('4', 'Giftpilz', 'Test');
-const TestItemAddMana: Item = new ItemImpl('5', 'Manatrank', 'Test');
+const TestItemAddHp: Item = new ItemImpl('5', 'Manatrank', 'Test');
 const TestItemRemoveItem: Item = new ItemImpl('6', 'Stein', 'Test');
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
@@ -84,7 +84,7 @@ const TestActionAddHp: ActionElement = new ActionElementImpl(
     'Du hast einen Apfel gegessen!',
     'test',
     [new ActionEventImpl('addhp', '10')],
-    [TestItem.id]
+    ['1']
 );
 const TestActionRemoveHp: ActionElement = new ActionElementImpl(
     '2',
@@ -92,7 +92,7 @@ const TestActionRemoveHp: ActionElement = new ActionElementImpl(
     'Du hast einen Giftpilz gegessen!',
     'test',
     [new ActionEventImpl('removehp', '20')],
-    [TestItemRemoveHp.id]
+    ['4']
 );
 const TestActionAddMana: ActionElement = new ActionElementImpl(
     '3',
@@ -100,7 +100,7 @@ const TestActionAddMana: ActionElement = new ActionElementImpl(
     'Du hast einen Manatrank getrunken!',
     'test',
     [new ActionEventImpl('addmana', '10')],
-    [TestItemAddMana.id]
+    ['5']
 );
 const TestActionRemoveMana: ActionElement = new ActionElementImpl(
     '4',
@@ -123,7 +123,7 @@ const TestActionRemoveDamage: ActionElement = new ActionElementImpl(
     'nahkampf',
     'Du wechselst in den Nahkampf!',
     'test',
-    [new ActionEventImpl('removedmg', '5')],
+    [new ActionEventImpl('removedmg', '20')],
     []
 );
 const TestActionRemoveItem: ActionElement = new ActionElementImpl(
@@ -132,7 +132,7 @@ const TestActionRemoveItem: ActionElement = new ActionElementImpl(
     'Du hast einen Stein geworfen!',
     'test',
     [new ActionEventImpl('removeItem', '6')],
-    [TestItemRemoveItem.id]
+    ['6']
 );
 const TestActionAddItem: ActionElement = new ActionElementImpl(
     '8',
@@ -141,22 +141,6 @@ const TestActionAddItem: ActionElement = new ActionElementImpl(
     'test',
     [new ActionEventImpl('additem', '3')],
     []
-);
-const TestActionInOtherRoom: ActionElement = new ActionElementImpl(
-    '9',
-    'test',
-    'test',
-    'test',
-    [new ActionEventImpl('addhp', '3')],
-    []
-);
-const TestActionItemMissing: ActionElement = new ActionElementImpl(
-    '10',
-    'kaufe leben',
-    'test',
-    'test',
-    [new ActionEventImpl('addhp', '3')],
-    [TestItemPickup.id]
 );
 
 const TestRoom: Room = new RoomImpl(
@@ -232,7 +216,7 @@ const TestRoomNorthEast: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestActionAddHp.id, TestActionInOtherRoom.id],
+    [TestActionAddHp.id],
     3,
     1
 );
@@ -243,7 +227,7 @@ const TestRoomActions: Room = new RoomImpl(
     [TestNpc.id],
     [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestActionAddHp.id, TestActionRemoveHp.id, TestActionAddMana.id, TestActionRemoveMana.id, TestActionAddDamage.id, TestActionRemoveDamage.id, TestActionAddItem.id, TestActionRemoveItem.id, TestActionItemMissing.id],
+    [TestActionAddHp.id, TestActionRemoveHp.id, TestActionAddMana.id, TestActionRemoveMana.id, TestActionAddDamage.id, TestActionRemoveDamage.id, TestActionAddItem.id, TestActionRemoveItem.id],
     10,
     10
 );
@@ -289,7 +273,18 @@ const TestCharacterDungeonActions: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoomActions.id,
-    [new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
+    [new ItemInfo(TestItemAddHp.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
+);
+const TestCharacterToDie: Character = new CharacterImpl(
+    '4',
+    'Jochen',
+    'Magier',
+    '1',
+    '1',
+    TestMaxStats,
+    TestStartStats,
+    TestRoomNorth.id,
+    [new ItemInfo(TestItem.id,1)]
 );
 const TestDungeon: Dungeon = new DungeonImpl(
     '1',
@@ -302,7 +297,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     [TestSpecies],
     [TestClass],
     [TestGender],
-    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions],
+    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions, TestCharacterToDie],
     [
         TestRoom,
         TestRoomNorth,
@@ -314,13 +309,14 @@ const TestDungeon: Dungeon = new DungeonImpl(
         TestRoomActions
     ],
     ['abc'],
-    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing],
-    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem],
+    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem],
+    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddHp, TestItemRemoveHp, TestItemRemoveItem],
     [TestNpc]
 );
 const TestDungeonController: DungeonController = new DungeonController(
     '1',
     amqpAdapter,
+    null,
     TestDungeon
 );
 
@@ -466,6 +462,8 @@ describe('Actions', () => {
     })
     beforeEach(() => {
         TestDungeon.characters['Jeff'].position = TestRoom.id;
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,1)];
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id, 1)]
     });
     afterEach(() => {
         jest.clearAllMocks();
@@ -485,12 +483,22 @@ describe('Actions', () => {
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
     const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
     const invalidAction: InvalidAction = actionHandler.invalidAction;
+    const dieAction: DieAction = new DieAction(TestDungeonController);
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();
     amqpAdapter.broadcast = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
+
+    test('DieAction should remove all items from character, add them to the current room and reset position and stats to start values', () => {
+        TestCharacterToDie.currentStats.hp = 0;
+        dieAction.performAction('Jochen', []);
+        expect(TestDungeon.characters['Jochen'].getInventory()).toEqual<ItemInfo[]>([]);
+        expect(TestDungeon.rooms['2'].getItemInfos()).toEqual<ItemInfo[]>([new ItemInfo(TestItem.id, 2)]);
+        expect(TestCharacterToDie.position).toEqual('0,0')
+        expect(TestCharacterToDie.currentStats).toEqual(new CharacterStatsImpl(100, 20, 100))
+    });
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
         messageAction.performAction('Jeff', [
@@ -679,7 +687,7 @@ describe('Actions', () => {
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
-        TestDungeon.characters['Jeff'].inventory.push({item: TestItemDiscard.id, count: 1})
+        TestDungeon.characters['Jeff'].inventory.push(new ItemInfo(TestItemDiscard.id, 1))
         discardAction.performAction('Jeff', ['Schwert']);
         expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}])
         expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemDiscard.id}])
@@ -737,10 +745,7 @@ describe('Actions', () => {
 
 describe("Dungeon Actions", () => {
     beforeEach(() => {
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.hp = 50
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.dmg = 10
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.mana = 50
-        TestDungeon.characters[TestCharacterDungeonActions.name].inventory = [new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
     })
     afterEach(() => {
         jest.clearAllMocks();
@@ -750,8 +755,6 @@ describe("Dungeon Actions", () => {
     })
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const dungeonActionItemMissing: DungeonAction = actionHandler.dungeonActions[TestActionItemMissing.command]
-    const dungeonActionInOtherRoom: DungeonAction = actionHandler.dungeonActions[TestActionInOtherRoom.command]
     const dungeonActionAddHp: DungeonAction = actionHandler.dungeonActions[TestActionAddHp.command];
     const dungeonActionRemoveHp: DungeonAction = actionHandler.dungeonActions[TestActionRemoveHp.command];
     const dungeonActionAddMana: DungeonAction = actionHandler.dungeonActions[TestActionAddMana.command];
@@ -761,450 +764,7 @@ describe("Dungeon Actions", () => {
     const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
     const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
 
-    amqpAdapter.sendToClient = jest.fn();
-
-    test('DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action', async () => {
-        await dungeonActionItemMissing.performAction('CoolerTyp', ['leben']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Dir fehlen folgende Items fuer die Aktion: Gold" },
-        })
-    })
-
-    test('DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room', async () => {
-        await dungeonActionInOtherRoom.performAction('CoolerTyp', []);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Diese Aktion ist nicht möglich!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp", async () => {
-        await dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(60)
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 60,
-                    dmg: 10,
-                    mana: 50
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast einen Apfel gegessen!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp", async () => {
-        await dungeonActionRemoveHp.performAction('CoolerTyp', ['Giftpilz']);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(30)
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 30,
-                    dmg: 10,
-                    mana: 50
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 1,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast einen Giftpilz gegessen!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana", async () => {
-        await dungeonActionAddMana.performAction('CoolerTyp', ['Manatrank']);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(60)
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 50,
-                    dmg: 10,
-                    mana: 60
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast einen Manatrank getrunken!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana", async () => {
-        await dungeonActionRemoveMana.performAction('CoolerTyp', ['aus dem Brunnen']);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(30)
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 50,
-                    dmg: 10,
-                    mana: 30
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast aus dem Brunnen getrunken!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg", async () => {
-        await dungeonActionAddDamage.performAction('CoolerTyp', ['Bier']);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(20)
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 50,
-                    dmg: 20,
-                    mana: 50
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast ein Bier getrunken!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg", async () => {
-        await dungeonActionRemoveDamage.performAction('CoolerTyp', []);
-        expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(5)
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 50,
-                    dmg: 5,
-                    mana: 50
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du wechselst in den Nahkampf!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem", async () => {
-        await dungeonActionAddItem.performAction('CoolerTyp', ['Truhe']);
-        expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1), new ItemInfo(TestItemPickup.id, 1)])
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 50,
-                    dmg: 10,
-                    mana: 50
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                },
-                {
-                    count: 1,
-                    item: "Stein"
-                },
-                {
-                    count: 1,
-                    item: "Gold"
-                },
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast die Truhe geoeffnet!" },
-        })
-    })
-
-    test("DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem", async () => {
-        await dungeonActionRemoveItem.performAction('CoolerTyp', ['Stein']);
-        expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2)])
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'stats',
-            data: { 
-                currentStats: {
-                    hp: 50,
-                    dmg: 10,
-                    mana: 50
-                }, 
-                maxStats: {
-                    hp: 100,
-                    dmg: 20,
-                    mana: 100
-                } 
-            },
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'inventory',
-            data: [
-                {
-                    count: 1,
-                    item: "Apfel"
-                },
-                {
-                    count: 1,
-                    item: "Manatrank"
-                },
-                {
-                    count: 2,
-                    item: "Giftpilz"
-                }
-            ],
-        })
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
-            action: 'message',
-            data: { message: "Du hast einen Stein geworfen!" },
-        })
-    })
-})
-
-describe("DungeonMaster Actions", () => {
-    beforeEach(() => {
-        TestDungeon.characters['Jeff'].position = TestRoom.id;
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
-    })
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-    afterAll(() => {
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats //(100, 20, 100);
-    })
-
-    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const addDamage: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage;
-    const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
-    const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
-
 
     amqpAdapter.sendToClient = jest.fn();
 
-    
-
-    test('dungeonmaster should add amount of actual Damage to a Charakter', () => {
-        addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-            action: 'message',
-            data: { message: "Du hast 1 Schaden erhalten" },
-        });
-    });
-
-//         test('Jeff should get 1 Attack and then have 11 in total', async () => {
-//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
-//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
-//         });
-
-//         test('Jeff should get so much attack so that he reaches his max Attack', async () => {
-//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
-//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
-//         });
-
-//         test('dungeonmaster should add amount of actual HP to a Charakter', () => {
-//             addHp.performAction('dungeonmaster', ['Jeff' , '1']);
-//             expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-//                 action: 'message',
-//                 data: { message: "Du hast 1 Leben erhalten" },
-//             });
-//         });
-    
-//             test('Jeff should get 1 HP and then have 51 in total', async () => {
-//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
-//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
-//             });
-    
-//             test('Jeff should get so much life so that he reaches his max life', async () => {
-//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
-//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
-//             });
-
-//             test('dungeonmaster should add amount of actual Mana to a Charakter', () => {
-//                 addMana.performAction('dungeonmaster', ['Jeff' , '1']);
-//                 expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-//                     action: 'message',
-//                     data: { message: "Du hast 1 Mana erhalten" },
-//                 });
-//             });
-        
-//                 test('Jeff should get 1 mana and then have 51 in total', async () => {
-//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
-//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
-//                 });
-        
-//                 test('Jeff should get so much mana so that he reaches his max mana', async () => {
-//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
-//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
-//                 });
 })

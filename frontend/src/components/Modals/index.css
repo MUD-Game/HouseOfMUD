@@ -13,3 +13,19 @@
 .modal-title::first-letter {
     text-transform: uppercase;
 }
+
+.isglobal-input {
+    background-color: var(--bgcolor);
+    border: solid var(--accent);
+    border-width: 3px;
+}
+.isglobal-input:checked {
+    background-color: var(--accent);
+    border: solid var(--accent);
+}
+.isglobal-input:focus {
+    box-shadow: none;
+    border: solid var(--accent);
+    border-width: 3px;
+    background-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23987d%27/%3e%3c/svg%3e") !important;
+}

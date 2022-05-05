@@ -25,6 +25,7 @@ export const triggers = {
 }
 
 export const actionMessages = {
+    die: "Du bist gestorben!",
     inspect: "Du untersuchst %s: %s",
     inventory: "Du hast folgende Items im Inventar:",
     lookEmpty: " Keine",

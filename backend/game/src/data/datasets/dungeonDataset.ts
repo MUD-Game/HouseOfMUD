@@ -21,6 +21,7 @@ export interface DungeonDataset {
   rooms: RoomDataset[];
   items: ItemDataset[];
   npcs: NpcDataset[];
+  globalActions: string[];
   blacklist: string[];
   actions: ActionDataset[];
 }
@@ -40,4 +41,5 @@ export const dungeonSchema = new Schema<DungeonDataset>({
   npcs: [{ type: Schema.Types.ObjectId, ref: "Npc" }],
   blacklist: [{ type: String }],
   actions: [{ type: Schema.Types.ObjectId, ref: "Action" }],
+  globalActions: [{ type: String }]
 });

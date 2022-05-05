@@ -9,7 +9,7 @@ import React from 'react';
 import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Client, IFrame, IMessage } from '@stomp/stompjs';
-import { RabbitMQPayload } from 'src/types/rabbitMQ';
+import { RabbitMQPayload, SendActions } from 'src/types/rabbitMQ';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/Game/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
@@ -20,7 +20,8 @@ const debug = true;
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
-  sendMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+  sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+  sendDmMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
   setChatSubscriber: (subscriber: (message: string) => void) => void;
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
@@ -165,13 +166,13 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     callback();
   }
 
-  const sendMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+  const sendMessage = (message: string, action: SendActions,  callback: VoidFunction, error: (error: string) => void) => {
     if (!rabbit.connected) {
       error("RabbitMQ is not connected");
       return;
     }
     let messagePayload: RabbitMQPayload = {
-      action: 'message',
+      action,
       ...payloadTemplate,
       data: {
         message
@@ -181,6 +182,16 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     callback();
 
   }
+
+  const sendCharacterMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+    sendMessage(message, 'message', callback, error);
+  }
+
+  const sendDmMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+    sendMessage(message, 'dmmessage', callback, error);
+  }
+
+
 
   const setChatSubscriber = (subscriber: (message: string) => void) => {
     chatSubscriber = subscriber;
@@ -213,7 +224,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

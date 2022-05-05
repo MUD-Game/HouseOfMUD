@@ -19,7 +19,7 @@ export interface ChatInputProps {
 
 const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallback, onSendCommand }) => {
 
-    const { sendMessage } = useRabbitMQ();
+    const { sendDmMessage: sendMessage } = useRabbitMQ();
     const sendInput = (evt: any) => {
         evt.preventDefault()
         sendMessage(message, () => {

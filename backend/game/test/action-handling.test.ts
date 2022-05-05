@@ -41,6 +41,7 @@ import { ShowActions } from "../src/worker/action/actions/show-actions";
 import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMessage-action";
 import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
 import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
+import { DieAction } from "../src/worker/action/actions/die-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -1276,9 +1277,11 @@ describe("DungeonMaster Actions", () => {
     const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
     const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
     const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const dieAction: DieAction = actionHandler.dieAction;
 
 
     amqpAdapter.sendToClient = jest.fn();
+    dieAction.performAction = jest.fn();
 
     
 
@@ -1350,9 +1353,9 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(48);
     });
 
-    test('Jeff should lose so much hp so that he reaches 0', async () => {
+    test('Jeff should lose so much hp so that he dies and gets 100 hp again', async () => {
         await removeHp.performAction('dungeonmaster', ['Jeff' ,'211']);
-        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(0);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
     });
 
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {

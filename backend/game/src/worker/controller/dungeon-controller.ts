@@ -116,6 +116,10 @@ export class DungeonController {
         return this.amqpAdapter
     }
 
+    getActionHandler(): ActionHandler {
+        return this.actionHandler
+    }
+
     async sendMiniMapData(character: string) {
         let rooms:MiniMapData["rooms"] = {};
         for (let room in this.dungeon.rooms) {

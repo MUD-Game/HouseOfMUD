@@ -4,6 +4,7 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
+import { DieAction } from "../actions/die-action";
 
 
 export class RemoveHp implements Action {
@@ -52,6 +53,7 @@ export class RemoveHp implements Action {
                    
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
+                await this.dungeonController.getActionHandler().dieAction.performAction(recipientCharacter.name, [])
 
             } catch (e) {
                 console.log(e)

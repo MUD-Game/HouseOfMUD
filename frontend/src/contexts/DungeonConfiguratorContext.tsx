@@ -623,8 +623,29 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
      * @param busyCallback callback that can set a busy state
      */
     const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, busyCallback: (busy: boolean) => void) => {
+        
         if (validateData()) {
             setError('');
+            let temp = rooms;
+            // save the last changes before saving the dungeon
+            if ((currentRoom && roomsKey !== "" && roomCoordiantes)) {
+                let oldRoom = temp[roomsKey];
+                oldRoom.name = selectedRoomName;
+                oldRoom.description = selectedRoomDescription;
+                oldRoom.items = [];
+                oldRoom.npcs = [];
+                oldRoom.actions = [];
+                selectedRoomItems.forEach((i: any) => {
+                    oldRoom.items.push({ item: i.id, count: selectedRoomItemValues[i.id] });
+                });
+                selectedRoomActions.forEach((i: any) => {
+                    oldRoom.actions.push(i.id);
+                });
+                selectedRoomNpcs.forEach((i: any) => {
+                    oldRoom.npcs.push(i.id);
+                });
+                temp[roomsKey] = oldRoom;
+            }
             busyCallback(true);
             let createBody: CreateDungeonRequest['dungeonData'] = {
                 id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
@@ -642,7 +663,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 actions,
                 characterClasses: classes,
                 items,
-                rooms: Object.keys(rooms).map((coordId) => {
+                rooms: Object.keys(temp).map((coordId) => {
                     return rooms[coordId] // Map => Array
                 }),
                 npcs,

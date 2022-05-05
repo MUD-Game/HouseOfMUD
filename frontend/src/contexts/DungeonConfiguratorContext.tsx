@@ -753,16 +753,14 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 masterId: "",
                 currentPlayers: 0,
                 maxPlayers,
-                species: species,
-                genders: genders,
                 characters: [],
-                characterSpecies: species,
-                characterGenders: genders,
+                characterSpecies: species.map(({ from_server, ...rest }) => rest),
+                characterGenders: genders.map(({ from_server, ...rest }) => rest),
                 actions: actions.map(({isGlobal,...rest}) => {
                     return {...rest}
                 }),
                 globalActions,
-                characterClasses: classes,
+                characterClasses: classes.map(({ from_server, ...rest }) => rest),
                 items,
                 rooms: Object.keys(temp).map((coordId) => {
                     return rooms[coordId] // Map => Array

@@ -174,7 +174,6 @@ export class API {
         app.post('/dungeon', this.authProvider.auth, async (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
             const {user, userID} = req.cookies;
-            // let dungeonID = this.h/ostLink.createDungeon(dungeonData, user);
             if(dungeonData){
                 dungeonData.masterId = userID;
                 dungeonData.creatorId = userID;

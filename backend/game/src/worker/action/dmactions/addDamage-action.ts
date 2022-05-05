@@ -16,7 +16,6 @@ export class AddDamage implements Action {
     }
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
-        //let senderCharacter: Character = dungeon.getCharacter(user)
         let recipientCharacterName: string = args[0]
         args.shift()
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
@@ -34,13 +33,19 @@ export class AddDamage implements Action {
                     actualDmg = actualDmg + dmgCount 
                     recipientCharacter.getCharakterStats().setDmg(actualDmg)
                     damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: damagestring } })
+                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: damagestring } })
 
+                    damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , args.join(' '))
+                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: damagestring } })
                 } else if (maxDmg - actualDmg < dmgCount) {
                 
-                    recipientCharacter.getCharakterStats().setDmg(maxDmg)
-                    damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, (maxDmg - actualDmg).toString())
+                    damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, (maxDmg-actualDmg).toString())
+                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: damagestring } })
+
+                    damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , (maxDmg-actualDmg).toString())
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: damagestring } })
+                    recipientCharacter.getCharakterStats().setDmg(maxDmg)
+
                 }
 
             } catch (e) {

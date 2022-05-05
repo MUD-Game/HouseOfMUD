@@ -21,6 +21,7 @@ import { AddMana } from './dmactions/addMana-action';
 import { RemoveHp } from './dmactions/removeHp-action';
 import { RemoveDamage } from './dmactions/removeDamage-action';
 import { RemoveMana } from './dmactions/removeMana-action';
+import { PrivateMessageFromDm } from './dmactions/privateMessage-action';
 
 
 const regExpression = {
@@ -102,7 +103,8 @@ export class ActionHandlerImpl implements ActionHandler {
            new AddMana(dungeonController),
            new RemoveMana(dungeonController),
            new RemoveDamage(dungeonController),
-           new RemoveHp(dungeonController)
+           new RemoveHp(dungeonController),
+           new PrivateMessageFromDm(dungeonController)
         ];
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;

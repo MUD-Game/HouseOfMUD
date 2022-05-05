@@ -759,7 +759,7 @@ describe("DungeonMaster Actions", () => {
         jest.clearAllMocks();
     });
     afterAll(() => {
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats //(100, 20, 100);
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats //(50, 10, 50);
     })
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
@@ -777,7 +777,7 @@ describe("DungeonMaster Actions", () => {
         addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Du hast 1 Schaden erhalten" },
+            data: { message: "Jeff hat 1 Schaden erhalten" },
         });
     });
 
@@ -795,7 +795,7 @@ describe("DungeonMaster Actions", () => {
             addHp.performAction('dungeonmaster', ['Jeff' , '1']);
             expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
                 action: 'message',
-                data: { message: "Du hast 1 Leben erhalten" },
+                data: { message: "Jeff hat 1 Leben erhalten" },
             });
         });
     
@@ -813,7 +813,7 @@ describe("DungeonMaster Actions", () => {
                 addMana.performAction('dungeonmaster', ['Jeff' , '1']);
                 expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
                     action: 'message',
-                    data: { message: "Du hast 1 Mana erhalten" },
+                    data: { message: "Jeff hat 1 Mana erhalten" },
                 });
             });
         
@@ -832,7 +832,7 @@ describe("DungeonMaster Actions", () => {
                 removeHp.performAction('dungeonmaster', ['Jeff' , '2']);
                 expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
                     action: 'message',
-                    data: { message: "Du hast 2 Leben verloren" },
+                    data: { message: "Jeff hat 2 Leben verloren" },
                 });
             });
         

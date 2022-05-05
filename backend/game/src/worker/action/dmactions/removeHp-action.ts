@@ -33,14 +33,23 @@ export class RemoveHp implements Action {
                     recipientCharacter.getCharakterStats().setHp(0)
                     //sterbefunktion ? 
                     lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, (actualHp).toString())
+                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: lifestring } })
+
+                    lifestring = parseResponseString(dungeonMasterSendMessages.hpRemoved, recipientCharacter.name , (actualHp).toString())
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: lifestring } })
 
                 } else if (actualHp - hpCount > 0) {
                     actualHp = actualHp - hpCount 
                     recipientCharacter.getCharakterStats().setHp(actualHp)
+
+
                     lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, args.join(' '))
-                    
+                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: lifestring } })
+
+                    lifestring = parseResponseString(dungeonMasterSendMessages.hpRemoved, recipientCharacter.name , args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: lifestring } })
+
+                   
                 }
 
             } catch (e) {

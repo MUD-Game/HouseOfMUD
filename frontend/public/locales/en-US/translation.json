@@ -50,6 +50,7 @@
         "language": {
             "label": "Language",
             "en-US": "English",
+            "fr-FR": "French",
             "nl-NL": "Dutch",
             "de-DE": "German"
         }

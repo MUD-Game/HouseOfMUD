@@ -94,6 +94,10 @@
             "label": "Sprache",
             "en-US": "Englisch",
             "de-DE": "Deutsch",
+            "fr-FR": "Französisch",
+            "it-IT": "Italienisch",
+            "es-ES": "Spanisch",
+            "pl-PL": "Polnisch",
             "nl-NL": "Niederländisch"
         }
     },

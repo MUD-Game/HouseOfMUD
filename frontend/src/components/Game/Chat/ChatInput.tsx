@@ -16,7 +16,7 @@ export interface ChatInputProps { }
 const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallback}) => {
 
     
-    const { sendMessage } = useRabbitMQ();
+    const { sendCharacterMessage: sendMessage } = useRabbitMQ();
 
     const [input, setInput] = React.useState("");
 

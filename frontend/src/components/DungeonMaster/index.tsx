@@ -52,9 +52,10 @@ const Game: React.FC<GameProps> = ({ }) => {
     const addMessage = (queueMessage:string) => {
         setMessageQueue([...messageQueue,queueMessage])
     }
+
     const sendQueue = () => {
         messageQueue.forEach(queueMessage => {
-            rabbit.sendMessage(queueMessage, ()=>{}, setError);
+            rabbit.sendDmMessage(queueMessage, ()=>{}, setError);
         });
         setMessageQueue([])
     }

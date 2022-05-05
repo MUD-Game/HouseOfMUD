@@ -24,7 +24,10 @@ export const triggers = {
     //dungeonmaster
     addDamage: "adddmg",
     addHp: "addhp",
-    addMana: "addhp"
+    addMana: "addmana",
+    removeMana: "remmana",
+    removeHp: "remhp",
+    removeDamage: "remdmg"
 }
 
 export const actionMessages = {
@@ -48,7 +51,6 @@ export const actionMessages = {
     moveRoomClosed: "In diese Richtung ist der Raum geschlossen!",
     movePathNotAvailable: "In diese Richtung geht es nicht weiter!",
     whisperCharacterNotInSameRoom: "%s ist nicht in diesem Raum!",
-    dmWhisper: "[privat] Dungeon Master -> %s: %s",
     whisperToDm: "[privat] %s -> Dungeon Master: %s",
     discard: "Du hast folgendes Item abgelegt: %s",
     pickup: "Du hast folgendes Item aufgehoben: %s",
@@ -69,12 +71,22 @@ export const errorMessages = {
 
 export const dungeonMasterSendMessages = {
     addDmg: "Du hast %s Schaden erhalten",
+    damageRecieved: "%s hat %s Schaden erhalten",
     addHp: "Du hast %s Leben erhalten",
-    addMana: "Du hast %s Mana erhalten"
+    hpRecieved: "%s hat %s Leben erhalten",
+    addMana: "Du hast %s Mana erhalten",
+    manaRecieved: "%s hat %s Mana erhalten",
+    removeMana: "Du hast %s Mana verloren",
+    ManaRemoved: "%s hat %s Mana verloren",
+    removeDmg: "Du hast %s Schaden verloren",
+    dmgRemoved: "%s hat %s Schaden verloren",
+    removeHp: "Du hast %s Leben verloren",
+    hpRemoved: "%s hat %s Leben verloren",
+    dmWhisper: "[privat] Dungeon Master -> %s: %s",
 }
 
 export const extras = {
-    dungeonMasterId: '0'
+    dungeonMasterId: 'dungeonmaster'
 }
 
 export const actionDescriptions = {

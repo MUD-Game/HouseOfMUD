@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras } from "../actions/action-resources";
+import { triggers, errorMessages, dungeonMasterSendMessages, parseResponseString} from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 
 
@@ -14,7 +14,7 @@ export class AddMana implements Action {
         this.trigger = triggers.addMana;
         this.dungeonController = dungeonController
     }
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacterName: string = args[0]
         args.shift()
@@ -22,7 +22,6 @@ export class AddMana implements Action {
         let manastring: string = ''
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-
 
             let actualMana: number = recipientCharacter.getCharakterStats().getMana()
             let maxMana: number = recipientCharacter.getMaxStats().getMana()
@@ -32,15 +31,28 @@ export class AddMana implements Action {
                 if (maxMana - actualMana >= manaCount) {
                     actualMana = actualMana + manaCount 
                     recipientCharacter.getCharakterStats().setMana(actualMana)
+                   
                     manastring = parseResponseString(dungeonMasterSendMessages.addMana, args.join(' '))
+                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: manastring } })
+
+                    manastring = parseResponseString(dungeonMasterSendMessages.manaRecieved, recipientCharacter.name , args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: manastring } })
 
                 } else if (maxMana - actualMana < manaCount) {
 
-                    recipientCharacter.getCharakterStats().setMana(maxMana)
-                    manastring = parseResponseString(dungeonMasterSendMessages.addMana, (maxMana - actualMana).toString())
+
+                    manastring = parseResponseString(dungeonMasterSendMessages.addMana, (maxMana-actualMana).toString())
+                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: manastring } })
+
+                    manastring = parseResponseString(dungeonMasterSendMessages.manaRecieved, recipientCharacter.name , (maxMana-actualMana).toString())
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: manastring } })
+                  
+
+                    recipientCharacter.getCharakterStats().setMana(maxMana)
+                  
+
                 }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
 
             } catch (e) {
                 console.log(e)

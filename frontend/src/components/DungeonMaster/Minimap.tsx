@@ -88,7 +88,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         const roomId = event.target.attrs["data-room"];
         const direction = event.target.attrs["data-direction"];
 
-        sendToggleConnection(roomId, direction, status === 'open' ? 'closed' : 'open', ()=>{
+        sendToggleConnection(roomId, direction, status === 'open' ? 'closed' : 'open', () => {
             switch (status) {
                 case "open":
                     event.target.setAttrs({
@@ -148,7 +148,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             <div id="konva-buttons-container">
                 <img src={compassPng} alt="compass" id="compass" onClick={() => {
                     focusOnRoom(currentRoomId, true);
-                 }} />
+                }} />
                 <ArrowsFullscreen size={40} onClick={() => {
                     $("body").toggleClass("noclickevents");
                     $('#minimap').toggleClass('fullscreen');
@@ -158,7 +158,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                             width: window.innerWidth,
                             height: window.innerHeight,
                         })
-                    }else{
+                    } else {
                         stageRef.current.to({
                             width: width,
                             height: width,
@@ -217,12 +217,27 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
                                 (yStatus !== 'inactive') && connections.push(<Line key={`${roomkey}-connection-south`} points={yPoints} stroke={yStrokeCol} data-room={roomkey} strokeWidth={connectionStrokeWidth} data-status={yStatus} onClick={toggleConnection} data-direction={'south'} />);
 
-
+                                const textConfig = {
+                                    x: x * roomOffset,
+                                    y: y * roomOffset,
+                                    align: "center",
+                                    width: roomSize,
+                                    height: roomSize,
+                                    fontSize: 10,
+                                    fontFamily: 'Segoe UI',
+                                    padding: roomStrokeWidth,
+                                    text: "Katakomben",
+                                    wrap: "word",
+                                    verticalAlign: "middle"
+                                }
+                                let text = new Konva.Text(textConfig)
+                                console.log(text.getSize());
 
                                 return (
                                     <Group key={roomkey}>
                                         {connections}
                                         <Rect
+
                                             x={x * roomOffset}
                                             y={y * roomOffset}
                                             data-coordinates={[room.xCoordinate, room.yCoordinate]}
@@ -233,14 +248,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                             stroke={strokeColor}
                                         />
                                         <Text
-                                            x={x * roomOffset }
-                                            y={y * roomOffset }
-                                            width={roomSize}
-                                            height={roomSize}
-                                            align="center"
-                                            padding={roomStrokeWidth}
-                                            text={"lorem ipsulorem ipsum dolor sit ametlorem ipsum dolor sit ametm dolor sit ametlorem ipsum dolor sit ametlorem ipsum dolor sit amet"}
-                                            verticalAlign="middle"
+                                           {...textConfig}
                                         />
 
                                     </Group>

@@ -41,4 +41,5 @@ export const dungeonSchema = new Schema<DungeonDataset>({
   npcs: [{ type: Schema.Types.ObjectId, ref: "Npc" }],
   blacklist: [{ type: String }],
   actions: [{ type: Schema.Types.ObjectId, ref: "Action" }],
+  globalActions: [{ type: String }]
 });

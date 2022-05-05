@@ -322,7 +322,8 @@ const TestDungeon: Dungeon = new DungeonImpl(
     ['abc'],
     [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing],
     [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem],
-    [TestNpc]
+    [TestNpc],
+    []
 );
 const TestDungeonController: DungeonController = new DungeonController(
     '1',

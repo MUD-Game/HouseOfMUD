@@ -176,7 +176,7 @@ export class API {
             const {user, userID} = req.cookies;
             // let dungeonID = this.h/ostLink.createDungeon(dungeonData, user);
             if(dungeonData){
-                console.log(userID);
+                console.log(dungeonData);
                 dungeonData.masterId = userID;
                 dungeonData.creatorId = userID;
                 this.dba.storeDungeon(dungeonData).then(dungeon => {

@@ -776,33 +776,6 @@ describe('Actions', () => {
     })
 });
 
-<<<<<<< HEAD
-// describe("Dungeon Actions", () => {
-//     beforeEach(() => {
-//         TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
-//     })
-//     afterEach(() => {
-//         jest.clearAllMocks();
-//     });
-//     afterAll(() => {
-//         TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
-//     })
-
-//     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-//     const dungeonActionAddHp: DungeonAction = actionHandler.dungeonActions[TestActionAddHp.command];
-//     const dungeonActionRemoveHp: DungeonAction = actionHandler.dungeonActions[TestActionRemoveHp.command];
-//     const dungeonActionAddMana: DungeonAction = actionHandler.dungeonActions[TestActionAddMana.command];
-//     const dungeonActionRemoveMana: DungeonAction = actionHandler.dungeonActions[TestActionRemoveMana.command];
-//     const dungeonActionAddDamage: DungeonAction = actionHandler.dungeonActions[TestActionAddDamage.command];
-//     const dungeonActionRemoveDamage: DungeonAction = actionHandler.dungeonActions[TestActionRemoveDamage.command];
-//     const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
-//     const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
-
-
-//     amqpAdapter.sendToClient = jest.fn();
-
-// })
-=======
 describe("Dungeon Actions", () => {
     beforeEach(() => {
         TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.hp = 50
@@ -1199,7 +1172,6 @@ describe("Dungeon Actions", () => {
         })
     })
 })
->>>>>>> origin/dev
 
 describe("DungeonMaster Actions", () => {
     beforeEach(() => {
@@ -1236,7 +1208,6 @@ describe("DungeonMaster Actions", () => {
         });
     });
 
-<<<<<<< HEAD
     test('Jeff should get 1 Attack and then have 11 in total', async () => {
         await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
         expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
@@ -1302,51 +1273,3 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(0);
     });
 })
-=======
-//         test('Jeff should get 1 Attack and then have 11 in total', async () => {
-//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
-//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
-//         });
-
-//         test('Jeff should get so much attack so that he reaches his max Attack', async () => {
-//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
-//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
-//         });
-
-//         test('dungeonmaster should add amount of actual HP to a Charakter', () => {
-//             addHp.performAction('dungeonmaster', ['Jeff' , '1']);
-//             expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-//                 action: 'message',
-//                 data: { message: "Du hast 1 Leben erhalten" },
-//             });
-//         });
-    
-//             test('Jeff should get 1 HP and then have 51 in total', async () => {
-//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
-//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
-//             });
-    
-//             test('Jeff should get so much life so that he reaches his max life', async () => {
-//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
-//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
-//             });
-
-//             test('dungeonmaster should add amount of actual Mana to a Charakter', () => {
-//                 addMana.performAction('dungeonmaster', ['Jeff' , '1']);
-//                 expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-//                     action: 'message',
-//                     data: { message: "Du hast 1 Mana erhalten" },
-//                 });
-//             });
-        
-//                 test('Jeff should get 1 mana and then have 51 in total', async () => {
-//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
-//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
-//                 });
-        
-//                 test('Jeff should get so much mana so that he reaches his max mana', async () => {
-//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
-//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
-//                 });
-})
->>>>>>> origin/dev

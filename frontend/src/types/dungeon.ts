@@ -94,6 +94,7 @@ export interface MudActionElement {
     description: string;
     events: MudEvent[];
     itemsneeded: number[];
+    isGlobal: boolean;
 }
 
 export interface MudConnectionInfo {

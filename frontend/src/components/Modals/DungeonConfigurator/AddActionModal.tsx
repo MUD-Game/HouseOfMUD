@@ -36,6 +36,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     let initialAddItems: Option[] = [];
     let initialEvents: Option[] = [];
     let initialEventValues: { [key: string]: number } = {};
+    let initialIsGlobal: boolean = props.editData?.isGlobal || false;
 
     const constructToModalData = () => {
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
@@ -67,7 +68,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     const [command, setCommand] = React.useState<string>(props.editData?.command || "");
     const [output, setOutput] = React.useState<string>(props.editData?.output || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-
+    const [isGlobal, setIsGlobal] = React.useState<boolean>(props.editData?.isGlobal || false);
     const [error, setError] = React.useState<string>("");
 
     const modalIsInvalid = () => {
@@ -117,7 +118,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             output,
             description,
             itemsneeded: itemsneedednumbers as number[],
-            events: allEvents
+            events: allEvents,
+            isGlobal: isGlobal
         } as MudActionElement;
         return characterAction;
     }
@@ -196,7 +198,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                     <div className="col-md-3 align-self-end text-end">
                         <div className="form-check form-switch p-0">
                         <label className="form-check-label" htmlFor="isglobal"><b>{t(`common.isglobal`)}</b></label> <br />
-                        <input className="form-check-input float-end isglobal-input" type="checkbox" role="switch" id="isglobal" />
+                        <input className="form-check-input float-end isglobal-input" onChange={evt => setIsGlobal(evt.target.checked)} type="checkbox" role="switch" id="isglobal" checked={isGlobal} />
                         </div>
                     </div>
                     {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {

@@ -707,6 +707,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
         if (validateData()) {
             setError('');
+            busyCallback(true);
             let temp = rooms;
             // save the last changes before saving the dungeon
             if ((currentRoom && roomsKey !== "" && roomCoordiantes)) {
@@ -727,7 +728,14 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 });
                 temp[roomsKey] = oldRoom;
             }
-            busyCallback(true);
+
+            // Create global actions:
+            let globalActions: string[] = [];
+            actions.forEach((a: MudActionElement) => {
+                if(a.isGlobal){
+                    globalActions.push(a.id);
+                }
+            });
             let createBody: CreateDungeonRequest['dungeonData'] = {
                 id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                 name,
@@ -741,7 +749,10 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 characters: [],
                 characterSpecies: species,
                 characterGenders: genders,
-                actions,
+                actions: actions.map(({isGlobal,...rest}) => {
+                    return {...rest}
+                }),
+                globalActions,
                 characterClasses: classes,
                 items,
                 rooms: Object.keys(temp).map((coordId) => {

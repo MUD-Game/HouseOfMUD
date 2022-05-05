@@ -223,6 +223,15 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         if (dungeonId) {
             supervisor.getDungeon(dungeonId, {}, (dungeon: any) => {
                 console.log(dungeon);
+                if(dungeon.globalActions){
+                    dungeon.globalActions.forEach((globalActionId:string)=>{
+                        dungeon.actions.find((action:MudActionElement)=>{
+                            if(action.id===globalActionId){
+                                action.isGlobal=true;
+                            }
+                        });
+                    })
+                }
                 setName(dungeon.name);
                 setDescription(dungeon.description);
                 setMaxPlayers(dungeon.maxPlayers);

@@ -168,6 +168,8 @@
             "create_class": "neue Klasse anlegen",
             "create_item": "neues Item erstellen",
             "create_npc": "neuen NPC erstellen",
+            "create_gender": "neues Geschlecht",
+            "create_species": "neue Spezies",
             "create_action": "neue Aktion anlegen"
         }
         

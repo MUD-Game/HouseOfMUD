@@ -22,6 +22,8 @@ import { CharacterGender } from '../../../backend/data/src/interfaces/characterG
 import { useTranslation } from 'react-i18next';
 import AddRoomModal from 'src/components/Modals/DungeonConfigurator/AddRoomModal';
 import AddNpcModal from 'src/components/Modals/DungeonConfigurator/AddNpcModal';
+import AddGenderModal from 'src/components/Modals/DungeonConfigurator/AddGenderModal';
+import AddSpeciesModal from 'src/components/Modals/DungeonConfigurator/AddSpeciesModal';
 type Option = string | { [key: string]: any };
 
 const processToSend = (array: any[]) => {
@@ -56,6 +58,15 @@ const processAfterReceive = (array: any[]) => {
     return t;
 }
 
+const markAsFromServer = (array: any[]) => {
+    return array.map(({
+        ...rest
+    }) => ({
+        ...rest,
+        from_server: true
+    }));
+}
+
 function arrayToMap(array: any[]): any {
     let map: { [id: string]: any } = {};
     array.forEach((obj: any) => {
@@ -67,13 +78,23 @@ export interface DungeonConfiguratorContextMethods {
     setName: (name: string) => void;
     setDescription: (description: string) => void;
     setMaxPlayers: (maxPlayers: number) => void;
-    setGenders: (genders: Option[]) => void;
-    setSpecies: (species: Option[]) => void;
 
     handleOnBlurInput: (event: React.FocusEvent<HTMLInputElement>) => void;
+
+
+    addGender: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    editGender: (key: number) => void;
+    deleteGender: (key: number) => void;
+
+    addSpecies: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    editSpecies: (key: number) => void;
+    deleteSpecies: (key: number) => void;
+
     addClass: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     editClass: (key: number) => void;
     deleteClass: (key: number) => void;
+
+
 
     addItem: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     editItem: (key: number) => void;
@@ -131,8 +152,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const [name, setName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [maxPlayers, setMaxPlayers] = React.useState<number>(0);
-    const [species, setSpecies] = React.useState<Option[]>([]);
-    const [genders, setGenders] = React.useState<Option[]>([]);
+    const [species, setSpecies] = React.useState<MudCharacterSpecies[]>([]);
+    const [genders, setGenders] = React.useState<MudCharacterGender[]>([]);
     const [classes, setClasses] = React.useState<MudCharacterClass[]>([]);
     const [items, setItems] = React.useState<MudItem[]>([]);
     const [actions, setActions] = React.useState<MudActionElement[]>([]);
@@ -142,7 +163,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         "0,0": {
             id: "0,0",
             name: t("common.start_room.name"),
-            description:t("common.start_room.description") ,
+            description: t("common.start_room.description"),
             npcs: [],
             items: [],
             connections: { east: 'inactive', south: 'inactive' },
@@ -160,6 +181,11 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     // States for configure Items
     const [showAddItemsModal, setShowAddItemsModal] = React.useState<boolean>(false);
     const [itemsKey, setItemsKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+
+    const [showAddGenderModal, setShowAddGenderModal] = React.useState<boolean>(false);
+    const [gendersKey, setGendersKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
+    const [showAddSpeciesModal, setShowAddSpeciesModal] = React.useState<boolean>(false);
+    const [speciesKey, setSpeciesKey] = React.useState<{ selected: number, nextKey: number }>({ selected: 0, nextKey: 0 });
 
     // States for configure Actions
     const [showAddActionsModal, setShowAddActionsModal] = React.useState<boolean>(false);
@@ -196,10 +222,11 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         // If the dungeonID exists we load the dungeon in the background and fill the states with the data.
         if (dungeonId) {
             supervisor.getDungeon(dungeonId, {}, (dungeon: any) => {
+                console.log(dungeon);
                 setName(dungeon.name);
                 setDescription(dungeon.description);
                 setMaxPlayers(dungeon.maxPlayers);
-                setClasses(dungeon.characterClasses);
+                setClasses(markAsFromServer(processAfterReceive(dungeon.characterClasses)));
                 setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length });
                 setItems(processAfterReceive(dungeon.items));
                 setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length });
@@ -208,15 +235,12 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
                 setRooms(arrayToMap(dungeon.rooms));
 
-
                 setNpcs(dungeon.npcs);
                 setNpcsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length });
-                dungeon.characterSpecies.forEach((s: CharacterSpecies) => {
-                    setSpecies([...species, { label: s.name, id: `new-id-${s.id}` }]);
-                });
-                dungeon.characterGenders.forEach((s: CharacterGender) => {
-                    setGenders([...genders, { label: s.name, id: `new-id-${s.id}` }]);
-                });
+                setSpecies(markAsFromServer(processAfterReceive(dungeon.characterSpecies)));
+                setSpeciesKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterSpecies.length });
+                setGenders(markAsFromServer(processAfterReceive(dungeon.characterGenders)));
+                setGendersKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterGenders.length });
                 setIsLoading(false);
             }, error => setError(error.error));
         }
@@ -265,14 +289,59 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         });
     }
 
+    const addGender = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setEditData(null);
+        setGendersKey({ ...gendersKey, selected: gendersKey.nextKey });
+        setShowAddGenderModal(true);
+    }
+
+    const editGender = (key: number) => {
+        const editIndex = genders.findIndex(c => c.id === key + "");
+        setEditData(genders[editIndex]);
+        setGendersKey({ selected: editIndex, nextKey: gendersKey.nextKey });
+        setShowAddGenderModal(true);
+    }
+
+    const deleteGender = (key: number) => {
+        showConfirmation("delete_gender", () => {
+            let index = genders.findIndex(c => c.id === key + "");
+            let newGenders = genders;
+            newGenders.splice(index, 1);
+            setGenders(newGenders);
+        });
+    }
+
+    const addSpecies = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setEditData(null);
+        setSpeciesKey({ ...speciesKey, selected: speciesKey.nextKey });
+        setShowAddSpeciesModal(true);
+    }
+
+    const editSpecies = (key: number) => {
+        const editIndex = species.findIndex(c => c.id === key + "");
+        setEditData(species[editIndex]);
+        setSpeciesKey({ selected: editIndex, nextKey: speciesKey.nextKey });
+        setShowAddSpeciesModal(true);
+    }
+
+    const deleteSpecies = (key: number) => {
+        showConfirmation("delete_species", () => {
+            let index = species.findIndex(c => c.id === key + "");
+            let newSpecies = species;
+            newSpecies.splice(index, 1);
+            setSpecies(newSpecies);
+        });
+    }
+
     const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setEditData(null);
         setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
         setShowCharacterClassModal(true);
     }
     const editClass = (key: number) => {
-        setEditData(classes[key]);
-        setCharacterClassKey({ selected: key, nextKey: characterClassKey.nextKey });
+        const editIndex = classes.findIndex(c => c.id === key+"");
+        setEditData(classes[editIndex]);
+        setCharacterClassKey({ selected: editIndex, nextKey: characterClassKey.nextKey });
         setShowCharacterClassModal(true);
     }
     const deleteClass = (key: number) => {
@@ -334,7 +403,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     const selectRoom = (c: [number, number]) => {
         // Save the old room
-        if (String(roomCoordiantes) !== String(c) &&(currentRoom && roomsKey !== "" && roomCoordiantes)) {
+        if (String(roomCoordiantes) !== String(c) && (currentRoom && roomsKey !== "" && roomCoordiantes)) {
             let temp = rooms;
             let oldRoom = temp[roomsKey];
             oldRoom.name = selectedRoomName;
@@ -623,7 +692,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
      * @param busyCallback callback that can set a busy state
      */
     const save = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, busyCallback: (busy: boolean) => void) => {
-        
+
         if (validateData()) {
             setError('');
             let temp = rooms;
@@ -655,11 +724,11 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 masterId: "",
                 currentPlayers: 0,
                 maxPlayers,
-                species: processToSend(species),
-                genders: processToSend(genders),
+                species: species,
+                genders: genders,
                 characters: [],
-                characterSpecies: processToSend(species) as MudCharacterSpecies[],
-                characterGenders: processToSend(genders) as MudCharacterGender[],
+                characterSpecies: species,
+                characterGenders: genders,
                 actions,
                 characterClasses: classes,
                 items,
@@ -669,6 +738,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 npcs,
                 blacklist: []
             };
+            console.log(createBody);
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
                     busyCallback(false);
@@ -692,7 +762,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName
+        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName, addGender, deleteGender, editGender, addSpecies, deleteSpecies, editSpecies
     }
 
     let fields: MudDungeon = {
@@ -748,6 +818,42 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         }} show={showAddItemsModal} onHide={() => {
             setShowAddItemsModal(false);
         }} />
+
+        <AddGenderModal editData={editData as MudCharacterGender} key={"Gender:" + gendersKey.selected} onSendGender={(cc: MudCharacterGender) => {
+            if (gendersKey.selected === gendersKey.nextKey) {
+                cc.id = gendersKey.nextKey + "";
+                setGenders([...genders, cc]);
+                setShowAddGenderModal(false);
+                setGendersKey({ nextKey: gendersKey.nextKey + 1, selected: gendersKey.selected + 1 });
+            } else {
+                cc.id = gendersKey.selected + "";
+                // Set the key to a new id
+                setGendersKey({ ...gendersKey, selected: gendersKey.nextKey });
+                let temp = genders;
+                let index = temp.findIndex((c) => c.id === cc.id);
+                temp[index] = cc;
+                setGenders(temp);
+            }
+        }} onHide={() => { setShowAddGenderModal(false) }} show={showAddGenderModal} />
+
+        <AddSpeciesModal editData={editData as MudCharacterSpecies} key={"Species:" + speciesKey.selected} onSendSpecies={(cc: MudCharacterSpecies) => {
+            if (speciesKey.selected === speciesKey.nextKey) {
+
+                cc.id = speciesKey.nextKey + "";
+                console.log(cc);
+                setSpecies([...species, cc]);
+                setShowAddSpeciesModal(false);
+                setSpeciesKey({ nextKey: speciesKey.nextKey + 1, selected: speciesKey.selected + 1 });
+            } else {
+                cc.id = speciesKey.selected + "";
+                // Set the key to a new id
+                setSpeciesKey({ ...speciesKey, selected: speciesKey.nextKey });
+                let temp = species;
+                let index = temp.findIndex((c) => c.id === cc.id);
+                temp[index] = cc;
+                setSpecies(temp);
+            }
+        }} onHide={() => { setShowAddSpeciesModal(false) }} show={showAddSpeciesModal} />
 
         <AddNpcModal editData={editData as MudNpc} key={"Npc:" + npcsKey.selected} onSendNpc={(cc: MudNpc) => {
             if (npcsKey.selected === npcsKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class

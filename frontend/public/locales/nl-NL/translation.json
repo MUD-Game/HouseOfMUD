@@ -1,0 +1,300 @@
+{
+    "info": {
+        "verifyemail": {
+            "text": "Bevestig je e-mailadres door op de link in de e-mail te klikken.",
+            "title": "geslaagd"
+        }
+    },
+    "button": {
+        "login": "aanmelding",
+        "download": "downloaden",
+        "upload": "uploaden",
+        "close": "sluiting",
+        "yes": "ja",
+        "edit": "bewerken",
+        "update": "update",
+        "preview": "voorbeeld",
+        "register": "registreren",
+        "delete": "verwijderen",
+        "remove": "verwijdering",
+        "save": "opslaan",
+        "cancel": "annuleren",
+        "logout": "afmelden",
+        "start": "begin",
+        "no": "nee",
+        "join": "deelnemen",
+        "ok": "O.K.",
+        "share": "vrijgeven",
+        "create": "creëren",
+        "submit": "verzenden"
+    },
+    "header": {
+        "welcome": "welkom"
+    },
+    "common": {
+        "amount": "nummer",
+        "isglobal": "Wereldwijde actie?",
+        "select_species": "Selecteer soort",
+        "select_actions": "Selecteer acties",
+        "404": "Pagina niet gevonden...",
+        "select_events": "Selecteer",
+        "select_npcs": "Selecteer NPC's",
+        "start_room": {
+            "description": "Dit is de begindroom",
+            "name": "begin"
+        },
+        "select_items": "Objecten selecteren"
+    },
+    "verify_email": {
+        "error": "Je e-mailadres kan niet worden geverifieerd, je token is ongeldig of je hebt al geverifieerd.",
+        "success": "E-mail is geverifieerd. U zult aan login binnen 3 seconden door:sturen",
+        "title": "e-mailverificatie"
+    },
+    "game": {
+        "inventory": "voorraad",
+        "queue": "wachtrij",
+        "leave": "verlaten"
+    },
+    "user_settings": {
+        "delete_user": {
+            "confirmation": {
+                "text": "Weet je zeker dat je je account wilt verwijderen? Deze stap kan niet ongedaan worden gemaakt!",
+                "title": "Gebruiker verwijderen"
+            },
+            "button": "Gebruiker verwijderen"
+        },
+        "language": {
+            "de-DE": "Duits",
+            "en-US": "Engels",
+            "nl-NL": "nederlands",
+            "label": "taal"
+        },
+        "account": "rekening",
+        "profile": "profiel",
+        "title": "gebruikersinstellingen"
+    },
+    "character_creator": {
+        "new_character": "Een nieuw teken maken",
+        "create": "Maken",
+        "pick_character": "Selecteer"
+    },
+    "error": {
+        "exists": {
+            "email": {
+                "text": "Dit e-mailadres is al in gebruik!",
+                "title": "Ongeldig e-mailadres"
+            },
+            "user": {
+                "text": "Kies een andere gebruikersnaam, deze wordt al gebruikt.",
+                "title": "Ongeldige gebruikersnaam"
+            }
+        },
+        "rabbitmq": {
+            "send": {
+                "text": "Er is een fout opgetreden bij het verzenden van je bericht. Probeer het opnieuw of neem contact op met een beheerder als het probleem zich blijft voordoen.",
+                "title": "Dit werkte niet"
+            },
+            "logout": {
+                "text": "Het zal proberen om u opnieuw aan te sluiten als dit niet werkt, contacteer een beheerder!",
+                "title": "Onverbonden met RabbitMQ"
+            },
+            "login": {
+                "text": "Probeer het opnieuw of neem contact op met een beheerder.",
+                "title": "Kan geen verbinding maken met RabbitMQ"
+            }
+        },
+        "deletestartroom": {
+            "text": "Je kunt de begindroom niet verwijderen!",
+            "title": "Dat is niet mogelijk!"
+        },
+        "failvalidation": {
+            "item": {
+                "text": "Om een nieuw punt tot stand te brengen, moet er een ingang op de volgende gebieden zijn: Naam, beschrijving!",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            },
+            "species": {
+                "text": "Gelieve een naam voor de soort te vermelden",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            },
+            "class": {
+                "text": "Om een nieuwe klasse tot stand te brengen, moet het een ingang op de volgende gebieden hebben: Naam, beschrijving, max. HP, max. Mana, max. Dmg. De cijfers mogen niet 0 zijn!",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            },
+            "gender": {
+                "text": "Geef een naam voor geslacht op",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            },
+            "action": {
+                "text": "Om een nieuwe actie tot stand te brengen, moet het minstens één ingang op de volgende gebieden hebben: Naam, beschrijving, uitvoer. Zoals in alle gebeurtenisvelden!",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            },
+            "room": {
+                "text": "Om een ruimte te bewaren, moet er een ingang op de volgende gebieden zijn: Naam, beschrijving!",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            },
+            "dungeon": {
+                "text": "Om een duinen te maken, moet een punt op de volgende gebieden worden vermeld: Naam, beschrijving, maximumaantal spelers, geslachten, soort en klasse!",
+                "title": "Gelieve alle gevraagde gegevens in te vullen"
+            }
+        },
+        "reference_in_npc": {
+            "text": "Er is minstens één NPC die tot deze soort behoort, het conflict oplost en opnieuw probeert!",
+            "title": "Je kunt deze soort niet verwijderen"
+        },
+        "reference_in_action": {
+            "text": "Er is minstens één actie die tot dit punt toegang heeft, het conflict oplost en opnieuw probeert!",
+            "title": "Je kunt dit object niet verwijderen"
+        },
+        "unauthorized": {
+            "text": "Geen gebruiker werd gevonden met de gegeven gegevens of het login gegeven is onjuist!",
+            "title": "onjuiste aanmelding"
+        },
+        "internal": {
+            "text": "Een interne server is mislukt. Probeer het later opnieuw als het probleem zich blijft voordoen. Neem contact op met een beheerder.",
+            "title": "Interne serverfout"
+        }
+    },
+    "dungeon_keys": {
+        "room": "ruimte",
+        "maxdmg": "max. Dmg",
+        "connections": {
+            "inactive": "Uitgeschakeld (geen doorgang)",
+            "closed": "gesloten",
+            "open": "open"
+        },
+        "output": "uitvoer",
+        "maxmana": "max mana",
+        "items": "objecten",
+        "command": "opdracht",
+        "maxhp": "max.",
+        "species": "soort",
+        "class": "klasse",
+        "gender": "geslacht",
+        "events": "gebeurtenissen",
+        "npcs": "NPC's",
+        "status": "status",
+        "npc": "NPC",
+        "description": "beschrijving",
+        "itemsNeeded": "Vereiste objecten",
+        "players": "speler",
+        "actions": "acties",
+        "name": "naam"
+    },
+    "dungeon_configurator": {
+        "inputs": {
+            "species": {
+                "placeholder": "soort",
+                "emptyLabel": "Geef nieuwe soorten op...",
+                "title": "soort"
+            },
+            "genders": {
+                "placeholder": "geslacht",
+                "emptyLabel": "Geef een nieuw geslacht op.",
+                "title": "geslacht"
+            },
+            "maxPlayers": {
+                "placeholder": "maximumaantal spelers"
+            },
+            "description": {
+                "placeholder": "beschrijving"
+            },
+            "name": {
+                "placeholder": "naam"
+            }
+        },
+        "title": "Dungeon configureren",
+        "confirmations": {
+            "delete_npc": {
+                "text": "Weet u zeker dat u deze NPC wilt verwijderen? Deze stap verwijdert NPC uit alle ruimten en kan niet worden ongedaan gemaakt!",
+                "title": "NPC verwijderen"
+            },
+            "delete_room": {
+                "text": "Weet u zeker dat u deze room wilt verwijderen?",
+                "title": "verwijderen"
+            },
+            "delete_action": {
+                "text": "Weet u zeker dat u deze actie wilt verwijderen? Deze stap schrapt de actie van alle ruimten en kan niet ongedaan worden gemaakt!",
+                "title": "Verwijderen"
+            },
+            "delete_gender": {
+                "text": "Weet u zeker dat u dit geslacht wilt verwijderen? Deze stap kan niet ongedaan worden gemaakt!",
+                "title": "geslacht verwijderen"
+            },
+            "delete_item": {
+                "text": "Weet je zeker dat je dit object wilt verwijderen? Deze stap schrapt het punt van alle ruimten en kan niet ongedaan worden gemaakt!",
+                "title": "verwijderen"
+            },
+            "delete_species": {
+                "text": "Weet u zeker dat u deze soort wilt verwijderen? Deze stap kan niet ongedaan worden gemaakt!",
+                "title": "schrappingssoort"
+            },
+            "delete_class": {
+                "text": "Weet u zeker dat u deze klasse wilt verwijderen?",
+                "title": "Klasse verwijderen"
+            }
+        },
+        "buttons": {
+            "create_species": "nieuwe soorten",
+            "create_gender": "nieuw geslacht",
+            "create_npc": "Nieuwe NPC maken",
+            "create_action": "nieuwe actie",
+            "create_item": "Een nieuw object maken",
+            "create_class": "een nieuwe klasse maken"
+        },
+        "rooms": {
+            "delete_room": "verwijderen",
+            "save_room": "winkel",
+            "create_room": "Nieuwe ruimte maken",
+            "title": "kamers"
+        }
+    },
+    "login": {
+        "register_here": "Hier inschrijven",
+        "login_here": "Hier inschrijven",
+        "have_account": "Account al beschikbaar?",
+        "no_account": "Nog geen account?",
+        "email": "e-mailadres",
+        "username": "gebruikersnaam",
+        "password": "wachtwoord"
+    },
+    "dashboard": {
+        "delete_dungeon": {
+            "confirmation": {
+                "text": "Weet je zeker dat je deze kerker wilt verwijderen? Deze stap kan niet ongedaan worden gemaakt!",
+                "title": "Dungeon verwijderen"
+            }
+        },
+        "already_in_dungeon": "Je bent al begonnen met deze kerker",
+        "my_dungeons": "Mijn Dungeons",
+        "all_dungeons": "Alle Dungeons",
+        "create_new_dungeon": "Nieuwe Dungeon maken",
+        "search_dungeon": "Zoekduif",
+        "title": "dashboard"
+    },
+    "room_tooltip": {
+        "toggle_connections": {
+            "text": "Wanneer gecreeerd, worden de verbindingen tussen ruimten automatisch gecreeerd. Deze verbindingen kunnen met één klik worden geopend, gesloten en onbruikbaar gemaakt.",
+            "title": "Interconnecties tussen kamers aanpassen"
+        },
+        "edit_room": {
+            "text": "Als u op een room klikt, wordt deze geselecteerd en kan dit met leven worden gevuld in de onderstaande vorm",
+            "title": "bewerken"
+        },
+        "navigation": {
+            "refocus": "Positie opnieuw instellen en zoomen",
+            "zoom_in_out": "puur en zoomen",
+            "drag": {
+                "text": "De kaart wordt verplaatst door slepen en neerzetten met de muis",
+                "title": "verplaatsen"
+            },
+            "ctrl": "ctrl",
+            "scroll_wheel": "wiel",
+            "title": "navigatie"
+        },
+        "add_room": {
+            "text": "Het klikken op een lege (grijze) ruimte opent een dialoog om een ruimte toe te voegen. Hier kunt u de ruimtenaam en beschrijving bepalen.",
+            "title": "toevoegen"
+        },
+        "title": "ruimte"
+    }
+}

@@ -93,7 +93,8 @@
         "language":{
             "label": "Sprache",
             "en-US": "Englisch",
-            "de-DE": "Deutsch"
+            "de-DE": "Deutsch",
+            "nl-NL": "Niederländisch"
         }
     },
     "game":{

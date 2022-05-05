@@ -46,6 +46,7 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
                             }}>
                                 <option value="de-DE">{t("user_settings.language.de-DE")}</option>
                                 <option value="en-US">{t("user_settings.language.en-US")}</option>
+                                <option value="nl-NL">{t("user_settings.language.nl-NL")}</option>
                             </MudSelect>
                         </div>
                     </Row>

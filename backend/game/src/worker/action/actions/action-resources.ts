@@ -2,6 +2,7 @@
  * File that holds all necessary string resources.
  */
 
+import { parse } from "path";
 import { Room } from "../../../data/interfaces/room";
 
 export const triggers = {
@@ -17,6 +18,8 @@ export const triggers = {
     messageMaster: "fluesterdm",
     unspecified: "dm",
     invalid: "invalid",
+    help: "hilfe",
+    showActions: "aktionen",
 
     //dungeonmaster
     addDamage: "adddmg",
@@ -49,7 +52,10 @@ export const actionMessages = {
     whisperToDm: "[privat] %s -> Dungeon Master: %s",
     discard: "Du hast folgendes Item abgelegt: %s",
     pickup: "Du hast folgendes Item aufgehoben: %s",
-    dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:"
+    dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
+    helpMessage: "Willkommen in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten. Gebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.",
+    showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
+    showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein."
 }
 
 export const errorMessages = {
@@ -69,6 +75,21 @@ export const dungeonMasterSendMessages = {
 
 export const extras = {
     dungeonMasterId: '0'
+}
+
+export const actionDescriptions = {
+    move: parseResponseString("'%s <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; ", triggers.move),
+    look: parseResponseString("'%s' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; ", triggers.look),
+    inv: parseResponseString("'%s' - Zeigt die Items in deinem Inventar an; ", triggers.inventory),
+    pickup: parseResponseString("'%s <Itemname>' - Hebe ein Item aus dem Raum auf; ", triggers.pickup),
+    discard: parseResponseString("'%s <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; ", triggers.discard),
+    inspect: parseResponseString("'%s <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; ", triggers.inspect),
+    unspecified: parseResponseString("'%s <aktion>' - Frage eine Aktion beim Dungeon Master an; ", triggers.unspecified),
+    message: parseResponseString("'%s <Nachricht>' - Sende eine Nachricht in den Raum; ", triggers.message),
+    whisper: parseResponseString("'%s <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; ", triggers.whisper),
+    messageMaster: parseResponseString("'%s <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; ", triggers.messageMaster),
+    help: parseResponseString("'%s' - Wenn du nicht mehr weiterkommst; ", triggers.help),
+    showActions: parseResponseString("'%s' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; ", triggers.showActions)
 }
 
 export const eventCases: { [event: string]: number } = {

@@ -356,23 +356,31 @@ export class DatabaseAdapter {
      * @returns an array of all characters from the specified user in the specified dungeon
      */
     async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]> {
+        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) });
+        let result = await foundDungeon!.populate({path: 'characters', match: { userId: { $eq: username } }});
         var charactersFromUser: CharacterDataset[] = [];
-        (await this.getAllCharactersFromDungeon(dungeonId)).forEach(char => {
+        result.characters.forEach((char: CharacterDataset) => {
             if (char.userId === username) {
                 charactersFromUser.push(char)
             }
-        })
+        });
         return charactersFromUser
     }
 
     /**
-     * gets a character with specified character id from database
-     * @param characterId the character id of the character to get
-     * @returns  the found character
+     * gets a specified character from dungeon from database
+     * @param characterName the character name of the character to get
+     * @returns the found character
      */
-    async getCharacterById(characterId: string): Promise<mongoose.Document<CharacterDataset, any, any> | null> {
-        return this.character.findOne({ id: characterId })
+    async getCharacterFromDungeon(characterName: string, dungeonId: string): Promise<CharacterDataset| null> {
+        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) });
+        let result = await foundDungeon!.populate({path: 'characters', match: { name: { $eq: characterName } }});
+        let resultChar: CharacterDataset| null = null;
+        result.characters.forEach((char: CharacterDataset) => {
+            if(char.name == characterName){
+                resultChar = char;
+            }
+        });
+        return resultChar;
     }
-
-
 }

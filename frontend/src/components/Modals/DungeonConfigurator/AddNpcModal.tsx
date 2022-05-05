@@ -70,6 +70,9 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
         }
     }
 
+    console.log(species.map(({ from_server, name, ...other }) => {
+        return { ...other, label:name }
+    }))
 
 
     return (
@@ -89,11 +92,13 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
                     <Alert message={error} type="error" setMessage={setError} />
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <Typeahead id={"typeahead-npc-species"} options={species} colmd={6} title={t(`dungeon_keys.species`)} selected={speciesSelection} onChange={(event) => setSpeciesSelection(event)} placeholder={t(`common.select_species`)} />
+                    <Typeahead id={"typeahead-npc-species"} options={species.map(({ from_server, name, ...other })=> {
+                        return { ...other, label: name }
+                    }) as Option[]} colmd={6} title={t(`dungeon_keys.species`)} selected={speciesSelection} onChange={(event) => setSpeciesSelection(event)} placeholder={t(`common.select_species`)} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
+                        <Button onClick={() => { setError(""); props.onHide() }} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
                         <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.${props.editData ? 'edit' : 'create'}`)}</Button>

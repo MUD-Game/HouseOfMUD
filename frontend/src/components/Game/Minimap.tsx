@@ -12,16 +12,18 @@ import { useEffect } from 'react';
 import './index.css'
 import { Compass, GeoAlt } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
+import Konva from 'konva';
+import { useRefSize } from '../../hooks/useRefSize';
 
 const roomSize = 60;
 const roomMargin = 40
 const roomOffset = roomSize + roomMargin;
-const connectionStrokeWidth = 8;
+const connectionStrokeWidth = 10;
 const connectionBlobRadius = connectionStrokeWidth;
-var scale = 0.4;
+const initialScale = 0.8;
+const minScale = 0.1;
+const maxScale = 1.5;
 
-const sizeX = 20;
-const sizeY = 20;
 let bodyStyles = window.getComputedStyle(document.body);
 
 const roomStrokeWidth = 4;
@@ -69,29 +71,75 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     const sizeRef = useRef<any>();
     const stageRef = useRef<any>();
+    const currentPositionCircleRef = useRef<any>();
     const [currentRoomId, setCurrentRoomId] = React.useState<string>(props.startRoom);
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
-    const [isAnchored, setIsAnchored] = React.useState<boolean>(true);
-    const [size, setSize] = React.useState<{ width: number, height: number }>({ width: 0, height: 0 });
+    const [width, height] = useRefSize(sizeRef);
 
     useEffect(() => {
-        setSize({ width: sizeRef.current.clientWidth, height: sizeRef.current.clientHeight });
         setRoomSubscriber((id:string)=>{
-            setCurrentRoomId(id)
+            setCurrentRoomId(id);
             let tempRooms = rooms;
             tempRooms[id].explored = true;
             setRooms(tempRooms);
-            focusOnRoom(id, true);
+            // Check if we move on the x or y axis
+            const oldId = currentPositionCircleRef.current.attrs["data-id"];
+            currentPositionCircleRef.current.attrs["data-id"] = id;
+            const [oldX, oldY] = oldId.split(',').map((x:any)=>parseInt(x));
+            const [newX, newY] = id.split(',').map(x=>parseInt(x));
+            // initially for ltr
+            if(Math.abs(oldX-newX) > 1){
+                // Its a move that isnt only one room
+                stageRef.current.to({ x: -rooms[id].xCoordinate * roomOffset * initialScale, y: -rooms[id].yCoordinate * roomOffset * initialScale, duration: 1, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
+                return;
+            }
+            let xHalf = (newX * roomOffset - roomMargin / 2);
+            const xFull = (newX * roomOffset + roomSize / 2);
+            let yHalf = (newY * roomOffset - roomMargin / 2);
+            const yFull = (newY * roomOffset + roomSize / 2);
+            if(newX>oldX){ // Left to right
+                xHalf = (newX * roomOffset - roomMargin / 2);
+                yHalf = yFull;
+            }else if(newX<oldX){ // Right to left
+                xHalf = (oldX * roomOffset - roomMargin / 2);
+                yHalf = yFull;
+            }else if(newY>oldY){ // Top to bottom
+                xHalf = xFull;
+                yHalf = (newY * roomOffset - roomMargin / 2);
+            }else if(newY<oldY){ // Bottom to top
+                xHalf = xFull;
+                yHalf = (oldY * roomOffset - roomMargin / 2);
+            }else{
+                return;
+            }
+            stageRef.current.to({ x: -rooms[id].xCoordinate * roomOffset * initialScale, y: -rooms[id].yCoordinate * roomOffset * initialScale, duration: 1, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
+            currentPositionCircleRef.current.to({
+                duration: 0.5,
+                radius: roomSize / 16,
+                x: xHalf,
+                y: yHalf,
+                easing: Konva.Easings.EaseIn,
+                onFinish: () => {
+                    currentPositionCircleRef.current.to({
+                        duration: 0.5,
+                        radius: roomSize / 4,
+                        x: xFull,
+                        y: yFull,
+                        easing: Konva.Easings.EaseOut
+                    })
+                }
+          
+            })
         });
-    }, [isAnchored]);
+        focusOnRoom("0,0", true);
+    }, []);
 
 
     const onWheelHandle = (e: any) => {
         e.evt.preventDefault();
-        setIsAnchored(false);
 
         let stage = e.currentTarget;
-        var oldScale = stage.attrs.scaleX || scale;
+        var oldScale = stage.attrs.scaleX;
         var pointer = stage.getPointerPosition();
         var scaleBy = 1.1;
         var mousePointTo = {
@@ -101,10 +149,10 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         // how to scale? Zoom in? Or zoom out?
         let direction = e.evt.deltaY > 0 ? -1 : 1;
 
-        scale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-        scale = Math.min(Math.max(scale, 0.2), 1);
+        let scale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+        scale = Math.min(Math.max(scale, minScale), maxScale);
         stage.scale({ x: scale, y: scale });
-
+        
         var newPos = {
             x: pointer.x - mousePointTo.x * scale,
             y: pointer.y - mousePointTo.y * scale,
@@ -117,28 +165,21 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         if(isAnc && stageRef.current){
             const xc = parseInt((roomId || currentRoomId).split(",")[0]);
             const yc = parseInt((roomId || currentRoomId).split(",")[1]);
-            const x = -xc * roomOffset* stageRef.current.attrs.scaleX; 
-            const y = -yc * roomOffset* stageRef.current.attrs.scaleY;
-
-            console.log(stageRef.current.attrs);
-
-            // stageRef.current.position({ x: x, y: y });
-            stageRef.current.to({ x: x, y: y, duration: 0.2 });
+            const x = -xc * roomOffset * initialScale;
+            const y = -yc * roomOffset * initialScale;
+            stageRef.current.to({ x: x, y: y, duration: 0.4,scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut});
         }
     }
 
     return (
         <>
             <div id="konva-buttons-container">
-                <img style={isAnchored ? { opacity: "0.5" } : {}} src={compassPng} alt="compass" id="compass" onClick={() => {
-                    if(!isAnchored){
-                        setIsAnchored(true);
-                        focusOnRoom(currentRoomId, true);
-                    }
+                <img src={compassPng} alt="compass" id="compass" onClick={() => {
+                     focusOnRoom(currentRoomId, true);
                 }} />
             </div>
-            <div id="minimap"  ref={sizeRef}>
-                <Stage scale={{ x: scale, y: scale }} onDragMove={() => setIsAnchored(false)} ref={stageRef} onWheel={onWheelHandle} width={size.width} height={size.width} draggable offsetY={(-size.width / 2)/scale+ (roomSize /2)} offsetX={(-size.width / 2)/scale + (roomSize /2)}>
+            <div id="minimap" className="mb-2" ref={sizeRef}>
+                <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable offsetY={(-width / 2) / initialScale + (roomSize / 2)} offsetX={(-width / 2) / initialScale + (roomSize / 2)}>
                     <Layer>
                         <Group name="connections">
                             {Object.keys(rooms).map(key => {
@@ -222,9 +263,6 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                 const room = rooms[roomkey];
                                 let fillColor = fillActive;
                                 let strokeColor = strokeActive;
-                                if (roomkey === currentRoomId) {
-                                    fillColor = fillCurrentRoom;
-                                }
                                 if (!room.explored) {
                                     return null
                                 }
@@ -291,7 +329,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     connections.push(<Circle key={`${roomkey}-connection-explored-south`} x={x * roomOffset + (roomSize / 2)} y={y * roomOffset + roomSize + 2} stroke={yStrokeCol} radius={connectionBlobRadius} fill={yStrokeCol} data-status={yStatus} />);
                                 }else{
                                     // Put a line
-                                    connections.push(<Line key={`${roomkey}-connection-explored-east`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
+                                    connections.push(<Line key={`${roomkey}-connection-explored-south`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
                                     }
                                 }
 
@@ -308,9 +346,11 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                         strokeWidth={roomStrokeWidth}
                                         stroke={strokeColor}
                                     />
+                                        
                                     </Group>
                                 )
                             })}
+                            {<Circle ref={currentPositionCircleRef} data-id="0,0" x={0 * roomOffset + (roomSize / 2)} y={0 * roomOffset + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />}
                         </Group>
                     </Layer>
                 </Stage>

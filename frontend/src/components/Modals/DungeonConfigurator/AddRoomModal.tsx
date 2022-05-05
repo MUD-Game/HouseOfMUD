@@ -31,7 +31,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
 
     const [error, setError] = React.useState<string>("");
 
-
     const modalIsInvalid = () => {
         return validator.isEmpty(name) || validator.isEmpty(description);
     }
@@ -40,7 +39,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
         if (modalIsInvalid()) {
             setError("failvalidation.room");
         } else {
-            setError("failvalidation.room");
+            setError("");
             const [x,y] = props.coordinates;
             const characterRoom: MudRoom = {
                 id: String(props.coordinates),
@@ -88,7 +87,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
+                        <Button onClick={() => { setError(""); props.onHide() }} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
                         <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.create`)}</Button>

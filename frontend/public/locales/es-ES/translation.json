@@ -1,0 +1,304 @@
+{
+    "info": {
+        "verifyemail": {
+            "text": "Por favor confirme su dirección de correo electrónico haciendo clic en el enlace en el correo electrónico.",
+            "title": "correcto"
+        }
+    },
+    "button": {
+        "login": "inicio de sesión",
+        "download": "descargar",
+        "upload": "cargar",
+        "close": "cerrar",
+        "yes": "sí",
+        "edit": "editar",
+        "update": "actualizar",
+        "preview": "vista previa",
+        "register": "registrar",
+        "delete": "eliminar",
+        "remove": "quitar",
+        "save": "guardar",
+        "cancel": "cancelar",
+        "logout": "cancelar suscripción",
+        "start": "inicio",
+        "no": "No",
+        "join": "unirse",
+        "ok": "OK.",
+        "share": "liberar",
+        "create": "crear",
+        "submit": "enviar"
+    },
+    "header": {
+        "welcome": "bienvenido"
+    },
+    "common": {
+        "amount": "número",
+        "isglobal": "¿Acción global?",
+        "select_species": "Seleccionar especies",
+        "select_actions": "Seleccionar acciones",
+        "404": "Página no encontrada..",
+        "select_events": "Seleccionar",
+        "select_npcs": "Seleccionar NPC",
+        "start_room": {
+            "description": "Este es el sueño de partida",
+            "name": "inicio"
+        },
+        "select_items": "Seleccionar elementos"
+    },
+    "verify_email": {
+        "error": "No se pudo comprobar el correo, el token no es válido o ya lo ha comprobado.",
+        "success": "Correo electrónico verificado correctamente. Se le reenviará al inicio de sesión en 3 segundos",
+        "title": "verificación de correo electrónico"
+    },
+    "game": {
+        "inventory": "inventario",
+        "queue": "cola",
+        "leave": "salir"
+    },
+    "user_settings": {
+        "delete_user": {
+            "confirmation": {
+                "text": "¿Está seguro de que desea eliminar su cuenta? ¡Este paso no se puede deshacer!",
+                "title": "Eliminar usuario"
+            },
+            "button": "Eliminar usuario"
+        },
+        "language": {
+            "pl-PL": "Polaco",
+            "es-ES": "Español",
+            "it-IT": "Italiano",
+            "fr-FR": "Francés",
+            "de-DE": "Alemán",
+            "en-US": "Inglés",
+            "nl-NL": "Neerlandés",
+            "label": "idioma"
+        },
+        "account": "cuenta",
+        "profile": "perfil",
+        "title": "configuración de usuario"
+    },
+    "character_creator": {
+        "new_character": "Crear un carácter nuevo",
+        "create": "Crear",
+        "pick_character": "Seleccionar"
+    },
+    "error": {
+        "exists": {
+            "email": {
+                "text": "Esta dirección de correo electrónico ya está en uso.",
+                "title": "Dirección de correo electrónico no válida"
+            },
+            "user": {
+                "text": "Elija un nombre de usuario diferente, ya se utiliza!",
+                "title": "Nombre de usuario no válido"
+            }
+        },
+        "rabbitmq": {
+            "send": {
+                "text": "Error al enviar el mensaje. Vuelva a intentarlo o póngase en contacto con un administrador si el problema persiste.",
+                "title": "Esto no funcionó"
+            },
+            "logout": {
+                "text": "Tratará de volver a conectarse si esto no funciona, póngase en contacto con un administrador.",
+                "title": "Desconectado a RabbitMQ"
+            },
+            "login": {
+                "text": "Inténtelo de nuevo o póngase en contacto con un administrador.",
+                "title": "No se puede conectar con RabbitMQ"
+            }
+        },
+        "deletestartroom": {
+            "text": "¡No se puede eliminar el sueño de inicio!",
+            "title": "¡Eso no es posible!"
+        },
+        "failvalidation": {
+            "item": {
+                "text": "Para crear un nuevo elemento, debe haber una entrada en los siguientes campos: ¡Nombre, descripción!",
+                "title": "Introduzca todos los datos solicitados"
+            },
+            "species": {
+                "text": "Proporcione un nombre para la especie",
+                "title": "Introduzca todos los datos solicitados"
+            },
+            "class": {
+                "text": "Para crear una nueva clase, debe tener una entrada en los siguientes campos: Nombre, descripción, HP máximo, Mana máx., Dmg máx. ¡Los números no deben ser 0!",
+                "title": "Introduzca todos los datos solicitados"
+            },
+            "gender": {
+                "text": "Proporcione un nombre para el género",
+                "title": "Introduzca todos los datos solicitados"
+            },
+            "action": {
+                "text": "Para crear una nueva acción, debe tener al menos una entrada en los siguientes campos: Nombre, descripción, salida. Como en todos los campos de eventos!",
+                "title": "Introduzca todos los datos solicitados"
+            },
+            "room": {
+                "text": "Para guardar un espacio, debe haber una entrada en los siguientes campos: ¡Nombre, descripción!",
+                "title": "Introduzca todos los datos solicitados"
+            },
+            "dungeon": {
+                "text": "Para crear una mazmorra, debe haber una entrada en los campos siguientes: Nombre, descripción, número máximo de jugadores, géneros, especies y clase!",
+                "title": "Introduzca todos los datos solicitados"
+            }
+        },
+        "reference_in_npc": {
+            "text": "Hay al menos un PNJ que pertenece a esta especie, resuelve el conflicto y vuelve a intentarlo.",
+            "title": "No se puede eliminar esta especie"
+        },
+        "reference_in_action": {
+            "text": "Hay al menos una acción que tiene acceso a este elemento, resuelve el conflicto y vuelve a intentarlo.",
+            "title": "No se puede eliminar este elemento"
+        },
+        "unauthorized": {
+            "text": "No se encontró ningún usuario con los datos proporcionados o los datos de inicio de sesión son incorrectos.",
+            "title": "inicio de sesión incorrecto"
+        },
+        "internal": {
+            "text": "Error en un servidor interno. Vuelva a intentarlo más tarde si el problema persiste, póngase en contacto con un administrador.",
+            "title": "Error interno del servidor"
+        }
+    },
+    "dungeon_keys": {
+        "room": "espacio",
+        "maxdmg": "Dmg máx.",
+        "connections": {
+            "inactive": "Desactivado (sin contraseña)",
+            "closed": "cerrado",
+            "open": "abrir"
+        },
+        "output": "salida",
+        "maxmana": "maná máx.",
+        "items": "elementos",
+        "command": "comando",
+        "maxhp": "máx.",
+        "species": "especies",
+        "class": "clase",
+        "gender": "género",
+        "events": "eventos",
+        "npcs": "PNJ",
+        "status": "estado",
+        "npc": "NPC",
+        "description": "descripción",
+        "itemsNeeded": "Elementos necesarios",
+        "players": "reproductor",
+        "actions": "acciones",
+        "name": "nombre"
+    },
+    "dungeon_configurator": {
+        "inputs": {
+            "species": {
+                "placeholder": "especies",
+                "emptyLabel": "Introducir nuevas especies...",
+                "title": "especies"
+            },
+            "genders": {
+                "placeholder": "género",
+                "emptyLabel": "Introducir nuevo género..",
+                "title": "género"
+            },
+            "maxPlayers": {
+                "placeholder": "número máximo de jugadores"
+            },
+            "description": {
+                "placeholder": "descripción"
+            },
+            "name": {
+                "placeholder": "nombre"
+            }
+        },
+        "title": "Configurar mazmorras",
+        "confirmations": {
+            "delete_npc": {
+                "text": "¿Está seguro de que desea eliminar este NPC? Este paso quita el NPC de todas las habitaciones y no se puede deshacer!",
+                "title": "Eliminar NPC"
+            },
+            "delete_room": {
+                "text": "¿Está seguro de que desea eliminar esta sala?",
+                "title": "eliminar"
+            },
+            "delete_action": {
+                "text": "¿Está seguro de que desea eliminar esta acción? Este paso elimina la acción de todas las salas y no se puede deshacer!",
+                "title": "Eliminar"
+            },
+            "delete_gender": {
+                "text": "¿Está seguro de que desea eliminar este género? ¡Este paso no se puede deshacer!",
+                "title": "Eliminar género"
+            },
+            "delete_item": {
+                "text": "¿Está seguro de que desea eliminar este elemento? Este paso elimina el elemento de todas las salas y no se puede deshacer.",
+                "title": "eliminar"
+            },
+            "delete_species": {
+                "text": "¿Está seguro de que desea eliminar esta especie? ¡Este paso no se puede deshacer!",
+                "title": "eliminar especies"
+            },
+            "delete_class": {
+                "text": "¿Está seguro de que desea eliminar esta clase?",
+                "title": "Eliminar clase"
+            }
+        },
+        "buttons": {
+            "create_species": "nuevas especies",
+            "create_gender": "nuevo género",
+            "create_npc": "Crear nuevo NPC",
+            "create_action": "crear nueva acción",
+            "create_item": "Crear un nuevo elemento",
+            "create_class": "crear una nueva clase"
+        },
+        "rooms": {
+            "delete_room": "eliminar",
+            "save_room": "tienda",
+            "create_room": "Crear espacio nuevo",
+            "title": "habitaciones"
+        }
+    },
+    "login": {
+        "register_here": "Regístrese aquí",
+        "login_here": "Regístrese aquí",
+        "have_account": "¿Cuenta ya disponible?",
+        "no_account": "¿Todavía no hay cuenta?",
+        "email": "dirección de correo electrónico",
+        "username": "nombre de usuario",
+        "password": "contraseña"
+    },
+    "dashboard": {
+        "delete_dungeon": {
+            "confirmation": {
+                "text": "¿Está seguro de que desea eliminar esta mazmorra? ¡Este paso no se puede deshacer!",
+                "title": "Eliminar mazmorra"
+            }
+        },
+        "already_in_dungeon": "Ya ha iniciado esta mazmorra",
+        "my_dungeons": "Mis mazmorras",
+        "all_dungeons": "Todas las mazmorras",
+        "create_new_dungeon": "Crear nueva mazmorra",
+        "search_dungeon": "Buscar en mazmorras",
+        "title": "panel de control"
+    },
+    "room_tooltip": {
+        "toggle_connections": {
+            "text": "Cuando se crean, las conexiones entre salas se crean automáticamente. Estas conexiones pueden abrirse, cerrarse y desactivarse con un solo clic.",
+            "title": "Ajuste de las interconexiones entre salas"
+        },
+        "edit_room": {
+            "text": "Al hacer clic en una sala se seleccionará y se podrá rellenar con la forma siguiente",
+            "title": "editar"
+        },
+        "navigation": {
+            "refocus": "Restablecer posición y zoom",
+            "zoom_in_out": "puro y zoom",
+            "drag": {
+                "text": "El mapa se mueve arrastrando y soltando con el ratón",
+                "title": "mover"
+            },
+            "ctrl": "ctrl",
+            "scroll_wheel": "rueda",
+            "title": "navegación"
+        },
+        "add_room": {
+            "text": "Al hacer clic en un espacio vacío (gris) se abre un cuadro de diálogo para agregar un espacio. Aquí puede definir el nombre y la descripción del espacio.",
+            "title": "agregar"
+        },
+        "title": "espacio"
+    }
+}

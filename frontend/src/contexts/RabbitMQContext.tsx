@@ -13,6 +13,9 @@ import { RabbitMQPayload } from 'src/types/rabbitMQ';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/Game/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
+import { HUDProps } from 'src/components/Game/HUD';
+
+const debug = true;
 
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
@@ -23,6 +26,7 @@ export interface RabbitMQContextType {
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
   setRoomSubscriber: (subscriber: (roomId: string) => void) => void;
   setInventorySubscriber: (subscriber: (items: InventoryProps["inventoryData"]) => void) => void;
+  setHudSubscriber: (subscriber: (hud: HUDProps) => void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -45,7 +49,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { character, dungeon, verifyToken } = useGame();
   
   let chatSubscriber: (message: string) => void = () => { };
-  let errorSubscriber: (error: string) => void = (error) => { };
+  let errorSubscriber: (error: string, ...optionalParams: any[]) => void = (error) => { };
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
   let miniMapSubscriber: (message: any) => void = () => { };
@@ -55,6 +59,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     try {
       let jsonData: {action:string, data:any} = JSON.parse(message.body);
       //TODO: Decide what type of message we received
+      debug && console.log(jsonData);
       if (jsonData['action'] === undefined) {
         errorSubscriber("RabbitMQ-Message is missing a action-key");
         return;
@@ -73,8 +78,11 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
         case 'inventory':
           inventorySubscriber(jsonData.data);
           break;
+        case 'stats':
+          hudSubscriber(jsonData.data);
+          break;
         default:
-          errorSubscriber("RabbitMQ-Action not implemented yet: " + jsonData.action);
+          errorSubscriber("RabbitMQ-Action not implemented yet: ", jsonData.action);
       }
     } catch (err) {
       if (err instanceof SyntaxError) {
@@ -190,6 +198,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     inventorySubscriber = subscriber;
   }
 
+  const setHudSubscriber = (subscriber: (hud: HUDProps) => void) => {
+    hudSubscriber = subscriber;
+  }
+
   const minimapHandler = (command: string[], data: any) => {
     switch(command[0]) {
       case 'init':
@@ -201,7 +213,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

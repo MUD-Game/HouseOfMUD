@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Modal, Button, Container } from 'react-bootstrap';
+import { Modal, Button, Container, Col, Row } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
 import { MudActionElement } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
@@ -29,14 +29,15 @@ export interface AddActionModalProps {
 const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const dconf = useDungeonConfigurator();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const dt = 'dungeon_configurator';
     let initialItemsNeeded: Option[] = [];
     let initialRemoveItems: Option[] = [];
     let initialAddItems: Option[] = [];
     let initialEvents: Option[] = [];
     let initialEventValues: { [key: string]: number } = {};
-   
+    let initialIsGlobal: boolean = props.editData?.isGlobal || false;
+
     const constructToModalData = () => {
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
         props.editData?.itemsneeded?.forEach((item: number) => {
@@ -53,8 +54,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             }
         });
 
-       
-        
+
+
 
     }
     constructToModalData();
@@ -67,11 +68,25 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     const [command, setCommand] = React.useState<string>(props.editData?.command || "");
     const [output, setOutput] = React.useState<string>(props.editData?.output || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-
+    const [isGlobal, setIsGlobal] = React.useState<boolean>(props.editData?.isGlobal || false);
     const [error, setError] = React.useState<string>("");
 
     const modalIsInvalid = () => {
-        return validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output);
+        let status = validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output);
+        selectedEvents.forEach((event: any) => {
+            if (event === "additem") {
+                if (addItems.length === 0) {
+                    status = true;
+                }
+            } else if (event === "removeitem") {
+                if (removeItems.length === 0) {
+                    status = true;
+                }
+            } else {
+                if (eventValues[event] === undefined) status = true;
+            }
+        });
+        return status;
     }
 
     const deconstructToContextData = () => {
@@ -103,7 +118,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             output,
             description,
             itemsneeded: itemsneedednumbers as number[],
-            events: allEvents
+            events: allEvents,
+            isGlobal: isGlobal
         } as MudActionElement;
         return characterAction;
     }
@@ -159,7 +175,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                     <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
                     <MudTypeahead
                         colmd={12}
-                        title={ t(`dungeon_keys.itemsNeeded`) }
+                        title={t(`dungeon_keys.itemsNeeded`)}
                         id={"typeahead-items-needed"}
                         labelKey={(option: any) => `${option.name} (${option.description})`}
                         options={dconf.items}
@@ -169,7 +185,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         selected={itemsNeeded}
                     />
                     <MudTypeahead
-                        colmd={12}
+                        colmd={9}
                         title={t(`dungeon_keys.events`)}
                         id="typeahead-events"
                         labelKey="events"
@@ -179,6 +195,12 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         placeholder={t(`common.select_events`)}
                         selected={selectedEvents}
                     />
+                    <div className="col-md-3 align-self-end text-end">
+                        <div className="form-check form-switch p-0">
+                        <label className="form-check-label" htmlFor="isglobal"><b>{t(`common.isglobal`)}</b></label> <br />
+                        <input className="form-check-input float-end isglobal-input" onChange={evt => setIsGlobal(evt.target.checked)} type="checkbox" role="switch" id="isglobal" checked={isGlobal} />
+                        </div>
+                    </div>
                     {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {
                         if (mudEvent as string === 'additem' || mudEvent as string === 'removeitem') {
                             return (
@@ -203,7 +225,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
+                        <Button onClick={() => { setError(""); props.onHide() }} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
                         <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.${props.editData ? 'edit' : 'create'}`)}</Button>

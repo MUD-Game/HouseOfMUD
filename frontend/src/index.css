@@ -27,7 +27,7 @@
   --room-stroke: rgb(170, 170, 170);
   
   /* Created Rooms */
-  --room-current-fill: #2bde64;
+  --room-current-fill: var(--lightgreen);
   --room-active-fill: #8b4a20;
   --room-active-stroke : #6b2a00;
 
@@ -62,6 +62,19 @@ html, body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+*::-webkit-scrollbar {
+  width: 15px;
+}
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px var(--accent);
+  background-color: var(--accentlight);
+  border-radius: 10px;
+}
+*::-webkit-scrollbar-thumb {    
+  background: var(--accent);
+  border-radius: 10px;
 }
 
 
@@ -286,13 +299,20 @@ a:hover {
 }
 .inventory {
   width: 100%;
-  height: 50%;
+  height: 40%;
+}
+.inventory-wrap {
+  height: 100%;
+  overflow-y: auto;
 }
 .onlineplayers {
   height: 50%;
 }
 .chatqueue {
   height: 45%;
+}
+.chatqueue-wrap {  
+  overflow-y: auto;
 }
 .playerinfo {
   height: 45%;
@@ -312,18 +332,6 @@ a:hover {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-}
-.chat-content::-webkit-scrollbar {
-  width: 15px;
-}
-.chat-content::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px var(--accent);
-  background-color: var(--accentlight);
-  border-radius: 10px;
-}
-.chat-content::-webkit-scrollbar-thumb {    
-  background: var(--accent);
-  border-radius: 10px;
 }
 
 .progress {  

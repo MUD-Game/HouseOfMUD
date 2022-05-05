@@ -85,10 +85,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 <div className="col">
                     <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
                         <Nav.Item>
-                            <Nav.Link eventKey="all">Verfügbare Dungeons</Nav.Link>
+                            <Nav.Link eventKey="all">{t("dashboard.all_dungeons")}</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="my">Eigene Dungeons</Nav.Link>
+                            <Nav.Link eventKey="my">{t("dashboard.my_dungeons")}</Nav.Link>
                         </Nav.Item>
                     </Nav>
                 </div>

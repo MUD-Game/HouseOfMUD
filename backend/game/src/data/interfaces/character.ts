@@ -4,7 +4,6 @@ import { ItemInfo } from "./itemInfo";
 export interface Character {
     name: string;
     userId: string;
-    dungeonId: string;
     characterClass: string;
     characterSpecies: string;
     characterGender: string;
@@ -17,14 +16,14 @@ export interface Character {
     getPosition(): string
     modifyPosition(destinationRoom: string): any
     getInventory(): ItemInfo[]
+    isDead(): boolean
     getCharakterStats(): CharacterStats
     getMaxStats(): CharacterStats
 }
-  
+
 export class CharacterImpl implements Character {
     name: string;
     userId: string;
-    dungeonId: string;
     characterClass: string;
     characterSpecies: string;
     characterGender: string;
@@ -35,7 +34,6 @@ export class CharacterImpl implements Character {
 
     constructor(
         userId: string,
-        dungeonId: string,
         name: string,
         className: string,
         species: string,
@@ -46,7 +44,6 @@ export class CharacterImpl implements Character {
         inventory: ItemInfo[]
     ) {
         this.userId = userId;
-        this.dungeonId = dungeonId;
         this.name = name;
         this.characterClass = className;
         this.characterSpecies = species; 
@@ -72,9 +69,20 @@ export class CharacterImpl implements Character {
     getInventory(): ItemInfo[] {
         return this.inventory
     }
+
+    isDead(): boolean {
+        if(this.currentStats.hp > 0){
+            return false
+        }
+        else {
+            return true
+        }
+    }
+    
     getCharakterStats(): CharacterStats {
         return this.currentStats
     }
+    
     getMaxStats(): CharacterStats {
         return this.maxStats
     }

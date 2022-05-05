@@ -1,9 +1,10 @@
 import { ConsumeMessage } from "amqplib";
+import { DatabaseAdapter } from "../../data/databaseAdapter";
 import { Character, CharacterImpl } from "../../data/interfaces/character";
-import { CharacterStatsImpl } from "../../data/interfaces/characterStats";
+import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
-import { MiniMapData } from "../action/actions/action-resources";
+import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
 function sendToHost(hostAction: string, data: any): void {
@@ -19,12 +20,14 @@ export class DungeonController {
 
     private dungeonID: string;
     private amqpAdapter: AmqpAdapter;
+    private databaseAdapter: DatabaseAdapter | null;
     private actionHandler: ActionHandler;
     private dungeon: Dungeon;
 
-    constructor(dungeonID: string, amqpAdapter: AmqpAdapter, dungeon: Dungeon) {
+    constructor(dungeonID: string, amqpAdapter: AmqpAdapter, databaseAdapter: DatabaseAdapter | null, dungeon: Dungeon) {
         this.dungeonID = dungeonID;
         this.amqpAdapter = amqpAdapter;
+        this.databaseAdapter = databaseAdapter;
         this.dungeon = dungeon;
 
         this.actionHandler = new ActionHandlerImpl(this);
@@ -41,16 +44,18 @@ export class DungeonController {
                         case 'login':
                             // TODO: Refactor
                             /* temporary */
-                            let character = this.createCharacter(data.character);
+                            // let character = this.createCharacter(data.character);
+                            let character = await this.getCharacter(data.character);
+                            this.dungeon.characters[data.character] = character;
                             /* temporary */
                             await this.amqpAdapter.initClient(data.character);
                             await this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
-                            this.amqpAdapter.broadcast({
-                                action: 'message',
-                                data: { message: `${data.character} ist dem Dungeon beigetreten!` },
-                            });
+                            this.amqpAdapter.broadcastAction('message', { message: `${data.character} ist dem Dungeon beigetreten!` });
                             sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-
+                            if (data.character !== 'dungeonmaster') {
+                                await this.amqpAdapter.sendActionToClient(data.character, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
+                            }
+                            await this.sendStatsData(data.character)
                             await this.sendMiniMapData(data.character);
                             await this.sendInventoryData(data.character);
                             break;
@@ -73,20 +78,32 @@ export class DungeonController {
         });
     }
 
+    async getCharacter(name: string): Promise<Character> {
+        if (this.databaseAdapter) {
+            let char = await this.databaseAdapter.getCharacterFromDungeon(name, this.dungeonID);
+            console.log(char);
+            if (char) {
+                let maxStats = char.maxStats;
+                let curStats = char.currentStats;
+                return new CharacterImpl(char.userId, char.name, char.characterClass, char.characterSpecies, char.characterGender, new CharacterStatsImpl(maxStats.hp, maxStats.dmg, maxStats.mana), 
+                    new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, char.inventory);
+            }
+        }
+        return this.createCharacter(name);
+    }
+
     createCharacter(name: string): Character {
         let newCharacter: Character = new CharacterImpl(
             name,
-            '1',
             name,
-            'Magier',
-            'species1',
-            'gender1',
-            new CharacterStatsImpl(100, 20, 100),
-            new CharacterStatsImpl(100, 20, 100),
+            '',
+            '',
+            '',
+            new CharacterStatsImpl(1, 1, 1),
+            new CharacterStatsImpl(1, 1, 1),
             "0,0",
             []
         );
-        this.dungeon.characters[name] = newCharacter;
         // console.log(this.dungeon)
         return newCharacter;
     }
@@ -110,20 +127,33 @@ export class DungeonController {
             }
         }
         rooms["0,0"].explored = true;
-        await this.amqpAdapter.sendToClient(character,{
-            action: 'minimap.init',
-            data: {
+        await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
                 startRoom: "0,0" //TODO: Actually get the room the character is in at the start
-            }
-        } as unknown as MiniMapData);
+            } as MiniMapData);
     }	
 
     async sendInventoryData(character: string) {
-        this.amqpAdapter.sendToClient(character, {action: "inventory", data: this.dungeon.characters[character].inventory.map(item => {
+        this.amqpAdapter.sendActionToClient(character, "inventory", this.dungeon.characters[character].inventory.map(item => {
             return { item:this.dungeon.items[item.item].name, count:item.count }
-        })})
+        }));
     }
 
-
+    async sendStatsData(character: string) {
+        let currentCharacterStats: CharacterStats = this.dungeon.characters[character].getCharakterStats()
+        let maxCharacterStats: CharacterStats = this.dungeon.characters[character].getMaxStats()
+        let data = {
+            currentStats: {
+                hp: currentCharacterStats.getHp(),
+                dmg: currentCharacterStats.getDmg(),
+                mana: currentCharacterStats.getMana()
+            },
+            maxStats: {
+                hp: maxCharacterStats.getHp(),
+                dmg: maxCharacterStats.getDmg(),
+                mana: maxCharacterStats.getMana()
+            }
+        }
+        this.amqpAdapter.sendActionToClient(character, "stats", data);
+    }
 }

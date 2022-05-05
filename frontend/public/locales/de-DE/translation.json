@@ -93,11 +93,18 @@
         "language":{
             "label": "Sprache",
             "en-US": "Englisch",
-            "de-DE": "Deutsch"
+            "de-DE": "Deutsch",
+            "fr-FR": "Französisch",
+            "it-IT": "Italienisch",
+            "es-ES": "Spanisch",
+            "pl-PL": "Polnisch",
+            "nl-NL": "Niederländisch"
         }
     },
     "game":{
-        "leave": "Verlassen"
+        "leave": "Verlassen",
+        "queue": "Warteschlange",
+        "inventory": "Inventar"
     },
     "verify_email":{
         "title": "Email-Verifizierung",
@@ -118,15 +125,27 @@
             },
             "delete_item": {
                 "title": "Item löschen",
-                "text": "Bist du sicher, dass du dieses Item löschen möchtest?"
+                "text": "Bist du sicher, dass du dieses Item löschen möchtest? Diesr Schritt löscht das Item aus allen Räumen und kann nicht rückgängig gemacht werden!"
             },
             "delete_action": {
                 "title": "Aktion löschen",
-                "text": "Bist du sicher, dass du diese Aktion löschen möchtest?"
+                "text": "Bist du sicher, dass du diese Aktion löschen möchtest? Dieser Schritt löscht die Aktion aus allen Räumen und kann nicht rückgängig gemacht werden!"
             },
             "delete_room": {
                 "title": "Raum löschen",
                 "text": "Bist du sicher, dass du diesen Raum löschen möchtest?"
+            },
+            "delete_npc": {
+                "title": "NPC löschen",
+                "text": "Bist du sicher, dass du diesen NPC löschen möchtest? Dieser Schritt löscht den NPC aus allen Räumen und kann nicht rückgängig gemacht werden!"
+            },
+            "delete_gender":{
+                "title": "Geschlecht löschen",
+                "text": "Bist du sicher, dass du dieses Geschlecht löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
+            },
+            "delete_species":{
+                "title": "Spezies löschen",
+                "text": "Bist du sicher, dass du diese Spezies löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
             }
         },
         "title": "Dungeon konfigurieren",
@@ -155,6 +174,8 @@
             "create_class": "neue Klasse anlegen",
             "create_item": "neues Item erstellen",
             "create_npc": "neuen NPC erstellen",
+            "create_gender": "neues Geschlecht",
+            "create_species": "neue Spezies",
             "create_action": "neue Aktion anlegen"
         }
         
@@ -165,8 +186,13 @@
         "select_actions": "Aktionen auswählen",
         "select_species": "Spezies auswählen",
         "select_events": "Events auswählen",
+        "isglobal": "Globale Aktion?",
         "404": "Seite nicht gefunden...",
-        "amount": "Anzahl"
+        "amount": "Anzahl",
+        "start_room":{
+            "name": "Start Raum",
+            "description": "Dies ist der Startraum"
+        }
     },
     "header":{
         "welcome": "Willkommen"
@@ -203,6 +229,14 @@
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch!"
         },
+        "reference_in_action": {
+            "title": "Du kannst dieses Item nicht löschen",
+            "text": "Es existiert mindestens eine Aktion die auf dieses Item drauf zugreift, löse den Konflikt und versuche es erneut!"
+        },
+        "reference_in_npc": {
+            "title": "Du kannst diese Spezies nicht löschen",
+            "text": "Es existiert mindestens ein NPC der schon dieser Spezies angehört, löse den Konflikt und versuche es erneut!"
+        },
         "failvalidation":{
             "dungeon": {
                 "title": "Bitte gebe alle geforderten Daten ein",
@@ -210,7 +244,15 @@
             },
             "room": {
                 "title": "Bitte gebe alle geforderten Daten ein",
-                "text": "Um einen neuen Raum zu erstellen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
+                "text": "Um einen Raum zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
+            },
+            "gender": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Bitte gebe einen Namen für das Geschlecht an"
+            },
+            "species": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Bitte gebe einen Namen für die Spezies an"
             },
             "item": {
                 "title": "Bitte gebe alle geforderten Daten ein",

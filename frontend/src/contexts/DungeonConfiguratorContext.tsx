@@ -141,8 +141,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const [rooms, setRooms] = React.useState<{ [key: string]: MudRoom }>({
         "0,0": {
             id: "0,0",
-            name: "Start-Raum",
-            description: "Der Start-Raum ist der erste Raum, der beim ersten Aufruf des Dungeons angezeigt wird. Hier kannst du dich mit den anderen Spielern verbinden und deine eigenen Charaktere erstellen.",
+            name: t("common.start_room.name"),
+            description:t("common.start_room.description") ,
             npcs: [],
             items: [],
             connections: { east: 'inactive', south: 'inactive' },

@@ -130,7 +130,11 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     }
 
     const emptyRoomClickHandler = (e: any) => {
+        if(selectedRoomName && selectedRoomDescription) {
         addNewRoom(e.target.attrs["data-coordinates"]);
+        }else{
+            setError("failvalidation.room");
+        }
     }
     const getPossibleEmptyRooms = (rooms: { [key: string]: MudRoom }) => {
         const occupiedCoords = Object.keys(rooms);

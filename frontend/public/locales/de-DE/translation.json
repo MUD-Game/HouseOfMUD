@@ -179,7 +179,11 @@
         "select_species": "Spezies auswählen",
         "select_events": "Events auswählen",
         "404": "Seite nicht gefunden...",
-        "amount": "Anzahl"
+        "amount": "Anzahl",
+        "start_room":{
+            "name": "Start Raum",
+            "description": "Dies ist der Startraum"
+        }
     },
     "header":{
         "welcome": "Willkommen"
@@ -227,7 +231,7 @@
             },
             "room": {
                 "title": "Bitte gebe alle geforderten Daten ein",
-                "text": "Um einen neuen Raum zu erstellen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
+                "text": "Um einen Raum zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
             },
             "item": {
                 "title": "Bitte gebe alle geforderten Daten ein",

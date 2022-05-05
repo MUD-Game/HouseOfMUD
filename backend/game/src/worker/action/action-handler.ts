@@ -2,7 +2,7 @@ import { Dungeon } from '../../data/interfaces/dungeon';
 import { DungeonController } from '../controller/dungeon-controller';
 import { Action } from './action';
 import { extras, triggers } from './actions/action-resources';
-import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
+import { DieAction } from './actions/die-action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';
 import { HelpAction } from './actions/help-action';
@@ -24,6 +24,7 @@ import { RemoveHp } from './dmactions/removeHp-action';
 import { RemoveDamage } from './dmactions/removeDamage-action';
 import { RemoveMana } from './dmactions/removeMana-action';
 import { PrivateMessageFromDm } from './dmactions/privateMessage-action';
+import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
 
 
 const regExpression = {
@@ -52,6 +53,11 @@ export interface ActionHandler {
     invalidAction: InvalidAction;
 
     /**
+     * Used when hp of user are less equal 0
+     */
+    dieAction: DieAction;
+
+    /**
      * Predefined Dungeon Master Actions types to call performAction on.
      */
      dmActions: { [trigger: string]: Action };
@@ -70,6 +76,7 @@ export class ActionHandlerImpl implements ActionHandler {
     actions: { [trigger: string]: Action } = {};
     dungeonActions: { [trigger: string]: DungeonAction } = {};
     invalidAction: InvalidAction;
+    dieAction: DieAction;
     dmActions:{ [trigger: string]: Action } = {};
 
     /**
@@ -101,6 +108,7 @@ export class ActionHandlerImpl implements ActionHandler {
             this.dungeonActions[dungeonAction.trigger] = dungeonAction
         });
         this.invalidAction = new InvalidAction(dungeonController);
+        this.dieAction = new DieAction(dungeonController)
 
         let dmActions: Action[] = [
            new AddDamage(dungeonController),
@@ -131,6 +139,7 @@ export class ActionHandlerImpl implements ActionHandler {
         }
         let actionArguments: string[] = this.getActionArguments(message)
         action.performAction(user, actionArguments);
+        this.dieAction.performAction(user, [])
         return action;
     }
 

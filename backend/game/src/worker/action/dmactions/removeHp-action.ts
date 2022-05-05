@@ -14,7 +14,7 @@ export class RemoveHp implements Action {
         this.trigger = triggers.removeHp;
         this.dungeonController = dungeonController
     }
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacterName: string = args[0]
         args.shift()
@@ -51,6 +51,7 @@ export class RemoveHp implements Action {
 
                    
                 }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
 
             } catch (e) {
                 console.log(e)

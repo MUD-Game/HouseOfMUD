@@ -14,7 +14,7 @@ export class RemoveMana implements Action {
         this.trigger = triggers.removeMana;
         this.dungeonController = dungeonController
     }
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacterName: string = args[0]
         args.shift()
@@ -50,6 +50,7 @@ export class RemoveMana implements Action {
                     manastring = parseResponseString(dungeonMasterSendMessages.ManaRemoved, recipientCharacter.name , args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: manastring } })
                 }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
 
             } catch (e) {
                 console.log(e)

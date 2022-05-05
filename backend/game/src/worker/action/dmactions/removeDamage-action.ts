@@ -14,7 +14,7 @@ export class RemoveDamage implements Action {
         this.trigger = triggers.removeDamage;
         this.dungeonController = dungeonController
     }
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacterName: string = args[0]
         args.shift()
@@ -53,6 +53,7 @@ export class RemoveDamage implements Action {
                 console.log(e)
                 amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) } })
             }
+            await this.dungeonController.sendStatsData(recipientCharacter.name)
 
 
         } catch (e) {

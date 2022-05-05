@@ -14,7 +14,7 @@ export class AddDamage implements Action {
         this.trigger = triggers.addDamage;
         this.dungeonController = dungeonController
     }
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacterName: string = args[0]
         args.shift()
@@ -47,6 +47,7 @@ export class AddDamage implements Action {
                     recipientCharacter.getCharakterStats().setDmg(maxDmg)
 
                 }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
 
             } catch (e) {
                 console.log(e)

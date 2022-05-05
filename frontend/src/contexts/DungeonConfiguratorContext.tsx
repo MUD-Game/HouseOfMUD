@@ -88,7 +88,7 @@ export interface DungeonConfiguratorContextMethods {
     deleteAction: (key: number) => void;
 
     addRoom: (c: [number, number]) => void;
-    editRoom: (room: MudRoom) => void;
+    saveRoom: (room: MudRoom) => void;
     deleteRoom: () => void;
     selectRoom: (c: [number, number]) => void;
     toggleRoomConnection: (c: [number, number], south: boolean) => void;
@@ -96,6 +96,8 @@ export interface DungeonConfiguratorContextMethods {
     setSelectedRoomItemValues: (values: { [key: string]: any }) => void;
     setSelectedRoomActions: (actions: Option[]) => void;
     setSelectedRoomNpcs: (npcs: Option[]) => void;
+    setSelectedRoomName: (name: string) => void;
+    setSelectedRoomDescription: (description: string) => void;
 
 
     save: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, busyCallback: (busy: boolean) => void) => void;
@@ -104,11 +106,13 @@ export interface DungeonConfiguratorContextMethods {
 export interface DungeonConfiguratorContextType extends MudDungeon, DungeonConfiguratorContextMethods {
     npcs: MudNpc[];
     items: MudItem[];
-    currentRoom: MudRoom;
+    currentRoom: MudRoom | null;
     selectedRoomItems: Option[];
     selectedRoomItemValues: { [key: string]: any };
     selectedRoomActions: Option[];
     selectedRoomNpcs: Option[];
+    selectedRoomName: string;
+    selectedRoomDescription: string;
     setError: (error: string) => void;
     error: string;
 }
@@ -167,9 +171,11 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // Used to configure Rooms
     const [showAddRoomModal, setShowAddRoomModal] = React.useState<boolean>(false);
-    const [roomsKey, setRoomsKey] = React.useState<string>("0,0");
-    const [roomCoordiantes, setRoomCoordiantes] = React.useState<[number, number]>([0, 0]);
-    const [currentRoom, setCurrentRoom] = React.useState<MudRoom>(rooms["0,0"]);
+    const [roomsKey, setRoomsKey] = React.useState<string>("");
+    const [roomCoordiantes, setRoomCoordiantes] = React.useState<[number, number] | null>(null);
+    const [currentRoom, setCurrentRoom] = React.useState<MudRoom | null>(null);
+    const [selectedRoomName, setSelectedRoomName] = React.useState<string>("");
+    const [selectedRoomDescription, setSelectedRoomDescription] = React.useState<string>("");
     const [selectedRoomItems, setSelectedRoomItems] = React.useState<Option[]>([]);
     const [selectedRoomItemValues, setSelectedRoomItemValues] = React.useState<{ [key: string]: any }>({});
     const [selectedRoomActions, setSelectedRoomActions] = React.useState<Option[]>([]);
@@ -201,10 +207,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length });
 
                 setRooms(arrayToMap(dungeon.rooms));
-                setRoomsKey("0,0");
-                setRoomCoordiantes([0, 0]);
 
-                setCurrentRoom(rooms["0,0"]);
 
                 setNpcs(dungeon.npcs);
                 setNpcsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length });
@@ -284,31 +287,35 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     // REFACTOR: Check again if RoomsKey, RoomCoordiantes and CurrentRoom are needed or just one.. or at least two of them
     const addRoom = (c: [number, number]) => {
         setEditData(null); // EditData that is used for every Modal
-        setRoomsKey(String(c));
         setRoomCoordiantes(c); // Set room-coordinates to be used in the modal 
         setShowAddRoomModal(true);
     }
 
-    const editRoom = (room: MudRoom) => {
+    const saveRoom = (oldRoom: MudRoom) => {
         let temp = rooms;
-        room.items = [];
-        room.npcs = [];
-        room.actions = [];
+        oldRoom.name = selectedRoomName;
+        oldRoom.description = selectedRoomDescription;
+        oldRoom.items = [];
+        oldRoom.npcs = [];
+        oldRoom.actions = [];
         selectedRoomItems.forEach((i: any) => {
-            room.items.push({ item: i.id, count: selectedRoomItemValues[i.id] });
+            oldRoom.items.push({ item: i.id, count: selectedRoomItemValues[i.id] });
         });
         selectedRoomActions.forEach((i: any) => {
-            room.actions.push(i.id);
+            oldRoom.actions.push(i.id);
         });
         selectedRoomNpcs.forEach((i: any) => {
-            room.npcs.push(i.id);
+            oldRoom.npcs.push(i.id);
         });
-        temp[roomsKey] = room;
+        temp[roomsKey] = oldRoom;
         setRooms(temp);
-        setCurrentRoom(room);
     }
 
     const deleteRoom = () => {
+        if (!roomCoordiantes || !currentRoom || roomsKey === "") {
+            setError("noroomselected");
+            return;
+        }
         if (roomsKey === "0,0") {
             setError("deletestartroom")
         } else {
@@ -317,16 +324,45 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 let newRooms = rooms;
                 delete newRooms[roomsKey];
                 setRooms(newRooms);
+                // After room deletion we need to update the roomsKey and the currentRoom
+                setRoomCoordiantes([0, 0]);
+                setCurrentRoom(rooms["0,0"]);
+                setRoomsKey("0,0");
             });
         }
     }
 
     const selectRoom = (c: [number, number]) => {
+        // Save the old room
+        if (String(roomCoordiantes) !== String(c) &&(currentRoom && roomsKey !== "" && roomCoordiantes)) {
+            let temp = rooms;
+            let oldRoom = temp[roomsKey];
+            oldRoom.name = selectedRoomName;
+            oldRoom.description = selectedRoomDescription;
+            oldRoom.items = [];
+            oldRoom.npcs = [];
+            oldRoom.actions = [];
+            selectedRoomItems.forEach((i: any) => {
+                oldRoom.items.push({ item: i.id, count: selectedRoomItemValues[i.id] });
+            });
+            selectedRoomActions.forEach((i: any) => {
+                oldRoom.actions.push(i.id);
+            });
+            selectedRoomNpcs.forEach((i: any) => {
+                oldRoom.npcs.push(i.id);
+            });
+            temp[roomsKey] = oldRoom;
+            setRooms(temp);
+        }
+        // Set the new room
         const key = String(c);
         setRoomCoordiantes(c);
         setRoomsKey(key);
+        setRoomsKey(key);
         if (rooms[key]) {
             setCurrentRoom(rooms[key]);
+            setSelectedRoomDescription(rooms[key].description);
+            setSelectedRoomName(rooms[key].name);
             const items_array = rooms[key].items;
             const actions_array = rooms[key].actions;
             const npcs_array = rooms[key].npcs;
@@ -444,8 +480,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     }
 
     const deleteItem = (itemkey: number) => {
-
-        let newActions = actions;
         // check if the items are used in any action
         let usedInActions = false;
         actions.forEach((a: MudActionElement) => {
@@ -477,7 +511,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                     temprooms[roomKey] = room;
                 });
                 setRooms(temprooms);
-                selectRoom(roomCoordiantes);
+                if (roomCoordiantes) {
+                    selectRoom(roomCoordiantes);
+                }
 
 
             });
@@ -505,7 +541,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 temprooms[roomKey] = room;
             });
             setRooms(temprooms);
-            selectRoom(roomCoordiantes);
+            if (roomCoordiantes) {
+                selectRoom(roomCoordiantes);
+            }
             setNpcs(npcs.filter((n) => n.id !== npckey + ""));
         });
     }
@@ -523,12 +561,19 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setActionsKey({ selected: editIndex, nextKey: actionsKey.nextKey });
         setShowAddActionsModal(true);
     }
-    const deleteAction = (key: number) => {
+    const deleteAction = (actionKey: number) => {
         showConfirmation('delete_action', () => {
-            let index = actions.findIndex(c => c.id === key + "");
-            let newActions = actions;
-            newActions.splice(index, 1);
-            setActions(newActions);
+            let temprooms = rooms;
+            Object.keys(temprooms).forEach((roomKey: string) => {
+                let room = temprooms[roomKey];
+                room.actions = room.actions.filter((i: any) => i !== actionKey + "");
+                temprooms[roomKey] = room;
+            });
+            setRooms(temprooms);
+            if (roomCoordiantes) {
+                selectRoom(roomCoordiantes);
+            }
+            setActions(actions.filter((a) => a.id !== actionKey + ""));
         });
     }
 
@@ -626,7 +671,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, editRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc
+        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, setGenders, setSpecies, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName
     }
 
     let fields: MudDungeon = {
@@ -642,7 +687,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
     // REFACTOR: Somehow make the Modals more Readable...
-    return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, error, setError, npcs, items, currentRoom, selectedRoomActions, selectedRoomItemValues, selectedRoomItems, selectedRoomNpcs }}>
+    return <DungeonConfiguratorContext.Provider value={{ ...fields, ...methods, error, setError, npcs, items, currentRoom, selectedRoomActions, selectedRoomItemValues, selectedRoomItems, selectedRoomNpcs, selectedRoomDescription, selectedRoomName }}>
         <AddClassModal editData={editData as MudCharacterClass} key={"Class-" + characterClassKey.selected} onSendCharacterClass={(cc) => {
             if (characterClassKey.selected === characterClassKey.nextKey) { // if the current key is the same as the next key, it means that the user is creating a new class
                 cc.id = characterClassKey.nextKey + "";
@@ -704,15 +749,16 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             setShowAddNpcModal(false);
         }} />
 
-        <AddRoomModal coordinates={roomCoordiantes} key={"Room:" + roomsKey} onSendRoom={(cc: MudRoom) => {
+        <AddRoomModal coordinates={roomCoordiantes || [0, 0]} key={"Room:" + Object.keys(rooms).length} onSendRoom={(cc: MudRoom) => {
             const newKey: [number, number] = [cc.xCoordinate, cc.yCoordinate];
             let temp_rooms = rooms;
             temp_rooms[String(newKey)] = cc;
+            console.log(selectedRoomName);
             setRooms(temp_rooms);
-            setShowAddRoomModal(false);
+            setRoomsKey(String(newKey));
             setInitialRoomConnections(newKey);
-            selectRoom(newKey);
             setEditData(null);
+            selectRoom(newKey);
         }} show={showAddRoomModal} onHide={() => {
             setShowAddRoomModal(false);
         }} />

@@ -8,7 +8,7 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import Busy from '../Busy';
 import Alert from '../Custom/Alert';
@@ -26,6 +26,7 @@ interface LocationState {
 
 const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
     const {t} = useTranslation();
+    const navigate = useNavigate();
     const tl = "dungeon_configurator";
     const dungeonConfig = useDungeonConfigurator();
     const location = useLocation();
@@ -64,7 +65,10 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <Alert type="error" message={dungeonConfig.error} setMessage={dungeonConfig.setError} />
             </Row>
             <Row className="mt-3 justify-content-end">                
-                <div className="col-md-5">
+                <div className="col-md-6">
+                    <button className="btn w-100 btn-red drawn-border" onClick={()=>navigate("/")}>{t(`button.cancel`)}</button>
+                </div>
+                <div className="col-md-6">
                     <button className="btn w-100 btn-green drawn-border" onClick={(e)=>dungeonConfig.save(e,setIsBusy)}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>
                 </div>
             </Row>

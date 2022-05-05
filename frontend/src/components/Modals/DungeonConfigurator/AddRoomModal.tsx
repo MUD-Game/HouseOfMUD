@@ -31,7 +31,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
 
     const [error, setError] = React.useState<string>("");
 
-
     const modalIsInvalid = () => {
         return validator.isEmpty(name) || validator.isEmpty(description);
     }

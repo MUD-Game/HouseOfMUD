@@ -47,7 +47,9 @@ export class DieAction extends Action {
 
         const amqpAdapter = this.dungeonController.getAmqpAdapter()
         //reset the stats to start amount
-        characterToDie.currentStats = characterToDie.maxStats
+        characterToDie.currentStats.hp = characterToDie.maxStats.hp
+        characterToDie.currentStats.mana = characterToDie.maxStats.mana
+        characterToDie.currentStats.dmg = characterToDie.maxStats.dmg
         await amqpAdapter.sendToClient(user, {
             action: 'minimap.move',
             data: "0,0"
@@ -55,6 +57,6 @@ export class DieAction extends Action {
         this.dungeonController.sendInventoryData(user)
         this.dungeonController.sendStatsData(user)
         const description = actionMessages.die
-        amqpAdapter.sendActionToClient(user, "message", {message: description})
+        await amqpAdapter.sendActionToClient(user, "message", {message: description})
     }
 }

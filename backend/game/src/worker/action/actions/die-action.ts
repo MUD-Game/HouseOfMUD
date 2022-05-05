@@ -14,6 +14,9 @@ export class DieAction extends Action {
     async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let characterToDie: Character = dungeon.getCharacter(user)
+        if (!characterToDie.isDead()){
+            return;
+        }
         let currentPosition: string = characterToDie.getPosition()
         let inventoryItems: ItemInfo[] = characterToDie.getInventory()
 

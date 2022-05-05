@@ -169,6 +169,14 @@ const TestActionItemMissing: ActionElement = new ActionElementImpl(
     [new ActionEventImpl('addhp', '3')],
     [TestItemPickup.id]
 );
+const TestGlobalAction: ActionElement = new ActionElementImpl(
+    '11',
+    'global',
+    'Du hast eine globale Aktion ausgefuehrt!',
+    'test',
+    [new ActionEventImpl('addhp', '30')],
+    []
+);
 
 const TestRoom: Room = new RoomImpl(
     '1',
@@ -325,10 +333,10 @@ const TestDungeon: Dungeon = new DungeonImpl(
         TestRoomActions
     ],
     ['abc'],
-    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing],
+    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing, TestGlobalAction],
     [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem],
     [TestNpc],
-    []
+    [TestGlobalAction.id]
 );
 const TestDungeonController: DungeonController = new DungeonController(
     '1',
@@ -798,7 +806,7 @@ describe('Actions', () => {
         showActions.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: 'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; 'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; 'inv' - Zeigt die Items in deinem Inventar an; 'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; 'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; 'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; 'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; 'sag <Nachricht>' - Sende eine Nachricht in den Raum; 'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; 'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; 'hilfe' - Wenn du nicht mehr weiterkommst; 'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; 'essen Apfel' - test; Gebe gegebenenfalls geeignete Argumente fuer <> ein.` },
+            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: 'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; 'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; 'inv' - Zeigt die Items in deinem Inventar an; 'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; 'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; 'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; 'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; 'sag <Nachricht>' - Sende eine Nachricht in den Raum; 'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; 'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; 'hilfe' - Wenn du nicht mehr weiterkommst; 'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; 'essen Apfel' - test; 'global' - test; Gebe gegebenenfalls geeignete Argumente fuer <> ein.` },
         });
     })
 });
@@ -828,6 +836,7 @@ describe("Dungeon Actions", () => {
     const dungeonActionRemoveDamage: DungeonAction = actionHandler.dungeonActions[TestActionRemoveDamage.command];
     const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
     const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
+    const dungeonActionGlobal: DungeonAction = actionHandler.dungeonActions[TestGlobalAction.command]
 
     amqpAdapter.sendToClient = jest.fn();
 
@@ -1196,6 +1205,51 @@ describe("Dungeon Actions", () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
             data: { message: "Du hast einen Stein geworfen!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output when the user performs a global action", async () => {
+        await dungeonActionGlobal.performAction('CoolerTyp', []);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(80)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 80,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast eine globale Aktion ausgefuehrt!" },
         })
     })
 })

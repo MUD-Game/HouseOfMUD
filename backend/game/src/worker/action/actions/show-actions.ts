@@ -18,15 +18,22 @@ export class ShowActions extends Action {
         let roomId: string = senderCharacter.getPosition()
         let room: Room = dungeon.getRoom(roomId)
         let roomActions: string[] = room.getActions()
+        let globalActions: string[] = dungeon.getGlobalActions()
         let actionString: string = actionMessages.showActionsBeginning
         Object.values(actionDescriptions).forEach(description => {
             actionString += description;
         })
-        if (roomActions.length === 0) {
+        if (roomActions.length === 0 && globalActions.length === 0) {
             actionString += actionMessages.lookEmpty
         } else {
             try {
                 roomActions.forEach(actionId => {
+                    let action: ActionElement = dungeon.getAction(actionId)
+                    let actionCommand: string = action.getCommand()
+                    let actionDescription: string = action.getDescription()
+                    actionString += `'${actionCommand}' - ${actionDescription}; `
+                })
+                globalActions.forEach(actionId => {
                     let action: ActionElement = dungeon.getAction(actionId)
                     let actionCommand: string = action.getCommand()
                     let actionDescription: string = action.getDescription()

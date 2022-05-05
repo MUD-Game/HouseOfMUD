@@ -73,6 +73,7 @@ async function main() {
     console.log(`Dungeon ${dungeonID} started`);
 
     sendToHost('started', {});
+
 }
 
 function handleHostMessages(dungeonController: DungeonController) {

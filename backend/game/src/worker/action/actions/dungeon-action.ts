@@ -28,7 +28,9 @@ export class DungeonAction extends Action {
         let roomId: string = senderCharacter.getPosition()
         let room: Room = dungeon.getRoom(roomId)
         let roomActions: string[] = room.getActions()
-        if (roomActions.includes(this.actionElement.id)) {
+        let globalActions: string [] = dungeon.getGlobalActions();
+        if (roomActions.includes(this.actionElement.id) || globalActions.includes(this.actionElement.id)) {
+            console.log('test1')
             let characterInventory: ItemInfo[] = senderCharacter.getInventory()
             let missingItems: string[] = this.returnMissingItems(characterInventory)
             if (missingItems.length === 0) {
@@ -59,10 +61,9 @@ export class DungeonAction extends Action {
                         this.modifyCharacterStat(actionEvent.eventType, +actionEvent.value, senderCharacter)
                     }
                 })
-                // WENN CHARAKTER TOT NOCH IMPLEMENTIEREN
                 await this.dungeonController.sendStatsData(user)
                 await this.dungeonController.sendInventoryData(user)
-                await amqpAdapter.sendActionToClient(user, 'message', { message: this.actionElement.output });
+                await amqpAdapter.sendActionToClient(user, 'message', { message: this.actionElement.output });    
             } else {
                 let itemsMissingString: string = actionMessages.dungeonActionItemsMissing
                 missingItems.forEach(missingItem => {

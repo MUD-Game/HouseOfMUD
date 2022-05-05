@@ -23,7 +23,7 @@ export class ShowActions extends Action {
         Object.values(actionDescriptions).forEach(description => {
             actionString += description;
         })
-        if (roomActions.length === 0) {
+        if (roomActions.length === 0 && globalActions.length === 0) {
             actionString += actionMessages.lookEmpty
         } else {
             try {

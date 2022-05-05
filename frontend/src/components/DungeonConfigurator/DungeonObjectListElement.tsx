@@ -13,6 +13,9 @@ export interface DungeonObjectListElementProps {
 }
 
 const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ item, onEditElement, onDeleteElement, displayKeys }) => {
+
+    const [isFromServer, setIsFromServer] = React.useState((item as any).from_server || false);
+
     return (
         <Row className="mb-2 py-1 configurator-item">
             {displayKeys?.map((key: string, iindex) => {
@@ -24,7 +27,7 @@ const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ ite
             })}
             <div className="col text-end">
                 <Pencil size={30} id="editIcon" className="mx-1" onClick={() => onEditElement(parseInt(item.id))} />
-                <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} />
+                {isFromServer ? null : <Trash size={30} id="deleteIcon" className="mx-1" onClick={() => onDeleteElement(parseInt(item.id))} />}
             </div>
         </Row>
     )

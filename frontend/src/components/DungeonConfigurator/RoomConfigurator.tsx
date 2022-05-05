@@ -7,12 +7,13 @@ import MudInput from 'src/components/Custom/Input';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/Typeahead';
 import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
-import {Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import connectionOpenPng from 'src/assets/connection_open.png';
 import connectionClosedPng from 'src/assets/connection_closed.png';
 import connectionInactivePng from 'src/assets/connection_inactive.png';
 import Konva from 'konva';
 import { useRefSize } from 'src/hooks/useRefSize';
+import Alert from '../Custom/Alert';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -54,15 +55,16 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
     const [width, height] = useRefSize(widthRef);
-    
+    const [error, setError] = React.useState<string>("");
+
+
+
+
+    const { rooms, currentRoom, items, npcs, actions, saveRoom: saveRoom, addRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItemValues, setSelectedRoomItems, setSelectedRoomNpcs, selectedRoomActions, selectedRoomItems, selectedRoomItemValues, selectedRoomNpcs, toggleRoomConnection, setSelectedRoomDescription, setSelectedRoomName, selectedRoomDescription, selectedRoomName } = useDungeonConfigurator();
+
     useEffect(() => {
-        // setWidth(widthRef.current.clientWidth);
-        
+
     }, []);
-
-    
-
-    const { rooms, currentRoom, items, npcs, actions, editRoom, addRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItemValues, setSelectedRoomItems, setSelectedRoomNpcs, selectedRoomActions, selectedRoomItems, selectedRoomItemValues, selectedRoomNpcs, toggleRoomConnection } = useDungeonConfigurator();
 
 
     const [selectedRoomObject, setSelectedRoomObject] = React.useState<any>(null);
@@ -95,21 +97,32 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     }
 
     const roomClickHandler = (e: any) => {
-        selectRoom(e.target.attrs["data-coordinates"]);
-        if (selectedRoomObject) {
-            const isStartOld = String(selectedRoomObject.attrs["data-coordinates"]) === String([0, 0]);
-            selectedRoomObject.setAttrs({
-                fill: isStartOld ? fillStart : fillActive,
-                stroke: isStartOld ? strokeStart : strokeActive
-            });
+        if (!currentRoom) {
+            // Select the first room
+            selectRoom(e.target.attrs["data-coordinates"]);
+            return;
         }
-        const isStart = String(e.target.attrs["data-coordinates"]) === String([0, 0]);
-        e.target.setAttrs({
-            fill: isStart ? fillStartSelected : fillActiveSelected,
-            stroke: isStart ? strokeStartSelected : strokeActiveSelected
-        });
-        setSelectedRoomObject(e.target);
-        setIsEdited(false);
+        if (String(e.target.attrs["data-coordinates"]) === String([currentRoom.xCoordinate, currentRoom.yCoordinate])) {
+            return;
+        }
+        if (selectedRoomName && selectedRoomDescription) {
+            selectRoom(e.target.attrs["data-coordinates"]);
+            if (selectedRoomObject) {
+                const isStartOld = String(selectedRoomObject.attrs["data-coordinates"]) === String([0, 0]);
+                selectedRoomObject.setAttrs({
+                    fill: isStartOld ? fillStart : fillActive,
+                    stroke: isStartOld ? strokeStart : strokeActive
+                });
+            }
+            const isStart = String(e.target.attrs["data-coordinates"]) === String([0, 0]);
+            e.target.setAttrs({
+                fill: isStart ? fillStartSelected : fillActiveSelected,
+                stroke: isStart ? strokeStartSelected : strokeActiveSelected
+            });
+            setSelectedRoomObject(e.target);
+        } else {
+            setError("failvalidation.save_room");
+        }
     }
 
     const addNewRoom = (c: [number, number]) => {
@@ -117,7 +130,11 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     }
 
     const emptyRoomClickHandler = (e: any) => {
+        if(selectedRoomName && selectedRoomDescription) {
         addNewRoom(e.target.attrs["data-coordinates"]);
+        }else{
+            setError("failvalidation.room");
+        }
     }
     const getPossibleEmptyRooms = (rooms: { [key: string]: MudRoom }) => {
         const occupiedCoords = Object.keys(rooms);
@@ -140,19 +157,6 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
             });
         });
         return Object.keys(possibleCoords).map(coord => possibleCoords[coord]);
-    }
-
-    const submitEditDungeon = (evt: React.FormEvent<HTMLFormElement>) => {
-        evt.preventDefault();
-        const formData = new FormData(evt.currentTarget);
-        // get name and description
-        const name = formData.get("name") as string;
-        const description = formData.get("description") as string;
-        let newData: MudRoom = currentRoom;
-        newData.name = name;
-        newData.description = description;
-        editRoom(newData);
-        setIsEdited(false);
     }
 
     const handleConnectionClick = (event: any, coords: [number, number], south: boolean) => {
@@ -245,11 +249,10 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                     </Row>
                 </div>
             </Container>
-            <br/>
+            <br />
         </Tooltip>
     );
     const tl = 'dungeon_configurator';
-    const [isEdited, setIsEdited] = React.useState(false);
     return (
         <>
             <Row className="mt-5">
@@ -262,7 +265,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 <div id="konva-buttons-container">
                     <GeoAlt size={37} id="refocus-button" onClick={() => {
                         // stageRef.current.scale({ x: 1, y: 1 });
-                        stageRef.current.to({ x: 0, y: 0, scaleX: 1, scaleY:1, duration: 0.2, easing: Konva.Easings.EaseInOut });
+                        stageRef.current.to({ x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.2, easing: Konva.Easings.EaseInOut });
                         // stageRef.current.position({ x: 0, y: 0 });
                     }} />
                     <OverlayTrigger
@@ -348,16 +351,19 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                         <Group name="rooms" ref={roomRefs}>
                             {Object.keys(rooms).map((roomkey, index) => {
                                 const room = rooms[roomkey];
-                                let fillColor = room.id === "0,0" ? fillStart : fillActive;
-                                let strokeColor = room.id === "0,0" ? strokeStart : strokeActive;
-                                if ([room.xCoordinate, room.yCoordinate].toString() === currentRoom.id.toString()) {
-                                    fillColor = room.id === "0,0" ? fillStartSelected : fillActiveSelected;
-                                    strokeColor = room.id === "0,0" ? strokeStartSelected : strokeSelected;
-                                }
                                 let x = room.xCoordinate * roomOffset;
                                 let y = room.yCoordinate * roomOffset;
-                                let fill = room.id === "0,0" ? fillStart : fillActive;
-                                let stroke = room.id === "0,0" ? strokeStart : strokeActive;
+                                let fill;
+                                let stroke;
+                                const isStart = room.id === "0,0";
+                                const isSelected = room.id === currentRoom?.id;
+                                if (isStart) {
+                                    fill = isSelected ? fillStartSelected : fillStart;
+                                    stroke = isSelected ? strokeStartSelected : strokeStart;
+                                } else {
+                                    fill = isSelected ? fillActiveSelected : fillActive;
+                                    stroke = isSelected ? strokeSelected : strokeActive;
+                                }
                                 let name = room.name;
                                 return (
                                     <Rect onClick={roomClickHandler} onTap={roomClickHandler} key={room.id}
@@ -379,85 +385,72 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 </Stage>
             </div>
 
-            <form onSubmit={submitEditDungeon} onChange={() => {
-                if (!isEdited) {
-                    setIsEdited(true);
-                }
-            }}>
-                <Row className="mt-2 g-1">
-                    <MudInput colmd={12} placeholder={t("dungeon_keys.name")} key={currentRoom.id + "name"} name={"name"} defaultValue={currentRoom.name} />
-                    <MudInput colmd={12} name="description" placeholder={t("dungeon_keys.description")} key={currentRoom.id + "descr"} defaultValue={currentRoom.description} />
-                    <MudTypeahead
-                        colmd={12}
-                        title={t(`dungeon_keys.actions`)}
-                        id={"room-actions-typeahead"}
-                        labelKey={(option: any) => `${option.command}`}
-                        options={actions}
-                        multiple
-                        onChange={(e: any) => {
-                            setSelectedRoomActions(e);
-                            if (!isEdited) {
-                                setIsEdited(true);
-                            }
-                        }}
-                        placeholder={t(`common.select_actions`)}
-                        selected={selectedRoomActions}
-                    />
-                    <MudTypeahead
-                        colmd={12}
-                        title={t(`dungeon_keys.npcs`)}
-                        id={"room-npc-typeahead"}
-                        labelKey={(option: any) => `${option.name}`}
-                        options={npcs}
-                        multiple
-                        onChange={(e: any) => {
-                            setSelectedRoomNpcs(e);
-                            if (!isEdited) {
-                                setIsEdited(true);
-                            }
-                        }}
-                        placeholder={t(`common.select_npcs`)}
-                        selected={selectedRoomNpcs}
-                    />
-                    <MudTypeahead
-                        colmd={12}
-                        title={t(`dungeon_keys.items`)}
-                        id={"room-items-typeahead"}
-                        labelKey={(option: any) => `${option.name} (${option.description})`}
-                        options={items}
-                        multiple
-                        onChange={(e: any) => {
-                            setSelectedRoomItems(e);
-                            if (!isEdited) {
-                                setIsEdited(true);
-                            }
-                            let temp = selectedRoomItemValues;
-                            // e.forEach((element:any) => {
-                            //     if (selectedRoomItemValues[element.id] === undefined) {
-                            //         temp = { ...temp, [element.id]: 1};
-                            //     }
-                            // });
-                            const createdItem = e.filter((x: any) => !selectedRoomItems.includes(x))[0];
-                            const createdItemId = createdItem?.id;
-                            const deletedItemId = (selectedRoomItems.filter((x: any) => !e.includes(x))[0] as any)?.id;
-                            setSelectedRoomItemValues({ ...selectedRoomItemValues, [createdItemId || deletedItemId]: 1 });
-                        }}
-                        placeholder={t(`common.select_items`)}
-                        selected={selectedRoomItems}
-                    />
-                    {selectedRoomItems.map((item: any) => {
-                        return <MudInput colmd={2} type="number" placeholder={item.name + "-" + t("common.amount")} key={currentRoom.id + item.name} name={item.name} value={selectedRoomItemValues[item.id]} onChange={(event) => setSelectedRoomItemValues({ ...selectedRoomItemValues, [item.id]: event.target.value })} />
-                    })}
-                </Row>
-                <Row className="mt-4">
-                    <div className="col-md-6">
-                        <button className="btn w-100 drawn-border btn-blue" disabled={!isEdited} type="submit">{t(`dungeon_configurator.rooms.save_room`)}</button>
-                    </div>
-                    <div className="col-md-6">
-                        <button onClick={() => deleteRoom()} disabled={currentRoom.id === "0,0"} className="btn w-100 drawn-border btn-red">{t(`dungeon_configurator.rooms.delete_room`)}</button>
-                    </div>
-                </Row>
-            </form>
+            {currentRoom ?
+                <>
+                    <Row className="mt-2 g-1">
+                        <MudInput colmd={12} placeholder={t("dungeon_keys.name")} key={currentRoom.id + "name"} name={"name"} value={selectedRoomName} onChange={event => setSelectedRoomName(event.target.value)} />
+                        <MudInput colmd={12} name="description" placeholder={t("dungeon_keys.description")} key={currentRoom.id + "descr"} value={selectedRoomDescription} onChange={event => setSelectedRoomDescription(event.target.value)} />
+                        <MudTypeahead
+                            colmd={12}
+                            title={t(`dungeon_keys.actions`)}
+                            id={"room-actions-typeahead"}
+                            labelKey={(option: any) => `${option.command}`}
+                            options={actions}
+                            multiple
+                            onChange={(e: any) => {
+                                setSelectedRoomActions(e);
+                            }}
+                            placeholder={t(`common.select_actions`)}
+                            selected={selectedRoomActions}
+                        />
+                        <MudTypeahead
+                            colmd={12}
+                            title={t(`dungeon_keys.npcs`)}
+                            id={"room-npc-typeahead"}
+                            labelKey={(option: any) => `${option.name}`}
+                            options={npcs}
+                            multiple
+                            onChange={(e: any) => {
+                                setSelectedRoomNpcs(e);
+                            }}
+                            placeholder={t(`common.select_npcs`)}
+                            selected={selectedRoomNpcs}
+                        />
+                        <MudTypeahead
+                            colmd={12}
+                            title={t(`dungeon_keys.items`)}
+                            id={"room-items-typeahead"}
+                            labelKey={(option: any) => `${option.name} (${option.description})`}
+                            options={items}
+                            multiple
+                            onChange={(e: any) => {
+                                setSelectedRoomItems(e);
+                                let temp = selectedRoomItemValues;
+                                // e.forEach((element:any) => {
+                                //     if (selectedRoomItemValues[element.id] === undefined) {
+                                //         temp = { ...temp, [element.id]: 1};
+                                //     }
+                                // });
+                                const createdItem = e.filter((x: any) => !selectedRoomItems.includes(x))[0];
+                                const createdItemId = createdItem?.id;
+                                const deletedItemId = (selectedRoomItems.filter((x: any) => !e.includes(x))[0] as any)?.id;
+                                setSelectedRoomItemValues({ ...selectedRoomItemValues, [createdItemId || deletedItemId]: 1 });
+                            }}
+                            placeholder={t(`common.select_items`)}
+                            selected={selectedRoomItems}
+                        />
+                        {selectedRoomItems.map((item: any) => {
+                            return <MudInput colmd={2} type="number" placeholder={item.name + "-" + t("common.amount")} key={currentRoom.id + item.name} name={item.name} value={selectedRoomItemValues[item.id]} onChange={(event) => setSelectedRoomItemValues({ ...selectedRoomItemValues, [item.id]: event.target.value })} />
+                        })}
+                    </Row>
+                    <Row className="mt-4">
+                        <div className="col-md-6">
+                            <button onClick={() => deleteRoom()} disabled={currentRoom.id === "0,0"} className="btn w-100 drawn-border btn-red">{t(`dungeon_configurator.rooms.delete_room`)}</button>
+                        </div>
+                    </Row>
+                </>
+                : null}
+            <Alert message={error} setMessage={setError} type="error" />
         </>
 
     )

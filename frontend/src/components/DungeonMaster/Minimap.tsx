@@ -5,12 +5,13 @@
  * @props {@linkcode MinimapProps}
  */
 import React, { useRef } from 'react'
-import { Circle, Group, Layer, Line, Rect, Stage } from 'react-konva';
+import { Circle, Group, Layer, Line, Rect, Stage, Text } from 'react-konva';
 import { MudRoom } from 'src/types/dungeon';
 import { useRabbitMQ } from '../../hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import './index.css'
-import { Compass, GeoAlt } from 'react-bootstrap-icons';
+import $ from 'jquery'
+import { ArrowsFullscreen, Compass, Fullscreen, GeoAlt } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
 import Konva from 'konva';
 import { useRefSize } from '../../hooks/useRefSize';
@@ -22,7 +23,7 @@ const connectionStrokeWidth = 10;
 const connectionBlobRadius = connectionStrokeWidth;
 const initialScale = 0.8;
 const minScale = 0.1;
-const maxScale = 1.5;
+const maxScale = 10;
 
 let bodyStyles = window.getComputedStyle(document.body);
 
@@ -67,7 +68,7 @@ export interface MinimapProps extends MiniMapData { }
 
 const Minimap: React.FC<MinimapProps> = (props) => {
 
-    const { setRoomSubscriber } = useRabbitMQ()
+    const { sendToggleConnection } = useRabbitMQ()
 
     const sizeRef = useRef<any>();
     const stageRef = useRef<any>();
@@ -76,64 +77,35 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     const [width, height] = useRefSize(sizeRef);
 
-    useEffect(() => {
-        setRoomSubscriber((id: string) => {
-            setCurrentRoomId(id);
-            let tempRooms = rooms;
-            tempRooms[id].explored = true;
-            setRooms(tempRooms);
-            // Check if we move on the x or y axis
-            const oldId = currentPositionCircleRef.current.attrs["data-id"];
-            currentPositionCircleRef.current.attrs["data-id"] = id;
-            const [oldX, oldY] = oldId.split(',').map((x: any) => parseInt(x));
-            const [newX, newY] = id.split(',').map(x => parseInt(x));
-            // initially for ltr
-            if (Math.abs(oldX - newX) > 1) {
-                // Its a move that isnt only one room
-                stageRef.current.to({ x: -rooms[id].xCoordinate * roomOffset * initialScale, y: -rooms[id].yCoordinate * roomOffset * initialScale, duration: 1, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
-                return;
-            }
-            let xHalf = (newX * roomOffset - roomMargin / 2);
-            const xFull = (newX * roomOffset + roomSize / 2);
-            let yHalf = (newY * roomOffset - roomMargin / 2);
-            const yFull = (newY * roomOffset + roomSize / 2);
-            if (newX > oldX) { // Left to right
-                xHalf = (newX * roomOffset - roomMargin / 2);
-                yHalf = yFull;
-            } else if (newX < oldX) { // Right to left
-                xHalf = (oldX * roomOffset - roomMargin / 2);
-                yHalf = yFull;
-            } else if (newY > oldY) { // Top to bottom
-                xHalf = xFull;
-                yHalf = (newY * roomOffset - roomMargin / 2);
-            } else if (newY < oldY) { // Bottom to top
-                xHalf = xFull;
-                yHalf = (oldY * roomOffset - roomMargin / 2);
-            } else {
-                return;
-            }
-            stageRef.current.to({ x: -rooms[id].xCoordinate * roomOffset * initialScale, y: -rooms[id].yCoordinate * roomOffset * initialScale, duration: 1, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
-            currentPositionCircleRef.current.to({
-                duration: 0.5,
-                radius: roomSize / 16,
-                x: xHalf,
-                y: yHalf,
-                easing: Konva.Easings.EaseIn,
-                onFinish: () => {
-                    currentPositionCircleRef.current.to({
-                        duration: 0.5,
-                        radius: roomSize / 4,
-                        x: xFull,
-                        y: yFull,
-                        easing: Konva.Easings.EaseOut
-                    })
-                }
 
-            })
-        });
+    useEffect(() => {
         focusOnRoom("0,0", true);
     }, []);
 
+    const toggleConnection = (event: any) => {
+        // Change the attrs of the connection
+        const status = event.target.attrs["data-status"];
+        const roomId = event.target.attrs["data-room"];
+        const direction = event.target.attrs["data-direction"];
+
+        sendToggleConnection(roomId, direction, status === 'open' ? 'closed' : 'open', ()=>{
+            switch (status) {
+                case "open":
+                    event.target.setAttrs({
+                        stroke: connectionClosed,
+                        "data-status": "closed"
+                    })
+                    break;
+                case "closed":
+                    event.target.setAttrs({
+                        stroke: connectionOpen,
+                        "data-status": "open"
+                    })
+                    break;
+            }
+        }, console.error);
+
+    }
 
     const onWheelHandle = (e: any) => {
         e.evt.preventDefault();
@@ -176,103 +148,33 @@ const Minimap: React.FC<MinimapProps> = (props) => {
             <div id="konva-buttons-container">
                 <img src={compassPng} alt="compass" id="compass" onClick={() => {
                     focusOnRoom(currentRoomId, true);
+                 }} />
+                <ArrowsFullscreen size={40} onClick={() => {
+                    $("body").toggleClass("noclickevents");
+                    $('#minimap').toggleClass('fullscreen');
+                    // Check if the stage is already fullscreen
+                    if ($('#minimap').hasClass('fullscreen')) {
+                        stageRef.current.setAttrs({
+                            width: window.innerWidth,
+                            height: window.innerHeight,
+                        })
+                    }else{
+                        stageRef.current.to({
+                            width: width,
+                            height: width,
+                            duration: 0.01,
+                        })
+                    }
                 }} />
             </div>
             <div id="minimap" className="mb-2" ref={sizeRef}>
                 <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable offsetY={(-width / 2) / initialScale + (roomSize / 2)} offsetX={(-width / 2) / initialScale + (roomSize / 2)}>
                     <Layer>
-                        <Group name="connections">
-                            {Object.keys(rooms).map(key => {
-                                const room = rooms[key];
-                                // used if this room isnt explored to draw the connections to the other rooms
-                                let eastExplored = true;
-                                let southExplored = true;
-                                const eastRoom = rooms[`${room.xCoordinate + 1},${room.yCoordinate}`];
-                                const southRoom = rooms[`${room.xCoordinate},${room.yCoordinate + 1}`];
-                                eastExplored = eastRoom && eastRoom.explored;
-                                southExplored = southRoom && southRoom.explored;
-                                const x = room.xCoordinate;
-                                const y = room.yCoordinate;
-                                let xStrokeCol = connectionOpen;
-                                let yStrokeCol = connectionOpen;
-                                switch (room.connections.east) {
-                                    case 'open':
-                                        xStrokeCol = connectionOpen;
-                                        break;
-                                    case 'inactive':
-                                        eastExplored = false;
-                                        xStrokeCol = connectionInactive;
-                                        break;
-                                    case 'closed':
-                                        xStrokeCol = connectionClosed;
-                                        break;
-                                }
-                                switch (room.connections.south) {
-                                    case 'open':
-                                        yStrokeCol = connectionOpen;
-                                        break;
-                                    case 'inactive':
-                                        southExplored = false;
-                                        yStrokeCol = connectionInactive;
-                                        break;
-                                    case 'closed':
-                                        yStrokeCol = connectionClosed;
-                                        break;
-                                }
-                                const xStatus = rooms[key].connections.east;
-                                const yStatus = rooms[key].connections.south;
-
-                                const isEastInactive = !eastExplored && xStatus === 'inactive';
-                                const isSouthInactive = !southExplored && yStatus === 'inactive';
-
-
-                                const onEastVisible = (room.explored && !isEastInactive);
-                                const onWestVisible = (!room.explored && eastExplored);
-                                const onNorthVisible = !room.explored && southExplored;
-                                const onSouthVisible = room.explored && !isSouthInactive
-
-                                let returnNode: React.ReactNode[] = [];
-
-                                if (room.explored) {
-                                    return null;
-                                }
-                                else {
-                                    if (onEastVisible) {
-                                        returnNode.push(<Circle key={`${key}-connection-unexplored-east`} x={x * roomOffset + roomSize + 2} y={y * roomOffset + (roomSize / 2)} stroke={xStrokeCol} radius={connectionBlobRadius} fill={xStrokeCol} data-status={xStatus} />);
-                                    }
-                                    if (onWestVisible) {
-                                        returnNode.push(<Circle key={`${key}-connection-unexplored-west`} x={(x + 1) * roomOffset} y={y * roomOffset + (roomSize / 2)} stroke={xStrokeCol} radius={connectionBlobRadius} fill={xStrokeCol} data-status={xStatus} />);
-                                    }
-                                    if (onNorthVisible) {
-                                        returnNode.push(<Circle key={`${key}-connection-unexplored-north`} x={x * roomOffset + (roomSize / 2)} y={(y + 1) * roomOffset} stroke={yStrokeCol} radius={connectionBlobRadius} fill={yStrokeCol} data-status={xStatus} />);
-                                    }
-                                    if (onSouthVisible) {
-                                        returnNode.push(<Circle key={`${key}-connection-unexplored-south`} x={x * roomOffset + (roomSize / 2)} y={y * roomOffset + roomSize + 2} stroke={yStrokeCol} radius={connectionBlobRadius} fill={yStrokeCol} data-status={xStatus} />);
-                                    }
-                                }
-
-                                return (
-                                    <Group key={key + "connections-from-empty"}>
-                                        {returnNode}
-                                    </Group>
-                                )
-                            })}
-                        </Group>
                         <Group name="rooms">
                             {Object.keys(rooms).map((roomkey, index) => {
                                 const room = rooms[roomkey];
                                 let fillColor = fillActive;
                                 let strokeColor = strokeActive;
-                                if (!room.explored) {
-                                    return null
-                                }
-
-                                let eastExplored = true;
-                                let southExplored = true;
-                                const eastRoom = rooms[`${room.xCoordinate + 1},${room.yCoordinate}`];
-                                const southRoom = rooms[`${room.xCoordinate},${room.yCoordinate + 1}`];
-                                eastExplored = eastRoom && eastRoom.explored;
-                                southExplored = southRoom && southRoom.explored;
                                 const x = room.xCoordinate;
                                 const y = room.yCoordinate;
                                 let xStrokeCol = connectionOpen;
@@ -282,7 +184,6 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                         xStrokeCol = connectionOpen;
                                         break;
                                     case 'inactive':
-                                        eastExplored = false;
                                         xStrokeCol = connectionInactive;
                                         break;
                                     case 'closed':
@@ -294,7 +195,6 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                         yStrokeCol = connectionOpen;
                                         break;
                                     case 'inactive':
-                                        southExplored = false;
                                         yStrokeCol = connectionInactive;
                                         break;
                                     case 'closed':
@@ -304,34 +204,20 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                 const xStatus = rooms[roomkey].connections.east;
                                 const yStatus = rooms[roomkey].connections.south;
 
-                                const isEastInactive = !eastExplored && xStatus === 'inactive';
-                                const isSouthInactive = !southExplored && yStatus === 'inactive';
 
                                 const xPoints = [x * roomOffset + roomSize + 2, y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)];
 
                                 const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + 2, x * roomOffset + (roomSize / 2), (y + 1) * roomOffset];
-                                let connections: React.ReactNode[] = []
 
-                                if (!isEastInactive) {
+                                let connections: React.ReactNode[] = [];
 
-                                    if (!eastExplored) {
-                                        // Put a blob instead of line
-                                        connections.push(<Circle key={`${roomkey}-connection-explored-east`} x={x * roomOffset + roomSize + 2} y={y * roomOffset + (roomSize / 2)} stroke={xStrokeCol} radius={connectionBlobRadius} fill={xStrokeCol} data-status={xStatus} />);
-                                    } else {
-                                        // Put a line
-                                        connections.push(<Line key={`${roomkey}-connection-explored-east`} points={xPoints} stroke={xStrokeCol} strokeWidth={connectionStrokeWidth} data-status={xStatus} />);
-                                    }
-                                }
-                                if (!isSouthInactive) {
 
-                                    if (!southExplored) {
-                                        // Put a blob instead of line
-                                        connections.push(<Circle key={`${roomkey}-connection-explored-south`} x={x * roomOffset + (roomSize / 2)} y={y * roomOffset + roomSize + 2} stroke={yStrokeCol} radius={connectionBlobRadius} fill={yStrokeCol} data-status={yStatus} />);
-                                    } else {
-                                        // Put a line
-                                        connections.push(<Line key={`${roomkey}-connection-explored-south`} points={yPoints} stroke={yStrokeCol} strokeWidth={connectionStrokeWidth} data-status={yStatus} />);
-                                    }
-                                }
+                                (xStatus !== 'inactive') && connections.push(<Line key={`${roomkey}-connection-east`} points={xPoints} stroke={xStrokeCol} data-room={roomkey} strokeWidth={connectionStrokeWidth} data-status={xStatus} onClick={toggleConnection} data-direction={'east'} />);
+
+
+                                (yStatus !== 'inactive') && connections.push(<Line key={`${roomkey}-connection-south`} points={yPoints} stroke={yStrokeCol} data-room={roomkey} strokeWidth={connectionStrokeWidth} data-status={yStatus} onClick={toggleConnection} data-direction={'south'} />);
+
+
 
                                 return (
                                     <Group key={roomkey}>
@@ -346,11 +232,21 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                             strokeWidth={roomStrokeWidth}
                                             stroke={strokeColor}
                                         />
+                                        <Text
+                                            x={x * roomOffset }
+                                            y={y * roomOffset }
+                                            width={roomSize}
+                                            height={roomSize}
+                                            align="center"
+                                            padding={roomStrokeWidth}
+                                            text={"lorem ipsulorem ipsum dolor sit ametlorem ipsum dolor sit ametm dolor sit ametlorem ipsum dolor sit ametlorem ipsum dolor sit amet"}
+                                            verticalAlign="middle"
+                                        />
 
                                     </Group>
                                 )
                             })}
-                            {<Circle ref={currentPositionCircleRef} data-id="0,0" x={0 * roomOffset + (roomSize / 2)} y={0 * roomOffset + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />}
+                            {/* {<Circle ref={currentPositionCircleRef} data-id="0,0" x={0 * roomOffset + (roomSize / 2)} y={0 * roomOffset + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />} */}
                         </Group>
                     </Layer>
                 </Stage>

@@ -20,8 +20,16 @@ const debug = true;
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
-  sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+
+
+  
+  // Dm-Stuff
   sendDmMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+  sendToggleConnection: (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed',callback: VoidFunction, error: (error: string) => void) => void;
+  
+  // Character Message
+  sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+  // Subscriber
   setChatSubscriber: (subscriber: (message: string) => void) => void;
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
@@ -191,7 +199,23 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     sendMessage(message, 'dmmessage', callback, error);
   }
 
+  const sendData = (data: any, action: SendActions, callback: VoidFunction, error: (error: string) => void) => {
+    if (!rabbit.connected) {
+      error("RabbitMQ is not connected");
+      return;
+    }
+    let dataPayload: RabbitMQPayload = {
+      action,
+      ...payloadTemplate,
+      data
+    }
+    sendPayload(dataPayload);
+    callback();	
+  }
 
+  const sendToggleConnection =  (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed', callback: VoidFunction, error: (error: string) => void) => {
+    sendData({roomId, direction, status}, 'connection.toggle', callback, error);
+  }
 
   const setChatSubscriber = (subscriber: (message: string) => void) => {
     chatSubscriber = subscriber;
@@ -224,7 +248,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage };
+  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

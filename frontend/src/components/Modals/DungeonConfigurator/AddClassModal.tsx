@@ -83,9 +83,9 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
                     <Alert type="error" message={error} setMessage={setError} />
                     <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
-                    <MudInput placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
-                    <MudInput placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
+                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
+                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
+                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

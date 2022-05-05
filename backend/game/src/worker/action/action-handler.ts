@@ -2,7 +2,6 @@ import { Dungeon } from '../../data/interfaces/dungeon';
 import { DungeonController } from '../controller/dungeon-controller';
 import { Action } from './action';
 import { extras, triggers } from './actions/action-resources';
-import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
 import { DiscardAction } from './actions/discard-action';
 import { DungeonAction } from './actions/dungeon-action';
 import { HelpAction } from './actions/help-action';
@@ -21,9 +20,10 @@ import { AddDamage } from './dmactions/addDamage-action';
 import { AddHp } from './dmactions/addHp-action';
 import { AddMana } from './dmactions/addMana-action';
 import { RemoveHp } from './dmactions/removeHp-action';
-import { RemoveDamage } from './dmactions/removeDamage-action';
 import { RemoveMana } from './dmactions/removeMana-action';
 import { PrivateMessageFromDm } from './dmactions/privateMessage-action';
+import { RemoveDamage } from './dmactions/removeDamage-action';
+import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
 
 
 const regExpression = {
@@ -134,7 +134,7 @@ export class ActionHandlerImpl implements ActionHandler {
         return action;
     }
 
-    processDmAction(message: string) { //not finished
+    processDmAction(message: string) {
         let dmaction: Action | undefined = undefined;
         if (this.inputMatch(message, regExpression.dmActions)) {
             dmaction = this.getDmAction(message)

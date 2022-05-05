@@ -119,15 +119,27 @@
             },
             "delete_item": {
                 "title": "Item löschen",
-                "text": "Bist du sicher, dass du dieses Item löschen möchtest?"
+                "text": "Bist du sicher, dass du dieses Item löschen möchtest? Diesr Schritt löscht das Item aus allen Räumen und kann nicht rückgängig gemacht werden!"
             },
             "delete_action": {
                 "title": "Aktion löschen",
-                "text": "Bist du sicher, dass du diese Aktion löschen möchtest?"
+                "text": "Bist du sicher, dass du diese Aktion löschen möchtest? Dieser Schritt löscht die Aktion aus allen Räumen und kann nicht rückgängig gemacht werden!"
             },
             "delete_room": {
                 "title": "Raum löschen",
                 "text": "Bist du sicher, dass du diesen Raum löschen möchtest?"
+            },
+            "delete_npc": {
+                "title": "NPC löschen",
+                "text": "Bist du sicher, dass du diesen NPC löschen möchtest? Dieser Schritt löscht den NPC aus allen Räumen und kann nicht rückgängig gemacht werden!"
+            },
+            "delete_gender":{
+                "title": "Geschlecht löschen",
+                "text": "Bist du sicher, dass du dieses Geschlecht löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
+            },
+            "delete_species":{
+                "title": "Spezies löschen",
+                "text": "Bist du sicher, dass du diese Spezies löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
             }
         },
         "title": "Dungeon konfigurieren",

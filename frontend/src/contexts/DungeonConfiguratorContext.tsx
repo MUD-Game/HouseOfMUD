@@ -190,7 +190,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         // If the dungeonID exists we load the dungeon in the background and fill the states with the data.
         if (dungeonId) {
             supervisor.getDungeon(dungeonId, {}, (dungeon: any) => {
-                console.log(dungeon);
                 setName(dungeon.name);
                 setDescription(dungeon.description);
                 setMaxPlayers(dungeon.maxPlayers);
@@ -333,7 +332,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             const npcs_array = rooms[key].npcs;
             // {item: i.id, count: selectedRoomItemValues[i.id]}
             // select items
-            console.log(items_array);
             setSelectedRoomItems(items_array.map((i: {
                 item: string;
                 count: number;
@@ -441,7 +439,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editItem = (key: number) => {
         const editIndex = items.findIndex(i => i.id === key + "");
         setEditData(items[editIndex]);
-        console.log(items[editIndex]);
         setItemsKey({ selected: editIndex, nextKey: itemsKey.nextKey });
         setShowAddItemsModal(true);
     }
@@ -467,12 +464,10 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
             showConfirmation('delete_item', () => {
                 let index = items.findIndex(c => c.id === itemkey + "");
-                console.log(index);
                 let newItems = items;
                 setItems(newItems.filter((_, i) => i !== index));
                 // Delete from selectedItems
                 let newSelectedItems = selectedRoomItems;
-                console.log(newSelectedItems)
                 newSelectedItems = newSelectedItems.filter((i: any) => i.id !== itemkey);
                 setSelectedRoomItems(newSelectedItems);
                 let temprooms = rooms;
@@ -495,15 +490,23 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setShowAddNpcModal(true);
     }
     const editNpc = (key: number) => {
-        setEditData(npcs[key]);
-        setNpcsKey({ selected: key, nextKey: npcsKey.nextKey });
+        const editIndex = npcs.findIndex(i => i.id === key + "");
+        setEditData(npcs[editIndex]);
+        setNpcsKey({ selected: editIndex, nextKey: npcsKey.nextKey });
         setShowAddNpcModal(true);
     }
 
-    const deleteNpc = (key: number) => {
+    const deleteNpc = (npckey: number) => {
         showConfirmation('delete_npc', () => {
-            let index = npcs.findIndex(c => c.id === key + "");
-            setNpcs(npcs.filter((n) => n.id !== key + ""));
+            let temprooms = rooms;
+            Object.keys(temprooms).forEach((roomKey: string) => {
+                let room = temprooms[roomKey];
+                room.npcs = room.npcs.filter((i: any) => i !== npckey + "");
+                temprooms[roomKey] = room;
+            });
+            setRooms(temprooms);
+            selectRoom(roomCoordiantes);
+            setNpcs(npcs.filter((n) => n.id !== npckey + ""));
         });
     }
 

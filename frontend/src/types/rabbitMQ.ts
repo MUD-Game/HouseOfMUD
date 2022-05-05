@@ -1,5 +1,5 @@
 
-export type SendActions = 'login' | 'logout' | 'message' | 'dmmessage';
+export type SendActions = 'login' | 'logout' | 'message' | 'dmmessage' | 'connection.toggle';
 
 export type ReceiveActions = 'message' | 'inventoryupdate' | 'hudupdate' | 'minimapupdate';
 

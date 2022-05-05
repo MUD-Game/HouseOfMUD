@@ -19,6 +19,7 @@ import ChatQueue from './ChatQueue';
 import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { MinimapProps } from '../Game/Minimap';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
@@ -29,9 +30,17 @@ const Game: React.FC<GameProps> = ({ }) => {
     const [messageQueue, setMessageQueue] = useState<string[]>([]);
     const { isAbleToJoinGame } = useGame();
     const [error, setError] = React.useState<string>("");
+    const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
+
+    const miniMapSubscriber = (roomData: MinimapProps) => {
+        setMiniMapData(roomData);
+    }
+
+
     useEffect(() => {
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
+            rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.login(() => {
                 // Success
             }, (error) => {
@@ -71,7 +80,7 @@ const Game: React.FC<GameProps> = ({ }) => {
             </Row>
             <Row className="game-body">
                 <div className="col col-md-3 col-lg-2">
-                    <Minimap mapData={null} />
+                    {miniMapData && <Minimap {...miniMapData} />}
                     <OnlinePlayers players={null} />
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>

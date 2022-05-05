@@ -21,6 +21,7 @@ export interface DungeonDataset {
   rooms: RoomDataset[];
   items: ItemDataset[];
   npcs: NpcDataset[];
+  globalActions: string[];
   blacklist: string[];
   actions: ActionDataset[];
 }

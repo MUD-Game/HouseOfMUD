@@ -76,6 +76,7 @@ export class DatabaseAdapter {
             characterClasses: await this.characterClass.insertMany(dungeonToStore.characterClasses),
             characterSpecies: await this.characterSpecies.insertMany(dungeonToStore.characterSpecies),
             characterGenders: await this.characterGenders.insertMany(dungeonToStore.characterGenders),
+            globalActions: dungeonToStore.globalActions,
             rooms: await this.room.insertMany(dungeonToStore.rooms),
             items: await this.item.insertMany(dungeonToStore.items),
             npcs: await this.npc.insertMany(dungeonToStore.npcs),
@@ -99,6 +100,7 @@ export class DatabaseAdapter {
             creatorId: foundDungeon.creatorId,
             masterId: foundDungeon.masterId,
             maxPlayers: foundDungeon.maxPlayers,
+            globalActions: foundDungeon.globalActions,
             blacklist: foundDungeon.blacklist,
             characters: (await foundDungeon.populate('characters')).characters,
             characterClasses: (await foundDungeon.populate('characterClasses')).characterClasses,
@@ -174,6 +176,16 @@ export class DatabaseAdapter {
         oldDungeon.actions.forEach(async (ac: any) => {
             await this.action.findByIdAndDelete(ac)
         })
+        oldDungeon.characterClasses.forEach(async (charClass: any) => {
+            await this.characterClass.findByIdAndDelete(charClass)
+        })
+        oldDungeon.characterSpecies.forEach(async (charSpec: any) => {
+            await this.characterSpecies.findByIdAndDelete(charSpec)
+        })
+        oldDungeon.characterGenders.forEach(async (charGen: any) => {
+            await this.characterGenders.findByIdAndDelete(charGen)
+        })
+
 
         return this.dungeon.create({
             name: newDungeon.name,
@@ -183,9 +195,9 @@ export class DatabaseAdapter {
             maxPlayers: newDungeon.maxPlayers,
             blacklist: newDungeon.blacklist,
             characters: oldDungeon.characters,
-            characterClasses: oldDungeon.characterClasses,
-            characterSpecies: oldDungeon.characterSpecies,
-            characterGenders: oldDungeon.characterGenders,
+            characterClasses: newDungeon.characterClasses,
+            characterSpecies: newDungeon.characterSpecies,
+            characterGenders: newDungeon.characterGenders,
             rooms: await this.room.insertMany(newDungeon.rooms),
             items: await this.item.insertMany(newDungeon.items),
             npcs: await this.npc.insertMany(newDungeon.npcs),

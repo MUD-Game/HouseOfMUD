@@ -34,7 +34,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
-    connection: mongoose.Connection;
+    connection: mongoose.Connection
     item: mongoose.Model<ItemDataset>
     action: mongoose.Model<ActionDataset>
     character: mongoose.Model<CharacterDataset>

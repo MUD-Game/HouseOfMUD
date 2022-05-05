@@ -200,8 +200,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const [roomsKey, setRoomsKey] = React.useState<string>("");
     const [roomCoordiantes, setRoomCoordiantes] = React.useState<[number, number] | null>(null);
     const [currentRoom, setCurrentRoom] = React.useState<MudRoom | null>(null);
-    const [selectedRoomName, setSelectedRoomName] = React.useState<string>("");
-    const [selectedRoomDescription, setSelectedRoomDescription] = React.useState<string>("");
+    const [selectedRoomName, setSelectedRoomName] = React.useState<string>(t("common.start_room.name"));
+    const [selectedRoomDescription, setSelectedRoomDescription] = React.useState<string>(t("common.start_room.description"));
     const [selectedRoomItems, setSelectedRoomItems] = React.useState<Option[]>([]);
     const [selectedRoomItemValues, setSelectedRoomItemValues] = React.useState<{ [key: string]: any }>({});
     const [selectedRoomActions, setSelectedRoomActions] = React.useState<Option[]>([]);
@@ -324,13 +324,25 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         setShowAddSpeciesModal(true);
     }
 
-    const deleteSpecies = (key: number) => {
+    const deleteSpecies = (speciesKey: number) => {
+        // check if the items are used in any action
+        let usedInNpc = false;
+        npcs.forEach((a: MudNpc) => {
+            if (a.species === speciesKey + "") {
+                usedInNpc = true;
+            }
+        });
+        if (usedInNpc) {
+            setError("reference_in_npc");
+        }else{
         showConfirmation("delete_species", () => {
-            let index = species.findIndex(c => c.id === key + "");
+            let index = species.findIndex(c => c.id === speciesKey + "");
             let newSpecies = species;
             newSpecies.splice(index, 1);
             setSpecies(newSpecies);
         });
+        }
+
     }
 
     const addClass = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

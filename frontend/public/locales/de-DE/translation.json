@@ -228,6 +228,10 @@
             "title": "Du kannst dieses Item nicht löschen",
             "text": "Es existiert mindestens eine Aktion die auf dieses Item drauf zugreift, löse den Konflikt und versuche es erneut!"
         },
+        "reference_in_npc": {
+            "title": "Du kannst diese Spezies nicht löschen",
+            "text": "Es existiert mindestens ein NPC der schon dieser Spezies angehört, löse den Konflikt und versuche es erneut!"
+        },
         "failvalidation":{
             "dungeon": {
                 "title": "Bitte gebe alle geforderten Daten ein",

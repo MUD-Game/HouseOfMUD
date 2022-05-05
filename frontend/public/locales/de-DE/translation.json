@@ -235,6 +235,14 @@
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um einen Raum zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
             },
+            "gender": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Bitte gebe einen Namen für das Geschlecht an"
+            },
+            "species": {
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Bitte gebe einen Namen für die Spezies an"
+            },
             "item": {
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um ein neues Item anzulegen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"

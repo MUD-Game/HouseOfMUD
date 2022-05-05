@@ -67,8 +67,8 @@ export class DungeonController {
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);
                             break;
-                        case 'dmMessage':
-                            //dmaction
+                        case 'dmmessage':
+                            this.actionHandler.processDmAction(data.data.message);
                             break;
                     }
                 }
@@ -114,6 +114,10 @@ export class DungeonController {
 
     getAmqpAdapter(): AmqpAdapter {
         return this.amqpAdapter
+    }
+
+    getActionHandler(): ActionHandler {
+        return this.actionHandler
     }
 
     async sendMiniMapData(character: string) {

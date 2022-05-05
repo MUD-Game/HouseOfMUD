@@ -15,7 +15,7 @@ import { Room, RoomImpl } from "../src/data/interfaces/room";
 import { Config, MongodbConfig } from "../src/host/types/config";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
 import { actionMessages, errorMessages, triggers } from "../src/worker/action/actions/action-resources";
-import { BroadcastMessageAction } from "../src/worker/action/actions/broadcast-message-action";
+import { BroadcastMessageAction } from "../src/worker/action/dmactions/broadcast-message-action";
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
 import { InspectAction } from "../src/worker/action/actions/inspect-action";
@@ -31,12 +31,17 @@ import UnspecifiedAction from "../src/worker/action/actions/unspecified-action";
 import { AddDamage } from "../src/worker/action/dmactions/addDamage-action";
 import { AddHp } from "../src/worker/action/dmactions/addHp-action";
 import { AddMana } from "../src/worker/action/dmactions/addMana-action";
+import { RemoveHp } from "../src/worker/action/dmactions/removeHp-action";
 import { AmqpAdapter } from "../src/worker/amqp/amqp-adapter";
 import { DungeonController } from "../src/worker/controller/dungeon-controller";
 import yaml from 'js-yaml';
 import fs from 'fs';
 import { HelpAction } from "../src/worker/action/actions/help-action";
 import { ShowActions } from "../src/worker/action/actions/show-actions";
+import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMessage-action";
+import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
+import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
+import { DieAction } from "../src/worker/action/actions/die-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -341,7 +346,6 @@ describe('ActionHandler', () => {
     const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
     const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
     const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast] as BroadcastMessageAction;
     const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
     const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
     const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
@@ -353,11 +357,19 @@ describe('ActionHandler', () => {
     const invalidAction: InvalidAction = actionHandler.invalidAction;
     const helpAction: HelpAction = actionHandler.actions[triggers.help] as HelpAction
     const showActions: ShowActions = actionHandler.actions[triggers.showActions] as ShowActions
+
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
+    const addHpAction: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp
+    const removeHpAction: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp
+    const addManaAction: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana
+    const removeManaAction: RemoveMana = actionHandler.dmActions[triggers.removeMana] as RemoveMana
+    const addDamageAction: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage
+    const removeDamageAction: RemoveDamage = actionHandler.dmActions[triggers.removeDamage] as RemoveDamage
     
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
     messageMasterAction.performAction = jest.fn();
-    broadcastMessageAction.performAction = jest.fn();
     discardAction.performAction = jest.fn();
     inspectAction.performAction = jest.fn();
     inventoryAction.performAction = jest.fn();
@@ -369,31 +381,40 @@ describe('ActionHandler', () => {
     invalidAction.performAction = jest.fn();
     helpAction.performAction = jest.fn();
     showActions.performAction = jest.fn();
+    broadcastMessageAction.performAction = jest.fn();
+    privateMessageFromDm.performAction = jest.fn();
+    addHpAction.performAction = jest.fn();
+    removeHpAction.performAction = jest.fn();
+    addManaAction.performAction = jest.fn();
+    removeManaAction.performAction = jest.fn();
+    addDamageAction.performAction = jest.fn();
+    removeDamageAction.performAction = jest.fn();
 
-    test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
-        actionHandler.processAction('0', `${triggers.message} Hallo`);
-        actionHandler.processAction('0', `${triggers.messageMaster} Hallo`);
-        actionHandler.processAction('0', `${triggers.discard} Apfel`);
-        actionHandler.processAction('0', `${triggers.inspect} Apfel`);
-        actionHandler.processAction('0', triggers.inventory);
-        actionHandler.processAction('0', triggers.look);
-        actionHandler.processAction('0', `${triggers.pickup} Apfel`);
-        actionHandler.processAction('0', `essen Apfel`);
-        actionHandler.processAction('0', `${triggers.unspecified} Test`);
-        actionHandler.processAction('0', `${triggers.help}`);
-        actionHandler.processAction('0', `${triggers.showActions}`);
-        expect(messageAction.performAction).not.toHaveBeenCalled()
-        expect(messageMasterAction.performAction).not.toHaveBeenCalled()
-        expect(discardAction.performAction).not.toHaveBeenCalled()
-        expect(inspectAction.performAction).not.toHaveBeenCalled()
-        expect(inventoryAction.performAction).not.toHaveBeenCalled()
-        expect(lookAction.performAction).not.toHaveBeenCalled()
-        expect(pickupAction.performAction).not.toHaveBeenCalled()
-        expect(dungeonAction.performAction).not.toHaveBeenCalled()
-        expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
-        expect(helpAction.performAction).not.toHaveBeenCalled()
-        expect(showActions.performAction).not.toHaveBeenCalled()
-    })
+    // NICHT MEHR NOTWENDIG!!!!!
+    // test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
+    //     actionHandler.processAction('dungeonmaster', `${triggers.message} Hallo`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.messageMaster} Hallo`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.discard} Apfel`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.inspect} Apfel`);
+    //     actionHandler.processAction('dungeonmaster', triggers.inventory);
+    //     actionHandler.processAction('dungeonmaster', triggers.look);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.pickup} Apfel`);
+    //     actionHandler.processAction('dungeonmaster', `essen Apfel`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.unspecified} Test`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.help}`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.showActions}`);
+    //     expect(messageAction.performAction).not.toHaveBeenCalled()
+    //     expect(messageMasterAction.performAction).not.toHaveBeenCalled()
+    //     expect(discardAction.performAction).not.toHaveBeenCalled()
+    //     expect(inspectAction.performAction).not.toHaveBeenCalled()
+    //     expect(inventoryAction.performAction).not.toHaveBeenCalled()
+    //     expect(lookAction.performAction).not.toHaveBeenCalled()
+    //     expect(pickupAction.performAction).not.toHaveBeenCalled()
+    //     expect(dungeonAction.performAction).not.toHaveBeenCalled()
+    //     expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
+    //     expect(helpAction.performAction).not.toHaveBeenCalled()
+    //     expect(showActions.performAction).not.toHaveBeenCalled()
+    // })
 
     test('ActionHandler should call performAction on MessageAction with the correct parameters when it receives a "sag" action message', () => {
         actionHandler.processAction('Jeff', `sag Hallo`);
@@ -454,25 +475,7 @@ describe('ActionHandler', () => {
             'Monster',
         ]);
     });
-    //Tests with dungeon master as user
-    test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
-        actionHandler.processAction('0', `fluester Spieler Hilfe`);
-        expect(privateMessageAction.performAction).toHaveBeenCalledWith('0', ['Spieler', 'Hilfe'])
-    })
-    test('ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users', () => {
-        actionHandler.processAction('0', `broadcast Hallo`);
-        expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('0', ['Hallo'])
-    })
-    test('ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action', () => {
-        actionHandler.processAction('Jeff', `broadcast Hallo`);
-        expect(invalidAction.performAction).toHaveBeenCalledWith('Jeff', ['Hallo'])
-    })
-    test('ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a "fluesterdm" action message', () => {
-        actionHandler.processAction('Jeff', `fluesterdm Hallo`);
-        expect(messageMasterAction.performAction).toHaveBeenCalledWith('Jeff', [
-            'Hallo',
-        ]);
-    });
+
     test('ActionHandler should call performAction on HelpAction with the correct parameters when it receives a "hilfe" action message', () => {
         actionHandler.processAction('Jeff', `hilfe`);
         expect(helpAction.performAction).toHaveBeenCalledWith('Jeff', []);
@@ -481,6 +484,46 @@ describe('ActionHandler', () => {
         actionHandler.processAction('Jeff', `aktionen`);
         expect(showActions.performAction).toHaveBeenCalledWith('Jeff', []);
     });
+    test('ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a "fluesterdm" action message', () => {
+        actionHandler.processAction('Jeff', `fluesterdm Hallo`);
+        expect(messageMasterAction.performAction).toHaveBeenCalledWith('Jeff', [
+            'Hallo',
+        ]);
+    });
+    
+    //Tests with dungeon master as user
+    test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
+        actionHandler.processDmAction(`fluester Spieler Hilfe`);
+        expect(privateMessageFromDm.performAction).toHaveBeenCalledWith('dungeonmaster', ['Spieler', 'Hilfe'])
+    })
+    test('ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users', () => {
+        actionHandler.processDmAction(`broadcast Hallo`);
+        expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Hallo'])
+    })
+    test('ActionHandler should call performAction on AddHp when the dungeon master adds hp to a user', () => {
+        actionHandler.processDmAction(`addhp Jeff 1`);
+        expect(addHpAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on RemoveHp when the dungeon master removes hp from a user', () => {
+        actionHandler.processDmAction(`remhp Jeff 1`);
+        expect(removeHpAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on AddMana when the dungeon master adds mana to a user', () => {
+        actionHandler.processDmAction(`addmana Jeff 1`);
+        expect(addManaAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on RemoveMana when the dungeon master removes mana from a user', () => {
+        actionHandler.processDmAction(`remmana Jeff 1`);
+        expect(removeManaAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on AddDamage when the dungeon master adds dmg to a user', () => {
+        actionHandler.processDmAction(`adddmg Jeff 1`);
+        expect(addDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on RemoveDmg when the dungeon master removes dmg from a user', () => {
+        actionHandler.processDmAction(`remdmg Jeff 1`);
+        expect(removeDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
     
 });
 
@@ -499,7 +542,6 @@ describe('Actions', () => {
     const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
     const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
     const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast] as BroadcastMessageAction;
     const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
     const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
     const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
@@ -540,21 +582,6 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
             action: 'message',
             data: { message: '[privat] Jeff -> Spieler: Hallo' },
-        });
-    });
-
-    test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
-        privateMessageAction.performAction('0', [
-            'Spieler',
-            'Hallo',
-        ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
-            action: 'message',
-            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
-        });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
-            action: 'message',
-            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
         });
     });
 
@@ -697,7 +724,7 @@ describe('Actions', () => {
             action: 'message',
             data: { message: `[privat] Jeff -> Dungeon Master: Hallo` },
         });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
             data: { message: `[privat] Jeff -> Dungeon Master: Hallo` },
         });
@@ -1176,76 +1203,129 @@ describe("Dungeon Actions", () => {
 describe("DungeonMaster Actions", () => {
     beforeEach(() => {
         TestDungeon.characters['Jeff'].position = TestRoom.id;
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+        TestDungeon.characters['Jeff'].currentStats.hp = 50
+        TestDungeon.characters['Jeff'].currentStats.dmg = 10
+        TestDungeon.characters['Jeff'].currentStats.mana = 50
     })
     afterEach(() => {
         jest.clearAllMocks();
     });
     afterAll(() => {
-        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats //(100, 20, 100);
+        TestDungeon.characters['Jeff'].currentStats.hp = 50
+        TestDungeon.characters['Jeff'].currentStats.dmg = 10
+        TestDungeon.characters['Jeff'].currentStats.mana = 50
     })
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
     const addDamage: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage;
     const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
     const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
+    const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
+    const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const dieAction: DieAction = actionHandler.dieAction;
 
 
     amqpAdapter.sendToClient = jest.fn();
+    dieAction.performAction = jest.fn();
 
     
 
-    test('dungeonmaster should add amount of actual Damage to a Charakter', () => {
-        addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
+    test('dungeonmaster should add amount of actual Damage to a Charakter', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Du hast 1 Schaden erhalten" },
+            data: { message: "Jeff hat 1 Schaden erhalten" },
         });
     });
 
-//         test('Jeff should get 1 Attack and then have 11 in total', async () => {
-//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
-//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
-//         });
+    test('Jeff should get 1 Attack and then have 11 in total', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
+    });
 
-//         test('Jeff should get so much attack so that he reaches his max Attack', async () => {
-//             await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
-//             expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
-//         });
+    test('Jeff should get so much attack so that he reaches his max Attack', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
+    });
 
-//         test('dungeonmaster should add amount of actual HP to a Charakter', () => {
-//             addHp.performAction('dungeonmaster', ['Jeff' , '1']);
-//             expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-//                 action: 'message',
-//                 data: { message: "Du hast 1 Leben erhalten" },
-//             });
-//         });
+    test('dungeonmaster should add amount of actual HP to a Charakter', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 1 Leben erhalten" },
+        });
+    });
     
-//             test('Jeff should get 1 HP and then have 51 in total', async () => {
-//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
-//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
-//             });
-    
-//             test('Jeff should get so much life so that he reaches his max life', async () => {
-//                 await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
-//                 expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
-//             });
+    test('Jeff should get 1 HP and then have 51 in total', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
+    });
 
-//             test('dungeonmaster should add amount of actual Mana to a Charakter', () => {
-//                 addMana.performAction('dungeonmaster', ['Jeff' , '1']);
-//                 expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
-//                     action: 'message',
-//                     data: { message: "Du hast 1 Mana erhalten" },
-//                 });
-//             });
+    test('Jeff should get so much life so that he reaches his max life', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
+    });
+
+    test('dungeonmaster should add amount of actual Mana to a Charakter', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 1 Mana erhalten" },
+        });
+    });
         
-//                 test('Jeff should get 1 mana and then have 51 in total', async () => {
-//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
-//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
-//                 });
+    test('Jeff should get 1 mana and then have 51 in total', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
+    });
+
+    test('Jeff should get so much mana so that he reaches his max mana', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
+    });
+
+                
+    test('dungeonmaster should remove hp from player', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' , '2']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 2 Leben verloren" },
+        });
+    });
         
-//                 test('Jeff should get so much mana so that he reaches his max mana', async () => {
-//                     await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
-//                     expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
-//                 });
+    test('Jeff should lose 2 Hp and then have 48 in total', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' ,'2']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(48);
+    });
+
+    test('Jeff should lose so much hp so that he dies and gets 100 hp again', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
+    });
+
+    test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
+        privateMessageFromDm.performAction('dungeonmaster', [
+            'Spieler',
+            'Hallo',
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
+            action: 'message',
+            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+        });
+    });
+
+    test('BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message', () => {
+        broadcastMessageAction.performAction('dungeonmaster', [
+            'Hallo'
+        ]);
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Hallo` },
+        });
+    });
 })

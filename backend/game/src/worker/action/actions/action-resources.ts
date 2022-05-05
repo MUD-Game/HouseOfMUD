@@ -86,7 +86,7 @@ export const dungeonMasterSendMessages = {
 }
 
 export const extras = {
-    dungeonMasterId: '0'
+    dungeonMasterId: 'dungeonmaster'
 }
 
 export const actionDescriptions = {

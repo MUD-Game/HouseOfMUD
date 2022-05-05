@@ -17,14 +17,11 @@ export class PrivateMessageFromDm extends Action {
     }
     
     performAction(user: string, args: string[]) {
-        let dungeon: Dungeon = this.dungeonController.getDungeon()
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
         let recipientCharacterName: string = args[0]
         args.shift()
         let messageBody: string = args.join(' ')
         try {
-            let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-       
             let responseMessage: string = parseResponseString(dungeonMasterSendMessages.dmWhisper, recipientCharacterName, messageBody)
             amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
             amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})

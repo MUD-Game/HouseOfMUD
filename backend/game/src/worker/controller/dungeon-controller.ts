@@ -67,8 +67,8 @@ export class DungeonController {
                         case 'message':
                             this.actionHandler.processAction(data.character, data.data.message);
                             break;
-                        case 'dmMessage':
-                            //dmaction
+                        case 'dmmessage':
+                            this.actionHandler.processDmAction(data.data.message);
                             break;
                     }
                 }

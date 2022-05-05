@@ -1,7 +1,7 @@
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers } from "./action-resources";
+import { triggers } from "../actions/action-resources";
 
 export class BroadcastMessageAction extends Action {
 

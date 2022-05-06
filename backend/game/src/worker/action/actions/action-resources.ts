@@ -4,6 +4,7 @@
 
 import { parse } from "path";
 import { Room } from "../../../data/interfaces/room";
+import format from "./format";
 
 export const triggers = {
     discard: "ablegen",
@@ -55,7 +56,7 @@ export const actionMessages = {
     discard: "Du hast folgendes Item abgelegt: %s",
     pickup: "Du hast folgendes Item aufgehoben: %s",
     dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
-    helpMessage: "Willkommen in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten. Gebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.",
+    helpMessage: `${format.bold}${format.underscore}${format.color.black}W${format.color.red}i${format.color.green}l${format.color.yellow}l${format.color.blue}k${format.color.magenta}o${format.color.cyan}m${format.color.white}m${format.color.black}e${format.color.red}n ${format.reset}in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.`,
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
     showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein."
 }
@@ -140,4 +141,3 @@ export function parseResponseString(str: string, ...args: string[]): string {
     let i = 0;
     return str.replace(/%s/g, () => args[i++]);
 }
-

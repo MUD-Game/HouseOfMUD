@@ -19,7 +19,7 @@ import ChatQueue from './ChatQueue';
 import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
-import { MinimapProps } from '../Game/Minimap';
+import { MinimapProps } from './Minimap';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {

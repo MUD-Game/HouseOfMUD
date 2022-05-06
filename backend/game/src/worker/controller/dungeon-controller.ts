@@ -122,12 +122,14 @@ export class DungeonController {
 
     async sendMiniMapData(character: string) {
         let rooms:MiniMapData["rooms"] = {};
+        const isDm: boolean = 'dungeonmaster' === character; // TODO: Find it in another way
         for (let room in this.dungeon.rooms) {
             rooms[room] = {
                 xCoordinate: this.dungeon.rooms[room].xCoordinate,
                 yCoordinate: this.dungeon.rooms[room].yCoordinate,
                 connections: this.dungeon.rooms[room].connections,
-                explored: false // TODO: Find a way to check if the room is explored
+                explored: false, // TODO: Find a way to check if the room is explored
+                name: isDm ? this.dungeon.rooms[room].name : undefined
             }
         }
         rooms["0,0"].explored = true;

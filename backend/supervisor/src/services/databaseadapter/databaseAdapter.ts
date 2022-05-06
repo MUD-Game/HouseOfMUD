@@ -194,6 +194,7 @@ export class DatabaseAdapter {
             masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
             blacklist: newDungeon.blacklist,
+            globalActions: newDungeon.globalActions,
             characters: oldDungeon.characters,
             characterClasses: await this.characterClass.insertMany(newDungeon.characterClasses),
             characterSpecies: await this.characterSpecies.insertMany(newDungeon.characterSpecies),

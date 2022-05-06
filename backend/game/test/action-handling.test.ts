@@ -41,6 +41,7 @@ import { ShowActions } from "../src/worker/action/actions/show-actions";
 import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMessage-action";
 import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
 import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
+import { ChangeRoom } from "../src/worker/action/dmactions/changePlayerPosition-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -1222,6 +1223,7 @@ describe("DungeonMaster Actions", () => {
     const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
     const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
     const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const changePlayerPosition: ChangeRoom = actionHandler.dmActions[triggers.changeRoom] as ChangeRoom;
 
 
     amqpAdapter.sendToClient = jest.fn();
@@ -1324,5 +1326,22 @@ describe("DungeonMaster Actions", () => {
             action: 'message',
             data: { message: `Hallo` },
         });
+    });
+
+    test('dungeonmaster changes the position of Jeff (text)', () => {
+        changePlayerPosition.performAction('dungeonmaster', [
+            'Jeff', 'Raum-N'
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Jeff wurde in Raum Raum-N verschoben` },
+        });
+    });
+
+    test('dungeonmaster changes the position of Jeff', async () => {
+        await  changePlayerPosition.performAction('dungeonmaster', [
+            'Jeff', 'Raum-N'
+        ]);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.name)
     });
 })

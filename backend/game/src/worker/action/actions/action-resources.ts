@@ -27,7 +27,8 @@ export const triggers = {
     addMana: "addmana",
     removeMana: "remmana",
     removeHp: "remhp",
-    removeDamage: "remdmg"
+    removeDamage: "remdmg",
+    changeRoom: "verschiebe"
 }
 
 export const actionMessages = {
@@ -83,6 +84,9 @@ export const dungeonMasterSendMessages = {
     removeHp: "Du hast %s Leben verloren",
     hpRemoved: "%s hat %s Leben verloren",
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
+    dmRoomMove: "%s wurde in Raum %s verschoben",
+    roomMove: "Du wurdest vom Dungeon Master in den Raum %s verschoben",
+    alreadyRoom: "Der Spieler ist bereits im gewünschten Raum"
 }
 
 export const extras = {

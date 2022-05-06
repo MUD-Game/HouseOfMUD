@@ -119,7 +119,8 @@ export interface MiniMapData {
         xCoordinate: Room['xCoordinate'],
         yCoordinate: Room['yCoordinate'],
         connections: Room['connections'],
-        explored: boolean
+        explored: boolean,
+        name?:string
     }};
     startRoom: string;
 }

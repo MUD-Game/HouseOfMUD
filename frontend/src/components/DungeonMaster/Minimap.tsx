@@ -5,15 +5,13 @@
  * @props {@linkcode MinimapProps}
  */
 import React, { useRef, useLayoutEffect } from 'react'
-import { Circle, Group, Layer, Line, Rect, Stage, Text } from 'react-konva';
+import { Group, Layer, Line, Rect, Stage, Text } from 'react-konva';
 import { MudRoom } from 'src/types/dungeon';
 import { useRabbitMQ } from '../../hooks/useRabbitMQ';
-import { useEffect } from 'react';
 import './index.css'
 import { ArrowsAngleContract, ArrowsFullscreen, Compass, Fullscreen, FullscreenExit, GeoAlt } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
 import Konva from 'konva';
-import { useRefSize } from '../../hooks/useRefSize';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -57,7 +55,8 @@ export interface MiniMapData {
             xCoordinate: MudRoom['xCoordinate'],
             yCoordinate: MudRoom['yCoordinate'],
             connections: MudRoom['connections'],
-            explored: boolean
+            explored: boolean,
+            name:string
         }
     };
     startRoom: string;
@@ -211,9 +210,9 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                 const yStatus = rooms[roomkey].connections.south;
 
 
-                                const xPoints = [x * roomOffset + roomSize + 2, y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)];
+                                const xPoints = [x * roomOffset + roomSize + roomStrokeWidth / 2, y * roomOffset + (roomSize / 2), (x + 1) * roomOffset - roomStrokeWidth / 2, y * roomOffset + (roomSize / 2)];
 
-                                const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + 2, x * roomOffset + (roomSize / 2), (y + 1) * roomOffset];
+                                const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + roomStrokeWidth / 2, x * roomOffset + (roomSize / 2), (y + 1) * roomOffset - roomStrokeWidth / 2];
 
                                 let connections: React.ReactNode[] = [];
 
@@ -223,25 +222,10 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
                                 (yStatus !== 'inactive') && connections.push(<Line key={`${roomkey}-connection-south`} points={yPoints} stroke={yStrokeCol} data-room={roomkey} strokeWidth={connectionStrokeWidth} data-status={yStatus} onClick={toggleConnection} data-direction={'south'} />);
 
-                                const textConfig = {
-                                    x: x * roomOffset,
-                                    y: y * roomOffset,
-                                    align: "center",
-                                    width: roomSize,
-                                    height: roomSize,
-                                    fontSize: 10,
-                                    fontFamily: 'Segoe UI',
-                                    padding: roomStrokeWidth,
-                                    text: "Katakomben",
-                                    wrap: "word",
-                                    verticalAlign: "middle"
-                                }
-                                let text = new Konva.Text(textConfig)
-                                // console.log(text.getSize());
+                              
 
                                 return (
                                     <Group key={roomkey}>
-                                        {connections}
                                         <Rect
 
                                             x={x * roomOffset}
@@ -253,9 +237,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                             strokeWidth={roomStrokeWidth}
                                             stroke={strokeColor}
                                         />
-                                        <Text
-                                           {...textConfig}
-                                        />
+                                        {connections}
 
                                     </Group>
                                 )
@@ -301,9 +283,9 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                 const yStatus = rooms[roomkey].connections.south;
 
 
-                                const xPoints = [x * roomOffset + roomSize + 2, y * roomOffset + (roomSize / 2), (x + 1) * roomOffset, y * roomOffset + (roomSize / 2)];
+                                const xPoints = [x * roomOffset + roomSize + roomStrokeWidth / 2, y * roomOffset + (roomSize / 2), (x + 1) * roomOffset - roomStrokeWidth / 2, y * roomOffset + (roomSize / 2)];
 
-                                const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + 2, x * roomOffset + (roomSize / 2), (y + 1) * roomOffset];
+                                const yPoints = [x * roomOffset + (roomSize / 2), y * roomOffset + roomSize + roomStrokeWidth / 2, x * roomOffset + (roomSize / 2), (y + 1) * roomOffset - roomStrokeWidth / 2];
 
                                 let connections: React.ReactNode[] = [];
 
@@ -313,7 +295,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
                                 (yStatus !== 'inactive') && connections.push(<Line key={`${roomkey}-connection-south`} points={yPoints} stroke={yStrokeCol} data-room={roomkey} strokeWidth={connectionStrokeWidth} data-status={yStatus} onClick={toggleConnection} data-direction={'south'} />);
 
-                                const textConfig = {
+                                const roomNameText = {
                                     x: x * roomOffset,
                                     y: y * roomOffset,
                                     align: "center",
@@ -322,16 +304,29 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     fontSize: 10,
                                     fontFamily: 'Segoe UI',
                                     padding: roomStrokeWidth,
-                                    text: "Katakomben",
+                                    text: room.name,
                                     wrap: "word",
                                     verticalAlign: "middle"
                                 }
-                                let text = new Konva.Text(textConfig)
+
+                                const coordText = {
+                                    x: x * roomOffset,
+                                    y: y * roomOffset,
+                                    align: "left",
+                                    width: roomSize,
+                                    height: roomSize,
+                                    fontSize: 8,
+                                    fontFamily: 'Segoe UI',
+                                    padding: roomStrokeWidth,
+                                    text: roomkey,
+                                    wrap: "word",
+                                    verticalAlign: "top"
+                                }
+                                let text = new Konva.Text(roomNameText)
                                 // console.log(text.getSize());
 
                                 return (
                                     <Group key={roomkey}>
-                                        {connections}
                                         <Rect
 
                                             x={x * roomOffset}
@@ -344,8 +339,12 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                             stroke={strokeColor}
                                         />
                                         <Text
-                                           {...textConfig}
+                                           {...roomNameText}
                                         />
+                                        <Text 
+                                            {... coordText}
+                                        />
+                                        {connections}
 
                                     </Group>
                                 )

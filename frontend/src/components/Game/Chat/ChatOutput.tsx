@@ -21,8 +21,10 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
 
     const {setChatSubscriber} = useRabbitMQ();
 
-    setChatSubscriber((data: any)=>{
-        setMessages([...messages, data.message]);
+    setChatSubscriber((data: any) => {
+        setMessages((prevState) => {
+            return [...prevState, data.message]
+        });
     });
 
     const messagesEndRef = useRef<HTMLInputElement>(null);

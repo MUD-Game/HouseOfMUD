@@ -12,17 +12,19 @@ import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import { Row } from 'react-bootstrap';
 
-export interface ChatOutputProps {}
+export interface ChatOutputProps { }
 
 
 const ChatOutput: React.FC<ChatOutputProps> = () => {
 
     const [messages, setMessages] = useState<string[]>([]);
 
-    const {setChatSubscriber} = useRabbitMQ();
+    const { setChatSubscriber } = useRabbitMQ();
 
-    setChatSubscriber((data: any)=>{
-        setMessages([...messages, data.message]);
+    setChatSubscriber((data: any) => {
+        setMessages((prevState) => {
+            return [...prevState, data.message]
+        });
     });
 
     const messagesEndRef = useRef<HTMLInputElement>(null);
@@ -32,7 +34,7 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
         }
     };
     useEffect(scrollToBottom, [messages]);
-    
+
     return (
         <Row className="chat-output-wrap">
             <div className="col">

@@ -10,17 +10,20 @@ export default class AuthProvider {
     private transporter: any;
     private salt: string;
     private verifyLink: string;
+    private passwordResetLink: string;
     private unverified_users: { [token: string]: User } = {};
+    private password_reset_token: { [token: string]: string } = {};
     private sessioned_users: { [token: string] : string} = {};
     private cookiehost: string;
     
 
-    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, cookiehost: string) {
+    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, passwordResetLink:string, cookiehost: string) {
 
         this.dba = dba;
         this.salt = salt;
         this.transporter = transporter;
         this.verifyLink = verifyLink;
+        this.passwordResetLink = passwordResetLink;
         this.cookiehost = cookiehost;
         this.register = this.register.bind(this);
         this.verifyEmail = this.verifyEmail.bind(this);
@@ -29,6 +32,7 @@ export default class AuthProvider {
         this.validatePassword = this.validatePassword.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
         this.logout = this.logout.bind(this);
+        this.requestPasswordReset = this.requestPasswordReset.bind(this);
 }
 
     async logout(req:any, res:any){
@@ -47,6 +51,31 @@ export default class AuthProvider {
             });
         }
     }
+
+
+    async requestPasswordReset(req:any, res:any){
+        let body: any = req.body;
+        if (body.email !== undefined) {
+            let email: string = body.email;
+            if (await this.dba.checkIfEmailExists(email)) {
+                let user = await this.dba.getUserByEmail(email);
+                if(user){
+                    let token: string = this.generateVerifyToken();
+                    this.password_reset_token[token] = email;
+                    let link: string = `${this.passwordResetLink}?token=${token}`;
+                    let options = {
+                        from: 'HouseOfMUD <houseofmud2022@gmail.com>',
+                        to: email,
+                        subject: 'Passwort zurücksetzen',
+                        text: `Hallo ${user.username},\n\n für deinen Account wurde ein Passwort-Reset angefragt. Klicke auf den unten stehenden Link um dein Passwort neu zu setzen. \n\n${link} \n\n Falls Du diese E-Mail nicht angefordert hast, ignoriere sie bitte.`
+                    }
+                    this.transporter.sendMail(options, (error: any, info: any) => {error && console.error(error)});
+                }
+            }
+        }
+        res.status(200).json({ ok: 1 });
+    }
+
 
     async deleteUser(req:any, res:any, next:any){
         this.dba.deleteUser(req.cookies.user).then(() => {

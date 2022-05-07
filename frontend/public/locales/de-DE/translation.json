@@ -1,11 +1,11 @@
 {
-    "room_tooltip":{
+    "room_tooltip": {
         "title": "Raum Editor",
-        "add_room":{
+        "add_room": {
             "title": "Raum hinzufügen",
             "text": "Mit einem Klick auf einen leeren Raum (grau) öffnet sich ein Dialog zum Hinzufügen eines Raums. Hier kannst du den Raumnamen und Beschreibung festlegen."
         },
-        "edit_room":{
+        "edit_room": {
             "title": "Raum bearbeiten",
             "text": "Mit einem Klick auf einen Raum wird dieser ausgewählt und kann im Formular darunter mit Leben befüllt werden"
         },
@@ -13,7 +13,7 @@
             "title": "Verbindungen zwischen Räumen anpassen",
             "text": "Beim Erstellen werden verbindungen zwischen den Räumen automatisch erstellt. Diese Verbindungen können mit einem Klick geöffnet, geschlossen und deaktiviert werden."
         },
-        "navigation":{
+        "navigation": {
             "title": "Navigation",
             "scroll_wheel": "Mausrad",
             "ctrl": "Strg",
@@ -46,6 +46,11 @@
         "no_account": "Noch keinen Account?",
         "have_account": "Account bereits vorhanden?",
         "login_here": "Hier anmelden",
+        "new_password": "Neues Passwort",
+        "confirm_password": "Passwort bestätigen",
+        "confirm_new_password": "Neues Passwort bestätigen",
+        "forgot_password": "Passwort vergessen?",
+        "forgot_user": "Benutzername vergessen?",
         "register_here": "Hier registrieren"
     },
     "dungeon_keys": {
@@ -68,13 +73,13 @@
         "maxmana": "max Mana",
         "maxdmg": "max Dmg",
         "room": "Raum",
-        "connections":{
+        "connections": {
             "open": "Offen",
             "closed": "Geschlossen",
             "inactive": "Deaktiviert (Kein Durchgang)"
         }
     },
-    "character_creator":{
+    "character_creator": {
         "pick_character": "Charakter auswählen",
         "create": "Charakter Erstellen",
         "new_character": "Neuen Charakter anlegen"
@@ -90,7 +95,7 @@
                 "text": "Bist du sicher, dass du deinen Account löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
             }
         },
-        "language":{
+        "language": {
             "label": "Sprache",
             "en-US": "Englisch",
             "de-DE": "Deutsch",
@@ -101,18 +106,18 @@
             "nl-NL": "Niederländisch"
         }
     },
-    "game":{
+    "game": {
         "leave": "Verlassen",
         "queue": "Warteschlange",
         "inventory": "Inventar"
     },
-    "verify_email":{
+    "verify_email": {
         "title": "Email-Verifizierung",
         "success": "E-Mail erfolgreich verifiziert! Sie werden in 3 Sekunden zum Login weitergeleitet",
         "error": "Ihre Mail konnte nicht verifiziert werden, entweder ihr Token ist ungültig oder Sie haben sich bereits verifiziert."
     },
-    "dungeon_configurator":{
-        "rooms":{
+    "dungeon_configurator": {
+        "rooms": {
             "title": "Räume",
             "create_room": "Neuen Raum anlegen",
             "save_room": "Raum speichern",
@@ -139,38 +144,38 @@
                 "title": "NPC löschen",
                 "text": "Bist du sicher, dass du diesen NPC löschen möchtest? Dieser Schritt löscht den NPC aus allen Räumen und kann nicht rückgängig gemacht werden!"
             },
-            "delete_gender":{
+            "delete_gender": {
                 "title": "Geschlecht löschen",
                 "text": "Bist du sicher, dass du dieses Geschlecht löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
             },
-            "delete_species":{
+            "delete_species": {
                 "title": "Spezies löschen",
                 "text": "Bist du sicher, dass du diese Spezies löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!"
             }
         },
         "title": "Dungeon konfigurieren",
         "inputs": {
-            "name":{
+            "name": {
                 "placeholder": "Name"
             },
-            "description":{
+            "description": {
                 "placeholder": "Beschreibung"
             },
-            "maxPlayers":{
+            "maxPlayers": {
                 "placeholder": "Maximale Spieleranzahl"
             },
-            "genders":{
+            "genders": {
                 "title": "Geschlechter",
                 "placeholder": "Geschlechter",
                 "emptyLabel": "Neues Geschlecht eingeben..."
             },
-            "species":{
+            "species": {
                 "title": "Spezies",
                 "placeholder": "Spezies",
                 "emptyLabel": "Neue Spezies eingeben..."
             }
         },
-        "buttons":{
+        "buttons": {
             "create_class": "neue Klasse anlegen",
             "create_item": "neues Item erstellen",
             "create_npc": "neuen NPC erstellen",
@@ -178,9 +183,8 @@
             "create_species": "neue Spezies",
             "create_action": "neue Aktion anlegen"
         }
-        
     },
-    "common":{
+    "common": {
         "select_items": "Items auswählen",
         "select_npcs": "NPCs auswählen",
         "select_actions": "Aktionen auswählen",
@@ -189,12 +193,12 @@
         "isglobal": "Globale Aktion?",
         "404": "Seite nicht gefunden...",
         "amount": "Anzahl",
-        "start_room":{
+        "start_room": {
             "name": "Start Raum",
             "description": "Dies ist der Startraum"
         }
     },
-    "header":{
+    "header": {
         "welcome": "Willkommen"
     },
     "button": {
@@ -220,8 +224,8 @@
         "login": "Anmelden",
         "register": "Registrieren"
     },
-    "error":{
-        "internal":{
+    "error": {
+        "internal": {
             "title": "Interner Server Fehler",
             "text": "Es ist ein interner Server Fehler aufgetreten. Bitte versuche es später noch einmal, falls das Problem weiterhin besteht wenden Sie sich an einen Administrator."
         },
@@ -237,10 +241,14 @@
             "title": "Du kannst diese Spezies nicht löschen",
             "text": "Es existiert mindestens ein NPC der schon dieser Spezies angehört, löse den Konflikt und versuche es erneut!"
         },
-        "failvalidation":{
+        "failvalidation": {
             "dungeon": {
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um einen Dungeon zu erstellen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung, Maximalanzahl der Spieler, Geschlechter, Spezies und Klasse!"
+            },
+            "password_not_match": {
+                "title": "Passwörter stimmen nicht überein",
+                "text": "Die eingegebenen Passwörter stimmen nicht überein!"
             },
             "room": {
                 "title": "Bitte gebe alle geforderten Daten ein",
@@ -267,21 +275,29 @@
                 "text": "Um eine neue Aktion zu erstellen, muss es mindestens einen Eintrag in den folgenden Feldern haben: Name, Beschreibung, Ausgabe. Sowie in allen Event feldern!"
             }
         },
-        "rabbitmq":{
+        "invalidtoken": {
+            "title": "Ungültiger Token",
+            "text": "Der mitgeschickte Token ist nicht mehr gültig, versuche ihn erneut anzufragen!"
+        },
+        "parameters": {
+            "title": "Ungültige Parameter",
+            "text": "Die an den Server mitgeschickten Parameter sind nicht vollständig oder ungültig, überprüfe deine Eingabe und versuche es erneut!"
+        },
+        "rabbitmq": {
             "login": {
                 "title": "Es konnte keine Verbindung zu RabbitMQ hergestellt werden",
                 "text": "Bitte versuche es erneut oder wende dich an einen Administrator!"
             },
-            "logout":{
+            "logout": {
                 "title": "Die Verbindung zu RabbitMQ wurde getrennt",
                 "text": "Es wird versucht dich wieder zu verbinden, falls dies nicht funktioniert, wende dich an einen Administrator!"
             },
-            "send":{
+            "send": {
                 "title": "Dies hat nicht funktioniert",
                 "text": "Beim senden deiner Nachricht ist ein Fehler aufgetreten. Bitte versuche es erneut oder wende dich an einen Administrator, falls das Problem weiterhin besteht!"
             }
         },
-        "exists":{
+        "exists": {
             "user": {
                 "title": "Ungültiger Nutzernamen",
                 "text": "Bitte wähle einen anderen Benutzernamen, dieser wird schon verwendet!"
@@ -296,10 +312,20 @@
             "text": "Du kannst den Startraum nicht löschen!"
         }
     },
-    "info":{
-        "verifyemail":{
+    "forgotlogin": {
+        "title": "Passwort vergessen",
+        "text": "Bitte gebe die E-Mail Adresse deines Accounts ein. Dir wird ein Link zugeschickt mit dem du dein Passwort ändern kannst."
+    },
+    "info": {
+        "verifyemail": {
             "title": "Registrierung erfolgreich",
             "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst."
+        },
+        "forgotlogin": {
+            "email_sent": {
+                "title": "E-Mail verschickt",
+                "text": "Falls ein Account mit dieser E-Mail-Adresse existiert, wurde ein Link zum Ändern deines Passworts an deine E-Mail-Adresse geschickt."
+            }
         }
     }
 }

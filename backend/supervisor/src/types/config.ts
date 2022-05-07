@@ -13,6 +13,7 @@ export interface Config {
     auth: {
         salt: string;
         verifyLink: string;
+        passwordResetLink: string;
         emailservice: string;
         emailadress: string;
         emailsecret: string;

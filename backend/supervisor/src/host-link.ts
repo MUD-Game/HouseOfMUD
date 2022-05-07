@@ -153,7 +153,7 @@ export class HostLink {
      * @returns best available host
      */
     private getBestHost(): string {
-        return Object.keys(this.hosts)[0];
+        return Object.keys(this.hosts)[Math.floor(Math.random()*Object.keys(this.hosts).length)];
     }
 
     /**

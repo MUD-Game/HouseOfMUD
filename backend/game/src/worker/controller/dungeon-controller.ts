@@ -8,6 +8,7 @@ import { Dungeon } from "../../data/interfaces/dungeon";
 import { Room } from "../../data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
+import { ToggleConnectionAction } from "../action/dmactions/toggleRoomConnection-action";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
 function sendToHost(hostAction: string, data: any): void {
@@ -75,6 +76,9 @@ export class DungeonController {
                         case 'dmmessage':
                             this.actionHandler.processDmAction(data.data.message);
                             break;
+                        case 'connection.toggle':
+                            let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
+                            toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
                     }
                 }
             } catch (err) {

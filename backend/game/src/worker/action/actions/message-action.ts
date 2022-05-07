@@ -23,6 +23,6 @@ export class MessageAction extends Action {
         let responseMessage: string = parseResponseString(actionMessages.say, roomName, senderCharacterName, messageBody)
         let routingKey = `room.${roomId}`
         this.dungeonController.getAmqpAdapter().sendWithRouting(routingKey, {action: "message", data: {message: responseMessage}})
-        this.dungeonController.getAmqpAdapter().sendToClient(extras.dungeonMasterId, {action: "message", data: {message: responseMessage}})
+        this.dungeonController.getAmqpAdapter().sendToClient(extras.dungeonMasterId, {action: "message", data: {message: responseMessage, player: senderCharacterName, room: roomName}})
     }
 }

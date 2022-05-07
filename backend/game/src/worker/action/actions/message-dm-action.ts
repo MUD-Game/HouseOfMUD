@@ -22,6 +22,6 @@ import { actionMessages, extras, parseResponseString, triggers } from "./action-
         let responseMessage: string = parseResponseString(actionMessages.whisperToDm, senderCharacterName, messageBody)
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
         amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-        amqpAdapter.sendToClient(extras.dungeonMasterId, {action: "message", data: {message: responseMessage}})
+        amqpAdapter.sendToClient(extras.dungeonMasterId, {action: "message", data: {message: responseMessage, player: senderCharacterName}})
     }
 }

@@ -23,7 +23,6 @@ export class LookAction extends Action {
         let roomName: string = room.getName()
         let roomDescription: string = room.getDescription()
         let description: string = parseResponseString(actionMessages.lookRoom, roomName, roomDescription)
-
         let roomItems: ItemInfo[] = room.getItemInfos()
         let itemString: string = actionMessages.lookItems
         if (roomItems.length === 0) {

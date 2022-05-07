@@ -578,7 +578,11 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!` },
+            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`},
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`, player: "Jeff", room: "Raum-1"},
         });
     });
 
@@ -639,6 +643,10 @@ describe('Actions', () => {
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
             data: { message: `Jeff ist Raum-N beigetreten!` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff ist Raum-N beigetreten!`, player: "Jeff", room: "Raum-N" },
         });
     });
 
@@ -738,7 +746,7 @@ describe('Actions', () => {
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Jeff -> Dungeon Master: Hallo` },
+            data: { message: `[privat] Jeff -> Dungeon Master: Hallo`, player: "Jeff" },
         });
     })
 
@@ -750,6 +758,10 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item abgelegt: Schwert` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff hat Schwert in Raum-1 abgelegt!`, player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.rooms['1'].items.pop()
     })
@@ -770,14 +782,19 @@ describe('Actions', () => {
         });
     })
 
-    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
+    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', async () => {
         TestDungeon.rooms[TestRoom.id].items.push({item: TestItemPickup.id, count: 1})
-        pickupAction.performAction('Jeff', ['Gold']);
+        await pickupAction.performAction('Jeff', ['Gold']);
         expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemPickup.id}])
         expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item aufgehoben: Gold` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalled()
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff hat Gold aus Raum-1 aufgehoben!`, player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.characters['Jeff'].inventory.pop()
     })
@@ -811,6 +828,18 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: 'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; 'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; 'inv' - Zeigt die Items in deinem Inventar an; 'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; 'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; 'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; 'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; 'sag <Nachricht>' - Sende eine Nachricht in den Raum; 'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; 'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; 'hilfe' - Wenn du nicht mehr weiterkommst; 'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; 'essen Apfel' - test; 'global' - test; Gebe gegebenenfalls geeignete Argumente fuer <> ein.` },
+        });
+    })
+
+    test('InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist', () => {
+        unspecifiedAction.performAction('Jeff', ['teste mich']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
+            action: 'message',
+            data: { message: "Du hast folgende Aktion beim Dungeon Master angefragt: teste mich" },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat folgende Aktion in Raum-1 angefragt: teste mich", player: "Jeff", room: "Raum-1" },
         });
     })
 });

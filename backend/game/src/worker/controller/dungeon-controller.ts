@@ -1,8 +1,11 @@
 import { ConsumeMessage } from "amqplib";
+import { userInfo } from "os";
 import { DatabaseAdapter } from "../../data/databaseAdapter";
+import { CharacterDataset } from "../../data/datasets/characterDataset";
 import { Character, CharacterImpl } from "../../data/interfaces/character";
 import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
+import { Room } from "../../data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
@@ -61,6 +64,8 @@ export class DungeonController {
                             break;
                         case 'logout':
                             // TODO: Refactor
+                            //! Hier müssen die CharacterDaten gespeichert werden.
+                            await this.persistCharacterData(this.dungeon.getCharacter(data.character))
                             delete this.dungeon.characters[data.character];
                             sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
                             break;
@@ -76,6 +81,37 @@ export class DungeonController {
                 console.log(err);
             }
         });
+    }
+
+    async persistAllRooms(){
+        let rooms: Room[] = this.mapToArray(this.dungeon.rooms)
+        rooms.forEach(r => {
+            console.log(r.items)
+            this.databaseAdapter?.updateRoom(r)
+        })
+    }
+
+    mapToArray(map: any): any[] {
+        let array: any[] = [];
+        for (let id in map) {
+            array.push({ ...map[id], id: id });
+        }
+        return array;
+    }
+
+    async persistCharacterData(character: Character){
+        this.databaseAdapter?.updateCharacterInDungeon({
+            name: character.name,
+            userId: character.userId,
+            dungeonId: this.dungeonID,
+            characterClass: character.characterClass,
+            characterSpecies: character.characterSpecies,
+            characterGender : character.characterGender,
+            maxStats: character.maxStats,
+            currentStats: character.currentStats,
+            position: character.position,
+            inventory: character.inventory
+        }, this.dungeonID)
     }
 
     async getCharacter(name: string): Promise<Character> {

@@ -27,7 +27,8 @@ export const triggers = {
     addMana: "addmana",
     removeMana: "remmana",
     removeHp: "remhp",
-    removeDamage: "remdmg"
+    removeDamage: "remdmg",
+    toggleConnection: "toggle"
 }
 
 export const actionMessages = {

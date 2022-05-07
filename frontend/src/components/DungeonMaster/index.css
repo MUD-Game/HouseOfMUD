@@ -124,7 +124,7 @@ body{
 
 #fullscreenbutton{
     position: relative;
-    left: 5%;
+    margin:5%;
     cursor: pointer;
     opacity: 1 !important;
 }

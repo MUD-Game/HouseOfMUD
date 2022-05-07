@@ -166,9 +166,9 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                 <img src={compassPng} draggable={false} alt="compass" id={`compass${isFullscreen ? "-fullscreen" : ""}`} onClick={() => {
                     focusOnRoom(currentRoomId, isFullscreen);
                 }} />
-                {isFullscreen ? <ArrowsAngleContract id={`fullscreenbutton-fullscreen`} size={40} onClick={() => {
+                {isFullscreen ? <ArrowsAngleContract id={`fullscreenbutton-fullscreen`} onClick={() => {
                     setIsFullscreen(!isFullscreen);
-                }} /> : <ArrowsFullscreen id={`fullscreenbutton`} size={40} onClick={() => {
+                }} /> : <ArrowsFullscreen id={`fullscreenbutton`} onClick={() => {
                     setIsFullscreen(!isFullscreen);
                 }} />}
             </div>

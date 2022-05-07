@@ -275,6 +275,7 @@ const TestCharacter: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
+    {[TestRoom.id]:true},
     [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterSameRoom: Character = new CharacterImpl(
@@ -286,6 +287,7 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
+    { [TestRoom.id]: true },
     [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterNotSameRoom: Character = new CharacterImpl(
@@ -297,6 +299,7 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoomNorth.id,
+    { [TestRoomNorth.id]: true },
     [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterDungeonActions: Character = new CharacterImpl(
@@ -308,6 +311,7 @@ const TestCharacterDungeonActions: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoomActions.id,
+    { [TestRoomActions.id]: true },
     [new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
 );
 const TestDungeon: Dungeon = new DungeonImpl(

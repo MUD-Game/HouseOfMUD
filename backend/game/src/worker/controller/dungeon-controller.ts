@@ -107,6 +107,7 @@ export class DungeonController {
             maxStats: character.maxStats,
             currentStats: character.currentStats,
             position: character.position,
+            exploredRooms: Object.keys(character.exploredRooms),
             inventory: character.inventory
         }, this.dungeonID)
     }
@@ -118,8 +119,12 @@ export class DungeonController {
             if (char) {
                 let maxStats = char.maxStats;
                 let curStats = char.currentStats;
+                let exploredRooms:Character['exploredRooms'] = {};
+                char.exploredRooms.forEach((room:string) => {
+                    exploredRooms[room] = true;
+                });
                 return new CharacterImpl(char.userId, char.name, char.characterClass, char.characterSpecies, char.characterGender, new CharacterStatsImpl(maxStats.hp, maxStats.dmg, maxStats.mana), 
-                    new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, char.inventory);
+                    new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
         }
         return this.createCharacter(name);
@@ -135,6 +140,7 @@ export class DungeonController {
             new CharacterStatsImpl(1, 1, 1),
             new CharacterStatsImpl(1, 1, 1),
             "0,0",
+            {"0,0":true},
             []
         );
         // console.log(this.dungeon)
@@ -156,19 +162,19 @@ export class DungeonController {
     async sendMiniMapData(character: string) {
         let rooms:MiniMapData["rooms"] = {};
         const isDm: boolean = 'dungeonmaster' === character; // TODO: Find it in another way
+        const exploredRooms = this.dungeon.getCharacter(character).exploredRooms;
         for (let room in this.dungeon.rooms) {
             rooms[room] = {
                 xCoordinate: this.dungeon.rooms[room].xCoordinate,
                 yCoordinate: this.dungeon.rooms[room].yCoordinate,
                 connections: this.dungeon.rooms[room].connections,
-                explored: false, // TODO: Find a way to check if the room is explored
+                explored: exploredRooms[room] || false, // TODO: Find a way to check if the room is explored
                 name: isDm ? this.dungeon.rooms[room].name : undefined
             }
         }
-        rooms["0,0"].explored = true;
         await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
-                startRoom: "0,0" //TODO: Actually get the room the character is in at the start
+                startRoom:  this.getDungeon().getCharacter(character).getPosition() //TODO: Actually get the room the character is in at the start
             } as MiniMapData);
     }	
 

@@ -18,7 +18,7 @@ const ChatQueue: React.FC<ChatQueueProps> = ({ commandQueue, onSendQueue }) => {
     const {t} = useTranslation();
 
     return (
-        <div className="chatqueue drawn-border mb-2 p-2 ps-0">
+        <div className="chatqueue drawn-border mb-2 p-2">
             <div className="chatqueue-wrap h-100 p-1 pt-0">
                 <p className='m-0'><u>{t("game.queue")}</u></p>
                 <ul className='ps-4'>

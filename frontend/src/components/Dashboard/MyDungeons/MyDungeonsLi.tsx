@@ -52,7 +52,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps & SendsMessagesProps> = ({ id, na
 
     const join = ()=>{
 
-        supervisor.login(id, {}, (data) => {
+        supervisor.login(id, { character: DUNGEON_MASTER_NAME }, (data) => {
             setIsBusy(false);
             game.setCharacter(DUNGEON_MASTER_NAME);
             game.setVerifyToken(data.verifyToken);

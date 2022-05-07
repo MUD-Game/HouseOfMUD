@@ -107,25 +107,17 @@ export class API {
 
         // login to dungeon
         app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
-            res.status(200).json({ok:1, verifyToken: this.generateVerifyToken()});
-            // let dungeonID: string = req.params.dungeonID;
-            // let body: any = req.body;
-            // if (body.user !== undefined && body.character !== undefined && body.authToken !== undefined) {
-            //     let user: string = body.user;
-            //     let character: string = body.character;
-            //     let authToken: string = body.authToken;
-            //     // TODO: Check if user has permission <-- will be solved with the auth middleware
-
-            //     if (this.hostLink.dungeonExists(dungeonID)) {
-            //         let verifyToken: string = this.generateVerifyToken();
-            //         this.hostLink.setCharacterToken(dungeonID, user, character, verifyToken);
-            //         res.json({ ok: 1, verifyToken: verifyToken });
-            //     } else {
-            //         res.json({ ok: 0, error: 'Dungeon does not exists' });
-            //     }
-            // } else {
-            //     res.json({ ok: 0, error: 'Invalid parameters' });
-            // }
+            let dungeonID: string = req.params.dungeonID;
+            let userID = req.cookies.userID;
+            let body: any = req.body;
+            if (body.character !== undefined && this.hostLink.dungeonExists(dungeonID)) {
+                let character = body.character;
+                let verifyToken: string = this.generateVerifyToken();
+                this.hostLink.setCharacterToken(dungeonID, userID, character, verifyToken);
+                res.status(200).json({ok:1, verifyToken: verifyToken});
+            } else {
+                res.status(400).json({ ok: 0, error: 'internal' });
+            }
         });
 
         // start dungeon

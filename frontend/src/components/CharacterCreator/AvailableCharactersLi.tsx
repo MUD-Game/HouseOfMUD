@@ -41,7 +41,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps & SendsMessages
     const onJoin = () => {
 
         let body: LoginRequest = {
-            character: character.id,
+            character: character.name,
         }
 
         supervisor.login(dungeon, body, (data) => {

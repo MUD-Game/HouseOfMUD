@@ -79,13 +79,16 @@ export class SupervisorLink {
         };
 
         socket.on('setCharacterToken', (data: any) => {
-            if (data.user !== undefined && data.dungeon !== undefined && data.character !== undefined && data.verifyToken !== undefined) {
-                let userID = data.user;
+
+            console.log(data);
+
+            if (data.dungeon !== undefined && data.user !== undefined && data.character !== undefined && data.verifyToken !== undefined) {
                 let dungeonID = data.dungeon;
+                let userID = data.user;
                 let character = data.character;
                 let verifyToken = data.verifyToken;
-
-                this.forkHandler.setCharacterToken(userID, dungeonID, character, verifyToken);
+                
+                this.forkHandler.setCharacterToken(dungeonID, userID, character, verifyToken);
             }
         });
 

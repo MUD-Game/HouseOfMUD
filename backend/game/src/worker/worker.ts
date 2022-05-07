@@ -80,7 +80,6 @@ function handleHostMessages(dungeonController: DungeonController) {
     process.on('message', async (msg: any) => {
         let action = msg.action;
         let data = msg.data;
-
         switch (action) {
             case 'setCharacterToken':
                 let userID = data.user;
@@ -90,7 +89,7 @@ function handleHostMessages(dungeonController: DungeonController) {
                 if (!(userID in userTokens)) {
                     userTokens[userID] = {};
                 }
-
+                console.log(`verify ${character}`);
                 userTokens[userID][character] = verifyToken;
                 break;
             case 'stop':

@@ -9,7 +9,7 @@
 import React from 'react'
 import {Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
 import Alert from 'src/components/Custom/Alert';
@@ -28,12 +28,15 @@ const ResetPassword: React.FC<ResetPasswordProps> = (props) => {
     const {t} = useTranslation();
     let location = useLocation();
     let auth = useAuth();
-    let token = new URLSearchParams(location.search).get('token')!;
+    let token = new URLSearchParams(location.search).get('token');
+    if (!token) {
+        return <Navigate to="/requestpasswordreset" />
+    }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsLoading(true);
-        if (password === repeatPassword) {
+        if (password === repeatPassword && token) {
             auth.changePassword(token, password, ()=>{
                 setIsLoading(false);
                 navigate('/login');
@@ -56,10 +59,10 @@ const ResetPassword: React.FC<ResetPasswordProps> = (props) => {
                     {isLoading ? <Busy/> :
                         <form onSubmit={handleSubmit} autoComplete="new-password">
                         <div className="input-group pt-2">
-                            <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
+                            <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.new_password")} />
                         </div>
                         <div className="input-group pt-2">
-                                <input value={repeatPassword} name="password" onChange={(event) => setRepeatPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
+                                <input value={repeatPassword} name="password" onChange={(event) => setRepeatPassword(event.target.value)} className="input-standard drawn-border" type="password" placeholder={t("login.confirm_new_password")} />
                         </div>
                             <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.submit")}</button>
                     </form>

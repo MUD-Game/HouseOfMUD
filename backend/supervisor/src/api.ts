@@ -94,6 +94,7 @@ export class API {
         app.post('/auth/verify', this.authProvider.verifyEmail);
 
         app.post('/auth/requestpassword', this.authProvider.requestPasswordReset);
+        app.post('/auth/resetpassword', this.authProvider.resetPassword);
 
         // TODO: Create actual authentication
         // platform authentication

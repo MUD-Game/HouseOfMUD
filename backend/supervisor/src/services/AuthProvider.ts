@@ -6,6 +6,7 @@ const COOKIE_TIME = 1000 * 60 * 60 * 24 * 30;
 
 export default class AuthProvider {
 
+
     private dba: DatabaseAdapter;
     private transporter: any;
     private salt: string;
@@ -13,11 +14,11 @@ export default class AuthProvider {
     private passwordResetLink: string;
     private unverified_users: { [token: string]: User } = {};
     private password_reset_token: { [token: string]: string } = {};
-    private sessioned_users: { [token: string] : string} = {};
+    private sessioned_users: { [token: string]: string } = {};
     private cookiehost: string;
-    
 
-    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, passwordResetLink:string, cookiehost: string) {
+
+    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, passwordResetLink: string, cookiehost: string) {
 
         this.dba = dba;
         this.salt = salt;
@@ -33,9 +34,10 @@ export default class AuthProvider {
         this.deleteUser = this.deleteUser.bind(this);
         this.logout = this.logout.bind(this);
         this.requestPasswordReset = this.requestPasswordReset.bind(this);
-}
+        this.resetPassword = this.resetPassword.bind(this);
+    }
 
-    async logout(req:any, res:any){
+    async logout(req: any, res: any) {
         if (req.cookies.authToken) {
             delete this.sessioned_users[req.cookies.authToken];
             res.cookie('authToken', "", { domain: this.cookiehost, maxAge: 0 });
@@ -44,7 +46,7 @@ export default class AuthProvider {
             res.status(200).send({
                 ok: 1
             });
-        }else{
+        } else {
             res.status(400).send({
                 ok: 0,
                 error: "logout"
@@ -53,13 +55,37 @@ export default class AuthProvider {
     }
 
 
-    async requestPasswordReset(req:any, res:any){
+    async resetPassword(req: any, res: any) {
+        let body: any = req.body;
+        if (body.token !== undefined && body.password !== undefined) {
+            if (this.password_reset_token[body.token]) {
+                let hasher = crypto.createHmac('sha256', this.salt);
+                let password: string = hasher.update(body.password).digest('base64');
+                let email: string = this.password_reset_token[body.token];
+                await this.dba.updatePassword(email, password);
+                delete this.password_reset_token[body.token];
+                res.status(200).send({ ok: 1 });
+            } else {
+                res.status(400).send({
+                    ok: 0,
+                    error: "invalidtoken"
+                });
+            }
+        } else {
+            res.status(403).send({
+                ok: 0,
+                error: "parameters"
+            });
+        }
+    }
+
+    async requestPasswordReset(req: any, res: any) {
         let body: any = req.body;
         if (body.email !== undefined) {
             let email: string = body.email;
             if (await this.dba.checkIfEmailExists(email)) {
                 let user = await this.dba.getUserByEmail(email);
-                if(user){
+                if (user) {
                     let token: string = this.generateVerifyToken();
                     this.password_reset_token[token] = email;
                     let link: string = `${this.passwordResetLink}?token=${token}`;
@@ -69,7 +95,7 @@ export default class AuthProvider {
                         subject: 'Passwort zurücksetzen',
                         text: `Hallo ${user.username},\n\n für deinen Account wurde ein Passwort-Reset angefragt. Klicke auf den unten stehenden Link um dein Passwort neu zu setzen. \n\n${link} \n\n Falls Du diese E-Mail nicht angefordert hast, ignoriere sie bitte.`
                     }
-                    this.transporter.sendMail(options, (error: any, info: any) => {error && console.error(error)});
+                    this.transporter.sendMail(options, (error: any, info: any) => { error && console.error(error) });
                 }
             }
         }
@@ -77,20 +103,20 @@ export default class AuthProvider {
     }
 
 
-    async deleteUser(req:any, res:any, next:any){
+    async deleteUser(req: any, res: any, next: any) {
         this.dba.deleteUser(req.cookies.user).then(() => {
             if (this.sessioned_users[req.cookies.authToken]) {
                 delete this.sessioned_users[req.cookies.authToken];
             }
             next();
         }).catch(() => {
-            res.code(500).json({ok:0, error: "internal"});
+            res.code(500).json({ ok: 0, error: "internal" });
         }
         );
     }
 
 
-        async register(req:any, res:any){
+    async register(req: any, res: any) {
         let body: any = req.body;
         if (body.user !== undefined && body.email !== undefined && body.password !== undefined) {
             let hasher = crypto.createHmac('sha256', this.salt);
@@ -138,7 +164,7 @@ export default class AuthProvider {
         }
     }
 
-    async verifyEmail(req:any, res:any){
+    async verifyEmail(req: any, res: any) {
         let body: any = req.body;
         if (body.token !== undefined) {
             if (this.unverified_users[body.token] !== undefined) {
@@ -169,40 +195,40 @@ export default class AuthProvider {
             let user = req.cookies?.user;
             let userID = req.cookies?.userID;
             let authStatus, backToken;
-            
+
             /* ----------------------------------------- */
             if (user == 'mockuser') {
                 res.cookie('authToken', "", { maxAge: 0 });
-                res.cookie('user',"", { maxAge : 0 });
+                res.cookie('user', "", { maxAge: 0 });
             }
             /* ----------------------------------------- */
 
             if (authToken) {
                 authStatus = await this.validateToken(user || "", userID || "", authToken);
                 if (authStatus) backToken = authToken;
-                if(userID){
+                if (userID) {
                     userID = await this.dba.getUserId(user);
                 }
             } else if (body.user && body.password) {
                 user = body.user;
                 let password: string = body.password;
                 authStatus = await this.validatePassword(user, password);
-                if (authStatus){
+                if (authStatus) {
                     backToken = this.generateVerifyToken()
                     userID = await this.dba.getUserId(user);
                     this.sessioned_users[backToken] = `${user}_${userID}`;
                 }
             }
 
-            if(authStatus){
+            if (authStatus) {
                 res.cookie('authToken', backToken, { domain: this.cookiehost, maxAge: COOKIE_TIME });
                 res.cookie('user', user, { domain: this.cookiehost, maxAge: COOKIE_TIME });
-                res.cookie('userID', userID, { domain: this.cookiehost, maxAge:COOKIE_TIME });
+                res.cookie('userID', userID, { domain: this.cookiehost, maxAge: COOKIE_TIME });
                 next();
-            }else{
+            } else {
                 res.cookie('authToken', "", { domain: this.cookiehost, maxAge: 0 });
-                res.cookie('user',"", { domain: this.cookiehost, maxAge : 0 });
-                res.cookie('userID', "", { domain: this.cookiehost, maxAge:  0 });
+                res.cookie('user', "", { domain: this.cookiehost, maxAge: 0 });
+                res.cookie('userID', "", { domain: this.cookiehost, maxAge: 0 });
                 res.status(401).send({
                     ok: 0,
                     error: "unauthorized"
@@ -222,7 +248,7 @@ export default class AuthProvider {
     async validatePassword(user: string, password: string) {
         // Fake wait
         const dbPw = await this.dba.getPassword(user);
-        if(dbPw === undefined) return false;
+        if (dbPw === undefined) return false;
         let hasher = crypto.createHmac('sha256', this.salt);
         let hashedPassword: string = hasher.update(password).digest('base64');
         return dbPw === hashedPassword;

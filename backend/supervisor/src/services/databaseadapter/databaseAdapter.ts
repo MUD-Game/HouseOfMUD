@@ -97,6 +97,10 @@ function mapToArray(map: any): any[] {
         return undefined;
     }
 
+    async updatePassword(email: string, password: string) {
+        return this.user.updateOne({ email: email }, { password: password });
+    }
+
 
 
     /**

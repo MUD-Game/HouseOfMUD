@@ -46,6 +46,8 @@
         "no_account": "Noch keinen Account?",
         "have_account": "Account bereits vorhanden?",
         "login_here": "Hier anmelden",
+        "forgot_password": "Passwort vergessen?",
+        "forgot_user": "Benutzername vergessen?",
         "register_here": "Hier registrieren"
     },
     "dungeon_keys": {
@@ -242,6 +244,10 @@
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um einen Dungeon zu erstellen, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung, Maximalanzahl der Spieler, Geschlechter, Spezies und Klasse!"
             },
+            "password_not_match":{
+                "title": "Passwörter stimmen nicht überein",
+                "text": "Die eingegebenen Passwörter stimmen nicht überein!"
+            },
             "room": {
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um einen Raum zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
@@ -296,10 +302,21 @@
             "text": "Du kannst den Startraum nicht löschen!"
         }
     },
+    "forgotlogin":{
+        "title": "Passwort vergessen",
+        "text": "Bitte gebe die E-Mail Adresse deines Accounts ein. Dir wird ein Link zugeschickt mit dem du dein Passwort ändern kannst."
+    },
     "info":{
         "verifyemail":{
             "title": "Registrierung erfolgreich",
             "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst."
+        },
+        "forgotlogin":{
+            "email_sent":{
+                "title": "E-Mail verschickt",
+                "text": "Falls ein Account mit dieser E-Mail-Adresse existiert, wurde ein Link zum Ändern deines Passworts an deine E-Mail-Adresse geschickt."
+            }
         }
+
     }
 }

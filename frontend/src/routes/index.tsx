@@ -24,6 +24,8 @@ import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
 import UserSettings from "src/components/Authentication/UserSettings";
 import Minimap from "src/components/Game/Minimap";
+import ForgotLogin from "src/components/Authentication/FortgotLogin";
+import ResetPassword from "src/components/Authentication/ResetPassword";
 
 
 const IndexRouter: React.FC = (): ReactElement => {
@@ -57,6 +59,8 @@ const IndexRouter: React.FC = (): ReactElement => {
                                 </RabbitMQProvider>
                             </RequireAuth>} />
                             <Route path="/verify" element={<VerifyEmail />} />
+                            <Route path="/requestpasswordreset" element={<ForgotLogin />} />
+                            <Route path="/passwordreset" element={<ResetPassword />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </GameProvider>

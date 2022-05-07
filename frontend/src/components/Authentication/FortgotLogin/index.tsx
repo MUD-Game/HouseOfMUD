@@ -1,5 +1,5 @@
 /**
- * @module Login
+ * @module ForgotLogin
  * @category React Components
  * @description Component to handle Loggin In
  * @hooks {@linkcode useAuth}
@@ -14,49 +14,49 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
 import Alert from 'src/components/Custom/Alert';
 import { useAuth } from 'src/hooks/useAuth';
-type LoginProps = {}
+type ForgotLoginProps = {}
 
 interface LocationState {
     from: { pathname: string }
 }
-const Login: React.FC<LoginProps> = (props) => {
+const ForgotLogin: React.FC<ForgotLoginProps> = (props) => {
     let navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [password, setPassword] = React.useState("");
-    const [username, setUsername] = React.useState("");
+    const [email, setEmail] = React.useState("");
     const [error, setError] = React.useState("");
+    const [info, setInfo] = React.useState("");
     const {t} = useTranslation();
     let location = useLocation();
     let auth = useAuth();
-    let from = (location.state as LocationState)?.from?.pathname || "/";
+    let token = new URLSearchParams(location.search).get('token')!;
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsLoading(true);
-        auth.login(username, password, () => {
-            navigate(from, { replace: true });
-        }, (error) => {
-            setError(error.toLowerCase());
-            setIsLoading(false);
-        });
+            auth.requestResetPassword(email, ()=>{
+                setIsLoading(false);
+                setInfo(t("forgotlogin.email_sent"));
+            },
+            (error)=>{
+                setIsLoading(false);
+                setError(error);
+            });
     }
 
     return (
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
+                    <h3>{t("forgotlogin.title")}</h3>
                     <Alert message={error} setMessage={setError} type="error" />
+                    <Alert message={info} setMessage={setInfo} type="info" />
                     {isLoading ? <Busy/> :
                         <form onSubmit={handleSubmit} autoComplete="new-password">
-                        <div className="input-group py-2">
-                                <input value={username} name="username" onChange={(event) => setUsername(event.target.value)} className="input-standard drawn-border" type="text" placeholder={t("login.username")} />
-                        </div>
+                            <span>{t("forgotlogin.text")}</span>
                         <div className="input-group pt-2">
-                            <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
-                                <span className="small font-weight-light"><Link className="small font-weight-light" to="/requestpasswordreset">{t("login.forgot_password")}</Link></span>
+                            <input value={email} name="password" onChange={(event)=> setEmail(event.target.value)}className="input-standard drawn-border" type="email" placeholder={t("login.email")} />
                         </div>
-                            <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.login")}</button> <br />
-                            <span>{t("login.no_account")} <Link to="/register">{t("login.register_here")}</Link></span>
+                            <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.submit")}</button>
                     </form>
                     }
                 </div>
@@ -65,4 +65,4 @@ const Login: React.FC<LoginProps> = (props) => {
     );
 }
 
-export default Login;    
+export default ForgotLogin;    

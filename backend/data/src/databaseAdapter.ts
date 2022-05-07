@@ -10,6 +10,8 @@ import { ItemDataset, itemSchema } from "./datasets/itemDataset";
 import { NpcDataset, npcSchema } from "./datasets/npcDataset";
 import { RoomDataset, roomSchema } from "./datasets/roomDataset";
 import { User, userSchema } from "./datasets/userDataset";
+import { Room } from "./interfaces/room";
+import { Schema } from "js-yaml";
 
 function arrayToMap(array: any[]): any {
     let map: { [id: string]: any } = {};
@@ -63,12 +65,11 @@ export class DatabaseAdapter {
         this.room = this.connection.model<RoomDataset>('Room', roomSchema)
         this.user = this.connection.model<User>('User', userSchema)
     }
-
     /**
      * store a dungeon inside the 'dungeons' Collection of the connection
      * @param dungeonToStore the 'Dungeon' dataset that contains all information of the dungeon
      */
-    async storeDungeon(dungeonToStore: DungeonDataset) {
+     async storeDungeon(dungeonToStore: DungeonDataset) {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
@@ -198,10 +199,11 @@ export class DatabaseAdapter {
             masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
             blacklist: newDungeon.blacklist,
+            globalActions: newDungeon.globalActions,
             characters: oldDungeon.characters,
-            characterClasses: newDungeon.characterClasses,
-            characterSpecies: newDungeon.characterSpecies,
-            characterGenders: newDungeon.characterGenders,
+            characterClasses: await this.characterClass.insertMany(newDungeon.characterClasses),
+            characterSpecies: await this.characterSpecies.insertMany(newDungeon.characterSpecies),
+            characterGenders: await this.characterGenders.insertMany(newDungeon.characterGenders),
             rooms: await this.room.insertMany(newDungeon.rooms),
             items: await this.item.insertMany(newDungeon.items),
             npcs: await this.npc.insertMany(newDungeon.npcs),
@@ -291,12 +293,19 @@ export class DatabaseAdapter {
     }
 
     /**
-     * updates the stats of an existing character
-     * @param characterId the id of the character to update
-     * @param stats the new stats for the character
+     * updates the stats and position of an existing character
+     * @param updatedCharacter the updated character data
+     * @param dungeonId the id of the dungeon in which the character exists
      */
-    async updateCharacterStats(characterId: string, stats: CharacterStats) {
-        await this.character.updateOne({ id: characterId }, { currentStats: stats })
+    async updateCharacterInDungeon(updatedCharacter: CharacterDataset, dungeonId: string) {
+        let oldCharacter = await this.getCharacterFromDungeon(updatedCharacter.name, dungeonId)
+        if(oldCharacter !== null)
+        {
+            await this.character.updateOne(
+                oldCharacter, 
+                updatedCharacter 
+            );
+        }
     }
 
     /**
@@ -304,8 +313,15 @@ export class DatabaseAdapter {
      * @param room the updated room (has to have the same custom id as the room that should be updated)
      * @returns the query response (information about the performed database action)
      */
-    async updateRoom(room: RoomDataset) {
-        return this.room.updateOne({ id: room.id }, room)
+    async updateRooms(rooms: RoomDataset[], dungeonId: string) {
+        let dungeonRoomIds: RoomDataset[]|undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
+        console.log(dungeonRoomIds)
+        if(dungeonRoomIds != undefined){
+            dungeonRoomIds.forEach(async id => {
+                let foundRoom = (await this.room.findOne({_id: id })) as RoomDataset
+                await this.room.updateOne(foundRoom, rooms.filter(room => room.id == foundRoom.id)[0]);
+            });
+        }
     }
 
     async getDungeonCharacterAttributes(dungeonId: string) {
@@ -391,12 +407,9 @@ export class DatabaseAdapter {
     async getCharacterFromDungeon(characterName: string, dungeonId: string): Promise<CharacterDataset | null> {
         const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) });
         let result = await foundDungeon!.populate({ path: 'characters', match: { name: { $eq: characterName } } });
-        let resultChar: CharacterDataset | null = null;
-        result.characters.forEach((char: CharacterDataset) => {
-            if (char.name == characterName) {
-                resultChar = char;
-            }
-        });
-        return resultChar;
+        if(result.characters.length >0){
+            return result.characters[0];
+        }
+        return null
     }
 }

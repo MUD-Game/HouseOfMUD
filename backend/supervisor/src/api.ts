@@ -281,6 +281,7 @@ export class API {
                 let characterData: CharacterDataset = body.characterData;
                 characterData.userId = userID;
                 characterData.name = characterData.name;
+                characterData.exploredRooms = ["0,0"];
                 this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
                     res.status(200).json({ ok: 1, character: character });
                 }).catch(err => {

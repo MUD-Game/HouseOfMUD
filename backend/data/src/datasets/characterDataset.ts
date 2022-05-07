@@ -12,6 +12,7 @@ export interface CharacterDataset {
   maxStats: CharacterStats;
   currentStats: CharacterStats;
   position: string;
+  exploredRooms: string[];
   inventory: ItemInfo[];
 }
 
@@ -25,5 +26,6 @@ export const characterSchema = new Schema<CharacterDataset>({
   maxStats: { type: Schema.Types.Mixed },
   currentStats: { type: Schema.Types.Mixed },
   position: { type: String },
+  exploredRooms: [{ type: String }],
   inventory: [{ type: Schema.Types.Mixed }],
 });

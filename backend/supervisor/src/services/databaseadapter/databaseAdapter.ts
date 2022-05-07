@@ -33,7 +33,10 @@ function mapToArray(map: any): any[] {
 /**
  * encapsulation of the mongoose API
  */
-export class DatabaseAdapter {
+ export class DatabaseAdapter {
+
+    public database: string;
+
     connection: mongoose.Connection;
     item: mongoose.Model<ItemDataset>
     action: mongoose.Model<ActionDataset>
@@ -46,8 +49,9 @@ export class DatabaseAdapter {
     room: mongoose.Model<RoomDataset>
     user: mongoose.Model<User>
 
-    constructor(connectionString: string, databaseName: string) {
-        this.connection = mongoose.createConnection(connectionString, { dbName: databaseName });
+    constructor(connectionString: string, database: string) {
+        this.database = database;
+        this.connection = mongoose.createConnection(connectionString, { dbName: database });
         this.item = this.connection.model<ItemDataset>('Item', itemSchema)
         this.action = this.connection.model<ActionDataset>('Action', actionSchema)
         this.character = this.connection.model<CharacterDataset>('Character', characterSchema)

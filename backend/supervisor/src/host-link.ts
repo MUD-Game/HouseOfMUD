@@ -80,11 +80,12 @@ export class HostLink {
         serverSocket.on('error', console.error);
 
         serverSocket.on('connection', socket => {
-            const key: string | undefined = socket.handshake.query.key as | string | undefined;
             const name: string | undefined = socket.handshake.query.name as | string | undefined;
+            const key: string | undefined = socket.handshake.query.key as | string | undefined;
+            const database: string | undefined = socket.handshake.query.database as | string | undefined;
 
-            if (key !== undefined && name !== undefined) {
-                if (key === this.authKey && !(name in this.hosts)) {
+            if (key !== undefined && name !== undefined && database !== undefined) {
+                if (key === this.authKey && database === this.databaseAdapter.database && !(name in this.hosts)) {
                     this.hosts[name] = {
                         socket: socket,
                         dungeons: [],

@@ -12,6 +12,7 @@ export class SupervisorLink {
     private port: number;
     private tls: boolean;
     private authKey: string;
+    private database: string;
 
     private forkHandler: ForkHandler;
 
@@ -21,14 +22,16 @@ export class SupervisorLink {
      * @param port supervisor port
      * @param tls use tls
      * @param authKey supervisor authentication
+     * @param database supervisor authentication
      * @param forkHandler object that handles the forks
      */
-    constructor(name: string, url: string, port: number, tls: boolean, authKey: string, forkHandler: ForkHandler) {
+    constructor(name: string, url: string, port: number, tls: boolean, authKey: string, database: string, forkHandler: ForkHandler) {
         this.name = name;
         this.url = url;
         this.port = port;
         this.tls = tls;
         this.authKey = authKey;
+        this.database = database;
 
         this.forkHandler = forkHandler;
     }
@@ -38,7 +41,7 @@ export class SupervisorLink {
      */
     public connect() {
         const protocol: string = this.tls ? 'wss' : 'ws';
-        const url: string = `${protocol}://${this.url}:${this.port}?name=${this.name}&key=${this.authKey}`;
+        const url: string = `${protocol}://${this.url}:${this.port}?name=${this.name}&key=${this.authKey}&database=${this.database}`;
         const socket = io(url);
 
         socket.on('error', console.log);

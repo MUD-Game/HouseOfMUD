@@ -9,7 +9,7 @@ async function main() {
 
     if (config !== undefined) {
         const forkHandler = new ForkHandler(config.amqpAdapter, config.mongodb);
-        const supervisorLink = new SupervisorLink(config.name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, forkHandler);
+        const supervisorLink = new SupervisorLink(config.name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, config.mongodb.database, forkHandler);
         supervisorLink.connect();
     } else {
         console.log("Cannot find Config");

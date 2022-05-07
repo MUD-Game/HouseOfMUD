@@ -826,6 +826,18 @@ describe('Actions', () => {
             data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: 'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; 'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; 'inv' - Zeigt die Items in deinem Inventar an; 'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; 'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; 'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; 'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; 'sag <Nachricht>' - Sende eine Nachricht in den Raum; 'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; 'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; 'hilfe' - Wenn du nicht mehr weiterkommst; 'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; 'essen Apfel' - test; 'global' - test; Gebe gegebenenfalls geeignete Argumente fuer <> ein.` },
         });
     })
+
+    test('InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist', () => {
+        unspecifiedAction.performAction('Jeff', ['teste mich']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
+            action: 'message',
+            data: { message: "Du hast folgende Aktion beim Dungeon Master angefragt: teste mich" },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat folgende Aktion in Raum-1 angefragt: teste mich", player: "Jeff", room: "Raum-1" },
+        });
+    })
 });
 
 describe("Dungeon Actions", () => {

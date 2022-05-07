@@ -60,7 +60,9 @@ export const actionMessages = {
     dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
     helpMessage: "Willkommen in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten. Gebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.",
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
-    showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein."
+    showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein.",
+    unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
+    unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s"
 }
 
 export const errorMessages = {

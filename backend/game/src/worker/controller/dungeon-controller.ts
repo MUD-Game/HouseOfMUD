@@ -165,10 +165,10 @@ export class DungeonController {
                 name: isDm ? this.dungeon.rooms[room].name : undefined
             }
         }
-        rooms["0,0"].explored = true;
+        rooms[this.getDungeon().getCharacter(character).getPosition()].explored = true;
         await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
-                startRoom: "0,0" //TODO: Actually get the room the character is in at the start
+                startRoom:  this.getDungeon().getCharacter(character).getPosition() //TODO: Actually get the room the character is in at the start
             } as MiniMapData);
     }	
 

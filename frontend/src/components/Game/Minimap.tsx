@@ -76,6 +76,8 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     const [width, height] = useRefSize(sizeRef);
 
+    const startRoomPos : [number,number] = props.startRoom.split(',').map(Number).map(x=>x*roomOffset) as [number, number];
+
     useEffect(() => {
         setRoomSubscriber((id:string)=>{
             setCurrentRoomId(id);
@@ -350,7 +352,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     </Group>
                                 )
                             })}
-                            {<Circle ref={currentPositionCircleRef} data-id="0,0" x={0 * roomOffset + (roomSize / 2)} y={0 * roomOffset + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />}
+                            {<Circle ref={currentPositionCircleRef} data-id={currentRoomId} x={startRoomPos[0] + (roomSize / 2)} y={startRoomPos[1]  + (roomSize / 2)} radius={roomSize / 4} fill={fillCurrentRoom} stroke={fillCurrentRoom} />}
                         </Group>
                     </Layer>
                 </Stage>

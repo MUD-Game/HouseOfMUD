@@ -37,54 +37,63 @@ export class DungeonController {
         this.actionHandler = new ActionHandlerImpl(this);
     }
 
-    init() {
+    public init() {
         // comsume messages from clients
         this.amqpAdapter.consume(async (consumeMessage: ConsumeMessage) => {
             try {
                 let data = JSON.parse(consumeMessage.content.toString());
-                console.log(data);
-                if (data.action !== undefined && data.character !== undefined && data.data !== undefined) {
-                    switch (data.action) {
-                        case 'login':
-                            // TODO: Refactor
-                            /* temporary */
-                            // let character = this.createCharacter(data.character);
-                            let character = await this.getCharacter(data.character);
-                            this.dungeon.characters[data.character] = character;
-                            /* temporary */
-                            await this.amqpAdapter.initClient(data.character);
-                            await this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
-                            this.amqpAdapter.broadcastAction('message', { message: `${data.character} ist dem Dungeon beigetreten!` });
-                            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-                            if (data.character !== 'dungeonmaster') {
-                                await this.amqpAdapter.sendActionToClient(data.character, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
-                            }
-                            await this.sendStatsData(data.character)
-                            await this.sendMiniMapData(data.character);
-                            await this.sendInventoryData(data.character);
-                            break;
-                        case 'logout':
-                            // TODO: Refactor
-                            //! Hier müssen die CharacterDaten gespeichert werden.
-                            await this.persistCharacterData(this.dungeon.getCharacter(data.character))
-                            delete this.dungeon.characters[data.character];
-                            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-                            break;
-                        case 'message':
-                            this.actionHandler.processAction(data.character, data.data.message);
-                            break;
-                        case 'dmmessage':
-                            this.actionHandler.processDmAction(data.data.message);
-                            break;
-                        case 'connection.toggle':
-                            let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
-                            toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
-                    }
+                if (data.action !== undefined && data.user !== undefined && data.character !== undefined && data.data !== undefined) {
+                    this.handleAmqpMessages(data);
                 }
             } catch (err) {
                 console.log(err);
             }
         });
+    }
+
+    private async handleAmqpMessages(data: any) {
+        switch (data.action) {
+            case 'login':
+                this.login(data.user, data.character);
+                break;
+            case 'logout':
+                this.logout(data.user, data.character);
+                break;
+            case 'message':
+                this.actionHandler.processAction(data.character, data.data.message);
+                break;
+            case 'dmmessage':
+                this.actionHandler.processDmAction(data.data.message);
+                break;
+            case 'connection.toggle':
+                let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
+                toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
+        }
+    }
+
+    private async login(user: string, characterName: string) {
+        console.log(`login ${characterName}`);
+
+        let character = await this.getCharacter(characterName);
+        this.dungeon.characters[characterName] = character;
+        await this.amqpAdapter.initClient(characterName);
+        await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
+        this.amqpAdapter.broadcastAction('message', { message: `${characterName} ist dem Dungeon beigetreten!` });
+        sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
+        if (characterName !== 'dungeonmaster') {
+            await this.amqpAdapter.sendActionToClient(characterName, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
+        }
+        await this.sendStatsData(characterName)
+        await this.sendMiniMapData(characterName);
+        await this.sendInventoryData(characterName);
+    }
+
+    private async logout(user: string, characterName: string) {
+        console.log(`logout ${characterName}`);
+
+        await this.persistCharacterData(this.dungeon.getCharacter(characterName))
+        delete this.dungeon.characters[characterName];
+        sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
     }
 
     async persistAllRooms(){

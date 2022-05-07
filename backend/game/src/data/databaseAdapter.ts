@@ -11,6 +11,7 @@ import { NpcDataset, npcSchema } from "./datasets/npcDataset";
 import { RoomDataset, roomSchema } from "./datasets/roomDataset";
 import { User, userSchema } from "./datasets/userDataset";
 import { Room } from "./interfaces/room";
+import { Schema } from "js-yaml";
 
 function arrayToMap(array: any[]): any {
     let map: { [id: string]: any } = {};
@@ -312,10 +313,15 @@ function mapToArray(map: any): any[] {
      * @param room the updated room (has to have the same custom id as the room that should be updated)
      * @returns the query response (information about the performed database action)
      */
-    //! raumId unique? ansonsten muss noch nach dungeon geprüft werden.
-    async updateRoom(room: RoomDataset) {
-        let foundRoom = (await this.room.findOne({ id: room.id })) as RoomDataset
-        await this.room.updateOne(foundRoom, room);
+    async updateRooms(rooms: RoomDataset[], dungeonId: string) {
+        let dungeonRoomIds: RoomDataset[]|undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
+        console.log(dungeonRoomIds)
+        if(dungeonRoomIds != undefined){
+            dungeonRoomIds.forEach(async id => {
+                let foundRoom = (await this.room.findOne({_id: id })) as RoomDataset
+                await this.room.updateOne(foundRoom, rooms.filter(room => room.id == foundRoom.id)[0]);
+            });
+        }
     }
 
     async getDungeonCharacterAttributes(dungeonId: string) {

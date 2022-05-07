@@ -85,10 +85,7 @@ export class DungeonController {
 
     async persistAllRooms(){
         let rooms: Room[] = this.mapToArray(this.dungeon.rooms)
-        rooms.forEach(r => {
-            console.log(r.items)
-            this.databaseAdapter?.updateRoom(r)
-        })
+        this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
     }
 
     mapToArray(map: any): any[] {

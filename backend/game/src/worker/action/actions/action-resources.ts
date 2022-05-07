@@ -32,6 +32,7 @@ export const triggers = {
 
 export const actionMessages = {
     die: "Du bist gestorben!",
+    dieDungeonMaster: "%s ist in %s gestorben!",
     inspect: "Du untersuchst %s: %s",
     inventory: "Du hast folgende Items im Inventar:",
     lookEmpty: " Keine",
@@ -53,7 +54,9 @@ export const actionMessages = {
     whisperCharacterNotInSameRoom: "%s ist nicht in diesem Raum!",
     whisperToDm: "[privat] %s -> Dungeon Master: %s",
     discard: "Du hast folgendes Item abgelegt: %s",
+    discardDungeonMaster: "%s hat %s in %s abgelegt!",
     pickup: "Du hast folgendes Item aufgehoben: %s",
+    pickupDungeonMaster: "%s hat %s aus %s aufgehoben!",
     dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
     helpMessage: "Willkommen in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten. Gebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.",
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",

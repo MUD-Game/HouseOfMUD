@@ -574,7 +574,11 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!` },
+            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`},
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`, player: "Jeff", room: "Raum-1"},
         });
     });
 
@@ -635,6 +639,10 @@ describe('Actions', () => {
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
             data: { message: `Jeff ist Raum-N beigetreten!` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff ist Raum-N beigetreten!`, player: "Jeff", room: "Raum-N" },
         });
     });
 
@@ -734,7 +742,7 @@ describe('Actions', () => {
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Jeff -> Dungeon Master: Hallo` },
+            data: { message: `[privat] Jeff -> Dungeon Master: Hallo`, player: "Jeff" },
         });
     })
 
@@ -746,6 +754,10 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item abgelegt: Schwert` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff hat Schwert in Raum-1 abgelegt!`, player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.rooms['1'].items.pop()
     })
@@ -766,14 +778,19 @@ describe('Actions', () => {
         });
     })
 
-    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
+    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', async () => {
         TestDungeon.rooms[TestRoom.id].items.push({item: TestItemPickup.id, count: 1})
-        pickupAction.performAction('Jeff', ['Gold']);
+        await pickupAction.performAction('Jeff', ['Gold']);
         expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemPickup.id}])
         expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: { message: `Du hast folgendes Item aufgehoben: Gold` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalled()
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff hat Gold aus Raum-1 aufgehoben!`, player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.characters['Jeff'].inventory.pop()
     })

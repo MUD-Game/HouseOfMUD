@@ -20,6 +20,7 @@ import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
 import { MinimapProps } from './Minimap';
+import ChatFilter from './ChatFilter';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = ({ }) => {
@@ -82,6 +83,7 @@ const Game: React.FC<GameProps> = ({ }) => {
                 <div className="col col-md-3 col-lg-2">
                     {miniMapData && <Minimap {...miniMapData} />}
                     <OnlinePlayers players={null} />
+                    <ChatFilter filter={null} />
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>
                 <div className="col col-md-6 col-lg-8">

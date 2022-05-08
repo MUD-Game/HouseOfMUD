@@ -9,7 +9,7 @@ body:
       label: What happened?
       description: what did you expect to happen?
       placeholder: Tell us what you see!
-      value: "Bug"
+      value: "Describe the Bug"
     validations:
       required: true
   - type: dropdown

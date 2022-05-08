@@ -10,21 +10,19 @@ export default class AuthProvider {
     private dba: DatabaseAdapter;
     private transporter: any;
     private salt: string;
-    private verifyLink: string;
-    private passwordResetLink: string;
+    private origin: string;
     private unverified_users: { [token: string]: User } = {};
     private password_reset_token: { [token: string]: string } = {};
     private sessioned_users: { [token: string]: string } = {};
     private cookiehost: string;
 
 
-    constructor(dba: DatabaseAdapter, salt: string, transporter: any, verifyLink: string, passwordResetLink: string, cookiehost: string) {
+    constructor(dba: DatabaseAdapter, salt: string, transporter: any, origin:string, cookiehost: string) {
 
         this.dba = dba;
         this.salt = salt;
         this.transporter = transporter;
-        this.verifyLink = verifyLink;
-        this.passwordResetLink = passwordResetLink;
+        this.origin = origin;
         this.cookiehost = cookiehost;
         this.register = this.register.bind(this);
         this.verifyEmail = this.verifyEmail.bind(this);
@@ -88,7 +86,7 @@ export default class AuthProvider {
                 if (user) {
                     let token: string = this.generateVerifyToken();
                     this.password_reset_token[token] = email;
-                    let link: string = `${this.passwordResetLink}?token=${token}`;
+                    let link: string = `${this.origin}/passwordreset?token=${token}`;
                     let options = {
                         from: 'HouseOfMUD <houseofmud2022@gmail.com>',
                         to: email,
@@ -144,7 +142,7 @@ export default class AuthProvider {
                     from: 'HouseOfMUD <houseofmud2022@gmail.com>',
                     to: email,
                     subject: 'Email-Verifizierung',
-                    text: `Hallo ${user} und Willkommen! Bitte klicke auf folgenden Link um deine Email zu verifizieren: ${this.verifyLink}?token=${verifyToken}`
+                    text: `Hallo ${user} und Willkommen! Bitte klicke auf folgenden Link um deine Email zu verifizieren: ${this.origin}/verify?token=${verifyToken}`
                 }
                 this.transporter.sendMail(options, (error: any, info: any) => {
                     if (error) {

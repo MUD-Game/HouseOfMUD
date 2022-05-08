@@ -40,11 +40,6 @@ const ChatOutput: React.FC<ChatOutputProps> = ({ selectedRooms }) => {
     };
     useEffect(scrollToBottom, [messages]);
 
-    useEffect(() => {
-        console.log(selectedRooms);
-        return () => {}
-    }, [selectedRooms]);
-
     return (
         <Row className="chat-output-wrap">
             <div className="col">

@@ -93,7 +93,7 @@ function handleHostMessages(dungeonController: DungeonController) {
                 userTokens[userID][character] = verifyToken;
                 break;
             case 'stop':
-                // dungeonController.stopDungeon();
+                dungeonController.stopDungeon();
                 break;
         }
     });

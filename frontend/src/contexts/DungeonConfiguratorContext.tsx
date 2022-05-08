@@ -17,34 +17,12 @@ import { supervisor } from 'src/services/supervisor';
 import { CreateDungeonRequest } from '@supervisor/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
-import { CharacterSpecies } from '../../../backend/data/src/interfaces/characterSpecies';
-import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
 import { useTranslation } from 'react-i18next';
 import AddRoomModal from 'src/components/Modals/DungeonConfigurator/AddRoomModal';
 import AddNpcModal from 'src/components/Modals/DungeonConfigurator/AddNpcModal';
 import AddGenderModal from 'src/components/Modals/DungeonConfigurator/AddGenderModal';
 import AddSpeciesModal from 'src/components/Modals/DungeonConfigurator/AddSpeciesModal';
 type Option = string | { [key: string]: any };
-
-const processToSend = (array: any[]) => {
-    // renames the keys to match the backend naming convention (label => name, customOption falls away)
-    let t = array.map(({
-        label: name,
-        customOption,
-        ...rest
-    }) => ({
-        name,
-        ...rest
-    }));
-    // Finally removes the id-prefix from the id (new-id-x => x)
-    return t.map(({
-        id,
-        ...rest
-    }) => ({
-        id: (id as string).split("-")[2],
-        ...rest
-    }));
-}
 
 const processAfterReceive = (array: any[]) => {
     // Deletes the _id and  __v keys
@@ -225,7 +203,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 console.log(dungeon);
                 if(dungeon.globalActions){
                     dungeon.globalActions.forEach((globalActionId:string)=>{
-                        dungeon.actions.find((action:MudActionElement)=>{
+                        dungeon.actions.forEach((action:MudActionElement)=>{
                             if(action.id===globalActionId){
                                 action.isGlobal=true;
                             }
@@ -256,7 +234,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         return () => {
 
         }
-    }, [])
+    }, [dungeonId])
 
 
 

@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Modal, Button, Container, Col, Row } from 'react-bootstrap';
+import { Modal, Button, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
 import { MudActionElement } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
@@ -36,7 +36,6 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     let initialAddItems: Option[] = [];
     let initialEvents: Option[] = [];
     let initialEventValues: { [key: string]: number } = {};
-    let initialIsGlobal: boolean = props.editData?.isGlobal || false;
 
     const constructToModalData = () => {
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});

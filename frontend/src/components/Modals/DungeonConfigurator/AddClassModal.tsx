@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Modal, Button, ModalProps, Container } from 'react-bootstrap';
+import { Modal, Button, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
 import { validator } from 'src/utils/validator';
 import { MudCharacterClass, MudCharacterStats } from '../../../types/dungeon';

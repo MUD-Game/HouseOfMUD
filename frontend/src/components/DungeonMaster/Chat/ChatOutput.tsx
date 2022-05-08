@@ -6,7 +6,6 @@
  * @props {@linkcode ChatOutputProps}
  */
 
-import { IMessage } from '@stomp/stompjs';
 import React, { useRef, useState } from 'react'
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useEffect } from 'react';

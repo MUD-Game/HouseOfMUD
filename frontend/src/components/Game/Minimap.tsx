@@ -10,7 +10,6 @@ import { MudRoom } from 'src/types/dungeon';
 import { useRabbitMQ } from '../../hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import './index.css'
-import { Compass, GeoAlt } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
 import Konva from 'konva';
 import { useRefSize } from '../../hooks/useRefSize';
@@ -28,22 +27,10 @@ let bodyStyles = window.getComputedStyle(document.body);
 
 const roomStrokeWidth = 4;
 
-const background = bodyStyles.getPropertyValue('--room-background');
 
 const fillActive = bodyStyles.getPropertyValue('--room-active-fill');
 const strokeActive = bodyStyles.getPropertyValue('--room-active-stroke');
-const strokeActiveSelected = bodyStyles.getPropertyValue('--room-selected-stroke');
 const fillCurrentRoom = bodyStyles.getPropertyValue('--room-current-fill');
-
-const fillStartSelected = bodyStyles.getPropertyValue('--room-start-selected-fill');
-const fillStart = bodyStyles.getPropertyValue('--room-start-fill');  // Start-Room color
-const strokeStart = bodyStyles.getPropertyValue('--room-start-stroke');
-const strokeStartSelected = bodyStyles.getPropertyValue('--room-start-selected-stroke');
-const strokeSelected = bodyStyles.getPropertyValue('--room-selected-stroke');
-
-const fillInactive = bodyStyles.getPropertyValue('--room-fill');
-const strokeInactive = bodyStyles.getPropertyValue('--room-stroke');
-
 
 const connectionOpen = bodyStyles.getPropertyValue('--connection-open');
 const connectionInactive = bodyStyles.getPropertyValue('--connection-inactive');
@@ -74,9 +61,19 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     const currentPositionCircleRef = useRef<any>();
     const [currentRoomId, setCurrentRoomId] = React.useState<string>(props.startRoom);
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
-    const [width, height] = useRefSize(sizeRef);
+    const [width] = useRefSize(sizeRef);
 
     const startRoomPos : [number,number] = props.startRoom.split(',').map(Number).map(x=>x*roomOffset) as [number, number];
+
+    const focusOnRoom = (roomId: string, isAnc: boolean) => {
+        if (isAnc && stageRef.current) {
+            const xc = parseInt((roomId || currentRoomId).split(",")[0]);
+            const yc = parseInt((roomId || currentRoomId).split(",")[1]);
+            const x = -xc * roomOffset * initialScale;
+            const y = -yc * roomOffset * initialScale;
+            stageRef.current.to({ x: x, y: y, duration: 0.4, scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut });
+        }
+    }
 
     useEffect(() => {
         setRoomSubscriber((id:string)=>{
@@ -133,8 +130,9 @@ const Minimap: React.FC<MinimapProps> = (props) => {
           
             })
         });
-        focusOnRoom("0,0", true);
-    }, []);
+        focusOnRoom(props.startRoom, true);
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
 
 
     const onWheelHandle = (e: any) => {
@@ -163,15 +161,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     }
 
 
-    const focusOnRoom = (roomId:string, isAnc:boolean) => {
-        if(isAnc && stageRef.current){
-            const xc = parseInt((roomId || currentRoomId).split(",")[0]);
-            const yc = parseInt((roomId || currentRoomId).split(",")[1]);
-            const x = -xc * roomOffset * initialScale;
-            const y = -yc * roomOffset * initialScale;
-            stageRef.current.to({ x: x, y: y, duration: 0.4,scaleX: initialScale, scaleY: initialScale, easing: Konva.Easings.EaseInOut});
-        }
-    }
+  
 
     return (
         <>

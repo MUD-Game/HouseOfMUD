@@ -13,7 +13,7 @@
 
 import React from 'react';
 import AllDungeonLi from './AllDungeonsLi';
-import { DungeonResponseData, GetDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData } from '@supervisor/api';
 import { Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 export type AllDungeonProps = {
@@ -24,7 +24,7 @@ export type AllDungeonProps = {
 
 const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filterKey }) => {
 
-    const {t, i18n} = useTranslation();
+    const {t} = useTranslation();
 
     return (
         <div className="dashboard pt-3">
@@ -49,13 +49,6 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filt
                     <AllDungeonLi key={index} isPrivate={false} {...dungeon} />
                 )
             })}
-
-            {/* {allDungeons.map((dungeon, index) => {
-                if (dungeon.name === filter)
-                return (
-                    <AllDungeonLi key={index} isPrivate={false} {...dungeon} />
-                )
-            })} */}
         </div>
     )
 }

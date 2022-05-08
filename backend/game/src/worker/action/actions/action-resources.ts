@@ -60,7 +60,7 @@ export const actionMessages = {
     pickup: "Du hast folgendes Item aufgehoben: %s",
     pickupDungeonMaster: "%s hat %s aus %s aufgehoben!",
     dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
-    helpMessage: `${format.bold}${format.underscore}${format.color.black}W${format.color.red}i${format.color.green}l${format.color.yellow}l${format.color.blue}k${format.color.magenta}o${format.color.cyan}m${format.color.white}m${format.color.black}e${format.color.red}n ${format.reset}in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.`,
+    helpMessage: "Willkommen in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten. Gebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.",
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
     showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein.",
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",

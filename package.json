@@ -9,7 +9,11 @@
     "startfrontend": "cd ./frontend && npm start",
     "starthost": "cd ./backend/game && npm start",
     "startsupervisor": "cd ./backend/supervisor && npm start",
-    "buildsupervisor": "cd ./backend/supervisor && npm run build"
+    "buildsupervisor": "cd ./backend/supervisor && npm run build",
+    "typedochost": "cd ./backend/game && npx typedoc",
+    "typedocfrontend": "cd ./frontend && npx typedoc",
+    "typedocsupervisor": "cd ./backend/supervisor && npx typedoc",
+    "typedoc": "npm run typedochost && npm run typedocfrontend && npm run typedocsupervisor"
   },
   "jest": {
     "coverageReporters": [

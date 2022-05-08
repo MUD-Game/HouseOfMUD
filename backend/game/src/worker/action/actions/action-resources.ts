@@ -28,11 +28,13 @@ export const triggers = {
     addMana: "addmana",
     removeMana: "remmana",
     removeHp: "remhp",
-    removeDamage: "remdmg"
+    removeDamage: "remdmg",
+    toggleConnection: "toggle"
 }
 
 export const actionMessages = {
     die: "Du bist gestorben!",
+    dieDungeonMaster: "%s ist in %s gestorben!",
     inspect: "Du untersuchst %s: %s",
     inventory: "Du hast folgende Items im Inventar:",
     lookEmpty: " Keine",
@@ -54,11 +56,15 @@ export const actionMessages = {
     whisperCharacterNotInSameRoom: "%s ist nicht in diesem Raum!",
     whisperToDm: "[privat] %s -> Dungeon Master: %s",
     discard: "Du hast folgendes Item abgelegt: %s",
+    discardDungeonMaster: "%s hat %s in %s abgelegt!",
     pickup: "Du hast folgendes Item aufgehoben: %s",
+    pickupDungeonMaster: "%s hat %s aus %s aufgehoben!",
     dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
     helpMessage: `${format.bold}${format.underscore}${format.color.black}W${format.color.red}i${format.color.green}l${format.color.yellow}l${format.color.blue}k${format.color.magenta}o${format.color.cyan}m${format.color.white}m${format.color.black}e${format.color.red}n ${format.reset}in %s! Gebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe '%s' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib '%s' ein.`,
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
-    showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein."
+    showActionsEnding: "Gebe gegebenenfalls geeignete Argumente fuer <> ein.",
+    unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
+    unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s"
 }
 
 export const errorMessages = {
@@ -132,7 +138,8 @@ export interface MiniMapData {
         xCoordinate: Room['xCoordinate'],
         yCoordinate: Room['yCoordinate'],
         connections: Room['connections'],
-        explored: boolean
+        explored: boolean,
+        name?:string
     }};
     startRoom: string;
 }

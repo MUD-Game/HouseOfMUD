@@ -19,10 +19,10 @@ import ChatQueue from './ChatQueue';
 import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
-import { MinimapProps } from '../Game/Minimap';
+import { MinimapProps } from './Minimap';
 export interface GameProps { }
 
-const Game: React.FC<GameProps> = ({ }) => {
+const Game: React.FC<GameProps> = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
 
@@ -32,12 +32,19 @@ const Game: React.FC<GameProps> = ({ }) => {
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
 
+    const onUnload = (e: any) => {
+        e.preventDefault();
+        rabbit.logout(() => { }, (error) => {
+            setError("rabbitmq.logout")
+        });
+    }
+
     const miniMapSubscriber = (roomData: MinimapProps) => {
         setMiniMapData(roomData);
     }
 
-
     useEffect(() => {
+        window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
@@ -48,11 +55,12 @@ const Game: React.FC<GameProps> = ({ }) => {
             });
         }
         return () => {
+            window.removeEventListener('unload', onUnload);
             rabbit.logout(() => { }, (error) => {
                 setError("rabbitmq.logout")
             });
         }
-    }, [])
+    }, [isAbleToJoinGame, rabbit]);
 
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />

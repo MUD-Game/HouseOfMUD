@@ -37,7 +37,7 @@
     z-index: 1000;
     display: flex;
     position: relative;
-    top: 0;
+    top: 1.5vh;
     right: 0;
 }
 

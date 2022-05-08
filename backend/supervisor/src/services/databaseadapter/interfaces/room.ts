@@ -20,6 +20,9 @@ export interface Room {
     getItemInfos(): ItemInfo[]
     getNpcs(): string[]
     getActions(): string[]
+
+    setEastConnection(status: string): any
+    setSouthConnection(status: string): any
 }
   
 export class RoomImpl implements Room {
@@ -85,5 +88,23 @@ export class RoomImpl implements Room {
 
     getActions(): string[] {
         return this.actions
+    }
+
+    setEastConnection(statusString: string) {
+        let status: "open" | "inactive" | "closed" = statusString as "open" | "inactive" | "closed";
+        if (status === "inactive") {
+            throw new Error("Cannot set room connection to inactive");
+        } else {
+            this.connections.east = status;
+        }
+    }
+
+    setSouthConnection(statusString: string) {
+        let status: "open" | "inactive" | "closed" = statusString as "open" | "inactive" | "closed";
+        if (status === "inactive") {
+            throw new Error("Cannot set room connection to inactive");
+        } else {
+            this.connections.south = status;
+        }
     }
 }

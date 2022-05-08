@@ -48,29 +48,33 @@
 #minimap canvas {
     border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
 }
-body.noclickevents{
-    pointer-events: visible;
-}
-#minimap.fullscreen{
+
+#minimap-fullscreen{
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 100;
+    background-color: aliceblue;
 }
 
+#minimap-fullscreen canvas{
+    border-radius: 0 0 0 0;
+}
+
+body{
+    pointer-events: visible;
+}
 #minimap.fullscreen canvas, #minimap.fullscreen div{
     width: 100vw;
     height: 100vh;
 }
 
-#minimap.fullscreen div {
+#minimap-fullscreen div{
     background-color: var(--bgcolor);
 }
 
-#konva-buttons-container img {
+#konva-buttons-container img, #konva-buttons-container-fullscreen img {
     position: absolute;
+    cursor: pointer;
 }
 
 #compass {
@@ -78,6 +82,16 @@ body.noclickevents{
     width: 25%;
     position: relative;
     right: 3%;
+}
+
+#compass-fullscreen {
+    position: relative;
+    width: 10vw !important;
+    height: 10vw !important;
+    right:1vh !important;
+    top: 1vh !important;
+    float:right;
+    pointer-events: all;
 }
 
 #compass {
@@ -94,4 +108,30 @@ body.noclickevents{
     position: relative;
     top: 20px;
     left: 5px;
+}
+
+
+#konva-buttons-container-fullscreen {
+    z-index: 2000;
+    display: flex;
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+}
+
+#fullscreenbutton{
+    position: relative;
+    margin:5%;
+    cursor: pointer;
+    opacity: 1 !important;
+}
+
+#fullscreenbutton-fullscreen {
+    position:relative;
+    margin:1vh;
+    pointer-events: all;
+    cursor: pointer;
 }

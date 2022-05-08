@@ -20,7 +20,6 @@ export interface CreateNewCharacterProps extends GetCharacterAttributesResponse 
     onCreate: () => void
 }
 
-interface PropValues { id: string; name: string; description: string }
 const CreateNewCharacter: React.FC<CreateNewCharacterProps & SendsMessagesProps> = ({ classes, genders, species, onCreate, messageCallback }) => {
 
     const game = useGame();

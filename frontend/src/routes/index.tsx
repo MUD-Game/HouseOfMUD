@@ -17,18 +17,17 @@ import CharacterCreator from "src/components/CharacterCreator";
 import Game from "src/components/Game";
 import DungeonMaster from "src/components/DungeonMaster"
 import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
-import { ConsoleProvider } from "src/contexts/ConsoleContext";
 import DungeonConfigurator from '../components/DungeonConfigurator/index';
 import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorContext";
 import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
 import UserSettings from "src/components/Authentication/UserSettings";
-import Minimap from "src/components/Game/Minimap";
+import ForgotLogin from "src/components/Authentication/FortgotLogin";
+import ResetPassword from "src/components/Authentication/ResetPassword";
 
 
 const IndexRouter: React.FC = (): ReactElement => {
     return (
-        <ConsoleProvider>
             <BrowserRouter>
                 <AuthProvider>
                     <Header />
@@ -57,12 +56,13 @@ const IndexRouter: React.FC = (): ReactElement => {
                                 </RabbitMQProvider>
                             </RequireAuth>} />
                             <Route path="/verify" element={<VerifyEmail />} />
+                            <Route path="/requestpasswordreset" element={<ForgotLogin />} />
+                            <Route path="/passwordreset" element={<ResetPassword />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </GameProvider>
                 </AuthProvider>
             </BrowserRouter>
-        </ConsoleProvider>
     );
 };
 

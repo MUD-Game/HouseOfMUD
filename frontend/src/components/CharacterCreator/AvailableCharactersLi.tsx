@@ -10,11 +10,10 @@
 import React from 'react';
 import { CharactersResponseData, LoginRequest } from '@supervisor/api';
 import { supervisor } from 'src/services/supervisor';
-import { useAuth } from '../../hooks/useAuth';
 import { useGame } from '../../hooks/useGame';
 import { useNavigate } from 'react-router-dom';
 import { Row } from 'react-bootstrap';
-import { Play, PlayCircle, Trash } from 'react-bootstrap-icons';
+import { Play, Trash } from 'react-bootstrap-icons';
 import { SendsMessagesProps } from '../../types/misc';
 
 export interface AvailableCharactersLiProps {
@@ -26,7 +25,6 @@ export interface AvailableCharactersLiProps {
 
 const AvailableCharactersLi: React.FC<AvailableCharactersLiProps & SendsMessagesProps> = ({ character, characterAttributes, fetchCharacters, messageCallback: sendMessage }) => {
 
-    const { user, token } = useAuth();
     const navigate = useNavigate();
     const { dungeon, setVerifyToken, setCharacter } = useGame();
 
@@ -41,7 +39,7 @@ const AvailableCharactersLi: React.FC<AvailableCharactersLiProps & SendsMessages
     const onJoin = () => {
 
         let body: LoginRequest = {
-            character: character.id,
+            character: character.name,
         }
 
         supervisor.login(dungeon, body, (data) => {

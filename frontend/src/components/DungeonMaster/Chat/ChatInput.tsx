@@ -6,8 +6,7 @@
  * @props {@linkcode ChatInputProps}
  */
 
-import React, { FormEvent, useState } from 'react'
-import $ from "jquery";
+import React, { useState } from 'react'
 import { Row } from 'react-bootstrap';
 import { CloudArrowUp, Send } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";

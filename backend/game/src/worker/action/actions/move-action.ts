@@ -4,7 +4,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, errorMessages, actionMessages, parseResponseString } from "./action-resources";
+import { triggers, errorMessages, actionMessages, parseResponseString, extras } from "./action-resources";
 
 export class MoveAction extends Action {
 
@@ -83,6 +83,8 @@ export class MoveAction extends Action {
                 await amqpAdapter.unbindClientQueue(user, routingKeyOldRoom);
                 await amqpAdapter.bindClientQueue(user, routingKeyNewRoom);
                 await amqpAdapter.sendActionWithRouting(routingKeyNewRoom, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)});
+                // message sent to dungeon master
+                await amqpAdapter.sendActionToClient(extras.dungeonMasterId, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName), player: senderCharacterName, room: destinationRoomName });
                 // Sends the new room id to the client.
                 await amqpAdapter.sendActionToClient(user, 'minimap.move', destinationRoomId);
             }

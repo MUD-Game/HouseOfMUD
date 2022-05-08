@@ -17,6 +17,13 @@ const validator = {
             target.focus();
         }
     },
+    alreadyExists(value: any, key:string, list: any[] | {[key: string]: any}) {
+        if (Array.isArray(list)) {
+        return list.find(item => item[key] === value);
+        }else{
+            return Object.keys(list).find(listkey => list[listkey][key] === value);
+        }
+    },
     isEmpty: (value: string, ...othervalues: string[]) => {
         return value === '';
 

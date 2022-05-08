@@ -10,8 +10,8 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Client, IFrame, IMessage } from '@stomp/stompjs';
 import { RabbitMQPayload, SendActions } from 'src/types/rabbitMQ';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { MiniMapData } from 'src/components/Game/Minimap';
+import {  useNavigate } from 'react-router-dom';
+import { MiniMapData } from 'src/components/DungeonMaster/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
 import { HUDProps } from 'src/components/Game/HUD';
 

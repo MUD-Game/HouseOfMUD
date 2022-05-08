@@ -1,10 +1,14 @@
 import { ConsumeMessage } from "amqplib";
+import { userInfo } from "os";
 import { DatabaseAdapter } from "../../data/databaseAdapter";
+import { CharacterDataset } from "../../data/datasets/characterDataset";
 import { Character, CharacterImpl } from "../../data/interfaces/character";
 import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
+import { Room } from "../../data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
+import { ToggleConnectionAction } from "../action/dmactions/toggleRoomConnection-action";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
 function sendToHost(hostAction: string, data: any): void {
@@ -33,49 +37,103 @@ export class DungeonController {
         this.actionHandler = new ActionHandlerImpl(this);
     }
 
-    init() {
+    public init() {
         // comsume messages from clients
         this.amqpAdapter.consume(async (consumeMessage: ConsumeMessage) => {
             try {
                 let data = JSON.parse(consumeMessage.content.toString());
-                console.log(data);
-                if (data.action !== undefined && data.character !== undefined && data.data !== undefined) {
-                    switch (data.action) {
-                        case 'login':
-                            // TODO: Refactor
-                            /* temporary */
-                            // let character = this.createCharacter(data.character);
-                            let character = await this.getCharacter(data.character);
-                            this.dungeon.characters[data.character] = character;
-                            /* temporary */
-                            await this.amqpAdapter.initClient(data.character);
-                            await this.amqpAdapter.bindClientQueue(data.character, `room.${character.getPosition()}`);
-                            this.amqpAdapter.broadcastAction('message', { message: `${data.character} ist dem Dungeon beigetreten!` });
-                            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-                            if (data.character !== 'dungeonmaster') {
-                                await this.amqpAdapter.sendActionToClient(data.character, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
-                            }
-                            await this.sendStatsData(data.character)
-                            await this.sendMiniMapData(data.character);
-                            await this.sendInventoryData(data.character);
-                            break;
-                        case 'logout':
-                            // TODO: Refactor
-                            delete this.dungeon.characters[data.character];
-                            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-                            break;
-                        case 'message':
-                            this.actionHandler.processAction(data.character, data.data.message);
-                            break;
-                        case 'dmmessage':
-                            this.actionHandler.processDmAction(data.data.message);
-                            break;
-                    }
+                if (data.action !== undefined && data.user !== undefined && data.character !== undefined && data.data !== undefined) {
+                    this.handleAmqpMessages(data);
                 }
             } catch (err) {
                 console.log(err);
             }
         });
+    }
+
+    private async handleAmqpMessages(data: any) {
+        switch (data.action) {
+            case 'login':
+                this.login(data.user, data.character);
+                break;
+            case 'logout':
+                this.logout(data.user, data.character);
+                break;
+            case 'message':
+                this.actionHandler.processAction(data.character, data.data.message);
+                break;
+            case 'dmmessage':
+                this.actionHandler.processDmAction(data.data.message);
+                break;
+            case 'connection.toggle':
+                let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
+                toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
+        }
+    }
+
+    private async login(user: string, characterName: string) {
+        console.log(`login ${characterName}`);
+
+        let character = await this.getCharacter(characterName);
+        this.dungeon.characters[characterName] = character;
+        await this.amqpAdapter.initClient(characterName);
+        await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
+        this.amqpAdapter.broadcastAction('message', { message: `${characterName} ist dem Dungeon beigetreten!` });
+        sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
+        if (characterName !== 'dungeonmaster') {
+            await this.amqpAdapter.sendActionToClient(characterName, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
+        }
+        await this.sendStatsData(characterName)
+        await this.sendMiniMapData(characterName);
+        await this.sendInventoryData(characterName);
+    }
+
+    private async logout(user: string, characterName: string) {
+        console.log(`logout ${characterName}`);
+
+        if (characterName !== 'dungeonmaster') {
+            await this.persistCharacterData(this.dungeon.getCharacter(characterName))
+            delete this.dungeon.characters[characterName];
+            sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
+        } else {
+            this.stopDungeon();
+        }
+    }
+
+    async stopDungeon() {
+        // TODO: kick all players
+        await this.persistAllRooms()
+        await this.getAmqpAdapter().close();
+        process.exit(0);
+    }
+
+    async persistAllRooms(){
+        let rooms: Room[] = this.mapToArray(this.dungeon.rooms)
+        this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
+    }
+
+    mapToArray(map: any): any[] {
+        let array: any[] = [];
+        for (let id in map) {
+            array.push({ ...map[id], id: id });
+        }
+        return array;
+    }
+
+    async persistCharacterData(character: Character){
+        this.databaseAdapter?.updateCharacterInDungeon({
+            name: character.name,
+            userId: character.userId,
+            dungeonId: this.dungeonID,
+            characterClass: character.characterClass,
+            characterSpecies: character.characterSpecies,
+            characterGender : character.characterGender,
+            maxStats: character.maxStats,
+            currentStats: character.currentStats,
+            position: character.position,
+            exploredRooms: Object.keys(character.exploredRooms),
+            inventory: character.inventory
+        }, this.dungeonID)
     }
 
     async getCharacter(name: string): Promise<Character> {
@@ -85,8 +143,12 @@ export class DungeonController {
             if (char) {
                 let maxStats = char.maxStats;
                 let curStats = char.currentStats;
+                let exploredRooms:Character['exploredRooms'] = {};
+                char.exploredRooms.forEach((room:string) => {
+                    exploredRooms[room] = true;
+                });
                 return new CharacterImpl(char.userId, char.name, char.characterClass, char.characterSpecies, char.characterGender, new CharacterStatsImpl(maxStats.hp, maxStats.dmg, maxStats.mana), 
-                    new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, char.inventory);
+                    new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
         }
         return this.createCharacter(name);
@@ -102,6 +164,7 @@ export class DungeonController {
             new CharacterStatsImpl(1, 1, 1),
             new CharacterStatsImpl(1, 1, 1),
             "0,0",
+            {"0,0":true},
             []
         );
         // console.log(this.dungeon)
@@ -122,18 +185,20 @@ export class DungeonController {
 
     async sendMiniMapData(character: string) {
         let rooms:MiniMapData["rooms"] = {};
+        const isDm: boolean = 'dungeonmaster' === character; // TODO: Find it in another way
+        const exploredRooms = this.dungeon.getCharacter(character).exploredRooms;
         for (let room in this.dungeon.rooms) {
             rooms[room] = {
                 xCoordinate: this.dungeon.rooms[room].xCoordinate,
                 yCoordinate: this.dungeon.rooms[room].yCoordinate,
                 connections: this.dungeon.rooms[room].connections,
-                explored: false // TODO: Find a way to check if the room is explored
+                explored: exploredRooms[room] || false, // TODO: Find a way to check if the room is explored
+                name: isDm ? this.dungeon.rooms[room].name : undefined
             }
         }
-        rooms["0,0"].explored = true;
         await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
-                startRoom: "0,0" //TODO: Actually get the room the character is in at the start
+                startRoom:  this.getDungeon().getCharacter(character).getPosition() //TODO: Actually get the room the character is in at the start
             } as MiniMapData);
     }	
 

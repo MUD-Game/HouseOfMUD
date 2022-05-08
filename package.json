@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
+    "start": "concurrently --names 'SUPERVISOR,HOST,FRONTEND' --prefix-colors 'red,yellow,blue' --kill-others  \"npm run startsupervisor\" \"npm run starthost\" \"npm run startfrontend\"",
     "startfrontend": "cd ./frontend && npm start",
     "starthost": "cd ./backend/game && npm start",
     "startsupervisor": "cd ./backend/supervisor && npm start",
@@ -57,6 +58,7 @@
     "@types/amqplib": "^0.8.2",
     "@types/js-yaml": "^4.0.5",
     "amqplib": "^0.8.0",
+    "concurrently": "^7.1.0",
     "fs": "^0.0.1-security",
     "jest": "^27.5.1",
     "jest-junit": "^13.1.0",

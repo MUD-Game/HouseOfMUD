@@ -12,7 +12,6 @@ export interface Config {
     tls: TLS;
     auth: {
         salt: string;
-        verifyLink: string;
         emailservice: string;
         emailadress: string;
         emailsecret: string;

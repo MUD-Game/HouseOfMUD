@@ -6,7 +6,6 @@
  */
 
 import React from 'react'
-import { Row } from 'react-bootstrap';
 import { Send } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 export interface ChatQueueProps {
@@ -26,7 +25,7 @@ const ChatQueue: React.FC<ChatQueueProps> = ({ commandQueue, onSendQueue }) => {
                         <li key={index}>{ command }</li>
                     )}
                 </ul>
-                { commandQueue.length != 0 ?
+                { commandQueue.length !== 0 ?
                 <div className="p-2">
                     <button className='btn drawn-border btn-green w-100' onClick={ onSendQueue }>
                         <Send />

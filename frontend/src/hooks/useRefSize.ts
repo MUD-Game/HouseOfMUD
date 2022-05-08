@@ -1,4 +1,10 @@
-import React, { useLayoutEffect, useState } from 'react';
+/**
+ * @module useRefSize
+ * @description Hook to get the size of an element
+ * @category React Hooks
+ */
+
+import { useLayoutEffect, useState } from 'react';
 
 export function useRefSize(ref: any) {
     const [size, setSize] = useState(ref.current ? [ref.current.clientWidth, ref.current.clientHeight]: [0,0]);
@@ -9,6 +15,6 @@ export function useRefSize(ref: any) {
         window.addEventListener('resize', updateSize);
         updateSize();
         return () => window.removeEventListener('resize', updateSize);
-    }, []);
+    }, [ref]);
     return size;
 }

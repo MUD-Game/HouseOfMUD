@@ -1,3 +1,10 @@
+/**
+ * @module useOnScreen
+ * @description Hook to check if an element is on screen
+ * @category React Hooks
+ */
+
+
 import { useEffect, useState, useRef, RefObject } from 'react';
 
 export default function useOnScreen(ref: RefObject<HTMLElement>) {

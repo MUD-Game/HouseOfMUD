@@ -13,6 +13,7 @@ import MudInput from 'src/components/Custom/Input';
 import { MudCharacterGender } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import '../index.css'
+import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 //REFACTOR: Redunant Modal, make generic pls
 export interface AddGenderModalProps {
     show: boolean;
@@ -25,7 +26,7 @@ const AddGenderModal: React.FC<AddGenderModalProps> = (props) => {
 
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
-
+    const dconf = useDungeonConfigurator();
     const [name, setName] = React.useState<string>(props.editData?.name || "");
 
     const [error, setError] = React.useState<string>("");
@@ -35,6 +36,10 @@ const AddGenderModal: React.FC<AddGenderModalProps> = (props) => {
     }
 
     const onSubmit = () => {
+        if (validator.alreadyExists(name, "name", dconf.genders)) {
+            setError(t(`genderalreadyexists`));
+            return;
+        }
         if (modalIsInvalid()) {
             setError("failvalidation.gender");
         } else {

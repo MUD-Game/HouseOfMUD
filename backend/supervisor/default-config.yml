@@ -16,7 +16,6 @@ tls:
 
 auth:
   salt: secret
-  verifyLink: http://localhost:3000/verify
   emailservice: gmail
   emailadress: houseofmud2022@gmail.com
   emailsecret: ...

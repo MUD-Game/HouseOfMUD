@@ -33,6 +33,7 @@ const Game: React.FC<GameProps> = () => {
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
     const [selectedRooms, setSelectedRooms] = React.useState<string[]>([]);
+    const [onlinePlayers, setOnlinePlayers] = React.useState<string[]>([]);
 
     const onUnload = (e: any) => {
         e.preventDefault();
@@ -45,10 +46,15 @@ const Game: React.FC<GameProps> = () => {
         setMiniMapData(roomData);
     }
 
+    const onlinePlayerSubscriber = (players: string[]) => {
+        setOnlinePlayers(players);
+    }
+
     useEffect(() => {
         window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
+            rabbit.setOnlinePlayersSubscriber(onlinePlayerSubscriber);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.login(() => {
                 // Success
@@ -91,7 +97,7 @@ const Game: React.FC<GameProps> = () => {
             <Row className="game-body">
                 <div className="col col-md-3 col-lg-2">
                     {miniMapData && <Minimap {...miniMapData} />}
-                    <OnlinePlayers players={null} />
+                    <OnlinePlayers players={onlinePlayers} />
                     {miniMapData && <ChatFilter selectedRooms={selectedRooms} setSelectedRooms={setSelectedRooms} allRooms={ Object.values(miniMapData.rooms).map( room => room.name) } />}
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>

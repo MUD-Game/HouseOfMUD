@@ -262,7 +262,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 </div>
             </Row>
             <Row>
-                <div id="konva-buttons-container">
+                <div id="konva-buttons-container-room">
                     <GeoAlt size={37} id="refocus-button" onClick={() => {
                         // stageRef.current.scale({ x: 1, y: 1 });
                         stageRef.current.to({ x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.2, easing: Konva.Easings.EaseInOut });

@@ -62,7 +62,7 @@ body{
     background-color: var(--bgcolor);
 }
 
-#konva-buttons-container img, #konva-buttons-container-fullscreen img {
+#konva-buttons-container img, #konva-buttons-container-fullscreen img, #konva-buttons-container svg, #konva-buttons-container-fullscreen svg {
     position: absolute;
     cursor: pointer;
 }
@@ -93,7 +93,7 @@ body{
     z-index: 2000;
     display: flex;
     position: relative;
-    top: 20px;
+    top: 0;
     left: 5px;
 }
 
@@ -136,4 +136,9 @@ body{
 #fullscreenbutton-fullscreen:hover {
     background-color: var(--accentlight);
     box-shadow: 0 0 5px .7em var(--accentlight);
+}
+
+.form-label {
+    margin: 0;
+    display: none;
 }

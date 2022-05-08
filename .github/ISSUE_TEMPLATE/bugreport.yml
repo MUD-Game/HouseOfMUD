@@ -9,17 +9,18 @@ body:
       label: What happened?
       description: what did you expect to happen?
       placeholder: Tell us what you see!
-      value: ""
+      value: "Bug"
     validations:
       required: true
   - type: dropdown
     id: version
     attributes:
-      label: Version
-      description: What version of our software are you running?
+      label: Location
+      description: Where do you think the Bug is occuring
       options:
-        - 1.0.2 (Default)
-        - 1.0.3 (Edge)
+        - Frontend
+        - Supervisor
+        - Host
     validations:
       required: true
   - type: textarea

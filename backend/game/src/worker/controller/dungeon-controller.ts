@@ -102,7 +102,9 @@ export class DungeonController {
             this.sendPlayerListToDM();
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
         } else {
-            this.stopDungeon();
+            delete this.dungeon.characters[characterName];
+            sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
+            // this.stopDungeon();
         }
     }
 

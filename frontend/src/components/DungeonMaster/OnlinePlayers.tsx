@@ -8,13 +8,18 @@
 
 import React from 'react'
 export interface OnlinePlayersProps {
-    players: any; //TODO: define item data
+    players: string[]; //TODO: define item data
 }
 
 const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ players }) => {
     return (
         <div className="onlineplayers drawn-border mb-2">
-            <p className='text-center pt-5'>Players online</p>
+            <p className='text-center'>Players online</p>
+            <ul className='ps-4'>
+                    {players.filter(player => player !== 'dungeonmaster').map((player) =>
+                        <li key={player}>{ player }</li>
+                    )}
+                </ul>
         </div>
     )
 }

@@ -14,19 +14,21 @@ import { default as AnsiUp } from 'ansi_up';
 
 const RESET = '\x1b[0m';
 
-export interface ChatOutputProps { }
+export interface ChatOutputProps {
+    selectedRooms: string[];
+}
 
-const ChatOutput: React.FC<ChatOutputProps> = () => {
+const ChatOutput: React.FC<ChatOutputProps> = ({ selectedRooms }) => {
 
     const ansi_up = new AnsiUp();
 
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<any[]>([]);
 
     const { setChatSubscriber } = useRabbitMQ();
 
     setChatSubscriber((data: any) => {
         setMessages((prevState) => {
-            return [...prevState, data.message]
+            return [...prevState, data]
         });
     });
 
@@ -38,18 +40,25 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
     };
     useEffect(scrollToBottom, [messages]);
 
+    useEffect(() => {
+        console.log(selectedRooms);
+        return () => {}
+    }, [selectedRooms]);
+
     return (
         <Row className="chat-output-wrap">
             <div className="col">
                 <div className="chat drawn-border p-2 ps-3 pe-3 pt-lg-3 pe-lg-4">
                     <div className="chat-content">
                         {messages.map((message, index) => {
-                            return (
-                                <span key={index} className={"chat-message channel-global"}>
-                                    <span dangerouslySetInnerHTML={{__html: ansi_up.ansi_to_html(RESET + message)}}></span>
-                                    <br />
-                                </span>
-                            )
+                            if(selectedRooms.includes(message.room) || message.room === undefined || selectedRooms.length === 0) {
+                                return (
+                                    <span key={index} className={"chat-message channel-global"}>
+                                        <span dangerouslySetInnerHTML={{__html: ansi_up.ansi_to_html(RESET + message.message)}}></span>
+                                        <br />
+                                    </span>
+                                )
+                            }
                         })}
                         <div ref={messagesEndRef} />
                     </div>

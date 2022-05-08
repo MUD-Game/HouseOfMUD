@@ -14,6 +14,7 @@ import {  useNavigate } from 'react-router-dom';
 import { MiniMapData } from 'src/components/DungeonMaster/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
 import { HUDProps } from 'src/components/Game/HUD';
+import OnlinePlayers from 'src/components/DungeonMaster/OnlinePlayers';
 
 const debug = true;
 
@@ -31,6 +32,7 @@ export interface RabbitMQContextType {
   sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
   // Subscriber
   setChatSubscriber: (subscriber: (message: string) => void) => void;
+  setOnlinePlayersSubscriber: (subscriber: (players: string[]) => void) => void;
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
   setRoomSubscriber: (subscriber: (roomId: string) => void) => void;
@@ -58,6 +60,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { character, dungeon, verifyToken } = useGame();
   
   let chatSubscriber: (message: string) => void = () => { };
+  let onlinePlayersSubscriber: (players: string[]) => void = () => { };
   let errorSubscriber: (error: string, ...optionalParams: any[]) => void = (error) => { };
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
@@ -80,6 +83,9 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       switch (command[0]) {
         case 'message':
           chatSubscriber(jsonData.data); // atm only chats
+          break;
+        case 'updateOnlinePlayers':
+          onlinePlayersSubscriber(jsonData.data);
           break;
         case 'minimap':
           minimapHandler(command.splice(1), jsonData.data);
@@ -220,6 +226,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const setChatSubscriber = (subscriber: (message: string) => void) => {
     chatSubscriber = subscriber;
   }
+  
+  const setOnlinePlayersSubscriber = (subscriber: (players: string[]) => void) => {
+    onlinePlayersSubscriber = subscriber;
+  }
 
   const setMiniMapSubscriber = (subscriber: (rooms: MiniMapData) => void) => {
     miniMapSubscriber = subscriber;
@@ -248,7 +258,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection };
+  let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber,setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

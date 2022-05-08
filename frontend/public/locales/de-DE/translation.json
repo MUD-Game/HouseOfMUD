@@ -109,7 +109,8 @@
     "game": {
         "leave": "Verlassen",
         "queue": "Warteschlange",
-        "inventory": "Inventar"
+        "inventory": "Inventar",
+        "filter": "Raum-Filter"
     },
     "verify_email": {
         "title": "Email-Verifizierung",

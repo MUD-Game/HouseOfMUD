@@ -17,7 +17,7 @@
 }
 
 
-#konva-buttons-container svg{
+#konva-buttons-container-rooms svg{
     position: absolute;
     transition: opacity 0.2s, transform 0.2s;
     fill:var(--accent);
@@ -25,7 +25,7 @@
 }
 
 
-#konva-buttons-container svg:hover {
+#konva-buttons-container-rooms svg:hover {
     opacity: 1;
 }
 
@@ -33,14 +33,13 @@
     transform: translateY(-2px);
 }
 
-#konva-buttons-container {
+#konva-buttons-container-rooms {
     z-index: 1000;
     display: flex;
     position: relative;
-    top: 1.5vh;
+    top: 10px;
     right: 0;
 }
-
 
 #konvacontainer{
     border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;

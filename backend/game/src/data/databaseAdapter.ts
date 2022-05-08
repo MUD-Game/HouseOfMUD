@@ -207,6 +207,7 @@ export class DatabaseAdapter {
 
 
         return this.dungeon.create({
+            _id: oldDungeon._id,
             name: newDungeon.name,
             description: newDungeon.description,
             creatorId: oldDungeon.creatorId,

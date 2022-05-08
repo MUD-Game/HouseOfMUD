@@ -144,7 +144,7 @@ export class DungeonController {
         }, this.dungeonID)
     }
 
-    async getCharacter(name: string): Promise<Character> {
+    private async getCharacter(name: string): Promise<Character> {
         if (this.databaseAdapter) {
             let char = await this.databaseAdapter.getCharacterFromDungeon(name, this.dungeonID);
             console.log(char);
@@ -153,8 +153,13 @@ export class DungeonController {
                 let curStats = char.currentStats;
                 let exploredRooms:Character['exploredRooms'] = {};
                 char.exploredRooms.forEach((room:string) => {
-                    exploredRooms[room] = true;
+                    if (room in this.dungeon.rooms) {
+                        exploredRooms[room] = true;
+                    }
                 });
+                if (!(char.position in this.dungeon.rooms)) {
+                    char.position = '0,0'; // Start Room
+                }
                 return new CharacterImpl(char.userId, char.name, char.characterClass, char.characterSpecies, char.characterGender, new CharacterStatsImpl(maxStats.hp, maxStats.dmg, maxStats.mana), 
                     new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
@@ -162,7 +167,7 @@ export class DungeonController {
         return this.createCharacter(name);
     }
 
-    createCharacter(name: string): Character {
+    private createCharacter(name: string): Character {
         let newCharacter: Character = new CharacterImpl(
             name,
             name,
@@ -204,6 +209,7 @@ export class DungeonController {
                 name: isDm ? this.dungeon.rooms[room].name : undefined
             }
         }
+        console.log(this.getDungeon().getCharacter(character).getPosition());
         await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
                 startRoom:  this.getDungeon().getCharacter(character).getPosition() //TODO: Actually get the room the character is in at the start

@@ -9,15 +9,12 @@
 import React, { useEffect } from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
 import Busy from '../../Busy';
 type VerifyEmailProps = {}
 
-interface LocationState {
-    from: { pathname: string }
-}
+
 const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
     const [isVerifying, setIsVerifying] = React.useState(true);
     const [verifyMessage, setVerifyMessage] = React.useState("");
@@ -37,7 +34,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = (props) => {
             setIsVerifying(false);
             setVerifyMessage(t("verify_email.error"));
         });
-    }, []);
+    }, [auth, navigate, token, t]);
 
    
 

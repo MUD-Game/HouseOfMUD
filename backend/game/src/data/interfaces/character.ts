@@ -10,6 +10,7 @@ export interface Character {
     maxStats: CharacterStats;
     currentStats: CharacterStats;
     position: string;
+    exploredRooms: { [roomId: string]: boolean },
     inventory: ItemInfo[];
   
     getName(): string
@@ -30,6 +31,7 @@ export class CharacterImpl implements Character {
     maxStats: CharacterStats;
     currentStats: CharacterStats;
     position: string;
+    exploredRooms: { [roomId: string]: boolean };
     inventory: ItemInfo[];
 
     constructor(
@@ -41,6 +43,7 @@ export class CharacterImpl implements Character {
         maxStats: CharacterStats,
         currentStats: CharacterStats,
         position: string,
+        exploredRooms: {[roomId:string]:boolean},
         inventory: ItemInfo[]
     ) {
         this.userId = userId;
@@ -51,6 +54,7 @@ export class CharacterImpl implements Character {
         this.maxStats = maxStats;
         this.currentStats = currentStats;
         this.position = position;
+        this.exploredRooms = exploredRooms;
         this.inventory = inventory;
     }
 
@@ -64,6 +68,7 @@ export class CharacterImpl implements Character {
 
     modifyPosition(destinationRoom: string): any {
         this.position = destinationRoom;
+        this.exploredRooms[destinationRoom] = true;
     }
 
     getInventory(): ItemInfo[] {

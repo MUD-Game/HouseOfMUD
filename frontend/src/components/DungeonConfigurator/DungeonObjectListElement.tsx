@@ -1,8 +1,6 @@
-import React, { ButtonHTMLAttributes, DetailedHTMLProps, MouseEvent } from "react";
+import React from "react";
 import { Row } from 'react-bootstrap';
 import { Pencil, Trash } from "react-bootstrap-icons";
-import { MudCharacterClass, MudItem } from "src/types/dungeon";
-import { MudActionElement } from '../../types/dungeon';
 import { AcceptedTypes } from './DungeonObjectList';
 
 export interface DungeonObjectListElementProps {
@@ -14,7 +12,7 @@ export interface DungeonObjectListElementProps {
 
 const DungeonObjectListElement: React.FC<DungeonObjectListElementProps> = ({ item, onEditElement, onDeleteElement, displayKeys }) => {
 
-    const [isFromServer, setIsFromServer] = React.useState((item as any).from_server || false);
+    const [isFromServer] = React.useState((item as any).from_server || false);
 
     return (
         <Row className="mb-2 py-1 configurator-item">

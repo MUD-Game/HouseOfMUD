@@ -10,6 +10,7 @@ import { Modal, Button, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';
 import MudInput from 'src/components/Custom/Input';
+import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import { MudCharacterSpecies } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import '../index.css'
@@ -25,7 +26,7 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
 
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
-
+    const {species} = useDungeonConfigurator();
     const [name, setName] = React.useState<string>(props.editData?.name || "");
 
     const [error, setError] = React.useState<string>("");
@@ -35,6 +36,10 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
     }
 
     const onSubmit = () => {
+        if (validator.alreadyExists(name, "name", species)) {
+            setError(t(`speciesalreadyexists`));
+            return;
+        }
         if (modalIsInvalid()) {
             setError("failvalidation.species");
         } else {

@@ -13,7 +13,7 @@
 
 import React from 'react';
 import MyDungeonsLi from './MyDungeonsLi';
-import { DungeonResponseData, GetDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData } from '@supervisor/api';
 import { Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { SendsMessagesProps } from '../../../types/misc';

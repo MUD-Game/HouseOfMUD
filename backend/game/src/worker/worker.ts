@@ -93,11 +93,7 @@ function handleHostMessages(dungeonController: DungeonController) {
                 userTokens[userID][character] = verifyToken;
                 break;
             case 'stop':
-                // TODO: save Dungeon to database and stop process
-                //! Hier die "dungeon speichern" Methode aus dem Dungeon controller aufrufen
-                await dungeonController.persistAllRooms()
-                await dungeonController.getAmqpAdapter().close();
-                exit(0);
+                // dungeonController.stopDungeon();
                 break;
         }
     });
@@ -123,7 +119,7 @@ function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefine
         let dungeonItems: Item[] = translateItemsFromDatabase(databaseDungeon)
         let dungeonNpcs: Npc[] = translateNpcsFromDatabase(databaseDungeon)
         let dungeonClasses: CharacterClass[] = translateClassesFromDatabase(databaseDungeon)
-        let dungeonObject: Dungeon = new DungeonImpl(dungeonID, databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, 0, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs,databaseDungeon?.globalActions )
+        let dungeonObject: Dungeon = new DungeonImpl(dungeonID, databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs,databaseDungeon?.globalActions )
         return dungeonObject
     }
 }
@@ -175,178 +171,5 @@ function translateClassesFromDatabase(dungeonFromDatabase: DungeonDataset): Char
     })
     return characterClasses;
 }
-
-// function getDungeon(dungeonID: string): Dungeon {
-//     const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(
-//         '1',
-//         'Hexer',
-//         'Hexiger Hexer'
-//     );
-//     const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
-//     const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
-//     const TestGender: CharacterGender = new CharacterGenderImpl(
-//         '1',
-//         'Mann',
-//         'Maennlicher Mann'
-//     );
-//     const TestClass: CharacterClass = new CharacterClassImpl(
-//         '1',
-//         'Magier',
-//         'Magischer Magier',
-//         TestMaxStats,
-//         TestStartStats
-//     );
-//     const TestNpc: Npc = new NpcImpl(
-//         '1',
-//         'Bernd',
-//         'Bernd liebt die Musik',
-//         'Barde'
-//     );
-//     const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
-//     const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
-//         'open',
-//         'open'
-//     );
-//     const TestAction: ActionElement = new ActionElementImpl(
-//         '1',
-//         'essen',
-//         'gegessen',
-//         'essen aktion',
-//         [new ActionEventImpl('addhp', '10')],
-//         ['1']
-//     );
-//     const TestRoom: Room = new RoomImpl(
-//         '1',
-//         'Raum-1',
-//         'Der Raum in dem alles begann',
-//         [TestNpc.id],
-//         [new ItemInfo(TestItem.id, 1)],
-//         TestConnections,
-//         [TestAction.id],
-//         2,
-//         2
-//     );
-//     const TestRoomNorth: Room = new RoomImpl(
-//         '2',
-//         'Raum-N',
-//         'Der Raum im Norden',
-//         [TestNpc.id],
-//         [new ItemInfo(TestItem.id, 1)],
-//         new ConnectionInfoImpl('inactive', 'open'),
-//         [TestAction.id],
-//         2,
-//         3
-//     );
-//     const TestRoomEast: Room = new RoomImpl(
-//         '3',
-//         'Raum-O',
-//         'Der Raum im Osten',
-//         [TestNpc.id],
-//         [new ItemInfo(TestItem.id, 1)],
-//         new ConnectionInfoImpl('inactive', 'inactive'),
-//         [TestAction.id],
-//         3,
-//         2
-//     );
-//     const TestRoomSouth: Room = new RoomImpl(
-//         '4',
-//         'Raum-S',
-//         'Der Raum im Sueden',
-//         [TestNpc.id],
-//         [new ItemInfo(TestItem.id, 1)],
-//         new ConnectionInfoImpl('inactive', 'inactive'),
-//         [TestAction.id],
-//         2,
-//         1
-//     );
-//     const TestRoomWest: Room = new RoomImpl(
-//         '5',
-//         'Raum-W',
-//         'Der Raum im Westen',
-//         [TestNpc.id],
-//         [new ItemInfo(TestItem.id, 1)],
-//         new ConnectionInfoImpl('open', 'inactive'),
-//         [TestAction.id],
-//         1,
-//         2
-//     );
-//     const TestRoomNorthNorth: Room = new RoomImpl(
-//         '6',
-//         'Raum-NN',
-//         'Der Raum im Norden, Norden',
-//         [TestNpc.id],
-//         [new ItemInfo(TestItem.id, 1)],
-//         new ConnectionInfoImpl('inactive', 'closed'),
-//         [TestAction.id],
-//         2,
-//         4
-//     );
-//     // const TestCharacter: Character = new CharacterImpl(
-//     //     'Jeff',
-//     //     'Jeff',
-//     //     '1',
-//     //     'Jeff',
-//     //     'Magier',
-//     //     TestSpecies,
-//     //     TestGender,
-//     //     TestMaxStats,
-//     //     TestStartStats,
-//     //     TestRoom.id,
-//     //     [TestItem.id]
-//     // );
-//     // const TestCharacterSameRoom: Character = new CharacterImpl(
-//     //     '2',
-//     //     '2',
-//     //     '1',
-//     //     'Spieler',
-//     //     'Magier',
-//     //     TestSpecies,
-//     //     TestGender,
-//     //     TestMaxStats,
-//     //     TestStartStats,
-//     //     TestRoom.id,
-//     //     [TestItem.id]
-//     // );
-//     // const TestCharacterNotSameRoom: Character = new CharacterImpl(
-//     //     '3',
-//     //     '3',
-//     //     '1',
-//     //     'Bob',
-//     //     'Magier',
-//     //     TestSpecies,
-//     //     TestGender,
-//     //     TestMaxStats,
-//     //     TestStartStats,
-//     //     TestRoomNorth.id,
-//     //     [TestItem.id]
-//     // );
-//     const testDungeon: Dungeon = new DungeonImpl(
-//         dungeonID,
-//         'TestDungeon1',
-//         'Test',
-//         '1',
-//         '1',
-//         2,
-//         1,
-//         [TestSpecies],
-//         [TestClass],
-//         [TestGender],
-//         // [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
-//         [],
-//         [
-//             TestRoom,
-//             TestRoomNorth,
-//             TestRoomEast,
-//             TestRoomSouth,
-//             TestRoomWest,
-//             TestRoomNorthNorth,
-//         ],
-//         ['abc'],
-//         [TestAction],
-//         [TestItem],
-//         [TestNpc]
-//     );
-//     return testDungeon;
-// }
 
 main();

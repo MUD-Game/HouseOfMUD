@@ -30,13 +30,13 @@ export class API {
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any, cookiehost: string) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, transporter: any, cookiehost: string) {
         this.origin = origin;
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
-        this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookiehost);
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, origin, cookiehost);
     }
 
     /**
@@ -92,6 +92,9 @@ export class API {
         app.post('/auth/register', this.authProvider.register);
 
         app.post('/auth/verify', this.authProvider.verifyEmail);
+
+        app.post('/auth/requestpassword', this.authProvider.requestPasswordReset);
+        app.post('/auth/resetpassword', this.authProvider.resetPassword);
 
         // TODO: Create actual authentication
         // platform authentication
@@ -165,8 +168,13 @@ export class API {
         // create dungeon
         app.post('/dungeon', this.authProvider.auth, async (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
-            const {user, userID} = req.cookies;
+            const {userID} = req.cookies;
             if(dungeonData){
+                // Check if dungeon with name already exists
+                if(this.hostLink.dungeonNameExists(dungeonData.name)){
+                    res.status(400).json({ ok: 0, error: 'dungeonalreadyexists' });
+                    return;
+                }
                 dungeonData.masterId = userID;
                 dungeonData.creatorId = userID;
                 this.dba.storeDungeon(dungeonData).then(dungeon => {
@@ -281,6 +289,7 @@ export class API {
                 let characterData: CharacterDataset = body.characterData;
                 characterData.userId = userID;
                 characterData.name = characterData.name;
+                characterData.exploredRooms = ["0,0"];
                 this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
                     res.status(200).json({ ok: 1, character: character });
                 }).catch(err => {

@@ -9,6 +9,7 @@ const root = ReactDOM.createRoot(
 );
 
 
+
 const LazyComponent = React.lazy(() => import('./routes/index'));
 
 root.render(

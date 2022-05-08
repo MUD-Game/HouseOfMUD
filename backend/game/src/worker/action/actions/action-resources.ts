@@ -4,6 +4,7 @@
 
 import { parse } from "path";
 import { Room } from "../../../data/interfaces/room";
+import format from "./format";
 
 export const triggers = {
     discard: "ablegen",
@@ -150,4 +151,3 @@ export function parseResponseString(str: string, ...args: string[]): string {
     let i = 0;
     return str.replace(/%s/g, () => args[i++]);
 }
-

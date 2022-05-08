@@ -35,7 +35,7 @@ function mapToArray(map: any): any[] {
 /**
  * encapsulation of the mongoose API
  */
- export class DatabaseAdapter {
+export class DatabaseAdapter {
 
     public database: string;
 
@@ -69,7 +69,7 @@ function mapToArray(map: any): any[] {
      * store a dungeon inside the 'dungeons' Collection of the connection
      * @param dungeonToStore the 'Dungeon' dataset that contains all information of the dungeon
      */
-     async storeDungeon(dungeonToStore: DungeonDataset) {
+    async storeDungeon(dungeonToStore: DungeonDataset) {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
@@ -88,6 +88,20 @@ function mapToArray(map: any): any[] {
             actions: await this.action.insertMany(dungeonToStore.actions)
         })
     }
+
+    async getUserByEmail(email: string): Promise<User | undefined> {
+        const foundUser = await this.user.findOne({ email: email }, 'username email');
+        if (foundUser) {
+            return foundUser;
+        }
+        return undefined;
+    }
+
+    async updatePassword(email: string, password: string) {
+        return this.user.updateOne({ email: email }, { password: password });
+    }
+
+
 
     /**
      * get a dungeon from the 'dungeons' Collection in the Mongo database
@@ -257,15 +271,7 @@ function mapToArray(map: any): any[] {
      * @returns true if the character could be found inside the dungeon, false if not
      */
     async characterExistsInDungeon(characterName: string, dungeonId: string) {
-        var foundFlag = false
-        const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
-        const foundCharacters = (await foundDungeon!.populate('characters')).characters
-        foundCharacters.forEach((char: { name: string; }) => {
-            if (char.name == characterName) {
-                foundFlag = true
-            }
-        })
-        return foundFlag
+        return this.getCharacterFromDungeon(characterName, dungeonId) !== null;
     }
 
     /**
@@ -276,11 +282,14 @@ function mapToArray(map: any): any[] {
      */
     async storeCharacterInDungeon(newCharacter: CharacterDataset, dungeonId: string) {
         const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'characterClasses');
-        const characterClasses = await foundDungeon!.populate('characterClasses');
-        const maxStats = characterClasses.characterClasses.find(c => c.id == newCharacter.characterClass)?.maxStats;
-        newCharacter.maxStats = maxStats!;
-        newCharacter.currentStats = maxStats!;
-        return this.dungeon.updateOne({ _id: dungeonId }, { $push: { characters: await this.character.create(newCharacter) } })
+        const characterClasses = await foundDungeon!.populate({ path: 'characterClasses', match: { id: { $eq: newCharacter.characterClass } } });
+        if (characterClasses.characterClasses.length > 0) {
+            const maxStats = characterClasses.characterClasses[0].maxStats;
+            newCharacter.maxStats = maxStats;
+            newCharacter.currentStats = maxStats;
+            return this.dungeon.updateOne({ _id: dungeonId }, { $push: { characters: await this.character.create(newCharacter) } })
+        }
+        return null;
     }
 
     /**
@@ -299,11 +308,10 @@ function mapToArray(map: any): any[] {
      */
     async updateCharacterInDungeon(updatedCharacter: CharacterDataset, dungeonId: string) {
         let oldCharacter = await this.getCharacterFromDungeon(updatedCharacter.name, dungeonId)
-        if(oldCharacter !== null)
-        {
+        if (oldCharacter !== null) {
             await this.character.updateOne(
-                oldCharacter, 
-                updatedCharacter 
+                oldCharacter,
+                updatedCharacter
             );
         }
     }
@@ -314,12 +322,12 @@ function mapToArray(map: any): any[] {
      * @returns the query response (information about the performed database action)
      */
     async updateRooms(rooms: RoomDataset[], dungeonId: string) {
-        let dungeonRoomIds: RoomDataset[]|undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
+        let dungeonRoomIds: RoomDataset[] | undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
         console.log(dungeonRoomIds)
-        if(dungeonRoomIds != undefined){
+        if (dungeonRoomIds != undefined) {
             dungeonRoomIds.forEach(async id => {
-                let foundRoom = (await this.room.findOne({_id: id })) as RoomDataset
-                await this.room.updateOne(foundRoom, rooms.filter(room => room.id == foundRoom.id)[0]);
+                let foundRoom = (await this.room.findOne({ _id: id })) as RoomDataset
+                await this.room.updateOne(foundRoom, rooms.find(room => room.id == foundRoom.id));
             });
         }
     }
@@ -390,13 +398,7 @@ function mapToArray(map: any): any[] {
     async getAllCharactersFromUserInDungeon(username: string, dungeonId: string): Promise<CharacterDataset[]> {
         const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) });
         let result = await foundDungeon!.populate({ path: 'characters', match: { userId: { $eq: username } } });
-        var charactersFromUser: CharacterDataset[] = [];
-        result.characters.forEach((char: CharacterDataset) => {
-            if (char.userId === username) {
-                charactersFromUser.push(char)
-            }
-        });
-        return charactersFromUser
+        return result.characters;
     }
 
     /**
@@ -407,7 +409,7 @@ function mapToArray(map: any): any[] {
     async getCharacterFromDungeon(characterName: string, dungeonId: string): Promise<CharacterDataset | null> {
         const foundDungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) });
         let result = await foundDungeon!.populate({ path: 'characters', match: { name: { $eq: characterName } } });
-        if(result.characters.length >0){
+        if (result.characters.length > 0) {
             return result.characters[0];
         }
         return null

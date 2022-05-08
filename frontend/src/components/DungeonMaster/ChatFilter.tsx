@@ -22,10 +22,11 @@ const ChatFilter: React.FC<ChatFilterProps> = ({allRooms, selectedRooms, setSele
     const {t} = useTranslation();
 
     return (
+        <div className="chat-filter-wrapper">
         <MudTypeahead
             colmd={12}
             title=""
-            id={"room-actions-typeahead"}
+            id={"chat-filter-typeahead"}
             labelKey={(option: any) => `${option}`}
             options={allRooms}
             multiple
@@ -35,6 +36,7 @@ const ChatFilter: React.FC<ChatFilterProps> = ({allRooms, selectedRooms, setSele
             placeholder={t(`game.filter`)}
             selected={selectedRooms}
         />
+        </div>
     )
 }
 

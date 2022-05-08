@@ -13,6 +13,7 @@ import MudInput from 'src/components/Custom/Input';
 import { MudRoom } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import '../index.css'
+import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 //REFACTOR: Redunant Modal, make generic pls
 export interface AddRoomModalProps{
     show: boolean;
@@ -25,7 +26,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
 
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
-
+    const {rooms} = useDungeonConfigurator();
     const [name, setName] = React.useState<string>( "");
     const [description, setDescription] = React.useState<string>("");
 
@@ -36,6 +37,11 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
     }
 
     const onSubmit = () => {
+        console.log(validator.alreadyExists(name, "name", rooms))
+        if (validator.alreadyExists(name, "name", rooms)) {
+            setError(t(`roomalreadyexists`));
+            return;
+        }
         if (modalIsInvalid()) {
             setError("failvalidation.room");
         } else {

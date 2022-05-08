@@ -26,7 +26,7 @@ export interface AddNpcModalProps {
 const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
 
     const { t } = useTranslation();
-    const { species } = useDungeonConfigurator();
+    const { species, npcs } = useDungeonConfigurator();
     const dt = 'dungeon_configurator';
 
     const [name, setName] = React.useState<string>(props.editData?.name || "");
@@ -40,6 +40,10 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
     }
 
     const onSubmit = () => {
+        if (validator.alreadyExists(name, "name", npcs)) {
+            setError(t(`npcalreadyexists`));
+            return;
+        }
         if (modalIsInvalid()) {
             setError("failvalidation.npc"); //TODO: add failvalidation.npc error
         } else {

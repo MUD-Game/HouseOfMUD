@@ -42,6 +42,7 @@ import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMess
 import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
 import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
 import { DieAction } from "../src/worker/action/actions/die-action";
+import { ToggleConnectionAction } from "../src/worker/action/dmactions/toggleRoomConnection-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -1310,6 +1311,7 @@ describe("DungeonMaster Actions", () => {
     const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
     const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
     const dieAction: DieAction = actionHandler.dieAction;
+    const toggleConnectionAction: ToggleConnectionAction = actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
 
 
     amqpAdapter.sendToClient = jest.fn();
@@ -1412,6 +1414,33 @@ describe("DungeonMaster Actions", () => {
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
             data: { message: `Hallo` },
+        });
+    });
+
+    test('ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection', () => {
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'closed');
+        expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('closed')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-O wurde geschlossen!` },
+        });
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'open');
+        expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('open')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-O wurde geoeffnet!` },
+        });
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'south', 'closed');
+        expect(TestDungeon.rooms[TestRoom.id].connections.south).toBe('closed')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geschlossen!` },
+        });
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'south', 'open');
+        expect(TestDungeon.rooms[TestRoom.id].connections.south).toBe('open')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geoeffnet!` },
         });
     });
 })

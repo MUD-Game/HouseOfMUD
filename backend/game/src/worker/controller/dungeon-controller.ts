@@ -77,7 +77,9 @@ export class DungeonController {
         let character = await this.getCharacter(characterName);
         this.dungeon.characters[characterName] = character;
         await this.amqpAdapter.initClient(characterName);
-        await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
+        if (characterName !== 'dungeonmaster') {
+            await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
+        }
         this.amqpAdapter.broadcastAction('message', { message: `${characterName} ist dem Dungeon beigetreten!` });
         sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
         if (characterName !== 'dungeonmaster') {

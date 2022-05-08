@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                     <img id="header-logo" src={Logo} alt="Logo HouseOfMUD" />
                 </Link>
             </Row>
-            {location.pathname!=='/login' && location.pathname!=='/register' ?
+            {location.pathname!=='/login' && location.pathname!=='/register' && location.pathname!=='/requestpasswordreset' ?
                 <Row className="mt-3 align-items-center">
                     <Col className="text-start">
                         <p className="headline">{auth.user ? <>{t(`header.welcome`)} <Link to="/user-settings"><b>{auth.user}<Gear size={15} style={{transform: "translateY(-6px)"}}/></b></Link></>: null}</p>

@@ -91,7 +91,7 @@ const Game: React.FC<GameProps> = ({ }) => {
                 <div className="col col-md-3 col-lg-2">
                     {miniMapData && <Minimap {...miniMapData} />}
                     <OnlinePlayers players={null} />
-                    <ChatFilter filter={null} />
+                    {miniMapData && <ChatFilter { ...{rooms: Object.values(miniMapData.rooms).map( room => room.name) } } />}
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>
                 <div className="col col-md-6 col-lg-8">

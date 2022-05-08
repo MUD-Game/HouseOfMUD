@@ -7,14 +7,40 @@
  */
 
 import React from 'react'
+import { MudRoom } from 'src/types/dungeon';
+import { useTranslation } from 'react-i18next';
+import MudTypeahead from '../Custom/Typeahead';
 export interface ChatFilterProps {
-    filter: any; //TODO: define item data
+    // filter: any; //TODO: define item data
 }
 
-const ChatFilter: React.FC<ChatFilterProps> = ({ filter }) => {
+export interface Filter {
+    rooms: string[];
+}
+
+
+export interface ChatFilterProps extends Filter { }
+
+const ChatFilter: React.FC<ChatFilterProps> = (props) => {
+    const [rooms, setRooms] = React.useState<Filter["rooms"]>(props.rooms);
+
+    const {t} = useTranslation();
+
     return (
-        <input className="input-standard drawn-border" type="text" name="filter" id="chatfilter-input" autoComplete='off' placeholder="Raum-Filter" />
+        <MudTypeahead
+            colmd={12}
+            title=""
+            id={"room-actions-typeahead"}
+            labelKey={(option: any) => `${option}`}
+            options={rooms}
+            multiple
+            onChange={(e: any) => {
+                // setSelectedRoomActions(e);
+            }}
+            placeholder={t(`game.filter`)}
+            // selected={selectedRoomActions}
+        />
     )
 }
 
-export default ChatFilter;    
+export default ChatFilter;

@@ -34,10 +34,11 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     const [characters, setCharacters] = React.useState<CharactersResponseData[]>([] as CharactersResponseData[]);
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
-        if (!dungeon) return;
-        supervisor.getCharacterAttributes(dungeon, {}, setDungeonData, error => setError(error.error));
-        supervisor.getCharacters(dungeon, {}, setCharacters, error => setError(error.error));
-    }, []);
+        if(dungeon){
+            supervisor.getCharacterAttributes(dungeon, {}, setDungeonData, error => setError(error.error));
+            supervisor.getCharacters(dungeon, {}, setCharacters, error => setError(error.error));
+        }
+    }, [dungeon]);
 
 
     const fetchNewCharacters = () => {

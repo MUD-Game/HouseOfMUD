@@ -6,13 +6,14 @@
  */
 
 import React from 'react';
-import { Modal, Button, ModalProps, Container } from 'react-bootstrap';
+import { Modal, Button, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
 import { validator } from 'src/utils/validator';
 import { MudCharacterClass, MudCharacterStats } from '../../../types/dungeon';
 import '../index.css'
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';
+import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 
 export interface AddClassModalProps {
     show: boolean;
@@ -25,7 +26,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
 
     const {t} = useTranslation();
     const dt = 'dungeon_configurator';
-
+    const dconf = useDungeonConfigurator();
     const [name, setName] = React.useState<string>(props.editData?.name || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
     const [hitPoints, setHitPoints] = React.useState<number>(props.editData?.startStats?.hp || 0);
@@ -39,6 +40,10 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     }
     
     const onSubmit = () => {
+        if (validator.alreadyExists(name, "name", dconf.classes)) {
+            setError(t(`classalreadyexists`));
+            return;
+        }
         if (modalIsInvalid()) {
             setError("failvalidation.class");
         } else {

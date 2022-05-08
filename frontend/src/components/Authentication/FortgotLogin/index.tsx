@@ -9,26 +9,18 @@
 import React from 'react'
 import {Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
 import Alert from 'src/components/Custom/Alert';
 import { useAuth } from 'src/hooks/useAuth';
 type ForgotLoginProps = {}
 
-interface LocationState {
-    from: { pathname: string }
-}
 const ForgotLogin: React.FC<ForgotLoginProps> = (props) => {
-    let navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
     const [email, setEmail] = React.useState("");
     const [error, setError] = React.useState("");
     const [info, setInfo] = React.useState("");
     const {t} = useTranslation();
-    let location = useLocation();
     let auth = useAuth();
-    let token = new URLSearchParams(location.search).get('token')!;
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();

@@ -40,18 +40,6 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({ id, name, description, curr
         navigate("/select-character");
     }
 
-    let joinDemo = () => {
-        game.setDungeon(id);
-        game.setDungeonName(name);
-        navigate("/demo-join");
-    }
-
-    let startDemo = () => {
-        game.setDungeon(id);
-        game.setDungeonName(name);
-        navigate("/demo-start");
-    }
-
     return (
         <Row className="dashboard-list align-items-center pt-1 pb-2 mb-2">
             <div className="col-3">

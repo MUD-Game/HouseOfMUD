@@ -13,10 +13,8 @@ import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import Busy from '../Busy';
 import Alert from '../Custom/Alert';
 import MudInput from '../Custom/Input';
-import MudTypeahead from '../Custom/Typeahead';
 import DungeonObjectList from './DungeonObjectList';
 import RoomConfigurator from './RoomConfigurator';
-type Option = string | { [key: string]: any };
 
 export interface DungeonConfiguratorProps { }
 
@@ -24,7 +22,7 @@ interface LocationState {
     dungeonId?: string;
 }
 
-const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
+const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const tl = "dungeon_configurator";

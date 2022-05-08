@@ -22,7 +22,7 @@ import Alert from '../Custom/Alert';
 import { MinimapProps } from './Minimap';
 export interface GameProps { }
 
-const Game: React.FC<GameProps> = ({ }) => {
+const Game: React.FC<GameProps> = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
 
@@ -60,7 +60,7 @@ const Game: React.FC<GameProps> = ({ }) => {
                 setError("rabbitmq.logout")
             });
         }
-    }, [])
+    }, [isAbleToJoinGame, rabbit]);
 
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />

@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
 export interface GameProps { }
 
-const Game: React.FC<GameProps> = ({ }) => {
+const Game: React.FC<GameProps> = () => {
 
     const {t} = useTranslation();
     const navigate = useNavigate();
@@ -38,18 +38,19 @@ const Game: React.FC<GameProps> = ({ }) => {
     const [inventoryData, setInventoryData] = React.useState<InventoryProps["inventoryData"]>([]);
     const [hudData, setHudData] = React.useState<HUDProps | null>(null);
 
-    const onUnload = (e: any) => {
-        e.preventDefault();
-        rabbit.logout(() => { }, (error) => {
-            setError("rabbitmq.logout")
-        });
-    }
+    
 
     const miniMapSubscriber = (roomData: MinimapProps) => {
         setMiniMapData(roomData);
     }
 
     useEffect(() => {
+        const onUnload = (e: any) => {
+            e.preventDefault();
+            rabbit.logout(() => { }, (error) => {
+                setError("rabbitmq.logout")
+            });
+        }
         window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
@@ -68,7 +69,7 @@ const Game: React.FC<GameProps> = ({ }) => {
                 setError("rabbitmq.logout")
             });
         }
-    }, [])
+    }, [rabbit, isAbleToJoinGame, setInventoryData, setHudData, setError, setMiniMapData]);
 
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />

@@ -168,8 +168,13 @@ export class API {
         // create dungeon
         app.post('/dungeon', this.authProvider.auth, async (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
-            const {user, userID} = req.cookies;
+            const {userID} = req.cookies;
             if(dungeonData){
+                // Check if dungeon with name already exists
+                if(this.hostLink.dungeonNameExists(dungeonData.name)){
+                    res.status(400).json({ ok: 0, error: 'dungeonalreadyexists' });
+                    return;
+                }
                 dungeonData.masterId = userID;
                 dungeonData.creatorId = userID;
                 this.dba.storeDungeon(dungeonData).then(dungeon => {

@@ -249,6 +249,10 @@
             "title": "NPC existiert bereits",
             "text": "Es existiert bereits ein NPC mit diesem Namen!"
         },
+        "dungeonalreadyexists":{
+            "title": "Dungeon existiert bereits",
+            "text": "Es existiert bereits ein Dungeon mit diesem Namen!"
+        },
         "speciesalreadyexists":{
             "title": "Spezies existiert bereits",
             "text": "Es existiert bereits eine Spezies mit diesem Namen!"

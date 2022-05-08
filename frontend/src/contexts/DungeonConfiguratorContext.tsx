@@ -797,7 +797,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = characterClassKey.selected + "";
                 // Set the key to a new id 
-                setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
                 let temp = classes;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -817,7 +816,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = itemsKey.selected + "";
                 // Set the key to a new id
-                setItemsKey({ ...itemsKey, selected: itemsKey.nextKey });
                 let temp = items;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -836,7 +834,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             } else {
                 cc.id = gendersKey.selected + "";
                 // Set the key to a new id
-                setGendersKey({ ...gendersKey, selected: gendersKey.nextKey });
                 let temp = genders;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -855,7 +852,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             } else {
                 cc.id = speciesKey.selected + "";
                 // Set the key to a new id
-                setSpeciesKey({ ...speciesKey, selected: speciesKey.nextKey });
                 let temp = species;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -874,10 +870,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = npcsKey.selected + "";
                 // Set the key to a new id
-                setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey });
                 let temp = npcs;
                 let index = temp.findIndex((c) => c.id === cc.id);
-                console.log(cc);
                 temp[index] = cc;
                 setNpcs(temp);
             }
@@ -910,7 +904,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = actionsKey.selected + "";
                 // Set the key to a new id
-                setActionsKey({ ...actionsKey, selected: actionsKey.nextKey });
                 let temp = actions;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;

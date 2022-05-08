@@ -14,9 +14,8 @@ import { MudNpc } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import '../index.css'
 import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
-import Typeahead from '../../Custom/Typeahead';
+import MudSelect from '../../Custom/Select';
 
-type Option = string | { [key: string]: any };
 export interface AddNpcModalProps {
     show: boolean;
     onHide: () => void;
@@ -30,17 +29,9 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
     const { species } = useDungeonConfigurator();
     const dt = 'dungeon_configurator';
 
-    let initialSpecies:Option[] = [];
-    if(props.editData) {
-        const sId = props.editData.species;
-        const speciesName = species.find(s => s.id === sId);
-        console.log(speciesName, "Npc Modal");
-        initialSpecies = [speciesName as unknown as Option];
-    }
-
     const [name, setName] = React.useState<string>(props.editData?.name || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const [speciesSelection, setSpeciesSelection] = React.useState<Option[]>(initialSpecies);
+    const [speciesSelection, setSpeciesSelection] = React.useState<string>(props?.editData?.species || "");
 
     const [error, setError] = React.useState<string>("");
 
@@ -53,12 +44,13 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
             setError("failvalidation.npc"); //TODO: add failvalidation.npc error
         } else {
             setError("");
-            const characterItem: MudNpc = {
+            const npcItem: MudNpc = {
                 name,
                 description,
-                species: (speciesSelection[0] as unknown as MudNpc).id,
+                species: speciesSelection,
             } as MudNpc;
-            props.onSendNpc(characterItem);
+            // set the input fields to empty
+            props.onSendNpc(npcItem);
             props.onHide();
         }
     }
@@ -70,9 +62,6 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
         }
     }
 
-    console.log(species.map(({ from_server, name, ...other }) => {
-        return { ...other, label:name }
-    }))
 
 
     return (
@@ -92,9 +81,12 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
                     <Alert message={error} type="error" setMessage={setError} />
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <Typeahead id={"typeahead-npc-species"} labelKey={(option:any)=> `${option.name}`} options={species.map(({ from_server, name, ...other })=> {
-                        return { ...other, name }
-                    }) as Option[]} colmd={6} title={t(`dungeon_keys.species`)} selected={speciesSelection} onChange={(event) => setSpeciesSelection(event)} placeholder={t(`common.select_species`)} />
+                    <MudSelect value={speciesSelection} colmd={6} title={t(`dungeon_keys.species`)} onChange={(event) => setSpeciesSelection(event.target.value)} placeholder={t(`common.select_species`)} label={t(`dungeon_keys.species`)}>
+                        <option value="-1" hidden>{t(`common.select_species`)}</option>
+                        {species.map(({name, id})=>{
+                            return <option key={`npc-species-option-${id}`} value={id}>{name}</option>
+                        })}
+                    </MudSelect>
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

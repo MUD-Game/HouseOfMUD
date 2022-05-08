@@ -878,9 +878,28 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
         <AddRoomModal coordinates={roomCoordiantes || [0, 0]} key={"Room:" + Object.keys(rooms).length} onSendRoom={(cc: MudRoom) => {
             const newKey: [number, number] = [cc.xCoordinate, cc.yCoordinate];
-            let temp_rooms = rooms;
-            temp_rooms[String(newKey)] = cc;
-            setRooms(temp_rooms);
+            // Save the old room
+            let temp = rooms;
+            if ((currentRoom && roomsKey !== "" && roomCoordiantes)) {
+                let oldRoom = temp[roomsKey];
+                oldRoom.name = selectedRoomName;
+                oldRoom.description = selectedRoomDescription;
+                oldRoom.items = [];
+                oldRoom.npcs = [];
+                oldRoom.actions = [];
+                selectedRoomItems.forEach((i: any) => {
+                    oldRoom.items.push({ item: i.id, count: selectedRoomItemValues[i.id] });
+                });
+                selectedRoomActions.forEach((i: any) => {
+                    oldRoom.actions.push(i.id);
+                });
+                selectedRoomNpcs.forEach((i: any) => {
+                    oldRoom.npcs.push(i.id);
+                });
+                temp[roomsKey] = oldRoom;
+            }
+            temp[String(newKey)] = cc;
+            setRooms(temp);
             setRoomsKey(String(newKey));
             setInitialRoomConnections(newKey);
             setEditData(null);

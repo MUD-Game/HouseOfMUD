@@ -877,6 +877,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey });
                 let temp = npcs;
                 let index = temp.findIndex((c) => c.id === cc.id);
+                console.log(cc);
                 temp[index] = cc;
                 setNpcs(temp);
             }

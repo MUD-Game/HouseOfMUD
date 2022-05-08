@@ -1,21 +1,25 @@
 /**
- * @module Chat
+ * @module DungeonMaster-Chat
  * @category React Components
  * @description Chat Component to display the Chat-Output and Input-Field
- * @children {@linkcode ChatOutput} {@linkcode ChatInput}
+ * @children {@linkcode DungeonMaster-ChatOutput} {@linkcode DungeonMaster-ChatInput}
  * @props {@linkcode ChatProps}
  */
 
 import React from 'react'
 import ChatInput from './ChatInput';
 import ChatOutput from './ChatOutput';
-export interface ChatProps { }
+import { SendsMessagesProps } from '../../../types/misc';
+export interface ChatProps {
+    onSendCommand: (command:string) => void;
+    selectedRooms: string[];
+}
 
-const Chat: React.FC<ChatProps> = ({ }) => {
+const Chat: React.FC<ChatProps & SendsMessagesProps> = ({ selectedRooms, messageCallback, onSendCommand }) => {
     return (
         <>
-            <ChatOutput/>
-            <ChatInput />
+            <ChatOutput selectedRooms={selectedRooms} />
+            <ChatInput onSendCommand={onSendCommand} messageCallback={messageCallback} />
         </>
     )
 }

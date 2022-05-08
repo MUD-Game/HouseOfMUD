@@ -9,21 +9,19 @@
 import React, { FormEvent } from 'react';
 import { supervisor } from 'src/services/supervisor';
 import { CreateCharacterRequest, GetCharacterAttributesResponse } from '@supervisor/api';
-import { useAuth } from '../../hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Col, Row } from 'react-bootstrap';
-import MudInput from '../Custom/MudInupt';
-import MudSelect from '../Custom/MudSelect';
+import MudInput from '../Custom/Input';
+import MudSelect from '../Custom/Select';
 import { useTranslation } from 'react-i18next';
+import { SendsMessagesProps } from '../../types/misc';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
 }
 
-interface PropValues { id: string; name: string; description: string }
-const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, genders, species, onCreate }) => {
+const CreateNewCharacter: React.FC<CreateNewCharacterProps & SendsMessagesProps> = ({ classes, genders, species, onCreate, messageCallback }) => {
 
-    const auth = useAuth();
     const game = useGame();
     const {t} = useTranslation();
 
@@ -43,7 +41,7 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
         supervisor.createCharacter(game.dungeon, bodyData, (data) => {
             onCreate();
         }, (error) => {
-            alert(error);
+            messageCallback(error.error);
         })
 
     }
@@ -53,10 +51,6 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps> = ({ classes, gender
             <p className="headline">{t("character_creator.new_character")}</p>
             <Row className="py-3 g-4">
                 <MudInput required colmd={6} name="name" type="text" placeholder="Charaktername wählen" />
-                {/* <div className="col-md-6">
-                    <label htmlFor="fullname"><b>Fullname:</b></label>
-                    <input required className="drawn-border input-standard" type="text" name="fullname" placeholder="Fullname wählen" />
-                </div> */}
                 <MudSelect required colmd={6} name="class" label={t("dungeon_keys.class")}>
                     {classes.map((cl, index) => {
                         return (

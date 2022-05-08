@@ -1,0 +1,304 @@
+{
+    "info": {
+        "verifyemail": {
+            "text": "Confermare il tuo indirizzo e-mail facendo clic sul collegamento presente nell'e-mail.",
+            "title": "Registrazione riuscita"
+        }
+    },
+    "button": {
+        "login": "accesso",
+        "download": "Scarica",
+        "upload": "Caricamento",
+        "close": "Chiudi",
+        "yes": "Sì",
+        "edit": "Modifica",
+        "update": "Aggiorna",
+        "preview": "anteprima",
+        "register": "registrazione",
+        "delete": "eliminazione",
+        "remove": "rimozione",
+        "save": "Salva",
+        "cancel": "Annulla",
+        "logout": "Disconnetti",
+        "start": "avvio",
+        "no": "No",
+        "join": "adesione",
+        "ok": "OK.",
+        "share": "condivisione",
+        "create": "creazione",
+        "submit": "Invia"
+    },
+    "header": {
+        "welcome": "Benvenuto"
+    },
+    "common": {
+        "amount": "Numero",
+        "isglobal": "Azione globale?",
+        "select_species": "Seleziona specie",
+        "select_actions": "Seleziona azioni",
+        "404": "Pagina non trovata...",
+        "select_events": "Seleziona eventi",
+        "select_npcs": "Seleziona NPC",
+        "start_room": {
+            "description": "Questo è lo spazio iniziale",
+            "name": "Spazio iniziale"
+        },
+        "select_items": "Seleziona elementi"
+    },
+    "verify_email": {
+        "error": "Impossibile verificare la posta, token non valido o verifica già eseguita.",
+        "success": "Verifica della posta elettronica riuscita. Verranno inoltrati al login tra 3 secondi",
+        "title": "Verifica e-mail"
+    },
+    "game": {
+        "inventory": "Inventario",
+        "queue": "coda",
+        "leave": "Uscita"
+    },
+    "user_settings": {
+        "delete_user": {
+            "confirmation": {
+                "text": "Sei sicuro di voler cancellare il tuo account? Questo passo non può essere annullato.",
+                "title": "Elimina utente"
+            },
+            "button": "Elimina utente"
+        },
+        "language": {
+            "pl-PL": "Polacco",
+            "es-ES": "Spagnolo",
+            "it-IT": "Italiano",
+            "fr-FR": "Francese",
+            "de-DE": "tedesco",
+            "en-US": "inglese",
+            "nl-NL": "Olandese",
+            "label": "Lingua"
+        },
+        "account": "Conto",
+        "profile": "Profilo",
+        "title": "preferenze utente"
+    },
+    "character_creator": {
+        "new_character": "Crea nuovo carattere",
+        "create": "carattere creazione",
+        "pick_character": "Seleziona carattere"
+    },
+    "error": {
+        "exists": {
+            "email": {
+                "text": "Indirizzo e-mail già in uso.",
+                "title": "Indirizzo e-mail non valido"
+            },
+            "user": {
+                "text": "Scegliere un altro nome utente, già in uso.",
+                "title": "Nome utente non valido"
+            }
+        },
+        "rabbitmq": {
+            "send": {
+                "text": "Errore durante l'invio del messaggio. Se il problema persiste, riprovare o contattare un amministratore.",
+                "title": "Non ha funzionato"
+            },
+            "logout": {
+                "text": "Tentativo di riconnetterti se non funziona, contattare un amministratore.",
+                "title": "Connessione a RabbitMQ interrotta"
+            },
+            "login": {
+                "text": "Riprovare o contattare un amministratore.",
+                "title": "Impossibile connettersi a RabbitMQ"
+            }
+        },
+        "deletestartroom": {
+            "text": "Non puoi cancellare la sala da lancio!",
+            "title": "Non si può!"
+        },
+        "failvalidation": {
+            "item": {
+                "text": "Per creare un nuovo elemento, è necessario inserire una voce nei campi seguenti: Nome, descrizione!",
+                "title": "Immettere tutti i dati richiesti"
+            },
+            "species": {
+                "text": "Indicare il nome della specie",
+                "title": "Immettere tutti i dati richiesti"
+            },
+            "class": {
+                "text": "Per creare una nuova classe, è necessario inserire una voce nei campi seguenti: Nome, descrizione, max HP, max Mana, max Dmg I valori numerici non devono essere 0!",
+                "title": "Immettere tutti i dati richiesti"
+            },
+            "gender": {
+                "text": "Indicare il nome del sesso",
+                "title": "Immettere tutti i dati richiesti"
+            },
+            "action": {
+                "text": "Per creare una nuova azione, è necessario disporre di almeno una voce nei campi seguenti: Nome, Descrizione, Output. In tutti gli eventi.",
+                "title": "Immettere tutti i dati richiesti"
+            },
+            "room": {
+                "text": "Per salvare una room, è necessario inserire una voce nei campi seguenti: Nome, descrizione!",
+                "title": "Immettere tutti i dati richiesti"
+            },
+            "dungeon": {
+                "text": "Per creare un dungeon, è necessario inserire una voce nei campi seguenti: Nome, descrizione, numero massimo di giocatori, sesso, specie e classe.",
+                "title": "Immettere tutti i dati richiesti"
+            }
+        },
+        "reference_in_npc": {
+            "text": "Esiste almeno un NPC che appartiene a questa specie, risolve il conflitto e riprova.",
+            "title": "Non puoi eliminare questa specie"
+        },
+        "reference_in_action": {
+            "text": "Esiste almeno un'azione che accede a questo elemento, risolve il conflitto e riprova.",
+            "title": "Non è possibile eliminare questo elemento"
+        },
+        "unauthorized": {
+            "text": "Impossibile trovare un utente con i dati specificati o le credenziali non sono corrette.",
+            "title": "Credenziali errate"
+        },
+        "internal": {
+            "text": "Errore del server interno. Se il problema persiste, riprovare più tardi. Contattare l'amministratore.",
+            "title": "Errore del server interno"
+        }
+    },
+    "dungeon_keys": {
+        "room": "Stanza",
+        "maxdmg": "max Dmg",
+        "connections": {
+            "inactive": "Disattivato (nessun passaggio)",
+            "closed": "Chiuso",
+            "open": "Aperta"
+        },
+        "output": "Output",
+        "maxmana": "max mana",
+        "items": "Items",
+        "command": "comando",
+        "maxhp": "max HP",
+        "species": "Specie",
+        "class": "Classe",
+        "gender": "Sesso",
+        "events": "Eventi",
+        "npcs": "NPC",
+        "status": "Stato",
+        "npc": "NPC",
+        "description": "Descrizione",
+        "itemsNeeded": "Oggetti necessari",
+        "players": "Giocatori",
+        "actions": "Azioni",
+        "name": "Nome"
+    },
+    "dungeon_configurator": {
+        "inputs": {
+            "species": {
+                "placeholder": "Specie",
+                "emptyLabel": "Inserisci nuova specie...",
+                "title": "Specie"
+            },
+            "genders": {
+                "placeholder": "Genere",
+                "emptyLabel": "Inserisci nuovo sesso...",
+                "title": "Genere"
+            },
+            "maxPlayers": {
+                "placeholder": "Numero massimo di giocatori"
+            },
+            "description": {
+                "placeholder": "Descrizione"
+            },
+            "name": {
+                "placeholder": "Nome"
+            }
+        },
+        "title": "Configurazione di Dungeon",
+        "confirmations": {
+            "delete_npc": {
+                "text": "Sicuro di voler cancellare questo NPC? Questo passaggio elimina l'NPC da tutte le stanze e non può essere annullato.",
+                "title": "Elimina NPC"
+            },
+            "delete_room": {
+                "text": "Sicuro di voler cancellare questa stanza?",
+                "title": "Elimina room"
+            },
+            "delete_action": {
+                "text": "Sicuro di voler cancellare questa azione? Questo passaggio elimina l'azione da tutte le stanze e non può essere annullato.",
+                "title": "Elimina azione azione"
+            },
+            "delete_gender": {
+                "text": "Sei sicuro di voler cancellare questo sesso? Questo passo non può essere annullato.",
+                "title": "Elimina sesso"
+            },
+            "delete_item": {
+                "text": "Sicuro di voler cancellare questo elemento? Questo passaggio elimina l'elemento da tutte le stanze e non può essere annullato.",
+                "title": "Elimina elemento"
+            },
+            "delete_species": {
+                "text": "Sicuro di voler eliminare questa specie? Questo passo non può essere annullato.",
+                "title": "Elimina specie"
+            },
+            "delete_class": {
+                "text": "Sicuro di voler cancellare questa classe?",
+                "title": "Elimina classe"
+            }
+        },
+        "buttons": {
+            "create_species": "nuove specie",
+            "create_gender": "nuovo sesso",
+            "create_npc": "creare un nuovo NPC",
+            "create_action": "Crea nuova azione",
+            "create_item": "creare un nuovo elemento",
+            "create_class": "creare una nuova classe"
+        },
+        "rooms": {
+            "delete_room": "Elimina room",
+            "save_room": "Salva room",
+            "create_room": "Crea una nuova stanza",
+            "title": "Locali"
+        }
+    },
+    "login": {
+        "register_here": "Registra qui",
+        "login_here": "Accesso",
+        "have_account": "Account già esistente?",
+        "no_account": "Nessun account?",
+        "email": "Indirizzo e-mail",
+        "username": "NomeUtente",
+        "password": "password"
+    },
+    "dashboard": {
+        "delete_dungeon": {
+            "confirmation": {
+                "text": "Sicuro di voler cancellare questo dungeon? Questo passo non può essere annullato.",
+                "title": "Elimina dungeon"
+            }
+        },
+        "already_in_dungeon": "Hai gia' lanciato questo Dungeon",
+        "my_dungeons": "Dungeon personalizzati",
+        "all_dungeons": "Tutti i dungeon",
+        "create_new_dungeon": "Crea nuovo dungeon",
+        "search_dungeon": "Ricerca Dungeon",
+        "title": "Dashboard"
+    },
+    "room_tooltip": {
+        "toggle_connections": {
+            "text": "Durante la creazione, le connessioni tra le stanze vengono create automaticamente. Queste connessioni possono essere aperte, chiuse e disattivate con un solo clic.",
+            "title": "Personalizzazione delle connessioni tra room"
+        },
+        "edit_room": {
+            "text": "Cliccando su una stanza, la stanza viene selezionata e può essere riempita di vita nel modulo sottostante",
+            "title": "Modifica room"
+        },
+        "navigation": {
+            "refocus": "Reimposta posizione e zoom",
+            "zoom_in_out": "Zoom dentro e fuori",
+            "drag": {
+                "text": "Trascinare la mappa con il mouse",
+                "title": "Sposta"
+            },
+            "ctrl": "Ctrl",
+            "scroll_wheel": "Mouse",
+            "title": "navigazione"
+        },
+        "add_room": {
+            "text": "Facendo clic su uno spazio vuoto (grigio) viene visualizzata una finestra di dialogo per l'aggiunta di uno spazio. Qui potete specificare il nome della stanza e la descrizione.",
+            "title": "Aggiungi room"
+        },
+        "title": "Editor room"
+    }
+}

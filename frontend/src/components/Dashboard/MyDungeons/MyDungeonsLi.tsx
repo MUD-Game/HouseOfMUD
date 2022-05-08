@@ -12,13 +12,13 @@ import React from "react"
 import { Row } from "react-bootstrap";
 import { CloudCheck, CloudSlash, Lock, Pencil, Play, Stop, Trash, Unlock } from "react-bootstrap-icons";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Busy from "src/components/Busy";
 import ConfirmationDialog from "src/components/Modals/BasicModals/ConfirmationDialog";
 import { useGame } from "src/hooks/useGame";
 import { supervisor } from "src/services/supervisor";
 import "./index.css"
+import { SendsMessagesProps } from '../../../types/misc';
 
 
 const DUNGEON_MASTER_NAME = "dungeonmaster";
@@ -34,7 +34,7 @@ export interface MyDungeonsLiProps {
     fetchMyDungeons: () => void;
 }
 
-const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status, fetchMyDungeons }) => {
+const MyDungeonsLi: React.FC<MyDungeonsLiProps & SendsMessagesProps> = ({ id, name, description, currentPlayers, maxPlayers, isPrivate, status, fetchMyDungeons, messageCallback }) => {
 
     const game = useGame();
     const navigate = useNavigate();
@@ -51,24 +51,27 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
 
     const join = ()=>{
 
-        supervisor.login(id, {}, (data) => {
+        supervisor.login(id, { character: DUNGEON_MASTER_NAME }, (data) => {
+            setIsBusy(false);
             game.setCharacter(DUNGEON_MASTER_NAME);
             game.setVerifyToken(data.verifyToken);
             game.setDungeon(id);
             game.setDungeonName(name);
-            navigate("/game");
+            navigate("/dungeon-master");
         }, (error) => {
+            setIsBusy(false);
             // TODO: handle error in a better way
         });
 
     }
 
     const startAndJoin = () => {
+        setIsBusy(true);
         supervisor.startDungeon(id, {}, (data) => {
-            setTimeout(() => {
-                join();
-            }, 2000);
+            join();
         }, (error) => {
+            messageCallback(error.error);
+            setIsBusy(false);
         });
     } 
 
@@ -102,7 +105,7 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                             supervisor.deleteDungeon(id, {}, (data)=>{
                             setIsBusy(false);
                             fetchMyDungeons();
-                        }, (error)=>{}); })
+                            }, (error) => { messageCallback(error.error) }); })
                     }} />
                     
                 </div>
@@ -112,11 +115,10 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps> = ({ id, name, description, curr
                         setIsBusy(true);
                         supervisor.stopDungeon(id, {}, (data) => {
                             // setIsBusy(false);
-                            setTimeout(()=>{
-                                setIsBusy(false);
-                                fetchMyDungeons();
-                            }, 5000);
-                        }, (error) => {alert(error.error)})
+                            setIsBusy(false);
+                            fetchMyDungeons();
+                            // TODO: handle error correctly
+                        }, (error) => { messageCallback(error.error) })
                     }} />
                 </div>
                 }

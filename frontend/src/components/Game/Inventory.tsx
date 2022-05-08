@@ -7,14 +7,25 @@
  */
 
 import React from 'react'
+import { useTranslation } from 'react-i18next';
 export interface InventoryProps {
-    items: any; //TODO: define item data
+    inventoryData: { item: string
+        count: number; }[]; //TODO: define item data
 }
 
-const Inventory: React.FC<InventoryProps> = ({ items }) => {
+const Inventory: React.FC<InventoryProps> = ({ inventoryData }) => {
+    const {t} = useTranslation();
+
     return (
-        <div className="inventory drawn-border mb-2">
-            <p className='text-center pt-5'>Inventory</p>
+        <div className="inventory drawn-border mb-2 p-2 pt-1">
+            <div className="inventory-wrap p-1">
+                <p className='m-0'><u>{t("game.inventory")}</u></p>
+                <ul className="ps-3">
+                    {inventoryData.map(itemName => {
+                        return ( <li key={itemName.item}> {itemName.item} [{itemName.count}] </li> )
+                    })}
+                </ul>
+            </div>
         </div>
     )
 }

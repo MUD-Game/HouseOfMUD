@@ -1,11 +1,12 @@
 import { ConnectionInfo } from "./connectionInfo";
+import { ItemInfo } from "./itemInfo";
 
 export interface Room {
     id: string;
     name: string;
     description: string;
     npcs: string[];
-    items: string[];
+    items: ItemInfo[];
     connections: ConnectionInfo;
     actions: string[];
     xCoordinate: number;
@@ -16,9 +17,12 @@ export interface Room {
     getDescription(): string
     getEastConnection(): "open" | "inactive" | "closed"
     getSouthConnection(): "open" | "inactive" | "closed"
-    getItems(): string[]
+    getItemInfos(): ItemInfo[]
     getNpcs(): string[]
     getActions(): string[]
+
+    setEastConnection(status: string): any
+    setSouthConnection(status: string): any
 }
   
 export class RoomImpl implements Room {
@@ -26,7 +30,7 @@ export class RoomImpl implements Room {
     name: string;
     description: string;
     npcs: string[];
-    items: string[];
+    items: ItemInfo[];
     connections: ConnectionInfo;
     actions: string[];
     xCoordinate: number;
@@ -37,7 +41,7 @@ export class RoomImpl implements Room {
         name: string,
         description: string,
         npcs: string[],
-        items: string[],
+        items: ItemInfo[],
         connections: ConnectionInfo,
         actions: string[],
         xCoordinate: number,
@@ -74,7 +78,7 @@ export class RoomImpl implements Room {
         return this.connections.south;
     }
 
-    getItems(): string[] {
+    getItemInfos(): ItemInfo[] {
         return this.items
     }
 
@@ -84,5 +88,23 @@ export class RoomImpl implements Room {
 
     getActions(): string[] {
         return this.actions
+    }
+
+    setEastConnection(statusString: string) {
+        let status: "open" | "inactive" | "closed" = statusString as "open" | "inactive" | "closed";
+        if (status === "inactive") {
+            throw new Error("Cannot set room connection to inactive");
+        } else {
+            this.connections.east = status;
+        }
+    }
+
+    setSouthConnection(statusString: string) {
+        let status: "open" | "inactive" | "closed" = statusString as "open" | "inactive" | "closed";
+        if (status === "inactive") {
+            throw new Error("Cannot set room connection to inactive");
+        } else {
+            this.connections.south = status;
+        }
     }
 }

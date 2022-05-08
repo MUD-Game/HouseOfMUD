@@ -5,10 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
+    "start": "concurrently --names 'SUPERVISOR,HOST,FRONTEND' --prefix-colors 'red,yellow,blue' --kill-others  \"npm run startsupervisor\" \"npm run starthost\" \"npm run startfrontend\"",
     "startfrontend": "cd ./frontend && npm start",
     "starthost": "cd ./backend/game && npm start",
     "startsupervisor": "cd ./backend/supervisor && npm start",
-    "buildsupervisor": "cd ./backend/supervisor && npm run build"
+    "buildsupervisor": "cd ./backend/supervisor && npm run build",
+    "typedochost": "cd ./backend/game && npx typedoc",
+    "typedocfrontend": "cd ./frontend && npx typedoc",
+    "typedocsupervisor": "cd ./backend/supervisor && npx typedoc",
+    "typedoc": "npm run typedochost && npm run typedocfrontend && npm run typedocsupervisor"
   },
   "jest": {
     "coverageReporters": [
@@ -57,6 +62,7 @@
     "@types/amqplib": "^0.8.2",
     "@types/js-yaml": "^4.0.5",
     "amqplib": "^0.8.0",
+    "concurrently": "^7.1.0",
     "fs": "^0.0.1-security",
     "jest": "^27.5.1",
     "jest-junit": "^13.1.0",

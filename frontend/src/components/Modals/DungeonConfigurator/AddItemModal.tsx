@@ -1,11 +1,19 @@
+/**
+ * @module AddItemModal
+ * @description Modal for adding a new Item to the dungeon.
+ * @author Raphael Sack
+ * @category Modal
+ */
+
 import React from 'react';
-import { Modal, Button, ModalProps, Container } from 'react-bootstrap';
+import { Modal, Button, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import MudInput from 'src/components/Custom/MudInupt';
+import Alert from 'src/components/Custom/Alert';
+import MudInput from 'src/components/Custom/Input';
 import { MudItem } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
-import { useMudConsole } from '../../../hooks/useMudConsole';
 import '../index.css'
+import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 //REFACTOR: Redunant Modal, make generic pls
 export interface AddItemModalProps {
     show: boolean;
@@ -18,17 +26,25 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
 
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
-
+    const dconf = useDungeonConfigurator();
     const [name, setName] = React.useState<string>(props.editData?.name || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const homosole = useMudConsole();
 
+    const [error, setError] = React.useState<string>("");
 
+    const modalIsInvalid = () => {
+        return validator.isEmpty(name) || validator.isEmpty(description);
+    }
 
     const onSubmit = () => {
-        if (validator.isEmpty(name) || validator.isEmpty(description)) {
-            homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddItemModal");
+        if (validator.alreadyExists(name, "name", dconf.items)) {
+            setError(t(`itemalreadyexists`));
+            return;
+        }
+        if (modalIsInvalid()) {
+            setError("failvalidation.item");
         } else {
+            setError("");
             const characterItem: MudItem = {
                 name,
                 description,
@@ -39,7 +55,7 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }
@@ -63,12 +79,13 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
+                    <Alert message={error} type="error" setMessage={setError} />
                     <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
+                        <Button onClick={() => { setError(""); props.onHide() }} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
                         <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.${props.editData ? 'edit' : 'create'}`)}</Button>

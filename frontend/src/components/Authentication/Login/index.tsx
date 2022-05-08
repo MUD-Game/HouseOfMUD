@@ -1,24 +1,19 @@
 /**
  * @module Login
  * @category React Components
- * @description Component to handle Login-In
+ * @description Component to handle Loggin In
  * @hooks {@linkcode useAuth}
- * ```jsx
- * <>
- *  <AvailableCharactersLi/>[]
- * </>
- * ```
  */
 
 
 import React from 'react'
-import { Alert, Container, Row } from 'react-bootstrap';
+import {Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
+import Alert from 'src/components/Custom/Alert';
 import { useAuth } from 'src/hooks/useAuth';
-import { useMudConsole } from '../../../hooks/useMudConsole';
 type LoginProps = {}
 
 interface LocationState {
@@ -30,7 +25,6 @@ const Login: React.FC<LoginProps> = (props) => {
     const [password, setPassword] = React.useState("");
     const [username, setUsername] = React.useState("");
     const [error, setError] = React.useState("");
-    const homsole = useMudConsole();
     const {t} = useTranslation();
     let location = useLocation();
     let auth = useAuth();
@@ -51,12 +45,7 @@ const Login: React.FC<LoginProps> = (props) => {
         <Container className="mt-5">
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
-                    {error !== "" ? <Alert variant="danger"  dismissible onClose={()=>setError("")}>
-                        <Alert.Heading>{t(`error.${error}.title`)}</Alert.Heading>
-                        <p>
-                            {t(`error.${error}.text`)}
-                        </p>
-                    </Alert> : null}
+                    <Alert message={error} setMessage={setError} type="error" />
                     {isLoading ? <Busy/> :
                         <form onSubmit={handleSubmit} autoComplete="new-password">
                         <div className="input-group py-2">
@@ -64,6 +53,7 @@ const Login: React.FC<LoginProps> = (props) => {
                         </div>
                         <div className="input-group pt-2">
                             <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
+                                <span className="small font-weight-light"><Link className="small font-weight-light" to="/requestpasswordreset">{t("login.forgot_password")}</Link></span>
                         </div>
                             <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.login")}</button> <br />
                             <span>{t("login.no_account")} <Link to="/register">{t("login.register_here")}</Link></span>

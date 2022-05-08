@@ -30,13 +30,13 @@ export class API {
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, verifyLink:string, transporter: any, cookiehost: string) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, transporter: any, cookiehost: string) {
         this.origin = origin;
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
-        this.authProvider = new AuthProvider(this.dba, salt, transporter, verifyLink, cookiehost);
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, origin, cookiehost);
     }
 
     /**
@@ -93,6 +93,9 @@ export class API {
 
         app.post('/auth/verify', this.authProvider.verifyEmail);
 
+        app.post('/auth/requestpassword', this.authProvider.requestPasswordReset);
+        app.post('/auth/resetpassword', this.authProvider.resetPassword);
+
         // TODO: Create actual authentication
         // platform authentication
         app.post('/auth/login', this.authProvider.auth ,  (req, res) => {
@@ -107,25 +110,17 @@ export class API {
 
         // login to dungeon
         app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
-            res.status(200).json({ok:1, verifyToken: this.generateVerifyToken()});
-            // let dungeonID: string = req.params.dungeonID;
-            // let body: any = req.body;
-            // if (body.user !== undefined && body.character !== undefined && body.authToken !== undefined) {
-            //     let user: string = body.user;
-            //     let character: string = body.character;
-            //     let authToken: string = body.authToken;
-            //     // TODO: Check if user has permission <-- will be solved with the auth middleware
-
-            //     if (this.hostLink.dungeonExists(dungeonID)) {
-            //         let verifyToken: string = this.generateVerifyToken();
-            //         this.hostLink.setCharacterToken(dungeonID, user, character, verifyToken);
-            //         res.json({ ok: 1, verifyToken: verifyToken });
-            //     } else {
-            //         res.json({ ok: 0, error: 'Dungeon does not exists' });
-            //     }
-            // } else {
-            //     res.json({ ok: 0, error: 'Invalid parameters' });
-            // }
+            let dungeonID: string = req.params.dungeonID;
+            let userID = req.cookies.userID;
+            let body: any = req.body;
+            if (body.character !== undefined && this.hostLink.dungeonExists(dungeonID)) {
+                let character = body.character;
+                let verifyToken: string = this.generateVerifyToken();
+                this.hostLink.setCharacterToken(dungeonID, userID, character, verifyToken);
+                res.status(200).json({ok:1, verifyToken: verifyToken});
+            } else {
+                res.status(400).json({ ok: 0, error: 'internal' });
+            }
         });
 
         // start dungeon
@@ -148,11 +143,11 @@ export class API {
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ (req, res) => {
+        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
-                this.hostLink.stopDungeon(dungeonID);
+                await this.hostLink.stopDungeon(dungeonID);
                 res.status(200).json({ ok: 1 });
             } else {
                 res.status(400).json({ ok: 0, error: 'dontexist' });
@@ -173,10 +168,13 @@ export class API {
         // create dungeon
         app.post('/dungeon', this.authProvider.auth, async (req, res) => {
             let dungeonData: any = req.body?.dungeonData;
-            const {user, userID} = req.cookies;
-            // let dungeonID = this.h/ostLink.createDungeon(dungeonData, user);
+            const {userID} = req.cookies;
             if(dungeonData){
-                console.log(userID);
+                // Check if dungeon with name already exists
+                if(this.hostLink.dungeonNameExists(dungeonData.name)){
+                    res.status(400).json({ ok: 0, error: 'dungeonalreadyexists' });
+                    return;
+                }
                 dungeonData.masterId = userID;
                 dungeonData.creatorId = userID;
                 this.dba.storeDungeon(dungeonData).then(dungeon => {
@@ -291,6 +289,7 @@ export class API {
                 let characterData: CharacterDataset = body.characterData;
                 characterData.userId = userID;
                 characterData.name = characterData.name;
+                characterData.exploredRooms = ["0,0"];
                 this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
                     res.status(200).json({ ok: 1, character: character });
                 }).catch(err => {

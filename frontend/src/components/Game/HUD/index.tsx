@@ -12,21 +12,18 @@
  */
 import React from 'react'
 import ResourceBar from './ResourceBar';
+
 export interface HUDProps {
-    health: number;
-    maxHealth: number;
-    mana: number;
-    maxMana: number;
-    damage: number;
-    maxDamage: number;
+    currentStats: {hp:number, mana:number, dmg:number};
+    maxStats: {hp:number, mana:number, dmg:number};
 }
 
-const HUD: React.FC<HUDProps> = ({ health, maxHealth, mana, maxMana, damage, maxDamage }) => {
+const HUD: React.FC<HUDProps> = ({currentStats, maxStats }) => {
     return (
         <div>
-            <ResourceBar variant='health' now={health} max={maxHealth} label='HP' />
-            <ResourceBar variant='mana' now={mana} max={maxMana} label='Mana' />
-            <ResourceBar variant='damage' now={damage} max={maxDamage} label='Damage' />
+            <ResourceBar variant='health' now={currentStats.hp} max={maxStats.hp} label='HP' />
+            <ResourceBar variant='mana' now={currentStats.mana} max={maxStats.mana} label='Mana' />
+            <ResourceBar variant='damage' now={currentStats.dmg} max={maxStats.dmg} label='Damage' />
         </div>
     )
 }

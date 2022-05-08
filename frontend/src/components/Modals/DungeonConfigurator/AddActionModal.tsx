@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react';
-import { Modal, Button, ModalProps, Form, Container } from 'react-bootstrap';
-import { Typeahead } from 'react-bootstrap-typeahead';
-import MudInput from 'src/components/Custom/MudInupt';
+/**
+ * @module AddActionModal
+ * @description Modal for adding a new Action to the dungeon.
+ * @author Raphael Sack
+ * @category Modal
+ */
+
+import React from 'react';
+import { Modal, Button, Container } from 'react-bootstrap';
+import MudInput from 'src/components/Custom/Input';
 import { MudActionElement } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
-import { useMudConsole } from '../../../hooks/useMudConsole';
 import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
-import { MudItem, MudEvent } from '../../../types/dungeon';
-import MudTypeahead from '../../Custom/MudTypeahead';
-import MudSelect from 'src/components/Custom/MudSelect';
+import { MudEvent } from '../../../types/dungeon';
+import MudTypeahead from '../../Custom/Typeahead';
 import '../index.css'
 import { useTranslation } from 'react-i18next';
+import Alert from 'src/components/Custom/Alert';
 type Option = string | { [key: string]: any };
 
 //REFACTOR: Redunant Modal, make generic pls
@@ -24,14 +29,14 @@ export interface AddActionModalProps {
 const AddActionModal: React.FC<AddActionModalProps> = (props) => {
 
     const dconf = useDungeonConfigurator();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const dt = 'dungeon_configurator';
     let initialItemsNeeded: Option[] = [];
     let initialRemoveItems: Option[] = [];
     let initialAddItems: Option[] = [];
     let initialEvents: Option[] = [];
     let initialEventValues: { [key: string]: number } = {};
-   
+
     const constructToModalData = () => {
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
         props.editData?.itemsneeded?.forEach((item: number) => {
@@ -48,8 +53,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             }
         });
 
-       
-        
+
+
 
     }
     constructToModalData();
@@ -62,10 +67,26 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     const [command, setCommand] = React.useState<string>(props.editData?.command || "");
     const [output, setOutput] = React.useState<string>(props.editData?.output || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const homosole = useMudConsole();
+    const [isGlobal, setIsGlobal] = React.useState<boolean>(props.editData?.isGlobal || false);
+    const [error, setError] = React.useState<string>("");
 
-
-
+    const modalIsInvalid = () => {
+        let status = validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output);
+        selectedEvents.forEach((event: any) => {
+            if (event === "additem") {
+                if (addItems.length === 0) {
+                    status = true;
+                }
+            } else if (event === "removeitem") {
+                if (removeItems.length === 0) {
+                    status = true;
+                }
+            } else {
+                if (eventValues[event] === undefined) status = true;
+            }
+        });
+        return status;
+    }
 
     const deconstructToContextData = () => {
         let allEvents: MudEvent[] = [];
@@ -96,7 +117,8 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             output,
             description,
             itemsneeded: itemsneedednumbers as number[],
-            events: allEvents
+            events: allEvents,
+            isGlobal: isGlobal
         } as MudActionElement;
         return characterAction;
     }
@@ -113,18 +135,23 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
-        if (validator.isEmpty(description) || validator.isEmpty(command) || validator.isEmpty(output)) {
-            homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
+        if (validator.alreadyExists(command, "command", dconf.actions)){
+            setError(t(`actionalreadyexists`));
+            return;
+        }
+        if (modalIsInvalid()) {
+            setError("failvalidation.action");
         } else {
             let action = deconstructToContextData();
-            if (!action) homosole.warn("Es sind nicht alle Felder ausgefüllt!", "AddActionModal");
+            if (!action) setError("failvalidation.action");
+            setError("");
             props.onSendAction(action);
             props.onHide();
         }
     }
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !modalIsInvalid()) {
             e.preventDefault();
             onSubmit();
         }
@@ -144,13 +171,14 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         {t(`${dt}.buttons.create_action`)}
                     </Modal.Title>
                 </Modal.Header>
+                <Alert type="error" message={error} setMessage={setError} />
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <MudInput autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
                     <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
                     <MudTypeahead
                         colmd={12}
-                        title={ t(`dungeon_keys.itemsNeeded`) }
+                        title={t(`dungeon_keys.itemsNeeded`)}
                         id={"typeahead-items-needed"}
                         labelKey={(option: any) => `${option.name} (${option.description})`}
                         options={dconf.items}
@@ -160,7 +188,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         selected={itemsNeeded}
                     />
                     <MudTypeahead
-                        colmd={12}
+                        colmd={9}
                         title={t(`dungeon_keys.events`)}
                         id="typeahead-events"
                         labelKey="events"
@@ -170,6 +198,12 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         placeholder={t(`common.select_events`)}
                         selected={selectedEvents}
                     />
+                    <div className="col-md-3 align-self-end text-end">
+                        <div className="form-check form-switch p-0">
+                        <label className="form-check-label" htmlFor="isglobal"><b>{t(`common.isglobal`)}</b></label> <br />
+                        <input className="form-check-input float-end isglobal-input" onChange={evt => setIsGlobal(evt.target.checked)} type="checkbox" role="switch" id="isglobal" checked={isGlobal} />
+                        </div>
+                    </div>
                     {selectedEvents.length > 0 && selectedEvents.map((mudEvent, index) => {
                         if (mudEvent as string === 'additem' || mudEvent as string === 'removeitem') {
                             return (
@@ -194,7 +228,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">
-                        <Button onClick={props.onHide} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
+                        <Button onClick={() => { setError(""); props.onHide() }} className="btn w-100 drawn-border btn-red">{t(`button.cancel`)}</Button>
                     </div>
                     <div className="col-6">
                         <Button onClick={onSubmit} className="btn w-100 drawn-border btn-green">{t(`button.${props.editData ? 'edit' : 'create'}`)}</Button>

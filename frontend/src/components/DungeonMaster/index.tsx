@@ -2,55 +2,88 @@
  * @module Game
  * @category React Components
  * @description Game Component to display the Chat, HUD, Inventory and Minimap
- * @children {@linkcode Minimap}, {@linkcode HUD}, {@linkcode Inventory} {@linkcode Chat}
+ * @children {@linkcode DungeonMaster-Minimap}, {@linkcode CharQueue} {@linkcode DungeonMaster-Chat}, {@linkcode OnlinePlayers}, {@linkcode PlayerInfo}
  * @props {@linkcode GameProps}
- * ```jsx
- * <Minimap />
- * ```
  */
 
-import React from 'react'
+import React, { useState } from 'react'
 import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Container, Row } from 'react-bootstrap';
 import Chat from './Chat';
 import OnlinePlayers from './OnlinePlayers';
 import ChatQueue from './ChatQueue';
 import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
+import Alert from '../Custom/Alert';
+import { MinimapProps } from './Minimap';
+import ChatFilter from './ChatFilter';
 export interface GameProps { }
 
-const Game: React.FC<GameProps> = ({ }) => {
+const Game: React.FC<GameProps> = () => {
     const {t} = useTranslation();
-    let homsole = useMudConsole();
     let navigate = useNavigate();
 
     const rabbit = useRabbitMQ();
+    const [messageQueue, setMessageQueue] = useState<string[]>([]);
     const { isAbleToJoinGame } = useGame();
+    const [error, setError] = React.useState<string>("");
+    const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
+    const [selectedRooms, setSelectedRooms] = React.useState<string[]>([]);
+    const [onlinePlayers, setOnlinePlayers] = React.useState<string[]>([]);
+
+    const onUnload = (e: any) => {
+        e.preventDefault();
+        rabbit.logout(() => { }, (error) => {
+            setError("rabbitmq.logout")
+        });
+    }
+
+    const miniMapSubscriber = (roomData: MinimapProps) => {
+        setMiniMapData(roomData);
+    }
+
+    const onlinePlayerSubscriber = (players: string[]) => {
+        setOnlinePlayers(players);
+    }
+
     useEffect(() => {
+        window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
+            rabbit.setOnlinePlayersSubscriber(onlinePlayerSubscriber);
+            rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.login(() => {
-                homsole.log("Successful login");
+                // Success
             }, (error) => {
-                homsole.error(error, "RabbitMQ");
+                setError("rabbitmq.login")
             });
         }
         return () => {
+            window.removeEventListener('unload', onUnload);
             rabbit.logout(() => { }, (error) => {
-                homsole.error(error, "RabbitMQ");
+                setError("rabbitmq.logout")
             });
         }
-    }, [])
+    }, [isAbleToJoinGame, rabbit]);
 
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
     }
 
+    const addMessage = (queueMessage:string) => {
+        setMessageQueue([...messageQueue,queueMessage])
+    }
+
+    const sendQueue = () => {
+        messageQueue.forEach(queueMessage => {
+            rabbit.sendDmMessage(queueMessage, ()=>{}, setError);
+        });
+        setMessageQueue([])
+    }
 
 
 
@@ -63,14 +96,16 @@ const Game: React.FC<GameProps> = ({ }) => {
             </Row>
             <Row className="game-body">
                 <div className="col col-md-3 col-lg-2">
-                    <Minimap mapData={null} />
-                    <OnlinePlayers players={null} />
+                    {miniMapData && <Minimap {...miniMapData} />}
+                    <OnlinePlayers players={onlinePlayers} />
+                    {miniMapData && <ChatFilter selectedRooms={selectedRooms} setSelectedRooms={setSelectedRooms} allRooms={ Object.values(miniMapData.rooms).map( room => room.name) } />}
+                    <Alert type='error' message={error} setMessage={setError} />
                 </div>
                 <div className="col col-md-6 col-lg-8">
-                    <Chat />
+                    <Chat selectedRooms={selectedRooms} onSendCommand={addMessage} messageCallback={setError}/>
                 </div>
                 <div className="col col-md-3 col-lg-2">
-                    <ChatQueue commands={null} />
+                    <ChatQueue commandQueue={messageQueue} onSendQueue={sendQueue} />
                     <PlayerInfo player={null} />
                 </div>
             </Row>

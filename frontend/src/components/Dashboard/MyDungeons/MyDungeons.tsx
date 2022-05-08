@@ -13,9 +13,10 @@
 
 import React from 'react';
 import MyDungeonsLi from './MyDungeonsLi';
-import { DungeonResponseData, GetDungeonsResponse } from '@supervisor/api';
+import { DungeonResponseData } from '@supervisor/api';
 import { Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { SendsMessagesProps } from '../../../types/misc';
 export type AllDungeonProps = {
     filterKey: 'name' | 'description';
     filterValue: string;
@@ -23,7 +24,7 @@ export type AllDungeonProps = {
     fetchMyDungeons: ()=>void;
 }
 
-const MyDungeons: React.FC<AllDungeonProps> = ({ myDungeons, filterValue, filterKey, fetchMyDungeons }) => {
+const MyDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({ myDungeons, filterValue, filterKey, fetchMyDungeons, messageCallback }) => {
 
     const {t} = useTranslation();
 
@@ -47,7 +48,7 @@ const MyDungeons: React.FC<AllDungeonProps> = ({ myDungeons, filterValue, filter
 
             {myDungeons.filter(dungeon => dungeon[filterKey].toLowerCase().includes(filterValue.toLowerCase())).map((dungeon, index) => {
                 return (
-                    <MyDungeonsLi key={index} isPrivate={false} fetchMyDungeons={fetchMyDungeons} {...dungeon} />
+                    <MyDungeonsLi key={index} isPrivate={false} fetchMyDungeons={fetchMyDungeons} messageCallback={messageCallback} {...dungeon} />
                 )
             })}
 

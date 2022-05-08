@@ -1,13 +1,12 @@
-import React, { ButtonHTMLAttributes, DetailedHTMLProps, MouseEvent } from "react";
-import { Row, Table } from 'react-bootstrap';
-import { Pencil, Trash } from "react-bootstrap-icons";
+import React, { MouseEvent } from "react";
+import { Row } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
-import { MudCharacterClass, MudItem } from "src/types/dungeon";
-import { MudActionElement } from '../../types/dungeon';
+import { MudCharacterClass, MudItem, MudCharacterSpecies } from 'src/types/dungeon';
+import { MudActionElement, MudCharacterGender } from '../../types/dungeon';
 import DungeonObjectListElement from './DungeonObjectListElement';
 import "./index.css";
 
-export type AcceptedTypes = MudCharacterClass | MudItem | MudActionElement;
+export type AcceptedTypes = MudCharacterClass | MudItem | MudActionElement | MudCharacterGender | MudCharacterSpecies;
 export interface DungeonObjectListProps {
     title: string;
     buttonText?: string;
@@ -28,10 +27,10 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
         <div className={props.disabled ? "disabled": ""}>
             <Row className="mt-5">
                 <hr />
-                <div className="col-md-9">
+                <div className="col-md-7">
                     <span className="headline">{props.title}</span>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-5">
                     <button className="btn drawn-border btn-standard col-md-2" onClick={props.onAdd}>{props.buttonText}</button>
                 </div>
             </Row>
@@ -47,8 +46,9 @@ const DungeonObjectList: React.FC<DungeonObjectListProps> = (props) => {
             </Row>
 
             {props.data.length > 0 && props.data.map((item: any, index) => {
+
                 return (
-                    <DungeonObjectListElement key={index} item={props.data[item.id]} {...props} />
+                    <DungeonObjectListElement key={`${props.title}-li-${item[props.identifier]}`} item={item} {...props} />
                 )
             })}
 

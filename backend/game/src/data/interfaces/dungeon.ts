@@ -15,18 +15,18 @@ export interface Dungeon {
   name: string;
   description: string;
   creatorId: string;
+  globalActions: string[];
   masterId: string;
   maxPlayers: number;
-  currentPlayers: number;
-  characterSpecies: {[id: string]: CharacterSpecies};
-  characterClasses: {[id: string]: CharacterClass};
-  characterGenders: {[id: string]: CharacterGender};
-  characters: {[name: string]: Character};
-  rooms: {[id: string]: Room};
+  characterSpecies: { [id: string]: CharacterSpecies };
+  characterClasses: { [id: string]: CharacterClass };
+  characterGenders: { [id: string]: CharacterGender };
+  characters: { [name: string]: Character };
+  rooms: { [id: string]: Room };
   blacklist: string[];
-  actions: {[id: string]: ActionElement};
-  items: {[id: string]: Item};
-  npcs: {[id: string]: Npc};
+  actions: { [id: string]: ActionElement };
+  items: { [id: string]: Item };
+  npcs: { [id: string]: Npc };
 
   getId(): string
   getName(): string
@@ -34,6 +34,7 @@ export interface Dungeon {
   getCreatorId(): string
   getMasterId(): string
   getMaxPlayers(): number
+  getGlobalActions(): string[]
   getCurrentPlayers(): number
   getSpecies(speciesName: string): CharacterSpecies
   getClass(className: string): CharacterClass
@@ -61,22 +62,22 @@ export class DungeonImpl implements Dungeon {
   creatorId: string;
   masterId: string;
   maxPlayers: number;
-  currentPlayers: number;
-  characterSpecies: {[id: string]: CharacterSpecies};
-  characterClasses: {[id: string]: CharacterClass};
-  characterGenders: {[id: string]: CharacterGender};
-  characters: {[name: string]: Character};
-  rooms: {[id: string]: Room};
+  globalActions: string[];
+  characterSpecies: { [id: string]: CharacterSpecies };
+  characterClasses: { [id: string]: CharacterClass };
+  characterGenders: { [id: string]: CharacterGender };
+  characters: { [name: string]: Character };
+  rooms: { [id: string]: Room };
   blacklist: string[];
-  actions: {[id: string]: ActionElement};
-  items: {[id: string]: Item};
-  npcs: {[id: string]: Npc};
+  actions: { [id: string]: ActionElement };
+  items: { [id: string]: Item };
+  npcs: { [id: string]: Npc };
 
   getId(): string {
     return this.id;
   }
 
-  getName(): string{
+  getName(): string {
     return this.name;
   }
 
@@ -97,7 +98,7 @@ export class DungeonImpl implements Dungeon {
   }
 
   getCurrentPlayers(): number {
-    return this.currentPlayers;
+    return Object.keys(this.characters).length;
   }
 
   getSpecies(speciesId: string): CharacterSpecies {
@@ -154,6 +155,10 @@ export class DungeonImpl implements Dungeon {
     }
   }
 
+  getGlobalActions(): string[] {
+    return this.globalActions;
+  }
+
   getNorthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
@@ -201,11 +206,11 @@ export class DungeonImpl implements Dungeon {
 
   getItem(itemId: string): Item {
     let item: Item = this.items[itemId]
-      if (item === undefined) {
-        throw new Error("Item does not exist");
-      } else {
-        return item;
-      }
+    if (item === undefined) {
+      throw new Error("Item does not exist");
+    } else {
+      return item;
+    }
   }
 
   getItemByName(itemName: string): Item {
@@ -219,11 +224,11 @@ export class DungeonImpl implements Dungeon {
 
   getNpc(npcId: string): Npc {
     let npc: Npc = this.npcs[npcId]
-      if (npc === undefined) {
-        throw new Error("Npc does not exist");
-      } else {
-        return npc;
-      }
+    if (npc === undefined) {
+      throw new Error("Npc does not exist");
+    } else {
+      return npc;
+    }
   }
 
   constructor(
@@ -233,7 +238,6 @@ export class DungeonImpl implements Dungeon {
     creatorId: string,
     masterId: string,
     maxPlayers: number,
-    currentPlayers: number,
     species: CharacterSpecies[],
     classes: CharacterClass[],
     genders: CharacterGender[],
@@ -242,7 +246,8 @@ export class DungeonImpl implements Dungeon {
     blacklist: string[],
     actions: ActionElement[],
     items: Item[],
-    npcs: Npc[]
+    npcs: Npc[],
+    globalActions: string[]
   ) {
     this.id = id;
     this.name = name;
@@ -250,7 +255,7 @@ export class DungeonImpl implements Dungeon {
     this.creatorId = creatorId;
     this.masterId = masterId;
     this.maxPlayers = maxPlayers;
-    this.currentPlayers = currentPlayers;
+    this.globalActions = globalActions;
     this.characterSpecies = arrayToMap(species);
     this.characterClasses = arrayToMap(classes);
     this.characterGenders = arrayToMap(genders);
@@ -264,19 +269,19 @@ export class DungeonImpl implements Dungeon {
 }
 
 function arrayToMap(array: any[]): any {
-  let map: {[id: string]: any} = {};
+  let map: { [id: string]: any } = {};
   array.forEach((obj: any) => {
-      //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
-      map[obj.id] = obj;
+    //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
+    map[obj.id] = obj;
   });
   return map;
 }
 
 function arrayToMapCharacters(array: any[]): any {
-  let map: {[name: string]: any} = {};
+  let map: { [name: string]: any } = {};
   array.forEach((obj: any) => {
-      //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
-      map[obj.name] = obj;
+    //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
+    map[obj.name] = obj;
   });
   return map;
 }

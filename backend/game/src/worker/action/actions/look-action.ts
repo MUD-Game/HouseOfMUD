@@ -1,3 +1,4 @@
+import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { ActionElement } from "../../../data/interfaces/actionElement";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
@@ -6,36 +7,33 @@ import { Npc } from "../../../data/interfaces/npc";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages } from "./action-resources";
+import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
-export class LookAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController;
+export class LookAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.look;
-        this.dungeonController = dungeonController
+        super(triggers.look, dungeonController);
     }
+
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
-        let dungeonId: string = dungeon.getId()
         let senderCharacter: Character = dungeon.getCharacter(user)
         let roomId: string = senderCharacter.getPosition()
         let room: Room = dungeon.getRoom(roomId)
         let roomName: string = room.getName()
         let roomDescription: string = room.getDescription()
-        let description: string = `${actionMessages.lookRoom} ${roomName}: ${roomDescription}. ${actionMessages.lookAround} `
-
-        let roomItems: string[] = room.getItems()
+        let description: string = parseResponseString(actionMessages.lookRoom, roomName, roomDescription)
+        let roomItems: ItemInfo[] = room.getItemInfos()
         let itemString: string = actionMessages.lookItems
         if (roomItems.length === 0) {
             itemString += actionMessages.lookEmpty
         } else {
             try {
-                roomItems.forEach(itemId => {
-                    let item: Item = dungeon.getItem(itemId)
+                roomItems.forEach(itemInfo => {
+                    let item: Item = dungeon.getItem(itemInfo.item)
                     let itemName: string = item.getName()
-                    itemString += ` ${itemName}`
+                    let itemCount: number = itemInfo.count
+                    itemString += `\n\t${itemName} (${itemCount}x)`
                 })
             } catch(e) {
                 console.log(e)
@@ -54,7 +52,7 @@ export class LookAction implements Action {
                 roomNpcs.forEach(npcId => {
                     let npc: Npc = dungeon.getNpc(npcId)
                     let npcName: string = npc.getName()
-                    npcString += ` ${npcName}`
+                    npcString += `\n\t${npcName}`
                 })
             } catch(e) {
                 console.log(e)
@@ -66,7 +64,7 @@ export class LookAction implements Action {
 
         try {
             let northRoom: Room = dungeon.getNorthernRoom(room)
-            let northRoomString: string = `${actionMessages.lookNorth} ${northRoom.getName()}. `
+            let northRoomString: string = `${actionMessages.lookNorth}\n\t${northRoom.getName()}. `
             description += northRoomString
         } catch(e) {
             console.log(e)
@@ -74,7 +72,7 @@ export class LookAction implements Action {
 
         try {
             let eastRoom: Room = dungeon.getEasternRoom(room)
-            let eastRoomString: string = `${actionMessages.lookEast} ${eastRoom.getName()}. `
+            let eastRoomString: string = `${actionMessages.lookEast}\n\t${eastRoom.getName()}. `
             description += eastRoomString
         } catch(e) {
             console.log(e)
@@ -82,7 +80,7 @@ export class LookAction implements Action {
 
         try {
             let southRoom: Room = dungeon.getSouthernRoom(room)
-            let southRoomString: string = `${actionMessages.lookSouth} ${southRoom.getName()}. `
+            let southRoomString: string = `${actionMessages.lookSouth}\n\t${southRoom.getName()}. `
             description += southRoomString
         } catch(e) {
             console.log(e)
@@ -90,37 +88,20 @@ export class LookAction implements Action {
 
         try {
             let westRoom: Room = dungeon.getWesternRoom(room)
-            let westRoomString: string = `${actionMessages.lookWest} ${westRoom.getName()}. `
+            let westRoomString: string = `${actionMessages.lookWest}\n\t${westRoom.getName()}. `
             description += westRoomString
         } catch(e) {
             console.log(e)
         }
 
-        let roomActions: string[] = room.getActions()
-        let actionString: string = actionMessages.lookActions
-        if (roomActions.length === 0) {
-            actionString += actionMessages.lookEmpty
-        } else {
-            try {
-                roomActions.forEach(actionId => {
-                    let action: ActionElement = dungeon.getAction(actionId)
-                    let actionCommand: string = action.getCommand()
-                    actionString += ` ${actionCommand}`
-                })
-            } catch(e) {
-                console.log(e)
-                actionString += errorMessages.lookError
-            }
-        }
-        actionString += ". "
-        description += actionString
-
-        let roomPlayers: Character[] = Object.values(dungeon.characters)
+        let dungeonCharacters: Character[] = Object.values(dungeon.characters)
         let playersString: string = actionMessages.lookPlayers
         try {
-            roomPlayers.forEach(character => {
-                let characterName: string = character.getName()
-                playersString += ` ${characterName}`
+            dungeonCharacters.forEach(character => {
+                if (character.getPosition() === roomId) {
+                    let characterName: string = character.getName()
+                    playersString += `\n\t${characterName}`
+                }
             })
         } catch(e) {
             console.log(e)

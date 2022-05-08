@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
 import { CharacterStats } from "./charcterStats";
+import { ItemInfo } from "./itemInfo";
 
 export interface CharacterDataset {
   name: string;
@@ -11,7 +12,8 @@ export interface CharacterDataset {
   maxStats: CharacterStats;
   currentStats: CharacterStats;
   position: string;
-  inventory: string[];
+  exploredRooms: string[];
+  inventory: ItemInfo[];
 }
 
 export const characterSchema = new Schema<CharacterDataset>({
@@ -24,5 +26,6 @@ export const characterSchema = new Schema<CharacterDataset>({
   maxStats: { type: Schema.Types.Mixed },
   currentStats: { type: Schema.Types.Mixed },
   position: { type: String },
-  inventory: [{ type: String }],
+  exploredRooms: [{ type: String }],
+  inventory: [{ type: Schema.Types.Mixed }],
 });

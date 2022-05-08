@@ -1,19 +1,21 @@
-import { CharacterStats } from "../src/data/datasets/charcterStats";
+import { DatabaseAdapter } from "../src/data/databaseAdapter";
 import { ActionElement, ActionElementImpl } from "../src/data/interfaces/actionElement";
 import { ActionEventImpl } from "../src/data/interfaces/actionEvent";
 import { Character, CharacterImpl } from "../src/data/interfaces/character";
 import { CharacterClass, CharacterClassImpl } from "../src/data/interfaces/characterClass";
 import { CharacterGender, CharacterGenderImpl } from "../src/data/interfaces/characterGender";
 import { CharacterSpecies, CharacterSpeciesImpl } from "../src/data/interfaces/characterSpecies";
-import { CharacterStatsImpl } from "../src/data/interfaces/characterStats";
+import { CharacterStats, CharacterStatsImpl } from "../src/data/interfaces/characterStats";
 import { ConnectionInfo, ConnectionInfoImpl } from "../src/data/interfaces/connectionInfo";
 import { Dungeon, DungeonImpl } from "../src/data/interfaces/dungeon";
 import { Item, ItemImpl } from "../src/data/interfaces/item";
+import { ItemInfo } from "../src/data/interfaces/itemInfo";
 import { Npc, NpcImpl } from "../src/data/interfaces/npc";
 import { Room, RoomImpl } from "../src/data/interfaces/room";
+import { Config, MongodbConfig } from "../src/host/types/config";
 import { ActionHandler, ActionHandlerImpl } from "../src/worker/action/action-handler";
 import { actionMessages, errorMessages, triggers } from "../src/worker/action/actions/action-resources";
-import { BroadcastMessageAction } from "../src/worker/action/actions/broadcast-message-action";
+import { BroadcastMessageAction } from "../src/worker/action/dmactions/broadcast-message-action";
 import { DiscardAction } from "../src/worker/action/actions/discard-action";
 import { DungeonAction } from "../src/worker/action/actions/dungeon-action";
 import { InspectAction } from "../src/worker/action/actions/inspect-action";
@@ -26,8 +28,21 @@ import { MoveAction } from "../src/worker/action/actions/move-action";
 import { PickupAction } from "../src/worker/action/actions/pickup-action";
 import { PrivateMessageAction } from "../src/worker/action/actions/private-message-action";
 import UnspecifiedAction from "../src/worker/action/actions/unspecified-action";
+import { AddDamage } from "../src/worker/action/dmactions/addDamage-action";
+import { AddHp } from "../src/worker/action/dmactions/addHp-action";
+import { AddMana } from "../src/worker/action/dmactions/addMana-action";
+import { RemoveHp } from "../src/worker/action/dmactions/removeHp-action";
 import { AmqpAdapter } from "../src/worker/amqp/amqp-adapter";
 import { DungeonController } from "../src/worker/controller/dungeon-controller";
+import yaml from 'js-yaml';
+import fs from 'fs';
+import { HelpAction } from "../src/worker/action/actions/help-action";
+import { ShowActions } from "../src/worker/action/actions/show-actions";
+import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMessage-action";
+import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
+import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
+import { DieAction } from "../src/worker/action/actions/die-action";
+import { ToggleConnectionAction } from "../src/worker/action/dmactions/toggleRoomConnection-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -44,7 +59,7 @@ const TestSpecies: CharacterSpecies = new CharacterSpeciesImpl(
     'Hexer',
     'Hexiger Hexer'
 );
-const TestStartStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
+const TestStartStats: CharacterStats = new CharacterStatsImpl(50, 10, 50);
 const TestMaxStats: CharacterStats = new CharacterStatsImpl(100, 20, 100);
 const TestGender: CharacterGender = new CharacterGenderImpl(
     '1',
@@ -67,27 +82,111 @@ const TestNpc: Npc = new NpcImpl(
 const TestItem: Item = new ItemImpl('1', 'Apfel', 'Apfliger Apfel');
 const TestItemDiscard: Item = new ItemImpl('2', 'Schwert', 'Schwertiges Schwert');
 const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
+const TestItemRemoveHp: Item = new ItemImpl('4', 'Giftpilz', 'Test');
+const TestItemAddMana: Item = new ItemImpl('5', 'Manatrank', 'Test');
+const TestItemRemoveItem: Item = new ItemImpl('6', 'Stein', 'Test');
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
     'open',
     'open'
 );
-const TestAction: ActionElement = new ActionElementImpl(
+const TestActionAddHp: ActionElement = new ActionElementImpl(
     '1',
     'essen Apfel',
-    'gegessen',
-    'essen aktion',
+    'Du hast einen Apfel gegessen!',
+    'test',
     [new ActionEventImpl('addhp', '10')],
-    ['1']
+    [TestItem.id]
 );
+const TestActionRemoveHp: ActionElement = new ActionElementImpl(
+    '2',
+    'essen Giftpilz',
+    'Du hast einen Giftpilz gegessen!',
+    'test',
+    [new ActionEventImpl('removehp', '20')],
+    [TestItemRemoveHp.id]
+);
+const TestActionAddMana: ActionElement = new ActionElementImpl(
+    '3',
+    'trinken Manatrank',
+    'Du hast einen Manatrank getrunken!',
+    'test',
+    [new ActionEventImpl('addmana', '10')],
+    [TestItemAddMana.id]
+);
+const TestActionRemoveMana: ActionElement = new ActionElementImpl(
+    '4',
+    'trinke aus dem Brunnen',
+    'Du hast aus dem Brunnen getrunken!',
+    'test',
+    [new ActionEventImpl('removemana', '20')],
+    []
+);
+const TestActionAddDamage: ActionElement = new ActionElementImpl(
+    '5',
+    'trinke Bier',
+    'Du hast ein Bier getrunken!',
+    'test',
+    [new ActionEventImpl('adddmg', '10')],
+    []
+);
+const TestActionRemoveDamage: ActionElement = new ActionElementImpl(
+    '6',
+    'nahkampf',
+    'Du wechselst in den Nahkampf!',
+    'test',
+    [new ActionEventImpl('removedmg', '5')],
+    []
+);
+const TestActionRemoveItem: ActionElement = new ActionElementImpl(
+    '7',
+    'werfe Stein',
+    'Du hast einen Stein geworfen!',
+    'test',
+    [new ActionEventImpl('removeItem', '6')],
+    [TestItemRemoveItem.id]
+);
+const TestActionAddItem: ActionElement = new ActionElementImpl(
+    '8',
+    'oeffne Truhe',
+    'Du hast die Truhe geoeffnet!',
+    'test',
+    [new ActionEventImpl('additem', '3')],
+    []
+);
+const TestActionInOtherRoom: ActionElement = new ActionElementImpl(
+    '9',
+    'test',
+    'test',
+    'test',
+    [new ActionEventImpl('addhp', '3')],
+    []
+);
+const TestActionItemMissing: ActionElement = new ActionElementImpl(
+    '10',
+    'kaufe leben',
+    'test',
+    'test',
+    [new ActionEventImpl('addhp', '3')],
+    [TestItemPickup.id]
+);
+const TestGlobalAction: ActionElement = new ActionElementImpl(
+    '11',
+    'global',
+    'Du hast eine globale Aktion ausgefuehrt!',
+    'test',
+    [new ActionEventImpl('addhp', '30')],
+    []
+);
+
 const TestRoom: Room = new RoomImpl(
     '1',
     'Raum-1',
     'Der Raum in dem alles begann',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     TestConnections,
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     2
 );
@@ -96,9 +195,9 @@ const TestRoomNorth: Room = new RoomImpl(
     'Raum-N',
     'Der Raum im Norden',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'open'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     1
 );
@@ -107,9 +206,9 @@ const TestRoomEast: Room = new RoomImpl(
     'Raum-O',
     'Der Raum im Osten',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     3,
     2
 );
@@ -118,9 +217,9 @@ const TestRoomSouth: Room = new RoomImpl(
     'Raum-S',
     'Der Raum im Sueden',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     3
 );
@@ -129,9 +228,9 @@ const TestRoomWest: Room = new RoomImpl(
     'Raum-W',
     'Der Raum im Westen',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('open', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     1,
     2
 );
@@ -140,9 +239,9 @@ const TestRoomNorthNorth: Room = new RoomImpl(
     'Raum-NN',
     'Der Raum im Norden, Norden',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'closed'),
-    [TestAction.id],
+    [TestActionAddHp.id],
     2,
     0
 );
@@ -151,14 +250,24 @@ const TestRoomNorthEast: Room = new RoomImpl(
     'Raum-NE',
     'Der Raum im Norden, dann Osten',
     [TestNpc.id],
-    [TestItem.id],
+    [new ItemInfo(TestItem.id,1)],
     new ConnectionInfoImpl('inactive', 'inactive'),
-    [TestAction.id],
+    [TestActionAddHp.id, TestActionInOtherRoom.id],
     3,
     1
 );
+const TestRoomActions: Room = new RoomImpl(
+    '8',
+    'Raum-A',
+    'Der Raum zum Testen der dungeonspezifischen Aktionen',
+    [TestNpc.id],
+    [new ItemInfo(TestItem.id,1)],
+    new ConnectionInfoImpl('inactive', 'inactive'),
+    [TestActionAddHp.id, TestActionRemoveHp.id, TestActionAddMana.id, TestActionRemoveMana.id, TestActionAddDamage.id, TestActionRemoveDamage.id, TestActionAddItem.id, TestActionRemoveItem.id, TestActionItemMissing.id],
+    10,
+    10
+);
 const TestCharacter: Character = new CharacterImpl(
-    '1',
     '1',
     'Jeff',
     'Magier',
@@ -167,11 +276,11 @@ const TestCharacter: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
-    [TestItem.id]
+    {[TestRoom.id]:true},
+    [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterSameRoom: Character = new CharacterImpl(
     '2',
-    '1',
     'Spieler',
     'Magier',
     '1',
@@ -179,11 +288,11 @@ const TestCharacterSameRoom: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoom.id,
-    [TestItem.id]
+    { [TestRoom.id]: true },
+    [new ItemInfo(TestItem.id,1)]
 );
 const TestCharacterNotSameRoom: Character = new CharacterImpl(
     '3',
-    '1',
     'Bob',
     'Magier',
     '1',
@@ -191,7 +300,20 @@ const TestCharacterNotSameRoom: Character = new CharacterImpl(
     TestMaxStats,
     TestStartStats,
     TestRoomNorth.id,
-    [TestItem.id]
+    { [TestRoomNorth.id]: true },
+    [new ItemInfo(TestItem.id,1)]
+);
+const TestCharacterDungeonActions: Character = new CharacterImpl(
+    '4',
+    'CoolerTyp',
+    'Magier',
+    '1',
+    '1',
+    TestMaxStats,
+    TestStartStats,
+    TestRoomActions.id,
+    { [TestRoomActions.id]: true },
+    [new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
 );
 const TestDungeon: Dungeon = new DungeonImpl(
     '1',
@@ -200,11 +322,10 @@ const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     '1',
     2,
-    1,
     [TestSpecies],
     [TestClass],
     [TestGender],
-    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom],
+    [TestCharacter, TestCharacterSameRoom, TestCharacterNotSameRoom, TestCharacterDungeonActions],
     [
         TestRoom,
         TestRoomNorth,
@@ -212,16 +333,19 @@ const TestDungeon: Dungeon = new DungeonImpl(
         TestRoomSouth,
         TestRoomWest,
         TestRoomNorthNorth,
-        TestRoomNorthEast
+        TestRoomNorthEast,
+        TestRoomActions
     ],
     ['abc'],
-    [TestAction],
-    [TestItem, TestItemDiscard, TestItemPickup],
-    [TestNpc]
+    [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing, TestGlobalAction],
+    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem],
+    [TestNpc],
+    [TestGlobalAction.id]
 );
 const TestDungeonController: DungeonController = new DungeonController(
     '1',
     amqpAdapter,
+    null,
     TestDungeon
 );
 
@@ -231,24 +355,33 @@ describe('ActionHandler', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions[triggers.message];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
-    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
-    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
-    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
-    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
-    const lookAction: LookAction = actionHandler.actions[triggers.look];
-    const moveAction: MoveAction = actionHandler.actions[triggers.move];
-    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
+    const lookAction: LookAction = actionHandler.actions[triggers.look] as LookAction;
+    const moveAction: MoveAction = actionHandler.actions[triggers.move] as MoveAction;
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup] as PickupAction;
     const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
     const invalidAction: InvalidAction = actionHandler.invalidAction;
+    const helpAction: HelpAction = actionHandler.actions[triggers.help] as HelpAction
+    const showActions: ShowActions = actionHandler.actions[triggers.showActions] as ShowActions
+
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
+    const addHpAction: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp
+    const removeHpAction: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp
+    const addManaAction: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana
+    const removeManaAction: RemoveMana = actionHandler.dmActions[triggers.removeMana] as RemoveMana
+    const addDamageAction: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage
+    const removeDamageAction: RemoveDamage = actionHandler.dmActions[triggers.removeDamage] as RemoveDamage
     
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
     messageMasterAction.performAction = jest.fn();
-    broadcastMessageAction.performAction = jest.fn();
     discardAction.performAction = jest.fn();
     inspectAction.performAction = jest.fn();
     inventoryAction.performAction = jest.fn();
@@ -258,67 +391,82 @@ describe('ActionHandler', () => {
     dungeonAction.performAction = jest.fn();
     unspecifiedAction.performAction = jest.fn();
     invalidAction.performAction = jest.fn();
+    helpAction.performAction = jest.fn();
+    showActions.performAction = jest.fn();
+    broadcastMessageAction.performAction = jest.fn();
+    privateMessageFromDm.performAction = jest.fn();
+    addHpAction.performAction = jest.fn();
+    removeHpAction.performAction = jest.fn();
+    addManaAction.performAction = jest.fn();
+    removeManaAction.performAction = jest.fn();
+    addDamageAction.performAction = jest.fn();
+    removeDamageAction.performAction = jest.fn();
 
-    test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
-        actionHandler.processAction('0', `${triggers.message} Hallo`);
-        actionHandler.processAction('0', `${triggers.messageMaster} Hallo`);
-        actionHandler.processAction('0', `${triggers.discard} Apfel`);
-        actionHandler.processAction('0', `${triggers.inspect} Apfel`);
-        actionHandler.processAction('0', triggers.inventory);
-        actionHandler.processAction('0', triggers.look);
-        actionHandler.processAction('0', `${triggers.pickup} Apfel`);
-        actionHandler.processAction('0', `essen Apfel`);
-        actionHandler.processAction('0', `${triggers.unspecified} Test`);
-        expect(messageAction.performAction).not.toHaveBeenCalled()
-        expect(messageMasterAction.performAction).not.toHaveBeenCalled()
-        expect(discardAction.performAction).not.toHaveBeenCalled()
-        expect(inspectAction.performAction).not.toHaveBeenCalled()
-        expect(inventoryAction.performAction).not.toHaveBeenCalled()
-        expect(lookAction.performAction).not.toHaveBeenCalled()
-        expect(pickupAction.performAction).not.toHaveBeenCalled()
-        expect(dungeonAction.performAction).not.toHaveBeenCalled()
-        expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
-    })
+    // NICHT MEHR NOTWENDIG!!!!!
+    // test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
+    //     actionHandler.processAction('dungeonmaster', `${triggers.message} Hallo`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.messageMaster} Hallo`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.discard} Apfel`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.inspect} Apfel`);
+    //     actionHandler.processAction('dungeonmaster', triggers.inventory);
+    //     actionHandler.processAction('dungeonmaster', triggers.look);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.pickup} Apfel`);
+    //     actionHandler.processAction('dungeonmaster', `essen Apfel`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.unspecified} Test`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.help}`);
+    //     actionHandler.processAction('dungeonmaster', `${triggers.showActions}`);
+    //     expect(messageAction.performAction).not.toHaveBeenCalled()
+    //     expect(messageMasterAction.performAction).not.toHaveBeenCalled()
+    //     expect(discardAction.performAction).not.toHaveBeenCalled()
+    //     expect(inspectAction.performAction).not.toHaveBeenCalled()
+    //     expect(inventoryAction.performAction).not.toHaveBeenCalled()
+    //     expect(lookAction.performAction).not.toHaveBeenCalled()
+    //     expect(pickupAction.performAction).not.toHaveBeenCalled()
+    //     expect(dungeonAction.performAction).not.toHaveBeenCalled()
+    //     expect(unspecifiedAction.performAction).not.toHaveBeenCalled()
+    //     expect(helpAction.performAction).not.toHaveBeenCalled()
+    //     expect(showActions.performAction).not.toHaveBeenCalled()
+    // })
 
     test('ActionHandler should call performAction on MessageAction with the correct parameters when it receives a "sag" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.message} Hallo`);
+        actionHandler.processAction('Jeff', `sag Hallo`);
         expect(messageAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Hallo',
         ]);
     });
     test('ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a "fluester" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.whisper} Spieler Hallo`);
+        actionHandler.processAction('Jeff', `fluester Spieler Hallo`);
         expect(privateMessageAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Spieler',
             'Hallo',
         ]);
     });
     test('ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a "ablegen" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.discard} Apfel`);
+        actionHandler.processAction('Jeff', `ablegen Apfel`);
         expect(discardAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on InspectAction with the correct parameters when it receives a "untersuche" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.inspect} Apfel`);
+        actionHandler.processAction('Jeff', `untersuche Apfel`);
         expect(inspectAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Apfel',
         ]);
     });
     test('ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a "inv" action message', () => {
-        actionHandler.processAction('Jeff', triggers.inventory);
+        actionHandler.processAction('Jeff', "inv");
         expect(inventoryAction.performAction).toHaveBeenCalledWith('Jeff', []);
     });
     test('ActionHandler should call performAction on LookAction with the correct parameters when it receives a "umschauen" action message', () => {
-        actionHandler.processAction('Jeff', triggers.look);
+        actionHandler.processAction('Jeff', 'umschauen');
         expect(lookAction.performAction).toHaveBeenCalledWith('Jeff', []);
     });
     test('ActionHandler should call performAction on MoveAction with the correct parameters when it receives a "gehe" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.move} Norden`);
+        actionHandler.processAction('Jeff', `gehe Norden`);
         expect(moveAction.performAction).toHaveBeenCalledWith('Jeff', ['Norden']);
     });
     test('ActionHandler should call performAction on PickupAction with the correct parameters when it receives a "aufheben" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.pickup} Apfel`);
+        actionHandler.processAction('Jeff', `aufheben Apfel`);
         expect(pickupAction.performAction).toHaveBeenCalledWith('Jeff', ['Apfel']);
     });
     test('ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message', () => {
@@ -328,7 +476,7 @@ describe('ActionHandler', () => {
         ]);
     });
     test('ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master', () => {
-        actionHandler.processAction('Jeff', `${triggers.unspecified} Test`);
+        actionHandler.processAction('Jeff', `dm Test`);
         expect(unspecifiedAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Test',
         ]);
@@ -339,25 +487,55 @@ describe('ActionHandler', () => {
             'Monster',
         ]);
     });
-    //Tests with dungeon master as user
-    test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
-        actionHandler.processAction('0', `${triggers.whisper} Spieler Hilfe`);
-        expect(privateMessageAction.performAction).toHaveBeenCalledWith('0', ['Spieler', 'Hilfe'])
-    })
-    test('ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users', () => {
-        actionHandler.processAction('0', `${triggers.broadcast} Hallo`);
-        expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('0', ['Hallo'])
-    })
-    test('ActionHandler should call performAction on InvalidAction when a regular player tries to use the broadcast action', () => {
-        actionHandler.processAction('Jeff', `${triggers.broadcast} Hallo`);
-        expect(invalidAction.performAction).toHaveBeenCalledWith('Jeff', ['Hallo'])
-    })
+
+    test('ActionHandler should call performAction on HelpAction with the correct parameters when it receives a "hilfe" action message', () => {
+        actionHandler.processAction('Jeff', `hilfe`);
+        expect(helpAction.performAction).toHaveBeenCalledWith('Jeff', []);
+    });
+    test('ActionHandler should call performAction on ShowActions with the correct parameters when it receives a "aktionen" action message', () => {
+        actionHandler.processAction('Jeff', `aktionen`);
+        expect(showActions.performAction).toHaveBeenCalledWith('Jeff', []);
+    });
     test('ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a "fluesterdm" action message', () => {
-        actionHandler.processAction('Jeff', `${triggers.messageMaster} Hallo`);
+        actionHandler.processAction('Jeff', `fluesterdm Hallo`);
         expect(messageMasterAction.performAction).toHaveBeenCalledWith('Jeff', [
             'Hallo',
         ]);
     });
+    
+    //Tests with dungeon master as user
+    test('ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user', () => {
+        actionHandler.processDmAction(`fluester Spieler Hilfe`);
+        expect(privateMessageFromDm.performAction).toHaveBeenCalledWith('dungeonmaster', ['Spieler', 'Hilfe'])
+    })
+    test('ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users', () => {
+        actionHandler.processDmAction(`broadcast Hallo`);
+        expect(broadcastMessageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Hallo'])
+    })
+    test('ActionHandler should call performAction on AddHp when the dungeon master adds hp to a user', () => {
+        actionHandler.processDmAction(`addhp Jeff 1`);
+        expect(addHpAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on RemoveHp when the dungeon master removes hp from a user', () => {
+        actionHandler.processDmAction(`remhp Jeff 1`);
+        expect(removeHpAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on AddMana when the dungeon master adds mana to a user', () => {
+        actionHandler.processDmAction(`addmana Jeff 1`);
+        expect(addManaAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on RemoveMana when the dungeon master removes mana from a user', () => {
+        actionHandler.processDmAction(`remmana Jeff 1`);
+        expect(removeManaAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on AddDamage when the dungeon master adds dmg to a user', () => {
+        actionHandler.processDmAction(`adddmg Jeff 1`);
+        expect(addDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on RemoveDmg when the dungeon master removes dmg from a user', () => {
+        actionHandler.processDmAction(`remdmg Jeff 1`);
+        expect(removeDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
     
 });
 
@@ -373,25 +551,25 @@ describe('Actions', () => {
     });
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
-    const messageAction: MessageAction = actionHandler.actions[triggers.message];
-    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper];
-    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster]
-    const broadcastMessageAction: BroadcastMessageAction = actionHandler.actions[triggers.broadcast]
-    const discardAction: DiscardAction = actionHandler.actions[triggers.discard];
-    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect];
-    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory];
-    const lookAction: LookAction = actionHandler.actions[triggers.look];
-    const moveAction: MoveAction = actionHandler.actions[triggers.move];
-    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup];
-    const dungeonAction: DungeonAction = actionHandler.dungeonActions['essen Apfel'];
-    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified];
+    const messageAction: MessageAction = actionHandler.actions[triggers.message] as MessageAction;
+    const privateMessageAction: PrivateMessageAction = actionHandler.actions[triggers.whisper] as PrivateMessageAction;
+    const messageMasterAction: MessageMasterAction = actionHandler.actions[triggers.messageMaster] as MessageMasterAction;
+    const discardAction: DiscardAction = actionHandler.actions[triggers.discard] as DiscardAction;
+    const inspectAction: InspectAction = actionHandler.actions[triggers.inspect] as InspectAction;
+    const inventoryAction: InventoryAction = actionHandler.actions[triggers.inventory] as InventoryAction;
+    const lookAction: LookAction = actionHandler.actions[triggers.look] as LookAction;
+    const moveAction: MoveAction = actionHandler.actions[triggers.move] as MoveAction;
+    const pickupAction: PickupAction = actionHandler.actions[triggers.pickup] as PickupAction;
+    const unspecifiedAction: UnspecifiedAction = actionHandler.actions[triggers.unspecified] as UnspecifiedAction;
+    const invalidAction: InvalidAction = actionHandler.invalidAction;
+    const helpAction: HelpAction = actionHandler.actions[triggers.help] as HelpAction
+    const showActions: ShowActions = actionHandler.actions[triggers.showActions] as ShowActions
 
     amqpAdapter.sendWithRouting = jest.fn();
     amqpAdapter.sendToClient = jest.fn();
     amqpAdapter.broadcast = jest.fn();
     amqpAdapter.bindClientQueue = jest.fn();
     amqpAdapter.unbindClientQueue = jest.fn();
-    jest.useFakeTimers()
 
     test('MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload', () => {
         messageAction.performAction('Jeff', [
@@ -400,7 +578,11 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `[Raum-1] Jeff ${actionMessages.say} Hallo zusammen!` },
+            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`},
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`, player: "Jeff", room: "Raum-1"},
         });
     });
 
@@ -419,21 +601,6 @@ describe('Actions', () => {
         });
     });
 
-    test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
-        privateMessageAction.performAction('0', [
-            'Spieler',
-            'Hallo',
-        ]);
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
-            action: 'message',
-            data: { message: `[privat] ${actionMessages.dmWhisper} -> Spieler: Hallo` },
-        });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
-            action: 'message',
-            data: { message: `[privat] ${actionMessages.dmWhisper} -> Spieler: Hallo` },
-        });
-    });
-
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room', () => {
         privateMessageAction.performAction('Jeff', [
             'Bob',
@@ -441,7 +608,7 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Bob ${actionMessages.whisperCharacterNotInSameRoom}` },
+            data: { message: `Bob ist nicht in diesem Raum!` },
         });
     });
 
@@ -454,75 +621,82 @@ describe('Actions', () => {
             action: 'message',
             data: {
                 message:
-                    `${errorMessages.characterDoesNotExist1} Held ${errorMessages.characterDoesNotExist2}`,
+                    `Der Charakter Held existiert nicht in diesem Dungeon!`,
             },
         });
     });
 
     
     test(`MoveAction should modify the position, call the functions to bind the client queues 
-    and call sendWithRouting on the AmqpAdapter when user moves to another room`, () => {
-        moveAction.performAction('Jeff', ['Norden']);
+    and call sendWithRouting on the AmqpAdapter when user moves to another room`, async () => {
+        await moveAction.performAction('Jeff', ['Norden']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id);
+        expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
+            action: 'message',
+            data: { message: `Jeff hat Raum-1 verlassen!` },
+        });
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith(
             'Jeff',
             'room.1'
         );
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('Jeff', 'room.2');
-        jest.runAllTimers()
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
-            data: { message: `Jeff ${actionMessages.move1} Raum-N ${actionMessages.move2}` },
+            data: { message: `Jeff ist Raum-N beigetreten!` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff ist Raum-N beigetreten!`, player: "Jeff", room: "Raum-N" },
         });
     });
 
-    test('MoveAction should modify the position to the room in the East when user moves east', () => {
-        moveAction.performAction('Jeff', ['Osten']);
+    test('MoveAction should modify the position to the room in the East when user moves east', async () => {
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomEast.id);
     });
 
-    test('MoveAction should modify the position to the room in the South when user moves south', () => {
-        moveAction.performAction('Jeff', ['Sueden']);
+    test('MoveAction should modify the position to the room in the South when user moves south', async () => {
+        await moveAction.performAction('Jeff', ['Sueden']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomSouth.id);
     });
 
-    test('MoveAction should modify the position to the room in the West when user moves west', () => {
-        moveAction.performAction('Jeff', ['Westen']);
+    test('MoveAction should modify the position to the room in the West when user moves west', async () => {
+        await moveAction.performAction('Jeff', ['Westen']);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomWest.id);
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Osten']);
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: actionMessages.movePathNotAvailable },
+            data: { message: "In diese Richtung geht es nicht weiter!" },
         });
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen', async() => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Nord-Sueden']);
+        await moveAction.performAction('Jeff', ['Nord-Sueden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: errorMessages.directionDoesNotExist },
+            data: { message: "Diese Richtung existiert nicht!" },
         });
     });
 
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorth.id;
-        moveAction.performAction('Jeff', ['Norden']);
+        await moveAction.performAction('Jeff', ['Norden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: actionMessages.moveRoomClosed },
+            data: { message: "In diese Richtung ist der Raum geschlossen!" },
         });
     });
-    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', () => {
+    test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', async () => {
         TestDungeon.characters['Jeff'].position = TestRoomNorthNorth.id;
-        moveAction.performAction('Jeff', ['Osten']);
+        await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: actionMessages.movePathNotAvailable },
+            data: { message: "In diese Richtung geht es nicht weiter!" },
         });
     });
     //MOVEACTION TEST
@@ -533,7 +707,7 @@ describe('Actions', () => {
             action: 'message',
             data: {
                 message:
-                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel. Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. Du kannst in diesem Raum folgende Aktionen ausfuehren: essen Apfel. In diesem Raum befinden sich folgende Spieler: Jeff Spieler Bob. ',
+                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. \nEs liegen folgende Items in dem Raum:\n\tApfel (1x). \nFolgende NPCs sind in diesem Raum:\n\tBernd. \nIm Norden befindet sich folgender Raum:\n\tRaum-N. \nIm Osten befindet sich folgender Raum:\n\tRaum-O. \nIm Sueden befindet sich folgender Raum:\n\tRaum-S. \nIm Westen befindet sich folgender Raum:\n\tRaum-W. \nIn diesem Raum befinden sich folgende Spieler:\n\tJeff\n\tSpieler. ',
             },
         });
     });
@@ -542,7 +716,7 @@ describe('Actions', () => {
         inventoryAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `${actionMessages.inventory} Apfel` },
+            data: { message: `Du hast folgende Items im Inventar:\n\tApfel (1x)` },
         });
     });
 
@@ -550,7 +724,7 @@ describe('Actions', () => {
         inspectAction.performAction('Jeff', ['Apfel']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `${actionMessages.inspect} Apfel: Apfliger Apfel` },
+            data: { message: `Du untersuchst Apfel: Apfliger Apfel` },
         });
     });
 
@@ -558,7 +732,7 @@ describe('Actions', () => {
         inspectAction.performAction('Jeff', ['Birne']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: errorMessages.itemNotOwned },
+            data: { message: "Du besitzt dieses Item nicht!" },
         });
     });
 
@@ -568,22 +742,26 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `[privat] Jeff -> ${actionMessages.dmWhisper}: Hallo` },
+            data: { message: `[privat] Jeff -> Dungeon Master: Hallo` },
         });
-        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('0', {
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Jeff -> ${actionMessages.dmWhisper}: Hallo` },
+            data: { message: `[privat] Jeff -> Dungeon Master: Hallo`, player: "Jeff" },
         });
     })
 
     test('DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item', () => {
-        TestDungeon.characters['Jeff'].inventory.push(TestItemDiscard.id)
+        TestDungeon.characters['Jeff'].inventory.push({item: TestItemDiscard.id, count: 1})
         discardAction.performAction('Jeff', ['Schwert']);
-        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id])
-        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id, TestItemDiscard.id])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}])
+        expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemDiscard.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `${actionMessages.discard}Schwert` },
+            data: { message: `Du hast folgendes Item abgelegt: Schwert` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff hat Schwert in Raum-1 abgelegt!`, player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.rooms['1'].items.pop()
     })
@@ -592,7 +770,7 @@ describe('Actions', () => {
         discardAction.performAction('Jeff', ['Gold']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: errorMessages.itemNotOwned },
+            data: { message: "Du besitzt dieses Item nicht!" },
         });
     })
 
@@ -600,18 +778,23 @@ describe('Actions', () => {
         discardAction.performAction('Jeff', ['Rubin']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: errorMessages.itemNotOwned },
+            data: { message: "Du besitzt dieses Item nicht!" },
         });
     })
 
-    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', () => {
-        TestDungeon.rooms[TestRoom.id].items.push(TestItemPickup.id)
-        pickupAction.performAction('Jeff', ['Gold']);
-        expect(TestDungeon.characters['Jeff'].inventory).toStrictEqual([TestItem.id, TestItemPickup.id])
-        expect(TestDungeon.rooms['1'].items).toStrictEqual([TestItem.id])
+    test('PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item', async () => {
+        TestDungeon.rooms[TestRoom.id].items.push({item: TestItemPickup.id, count: 1})
+        await pickupAction.performAction('Jeff', ['Gold']);
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemPickup.id}])
+        expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `${actionMessages.pickup}Gold` },
+            data: { message: `Du hast folgendes Item aufgehoben: Gold` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalled()
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Jeff hat Gold aus Raum-1 aufgehoben!`, player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.characters['Jeff'].inventory.pop()
     })
@@ -620,15 +803,644 @@ describe('Actions', () => {
         pickupAction.performAction('Jeff', ['Schwert']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: errorMessages.itemNotInRoom },
+            data: { message: "Dieses Item existiert nicht in diesem Raum!" },
         });
     })
 
-    test('PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pick up an item that does not exist in the dungeon', () => {
-        pickupAction.performAction('Jeff', ['Rubin']);
+    test('InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist', () => {
+        invalidAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: errorMessages.itemNotInRoom },
+            data: { message: "Diese Aktion ist nicht möglich!" },
+        });
+    })
+
+    test('HelpAction should call sendToClient on AmqpAdapter with the correct payload to the correct sender', () => {
+        helpAction.performAction('Jeff', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
+            action: 'message',
+            data: { message: "Willkommen in TestDungeon1!\nGebe 'aktionen' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe 'umschauen' ein, um dich im Raum umzuschauen.\nWenn du nicht weiter kommst, gib 'hilfe' ein." },
+        });
+    })
+
+    test('ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user', () => {
+        showActions.performAction('Jeff', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
+            action: 'message',
+            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: \n\t'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; \n\t'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; \n\t'inv' - Zeigt die Items in deinem Inventar an; \n\t'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; \n\t'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; \n\t'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; \n\t'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; \n\t'sag <Nachricht>' - Sende eine Nachricht in den Raum; \n\t'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; \n\t'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; \n\t'hilfe' - Wenn du nicht mehr weiterkommst; \n\t'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; \n\t'essen Apfel' - test;\n\t'global' - test;\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.` },
+        });
+    })
+
+    test('InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist', () => {
+        unspecifiedAction.performAction('Jeff', ['teste mich']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
+            action: 'message',
+            data: { message: "Du hast folgende Aktion beim Dungeon Master angefragt: teste mich" },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat folgende Aktion in Raum-1 angefragt: teste mich", player: "Jeff", room: "Raum-1" },
         });
     })
 });
+
+describe("Dungeon Actions", () => {
+    beforeEach(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.hp = 50
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.dmg = 10
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats.mana = 50
+        TestDungeon.characters[TestCharacterDungeonActions.name].inventory = [new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1)]
+    })
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    afterAll(() => {
+        TestDungeon.characters[TestCharacterDungeonActions.name].currentStats = TestStartStats
+    })
+
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
+    const dungeonActionItemMissing: DungeonAction = actionHandler.dungeonActions[TestActionItemMissing.command]
+    const dungeonActionInOtherRoom: DungeonAction = actionHandler.dungeonActions[TestActionInOtherRoom.command]
+    const dungeonActionAddHp: DungeonAction = actionHandler.dungeonActions[TestActionAddHp.command];
+    const dungeonActionRemoveHp: DungeonAction = actionHandler.dungeonActions[TestActionRemoveHp.command];
+    const dungeonActionAddMana: DungeonAction = actionHandler.dungeonActions[TestActionAddMana.command];
+    const dungeonActionRemoveMana: DungeonAction = actionHandler.dungeonActions[TestActionRemoveMana.command];
+    const dungeonActionAddDamage: DungeonAction = actionHandler.dungeonActions[TestActionAddDamage.command];
+    const dungeonActionRemoveDamage: DungeonAction = actionHandler.dungeonActions[TestActionRemoveDamage.command];
+    const dungeonActionAddItem: DungeonAction = actionHandler.dungeonActions[TestActionAddItem.command];
+    const dungeonActionRemoveItem: DungeonAction = actionHandler.dungeonActions[TestActionRemoveItem.command];
+    const dungeonActionGlobal: DungeonAction = actionHandler.dungeonActions[TestGlobalAction.command]
+
+    amqpAdapter.sendToClient = jest.fn();
+
+    test('DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action', async () => {
+        await dungeonActionItemMissing.performAction('CoolerTyp', ['leben']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Dir fehlen folgende Items fuer die Aktion: Gold" },
+        })
+    })
+
+    test('DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room', async () => {
+        await dungeonActionInOtherRoom.performAction('CoolerTyp', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Diese Aktion ist nicht möglich!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp", async () => {
+        await dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(60)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 60,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Apfel gegessen!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp", async () => {
+        await dungeonActionRemoveHp.performAction('CoolerTyp', ['Giftpilz']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(30)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 30,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 1,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Giftpilz gegessen!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana", async () => {
+        await dungeonActionAddMana.performAction('CoolerTyp', ['Manatrank']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(60)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 60
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Manatrank getrunken!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana", async () => {
+        await dungeonActionRemoveMana.performAction('CoolerTyp', ['aus dem Brunnen']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.mana).toBe(30)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 30
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast aus dem Brunnen getrunken!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg", async () => {
+        await dungeonActionAddDamage.performAction('CoolerTyp', ['Bier']);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(20)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 20,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast ein Bier getrunken!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg", async () => {
+        await dungeonActionRemoveDamage.performAction('CoolerTyp', []);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.dmg).toBe(5)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 5,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du wechselst in den Nahkampf!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem", async () => {
+        await dungeonActionAddItem.performAction('CoolerTyp', ['Truhe']);
+        expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2), new ItemInfo(TestItemRemoveItem.id, 1), new ItemInfo(TestItemPickup.id, 1)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+                {
+                    count: 1,
+                    item: "Gold"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast die Truhe geoeffnet!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem", async () => {
+        await dungeonActionRemoveItem.performAction('CoolerTyp', ['Stein']);
+        expect(TestDungeon.characters['CoolerTyp'].inventory).toEqual([new ItemInfo(TestItem.id, 1), new ItemInfo(TestItemAddMana.id, 1), new ItemInfo(TestItemRemoveHp.id, 2)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 50,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                }
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast einen Stein geworfen!" },
+        })
+    })
+
+    test("DungeonAction.performAction should call sendToClient with the correct output when the user performs a global action", async () => {
+        await dungeonActionGlobal.performAction('CoolerTyp', []);
+        expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(80)
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'stats',
+            data: { 
+                currentStats: {
+                    hp: 80,
+                    dmg: 10,
+                    mana: 50
+                }, 
+                maxStats: {
+                    hp: 100,
+                    dmg: 20,
+                    mana: 100
+                } 
+            },
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'inventory',
+            data: [
+                {
+                    count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
+                    count: 2,
+                    item: "Giftpilz"
+                },
+                {
+                    count: 1,
+                    item: "Stein"
+                },
+            ],
+        })
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
+            action: 'message',
+            data: { message: "Du hast eine globale Aktion ausgefuehrt!" },
+        })
+    })
+})
+
+describe("DungeonMaster Actions", () => {
+    beforeEach(() => {
+        TestDungeon.characters['Jeff'].position = TestRoom.id;
+        TestDungeon.characters['Jeff'].currentStats.hp = 50
+        TestDungeon.characters['Jeff'].currentStats.dmg = 10
+        TestDungeon.characters['Jeff'].currentStats.mana = 50
+    })
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    afterAll(() => {
+        TestDungeon.characters['Jeff'].currentStats.hp = 50
+        TestDungeon.characters['Jeff'].currentStats.dmg = 10
+        TestDungeon.characters['Jeff'].currentStats.mana = 50
+    })
+
+    const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
+    const addDamage: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage;
+    const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
+    const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
+    const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
+    const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
+    const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const dieAction: DieAction = actionHandler.dieAction;
+    const toggleConnectionAction: ToggleConnectionAction = actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
+
+
+    amqpAdapter.sendToClient = jest.fn();
+    dieAction.performAction = jest.fn();
+
+    
+
+    test('dungeonmaster should add amount of actual Damage to a Charakter', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 1 Schaden erhalten" },
+        });
+    });
+
+    test('Jeff should get 1 Attack and then have 11 in total', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' ,'1']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(11);
+    });
+
+    test('Jeff should get so much attack so that he reaches his max Attack', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
+    });
+
+    test('dungeonmaster should add amount of actual HP to a Charakter', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 1 Leben erhalten" },
+        });
+    });
+    
+    test('Jeff should get 1 HP and then have 51 in total', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' ,'1']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(51);
+    });
+
+    test('Jeff should get so much life so that he reaches his max life', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
+    });
+
+    test('dungeonmaster should add amount of actual Mana to a Charakter', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 1 Mana erhalten" },
+        });
+    });
+        
+    test('Jeff should get 1 mana and then have 51 in total', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' ,'1']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(51);
+    });
+
+    test('Jeff should get so much mana so that he reaches his max mana', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
+    });
+
+                
+    test('dungeonmaster should remove hp from player', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' , '2']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Jeff hat 2 Leben verloren" },
+        });
+    });
+        
+    test('Jeff should lose 2 Hp and then have 48 in total', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' ,'2']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(48);
+    });
+
+    test('Jeff should lose so much hp so that he dies and gets 100 hp again', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
+    });
+
+    test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
+        privateMessageFromDm.performAction('dungeonmaster', [
+            'Spieler',
+            'Hallo',
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
+            action: 'message',
+            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+        });
+    });
+
+    test('BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message', () => {
+        broadcastMessageAction.performAction('dungeonmaster', [
+            'Hallo'
+        ]);
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Hallo` },
+        });
+    });
+
+    test('ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection', () => {
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'closed');
+        expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('closed')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-O wurde geschlossen!` },
+        });
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'open');
+        expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('open')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-O wurde geoeffnet!` },
+        });
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'south', 'closed');
+        expect(TestDungeon.rooms[TestRoom.id].connections.south).toBe('closed')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geschlossen!` },
+        });
+        toggleConnectionAction.modifyConnection(TestRoom.id, 'south', 'open');
+        expect(TestDungeon.rooms[TestRoom.id].connections.south).toBe('open')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geoeffnet!` },
+        });
+    });
+})

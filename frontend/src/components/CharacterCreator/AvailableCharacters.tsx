@@ -16,6 +16,7 @@ import { Row } from 'react-bootstrap';
 import {  CharactersResponseData, GetCharacterAttributesResponse } from '@supervisor/api';
 import AvailableCharactersLi from './AvailableCharactersLi';
 import { useTranslation } from 'react-i18next';
+import { SendsMessagesProps } from 'src/types/misc';
 
 export interface AvailableCharactersProps {
     characters: CharactersResponseData[];
@@ -23,7 +24,7 @@ export interface AvailableCharactersProps {
     fetchCharacters: ()=>void;
 }
 
-const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters, characterAttributes, fetchCharacters }) => {
+const AvailableCharacters: React.FC<AvailableCharactersProps & SendsMessagesProps> = ({ characters, characterAttributes, fetchCharacters, messageCallback }) => {
 
     const {t} = useTranslation();
 
@@ -52,7 +53,7 @@ const AvailableCharacters: React.FC<AvailableCharactersProps> = ({ characters, c
                     characterSpecies: characterAttributes?.species?.find(characterSpecies => characterSpecies.id === character.characterSpecies)?.name || "undefined",
                 }
                 // Resolve right character attributes
-                return <AvailableCharactersLi character={character} characterAttributes={resolvedCharacterAttributes} key={index} fetchCharacters={fetchCharacters} />
+                return <AvailableCharactersLi messageCallback={messageCallback} character={character} characterAttributes={resolvedCharacterAttributes} key={index} fetchCharacters={fetchCharacters} />
             }
             )}
         </>

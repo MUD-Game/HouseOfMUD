@@ -30,6 +30,7 @@ export interface MudCharacterSpecies {
     id: string;
     name: string;
     description: string;
+    from_server: boolean;
 }
 
 export interface MudCharacterClass {
@@ -38,12 +39,13 @@ export interface MudCharacterClass {
     description: string;
     maxStats: MudCharacterStats;
     startStats: MudCharacterStats;
+    from_server: boolean;
 }
 
 export interface MudCharacterGender {
     id: string;
     name: string;
-    description: string;
+    from_server: boolean;
 }
 
 export interface MudItem {
@@ -92,6 +94,7 @@ export interface MudActionElement {
     description: string;
     events: MudEvent[];
     itemsneeded: number[];
+    isGlobal: boolean;
 }
 
 export interface MudConnectionInfo {
@@ -104,7 +107,7 @@ export interface MudRoom {
     name: string;
     description: string;
     npcs: string[];
-    items: string[];
+    items: {item: string, count: number}[];
     connections: MudConnectionInfo;
     actions: string[];
     xCoordinate: number;

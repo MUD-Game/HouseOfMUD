@@ -15,6 +15,7 @@ export interface Dungeon {
   name: string;
   description: string;
   creatorId: string;
+  globalActions: string[];
   masterId: string;
   maxPlayers: number;
   currentPlayers: number;
@@ -34,6 +35,7 @@ export interface Dungeon {
   getCreatorId(): string
   getMasterId(): string
   getMaxPlayers(): number
+  getGlobalActions(): string[]
   getCurrentPlayers(): number
   getSpecies(speciesName: string): CharacterSpecies
   getClass(className: string): CharacterClass
@@ -61,6 +63,7 @@ export class DungeonImpl implements Dungeon {
   creatorId: string;
   masterId: string;
   maxPlayers: number;
+  globalActions: string[];
   currentPlayers: number;
   characterSpecies: {[id: string]: CharacterSpecies};
   characterClasses: {[id: string]: CharacterClass};
@@ -154,10 +157,14 @@ export class DungeonImpl implements Dungeon {
     }
   }
 
+  getGlobalActions(): string[] {
+    return this.globalActions;
+  }
+
   getNorthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
-      initialRoom.yCoordinate + 1
+      initialRoom.yCoordinate - 1
     );
   }
 
@@ -171,7 +178,7 @@ export class DungeonImpl implements Dungeon {
   getSouthernRoom(initialRoom: Room): Room {
     return this.getRoomByCoordinates(
       initialRoom.xCoordinate,
-      initialRoom.yCoordinate - 1
+      initialRoom.yCoordinate + 1
     );
   }
 
@@ -242,7 +249,8 @@ export class DungeonImpl implements Dungeon {
     blacklist: string[],
     actions: ActionElement[],
     items: Item[],
-    npcs: Npc[]
+    npcs: Npc[],
+    globalActions: string[]
   ) {
     this.id = id;
     this.name = name;
@@ -250,6 +258,7 @@ export class DungeonImpl implements Dungeon {
     this.creatorId = creatorId;
     this.masterId = masterId;
     this.maxPlayers = maxPlayers;
+    this.globalActions = globalActions;
     this.currentPlayers = currentPlayers;
     this.characterSpecies = arrayToMap(species);
     this.characterClasses = arrayToMap(classes);

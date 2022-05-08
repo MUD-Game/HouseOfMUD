@@ -1,3 +1,9 @@
+/**
+ * @module App-Routes
+ * @description Routes for the app
+ * @author Raphael Sack
+ * @category Routes
+ */
 import React, { ReactElement } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "../components/Authentication/Login";
@@ -11,24 +17,19 @@ import CharacterCreator from "src/components/CharacterCreator";
 import Game from "src/components/Game";
 import DungeonMaster from "src/components/DungeonMaster"
 import { RabbitMQProvider } from "src/contexts/RabbitMQContext";
-import { ConsoleProvider } from "src/contexts/ConsoleContext";
 import DungeonConfigurator from '../components/DungeonConfigurator/index';
 import { DungeonConfiguratorProvider } from "src/contexts/DungeonConfiguratorContext";
-import DemoStart from "src/components/DemoStart";
-import DemoJoin from "src/components/DemoJoin";
 import VerifyEmail from "src/components/Authentication/VerifyEmail";
 import Register from "src/components/Authentication/Register";
 import UserSettings from "src/components/Authentication/UserSettings";
-import Busy from "src/components/Busy";
-
+import ForgotLogin from "src/components/Authentication/FortgotLogin";
+import ResetPassword from "src/components/Authentication/ResetPassword";
 
 
 const IndexRouter: React.FC = (): ReactElement => {
     return (
-        <ConsoleProvider>
-
-                <BrowserRouter>
-            <AuthProvider>
+            <BrowserRouter>
+                <AuthProvider>
                     <Header />
                     <GameProvider>
                         <Routes>
@@ -38,8 +39,6 @@ const IndexRouter: React.FC = (): ReactElement => {
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />
-                            <Route path="/demo-start" element={<RequireAuth><DemoStart /></RequireAuth>} />
-                            <Route path="/demo-join" element={<RequireAuth><DemoJoin /></RequireAuth>} />
                             <Route path="/dungeon-configurator" element={
                                 <RequireAuth>
                                     <DungeonConfiguratorProvider>
@@ -57,12 +56,13 @@ const IndexRouter: React.FC = (): ReactElement => {
                                 </RabbitMQProvider>
                             </RequireAuth>} />
                             <Route path="/verify" element={<VerifyEmail />} />
+                            <Route path="/requestpasswordreset" element={<ForgotLogin />} />
+                            <Route path="/passwordreset" element={<ResetPassword />} />
                             <Route path="*" element={<NotFound />} />
                         </Routes>
                     </GameProvider>
                 </AuthProvider>
-                </BrowserRouter>
-        </ConsoleProvider>
+            </BrowserRouter>
     );
 };
 

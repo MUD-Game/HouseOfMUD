@@ -6,56 +6,73 @@
  * @props {@linkcode GameProps}
  * ```jsx
  * <Minimap />
+ * <HUD />
+ * <Inventory />
+ * <Chat />
  * ```
  */
 
 import React from 'react'
 import Chat from './Chat';
 import HUD, { HUDProps } from './HUD';
-import Inventory from './Inventory';
-import Minimap from './Minimap';
+import Inventory, { InventoryProps } from './Inventory';
+import Minimap, { MinimapProps } from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
-import { useMudConsole } from 'src/hooks/useMudConsole';
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import Alert from '../Custom/Alert';
 export interface GameProps { }
 
-const Game: React.FC<GameProps> = ({ }) => {
-    const {t} = useTranslation();
-    let homsole = useMudConsole();
-    let navigate = useNavigate();
+const Game: React.FC<GameProps> = () => {
 
+    const {t} = useTranslation();
+    const navigate = useNavigate();
     const rabbit = useRabbitMQ();
     const { isAbleToJoinGame } = useGame();
+
+    const [error, setError] = React.useState<string>("");
+    const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
+    const [inventoryData, setInventoryData] = React.useState<InventoryProps["inventoryData"]>([]);
+    const [hudData, setHudData] = React.useState<HUDProps | null>(null);
+
+    
+
+    const miniMapSubscriber = (roomData: MinimapProps) => {
+        setMiniMapData(roomData);
+    }
+
     useEffect(() => {
+        const onUnload = (e: any) => {
+            e.preventDefault();
+            rabbit.logout(() => { }, (error) => {
+                setError("rabbitmq.logout")
+            });
+        }
+        window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
+            rabbit.setMiniMapSubscriber(miniMapSubscriber);
+            rabbit.setInventorySubscriber(setInventoryData);
+            rabbit.setHudSubscriber(setHudData);
             rabbit.login(() => {
-                homsole.log("Successful login");
+                
             }, (error) => {
-                homsole.error(error, "RabbitMQ");
+                setError("rabbitmq.login")
             });
         }
         return () => {
+            window.removeEventListener('unload', onUnload);
             rabbit.logout(() => { }, (error) => {
-                homsole.error(error, "RabbitMQ");
+                setError("rabbitmq.logout")
             });
         }
-    }, [])
+    }, [rabbit, isAbleToJoinGame, setInventoryData, setHudData, setError, setMiniMapData]);
 
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
-    }
-    const hudMock: HUDProps = {
-        health: 50,
-        maxHealth: 100,
-        mana: 100,
-        maxMana: 100,
-        damage: 10,
-        maxDamage: 100
     }
 
 
@@ -70,12 +87,13 @@ const Game: React.FC<GameProps> = ({ }) => {
             </Row>
             <Row className="game-body">
                 <div className="col col-4 col-md-3 col-lg-2">
-                    <Minimap mapData={null} />
-                    <Inventory items={null} />
-                    <HUD {...hudMock} />
+                    {miniMapData ? <Minimap {...miniMapData} /> : null}
+                    <Inventory inventoryData={inventoryData} />
+                    {hudData && <HUD {...hudData} />}
+                    <Alert type="error" message={error} setMessage={setError} />
                 </div>
                 <div className="col col-8 col-md-9 col-lg-10">
-                    <Chat />
+                    <Chat messageCallback={setError}/>
                 </div>
             </Row>
         </Container>

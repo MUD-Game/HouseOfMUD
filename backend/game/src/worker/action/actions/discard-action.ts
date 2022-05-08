@@ -1,42 +1,55 @@
+import { ItemInfo } from "../../../data/datasets/itemInfo";
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { Item } from "../../../data/interfaces/item";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages, errorMessages, triggers } from "./action-resources";
+import { actionMessages, errorMessages, extras, parseResponseString, triggers } from "./action-resources";
 
-export class DiscardAction implements Action {
-    trigger: string;
-    dungeonController: DungeonController
+export class DiscardAction extends Action {
 
     constructor(dungeonController: DungeonController) {
-        this.trigger = triggers.discard;
-        this.dungeonController = dungeonController;
+        super(triggers.discard, dungeonController);
     }
 
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)
         let nameOfItemToDiscard: string = args.join(' ')
-        let characterInventory: string[] = senderCharacter.getInventory()
+        let characterInventory: ItemInfo[] = senderCharacter.getInventory()
         let idOfCharacterPosition: string = senderCharacter.getPosition()
         let characterPosition: Room = dungeon.getRoom(idOfCharacterPosition)
-        let roomItems: string[] = characterPosition.getItems()
+        let roomName: string = characterPosition.getName()
+        let roomItems: ItemInfo[] = characterPosition.getItemInfos()
         try {
             let itemToDiscard: Item = dungeon.getItemByName(nameOfItemToDiscard)
             let idOfItemToDiscard: string = itemToDiscard.getId()
-            if (characterInventory.includes(idOfItemToDiscard)) {
-                let indexOfItemToDiscard: number = characterInventory.indexOf(idOfItemToDiscard)
-                characterInventory.splice(indexOfItemToDiscard, 1)
-                roomItems.push(idOfItemToDiscard)
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: `${actionMessages.discard}${nameOfItemToDiscard}`}})
+            if (characterInventory.some(it => it.item == idOfItemToDiscard)) {
+                let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == idOfItemToDiscard)[0]
+                if (itemInInventory.count > 1){
+                    itemInInventory.count -= 1
+                } else {
+                    let indexOfItemToDiscardInInventory: number = characterInventory.indexOf(itemInInventory)
+                    characterInventory.splice(indexOfItemToDiscardInInventory, 1)
+                }
+                if (roomItems.some(it => it.item == idOfItemToDiscard)) {
+                    let itemInRoom: ItemInfo = roomItems.filter(it => it.item == idOfItemToDiscard)[0]
+                    itemInRoom.count += 1
+                }
+                else{
+                    roomItems.push(new ItemInfo(itemInInventory.item, 1))
+                }
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(actionMessages.discard, nameOfItemToDiscard)})
+                // message sent to dungeon master
+                this.dungeonController.getAmqpAdapter().sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.discardDungeonMaster, user, nameOfItemToDiscard, roomName), player: user, room: roomName})
+                this.dungeonController.sendInventoryData(user)
             } else {
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
             }
         } catch(e) {
             console.log(e)
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
         }
     }
 

@@ -1,29 +1,21 @@
 /**
  * @module UserSettings
  * @category React Components
- * @description Component to handle UserSettings-In
+ * @description Component to show and change the user-settings
+ * @author Raphael Sack
  * @hooks {@linkcode useAuth}
- * ```jsx
- * <>
- *  <AvailableCharactersLi/>[]
- * </>
- * ```
  */
 
 
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ConfirmationDialog, { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
+import { useNavigate } from 'react-router-dom';
+import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import { useAuth } from 'src/hooks/useAuth';
-import MudSelect from '../../Custom/MudSelect';
+import MudSelect from '../../Custom/Select';
 type UserSettingsProps = {}
 
-interface LocationState {
-    from: { pathname: string }
-}
 const UserSettings: React.FC<UserSettingsProps> = (props) => {
     let navigate = useNavigate();
     const { t, i18n } = useTranslation();
@@ -53,6 +45,11 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
                             }}>
                                 <option value="de-DE">{t("user_settings.language.de-DE")}</option>
                                 <option value="en-US">{t("user_settings.language.en-US")}</option>
+                                <option value="nl-NL">{t("user_settings.language.nl-NL")}</option>
+                                <option value="fr-FR">{t("user_settings.language.fr-FR")}</option>
+                                <option value="es-ES">{t("user_settings.language.es-ES")}</option>
+                                <option value="it-IT">{t("user_settings.language.it-IT")}</option>
+                                <option value="pl-PL">{t("user_settings.language.pl-PL")}</option>
                             </MudSelect>
                         </div>
                     </Row>

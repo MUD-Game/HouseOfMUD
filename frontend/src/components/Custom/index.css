@@ -10,7 +10,7 @@ select {
   border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
 }
 
-input, textarea {
+input.input-custom, textarea.input-custom {
   background-color: var(--bgcolor);
   color: var(--textcolor);
   padding: .4em .7em;
@@ -29,6 +29,10 @@ input:focus-visible, select:focus-visible, select:focus, input:focus {
 
 .rbt .rbt-input-main::-ms-clear {
   display: none;
+}
+
+.rbt-input-main {
+  color: var(--textcolor);
 }
 
 /**
@@ -59,7 +63,7 @@ input:focus-visible, select:focus-visible, select:focus, input:focus {
   color: var(--textcolor);
   width: 100%;
   border: solid var(--accent);
-  caret-color: black;
+  caret-color: var(--textcolor);
   border-width: 3px 4px 3px 5px;
   border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
 }
@@ -210,4 +214,21 @@ input:focus-visible, select:focus-visible, select:focus, input:focus {
 .input-group > .rbt:not(:last-child) .form-control {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+
+.alert-container{
+  position:fixed;
+  top:5vh;
+  left:0;
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index:9999;
+}
+
+.alert-container > .alert{
+  width:50vw;
 }

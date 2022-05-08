@@ -93,11 +93,7 @@ function handleHostMessages(dungeonController: DungeonController) {
                 userTokens[userID][character] = verifyToken;
                 break;
             case 'stop':
-                // TODO: save Dungeon to database and stop process
-                //! Hier die "dungeon speichern" Methode aus dem Dungeon controller aufrufen
-                await dungeonController.persistAllRooms()
-                await dungeonController.getAmqpAdapter().close();
-                exit(0);
+                // dungeonController.stopDungeon();
                 break;
         }
     });

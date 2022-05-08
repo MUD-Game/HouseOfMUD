@@ -91,9 +91,20 @@ export class DungeonController {
     private async logout(user: string, characterName: string) {
         console.log(`logout ${characterName}`);
 
-        await this.persistCharacterData(this.dungeon.getCharacter(characterName))
-        delete this.dungeon.characters[characterName];
-        sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
+        if (characterName !== 'dungeonmaster') {
+            await this.persistCharacterData(this.dungeon.getCharacter(characterName))
+            delete this.dungeon.characters[characterName];
+            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
+        } else {
+            this.stopDungeon();
+        }
+    }
+
+    async stopDungeon() {
+        // TODO: kick all players
+        await this.persistAllRooms()
+        await this.getAmqpAdapter().close();
+        process.exit(0);
     }
 
     async persistAllRooms(){

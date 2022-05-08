@@ -32,6 +32,7 @@ const Game: React.FC<GameProps> = ({ }) => {
     const { isAbleToJoinGame } = useGame();
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
+    const [selectedRooms, setSelectedRooms] = React.useState<string[]>([]);
 
     const onUnload = (e: any) => {
         e.preventDefault();
@@ -91,11 +92,11 @@ const Game: React.FC<GameProps> = ({ }) => {
                 <div className="col col-md-3 col-lg-2">
                     {miniMapData && <Minimap {...miniMapData} />}
                     <OnlinePlayers players={null} />
-                    {miniMapData && <ChatFilter { ...{rooms: Object.values(miniMapData.rooms).map( room => room.name) } } />}
+                    {miniMapData && <ChatFilter selectedRooms={selectedRooms} setSelectedRooms={setSelectedRooms} allRooms={ Object.values(miniMapData.rooms).map( room => room.name) } />}
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>
                 <div className="col col-md-6 col-lg-8">
-                    <Chat onSendCommand={addMessage} messageCallback={setError}/>
+                    <Chat selectedRooms={selectedRooms} onSendCommand={addMessage} messageCallback={setError}/>
                 </div>
                 <div className="col col-md-3 col-lg-2">
                     <ChatQueue commandQueue={messageQueue} onSendQueue={sendQueue} />

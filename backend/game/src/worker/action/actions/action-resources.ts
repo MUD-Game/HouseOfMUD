@@ -89,6 +89,9 @@ export const dungeonMasterSendMessages = {
     removeHp: "Du hast %s Leben verloren",
     hpRemoved: "%s hat %s Leben verloren",
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
+    toggleConnection: "Der Durchgang zwischen %s und %s wurde %s!",
+    connectionOpen: "geoeffnet",
+    connectionClosed: "geschlossen"
 }
 
 export const extras = {

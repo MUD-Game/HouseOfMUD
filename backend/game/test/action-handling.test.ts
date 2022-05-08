@@ -321,7 +321,6 @@ const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     '1',
     2,
-    1,
     [TestSpecies],
     [TestClass],
     [TestGender],

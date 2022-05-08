@@ -40,8 +40,8 @@ const validator = {
         // Check if password is at least 8 characters long
         if (password.length < 8) returns.push("password.tooshort");
         
-        // Check if password contains 3 numeral
-        if (!/[0-9]{3}/.test(password)) returns.push("password.nonumeral");
+        // Check if password contains a numeral
+        if (!/[0-9]/.test(password)) returns.push("password.nonumeral");
 
         // Check if password contains a lowecase letter
         if (!/[a-z]/.test(password)) returns.push("password.nolower");
@@ -49,11 +49,8 @@ const validator = {
         // Check if password contains a capital letter
         if (!/[A-Z]/.test(password)) returns.push("password.nocapital");
 
-        // Check if password contains 3 symbol
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{3}/.test(password)) returns.push("password.nosymbol");
-
-        // Check if password contains at least 3 symbols
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{3}/.test(password)) returns.push("password.nosymbol");
+        // Check if password contains a symbol
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) returns.push("password.nosymbol");
 
         return returns;
 

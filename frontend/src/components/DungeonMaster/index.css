@@ -139,7 +139,7 @@ body{
     box-shadow: 0 0 5px .7em var(--accentlight);
 }
 
-.form-label {
+.chat-filter-wrapper .form-label {
     margin: 0;
     display: none;
 }

@@ -31,13 +31,13 @@ export class ShowActions extends Action {
                     let action: ActionElement = dungeon.getAction(actionId)
                     let actionCommand: string = action.getCommand()
                     let actionDescription: string = action.getDescription()
-                    actionString += `'${actionCommand}' - ${actionDescription}; `
+                    actionString += `\n\t'${actionCommand}' - ${actionDescription};`
                 })
                 globalActions.forEach(actionId => {
                     let action: ActionElement = dungeon.getAction(actionId)
                     let actionCommand: string = action.getCommand()
                     let actionDescription: string = action.getDescription()
-                    actionString += `'${actionCommand}' - ${actionDescription}; `
+                    actionString += `\n\t'${actionCommand}' - ${actionDescription};`
                 })
             } catch(e) {
                 console.log(e)

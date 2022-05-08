@@ -707,7 +707,7 @@ describe('Actions', () => {
             action: 'message',
             data: {
                 message:
-                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. Es liegen folgende Items in dem Raum: Apfel (1x). Folgende NPCs sind in diesem Raum: Bernd. Im Norden befindet sich folgender Raum: Raum-N. Im Osten befindet sich folgender Raum: Raum-O. Im Sueden befindet sich folgender Raum: Raum-S. Im Westen befindet sich folgender Raum: Raum-W. In diesem Raum befinden sich folgende Spieler: Jeff Spieler. ',
+                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. \nEs liegen folgende Items in dem Raum:\n\tApfel (1x). \nFolgende NPCs sind in diesem Raum:\n\tBernd. \nIm Norden befindet sich folgender Raum:\n\tRaum-N. \nIm Osten befindet sich folgender Raum:\n\tRaum-O. \nIm Sueden befindet sich folgender Raum:\n\tRaum-S. \nIm Westen befindet sich folgender Raum:\n\tRaum-W. \nIn diesem Raum befinden sich folgende Spieler:\n\tJeff\n\tSpieler. ',
             },
         });
     });
@@ -716,7 +716,7 @@ describe('Actions', () => {
         inventoryAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du hast folgende Items im Inventar: Apfel (1x)` },
+            data: { message: `Du hast folgende Items im Inventar:\n\tApfel (1x)` },
         });
     });
 
@@ -819,7 +819,7 @@ describe('Actions', () => {
         helpAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Willkommen in TestDungeon1! Gebe 'aktionen' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten. Gebe 'umschauen' ein, um dich im Raum umzuschauen. Wenn du nicht weiter kommst, gib 'hilfe' ein." },
+            data: { message: "Willkommen in TestDungeon1!\nGebe 'aktionen' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe 'umschauen' ein, um dich im Raum umzuschauen.\nWenn du nicht weiter kommst, gib 'hilfe' ein." },
         });
     })
 
@@ -827,7 +827,7 @@ describe('Actions', () => {
         showActions.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: 'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; 'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; 'inv' - Zeigt die Items in deinem Inventar an; 'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; 'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; 'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; 'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; 'sag <Nachricht>' - Sende eine Nachricht in den Raum; 'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; 'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; 'hilfe' - Wenn du nicht mehr weiterkommst; 'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; 'essen Apfel' - test; 'global' - test; Gebe gegebenenfalls geeignete Argumente fuer <> ein.` },
+            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: \n\t'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; \n\t'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; \n\t'inv' - Zeigt die Items in deinem Inventar an; \n\t'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; \n\t'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; \n\t'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; \n\t'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; \n\t'sag <Nachricht>' - Sende eine Nachricht in den Raum; \n\t'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; \n\t'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; \n\t'hilfe' - Wenn du nicht mehr weiterkommst; \n\t'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; \n\t'essen Apfel' - test;\n\t'global' - test;\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.` },
         });
     })
 

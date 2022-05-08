@@ -33,12 +33,19 @@ const Game: React.FC<GameProps> = ({ }) => {
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
 
+    const onUnload = (e: any) => {
+        e.preventDefault();
+        rabbit.logout(() => { }, (error) => {
+            setError("rabbitmq.logout")
+        });
+    }
+
     const miniMapSubscriber = (roomData: MinimapProps) => {
         setMiniMapData(roomData);
     }
 
-
     useEffect(() => {
+        window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
@@ -49,6 +56,7 @@ const Game: React.FC<GameProps> = ({ }) => {
             });
         }
         return () => {
+            window.removeEventListener('unload', onUnload);
             rabbit.logout(() => { }, (error) => {
                 setError("rabbitmq.logout")
             });

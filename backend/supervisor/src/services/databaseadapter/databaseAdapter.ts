@@ -89,6 +89,20 @@ function mapToArray(map: any): any[] {
         })
     }
 
+    async getUserByEmail(email: string): Promise<User | undefined> {
+        const foundUser = await this.user.findOne({ email: email }, 'username email');
+        if (foundUser) {
+            return foundUser;
+        }
+        return undefined;
+    }
+
+    async updatePassword(email: string, password: string) {
+        return this.user.updateOne({ email: email }, { password: password });
+    }
+
+
+
     /**
      * get a dungeon from the 'dungeons' Collection in the Mongo database
      * @param id the id of the dungeon to get

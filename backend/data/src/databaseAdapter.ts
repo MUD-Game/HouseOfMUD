@@ -69,7 +69,7 @@ export class DatabaseAdapter {
      * store a dungeon inside the 'dungeons' Collection of the connection
      * @param dungeonToStore the 'Dungeon' dataset that contains all information of the dungeon
      */
-     async storeDungeon(dungeonToStore: DungeonDataset) {
+    async storeDungeon(dungeonToStore: DungeonDataset) {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
@@ -88,6 +88,20 @@ export class DatabaseAdapter {
             actions: await this.action.insertMany(dungeonToStore.actions)
         })
     }
+
+    async getUserByEmail(email: string): Promise<User | undefined> {
+        const foundUser = await this.user.findOne({ email: email }, 'username email');
+        if (foundUser) {
+            return foundUser;
+        }
+        return undefined;
+    }
+
+    async updatePassword(email: string, password: string) {
+        return this.user.updateOne({ email: email }, { password: password });
+    }
+
+
 
     /**
      * get a dungeon from the 'dungeons' Collection in the Mongo database
@@ -294,11 +308,10 @@ export class DatabaseAdapter {
      */
     async updateCharacterInDungeon(updatedCharacter: CharacterDataset, dungeonId: string) {
         let oldCharacter = await this.getCharacterFromDungeon(updatedCharacter.name, dungeonId)
-        if(oldCharacter !== null)
-        {
+        if (oldCharacter !== null) {
             await this.character.updateOne(
-                oldCharacter, 
-                updatedCharacter 
+                oldCharacter,
+                updatedCharacter
             );
         }
     }
@@ -309,11 +322,11 @@ export class DatabaseAdapter {
      * @returns the query response (information about the performed database action)
      */
     async updateRooms(rooms: RoomDataset[], dungeonId: string) {
-        let dungeonRoomIds: RoomDataset[]|undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
+        let dungeonRoomIds: RoomDataset[] | undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
         console.log(dungeonRoomIds)
-        if(dungeonRoomIds != undefined){
+        if (dungeonRoomIds != undefined) {
             dungeonRoomIds.forEach(async id => {
-                let foundRoom = (await this.room.findOne({_id: id })) as RoomDataset
+                let foundRoom = (await this.room.findOne({ _id: id })) as RoomDataset
                 await this.room.updateOne(foundRoom, rooms.find(room => room.id == foundRoom.id));
             });
         }

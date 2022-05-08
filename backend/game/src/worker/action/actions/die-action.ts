@@ -3,7 +3,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages } from "./action-resources";
+import { actionMessages, extras, parseResponseString } from "./action-resources";
 
 export class DieAction extends Action {
 
@@ -18,6 +18,7 @@ export class DieAction extends Action {
             return;
         }
         let currentPosition: string = characterToDie.getPosition()
+        let roomName: string = dungeon.getRoom(currentPosition).name
         let inventoryItems: ItemInfo[] = characterToDie.getInventory()
 
         //remove items from inventory and add them to the current room
@@ -58,5 +59,7 @@ export class DieAction extends Action {
         this.dungeonController.sendStatsData(user)
         const description = actionMessages.die
         await amqpAdapter.sendActionToClient(user, "message", {message: description})
+        // message send to dungeon master
+        await amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.dieDungeonMaster, user, roomName), player: user, room: roomName})
     }
 }

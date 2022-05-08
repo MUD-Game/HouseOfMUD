@@ -320,6 +320,9 @@ a:hover {
 .chat-output-wrap {
   height: 90%;
 }
+.chat-message {
+  white-space: pre-wrap;
+}
 .chat-input-wrap {
   height: 10%;
 }

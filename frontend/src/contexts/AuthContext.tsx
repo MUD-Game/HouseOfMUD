@@ -6,8 +6,6 @@
  */
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { supervisor } from 'src/services/supervisor';
 import Cookies from 'universal-cookie';
 
@@ -29,8 +27,6 @@ let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 function AuthProvider({ children }: { children: React.ReactNode }) {
   let [user, setUser] = React.useState<string>("");
   let [token, setToken] = React.useState<string>('');
-  const { t } = useTranslation();
-  const navigate = useNavigate();
   let isAuthenticated = (success: VoidFunction, error: (error: string) => void) => {
     supervisor.authenticate({ user: user, password: token }, (data: any) => {
         let c = new Cookies();

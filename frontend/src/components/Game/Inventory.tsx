@@ -6,8 +6,7 @@
  * @props {@linkcode InventoryProps}
  */
 
-import React, { useState } from 'react'
-import { useRabbitMQ } from '../../hooks/useRabbitMQ';
+import React from 'react'
 import { useTranslation } from 'react-i18next';
 export interface InventoryProps {
     inventoryData: { item: string

@@ -1,72 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Unit Tests" tests="145" failures="0" errors="0" time="17.039">
-  <testsuite name="backend\game\dist\test\action-handling.test.js" errors="0" failures="0" skipped="0" timestamp="2022-05-07T16:18:33" time="3.024" tests="72">
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.134">
+<testsuites name="Unit Tests" tests="149" failures="0" errors="0" time="27.727">
+  <testsuite name="backend\game\dist\test\action-handling.test.js" errors="0" failures="0" skipped="0" timestamp="2022-05-08T17:28:12" time="4.955" tests="74">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.151">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.005">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.009">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0.003">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0.006">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0.005">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.004">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0.003">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0.003">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PickupAction with the correct parameters when it receives a &quot;aufheben&quot; action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.005">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on HelpAction with the correct parameters when it receives a &quot;hilfe&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on HelpAction with the correct parameters when it receives a &quot;hilfe&quot; action message" time="0.005">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on ShowActions with the correct parameters when it receives a &quot;aktionen&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on ShowActions with the correct parameters when it receives a &quot;aktionen&quot; action message" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a &quot;fluesterdm&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a &quot;fluesterdm&quot; action message" time="0.004">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.003">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.004">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0.003">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddHp when the dungeon master adds hp to a user" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveHp when the dungeon master removes hp from a user" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveHp when the dungeon master removes hp from a user" time="0.017">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddMana when the dungeon master adds mana to a user" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddMana when the dungeon master adds mana to a user" time="0.003">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveMana when the dungeon master removes mana from a user" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveMana when the dungeon master removes mana from a user" time="0.003">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddDamage when the dungeon master adds dmg to a user" time="0.002">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveDmg when the dungeon master removes dmg from a user" time="0.003">
     </testcase>
-    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0.002">
+    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0.005">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0.003">
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0.005">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room" time="0.001">
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.26">
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.199">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position, call the functions to bind the client queues 
     and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0.012">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the East when user moves east" time="0.001">
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the East when user moves east" time="0.003">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the South when user moves south" time="0.004">
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the South when user moves south" time="0.003">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.003">
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0.002">
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0.001">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed" time="0.009">
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room is closed when the user tries to move into a room that is closed" time="0.003">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist" time="0.002">
     </testcase>
@@ -80,89 +80,93 @@
     </testcase>
     <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.006">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.007">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0.001">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.061">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.03">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0.011">
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0.014">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0.002">
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist" time="0.001">
+    <testcase classname="Test - Actions" name="InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist" time="0.002">
     </testcase>
     <testcase classname="Test - Actions" name="HelpAction should call sendToClient on AmqpAdapter with the correct payload to the correct sender" time="0.004">
     </testcase>
-    <testcase classname="Test - Actions" name="ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user" time="0.003">
+    <testcase classname="Test - Actions" name="ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user" time="0.007">
+    </testcase>
+    <testcase classname="Test - Actions" name="InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist" time="0.003">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action" time="0.015">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room" time="0.002">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp" time="0.018">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp" time="0.007">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp" time="0.006">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp" time="0.005">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana" time="0.008">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana" time="0.005">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana" time="0.009">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana" time="0.014">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg" time="0.006">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg" time="0.007">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg" time="0.006">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg" time="0.005">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem" time="0.007">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem" time="0.006">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem" time="0.005">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem" time="0.006">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output when the user performs a global action" time="0.004">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output when the user performs a global action" time="0.006">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0.005">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0.008">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 Attack and then have 11 in total" time="0.002">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 Attack and then have 11 in total" time="0.001">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much attack so that he reaches his max Attack" time="0.002">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual HP to a Charakter" time="0.009">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 HP and then have 51 in total" time="0.004">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 HP and then have 51 in total" time="0.003">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much life so that he reaches his max life" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much life so that he reaches his max life" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Mana to a Charakter" time="0.003">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Mana to a Charakter" time="0.004">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0.002">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0.005">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose 2 Hp and then have 48 in total" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose 2 Hp and then have 48 in total" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he dies and gets 100 hp again" time="0.002">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he dies and gets 100 hp again" time="0.005">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0.004">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message" time="0.002">
     </testcase>
-  </testsuite>
-  <testsuite name="jest.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-07T16:18:33" time="12.49" tests="1">
-    <testcase classname="Test - Jenkins Pipeline" name="Test jenkins pipeline" time="0.007">
+    <testcase classname="Test - DungeonMaster Actions" name="ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection" time="0.05">
     </testcase>
   </testsuite>
-  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-07T16:18:33" time="14.826" tests="72">
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.057">
+  <testsuite name="jest.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-08T17:28:12" time="15.137" tests="1">
+    <testcase classname="Test - Jenkins Pipeline" name="Test jenkins pipeline" time="0.006">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.002">
+  </testsuite>
+  <testsuite name="backend\game\test\action-handling.test.ts" errors="0" failures="0" skipped="0" timestamp="2022-05-08T17:28:12" time="24.747" tests="74">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageAction with the correct parameters when it receives a &quot;sag&quot; action message" time="0.076">
+    </testcase>
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction with the correct parameters when it receives a &quot;fluester&quot; action message" time="0.003">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DiscardAction with the correct parameters when it receives a &quot;ablegen&quot; action message" time="0.002">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InspectAction with the correct parameters when it receives a &quot;untersuche&quot; action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InventoryAction with the correct parameters when it receives a &quot;inv&quot; action message" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on LookAction with the correct parameters when it receives a &quot;umschauen&quot; action message" time="0.001">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MoveAction with the correct parameters when it receives a &quot;gehe&quot; action message" time="0.001">
     </testcase>
@@ -170,50 +174,50 @@
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master" time="0.002">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on InvalidAction with the correct parameters when it receives an invalid action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on HelpAction with the correct parameters when it receives a &quot;hilfe&quot; action message" time="0.002">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on HelpAction with the correct parameters when it receives a &quot;hilfe&quot; action message" time="0.001">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on ShowActions with the correct parameters when it receives a &quot;aktionen&quot; action message" time="0.001">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on MessageMasterAction with the correct parameters when it receives a &quot;fluesterdm&quot; action message" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on PrivateMessageAction when the dungeon master sends a message to a user" time="0.002">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on BroadcastMessage when the dungeon master broadcasts a message to all users" time="0.001">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddHp when the dungeon master adds hp to a user" time="0.005">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddHp when the dungeon master adds hp to a user" time="0">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveHp when the dungeon master removes hp from a user" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveHp when the dungeon master removes hp from a user" time="0">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddMana when the dungeon master adds mana to a user" time="0">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddMana when the dungeon master adds mana to a user" time="0.001">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveMana when the dungeon master removes mana from a user" time="0">
     </testcase>
-    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddDamage when the dungeon master adds dmg to a user" time="0.001">
+    <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on AddDamage when the dungeon master adds dmg to a user" time="0">
     </testcase>
     <testcase classname="Test - ActionHandler" name="ActionHandler should call performAction on RemoveDmg when the dungeon master removes dmg from a user" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0.001">
+    <testcase classname="Test - Actions" name="MessageAction should call sendWithRouting on the AmqpAdapter with the correct routingKey and payload" time="0.008">
     </testcase>
     <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload" time="0.001">
     </testcase>
     <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient is not in the same room when trying to send a message to a character that is not in the same room" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.068">
+    <testcase classname="Test - Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to the initial sender saying the recipient does not exist in the dungeon when trying to send a message to a character that does not exist" time="0.095">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position, call the functions to bind the client queues 
-    and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0.008">
+    and call sendWithRouting on the AmqpAdapter when user moves to another room" time="0.006">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the East when user moves east" time="0.002">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the South when user moves south" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.001">
+    <testcase classname="Test - Actions" name="MoveAction should modify the position to the room in the West when user moves west" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0.003">
+    <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the room does not exist when the user tries to move to a direction where a room does not exist" time="0.001">
     </testcase>
     <testcase classname="Test - Actions" name="MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the user input an invalid direction when the user inputs anything but Norden, Osten, Sueden or Westen" time="0.001">
     </testcase>
@@ -229,73 +233,77 @@
     </testcase>
     <testcase classname="Test - Actions" name="InspectAction should call sendToClient on AmqpAdapter saying the user does not have the item when the user does not have the item" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0.002">
+    <testcase classname="Test - Actions" name="MessageMasterAction should call sendToClient on the AmqpAdapter to both the sender and the dungeon master with the correct payload" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.005">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user discards an item" time="0.003">
     </testcase>
     <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item he does not own" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.014">
+    <testcase classname="Test - Actions" name="DiscardAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to discard an item that does not exist in the dungeon" time="0.012">
     </testcase>
     <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter and modify the inventory of the character and the room items list when user picks up an item" time="0.006">
     </testcase>
-    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0">
+    <testcase classname="Test - Actions" name="PickupAction should call sendToClient on AmqpAdapter notifying the user that he does not own the item when he tries to pickup an item the room does not hold" time="0.001">
     </testcase>
-    <testcase classname="Test - Actions" name="InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist" time="0.001">
+    <testcase classname="Test - Actions" name="InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist" time="0">
     </testcase>
     <testcase classname="Test - Actions" name="HelpAction should call sendToClient on AmqpAdapter with the correct payload to the correct sender" time="0.002">
     </testcase>
-    <testcase classname="Test - Actions" name="ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user" time="0.001">
+    <testcase classname="Test - Actions" name="ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user" time="0.002">
+    </testcase>
+    <testcase classname="Test - Actions" name="InvalidAction should call sendToClient on AmqpAdapter notifying the tries to perform an invalid action when the user tries to perform an action that does not exist" time="0.001">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he does not have the items to perform the action when the user does not have the required items to perform the action" time="0.006">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room" time="0">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sentToClient notifying the user that he is not able to perform the action in the room when the user does tries to perform an action that is not available in this room" time="0.001">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp" time="0.003">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove hp to character when the event type is removehp" time="0.002">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana" time="0.002">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add mana to character when the event type is addmana" time="0.003">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove mana to character when the event type is removemana" time="0.002">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg" time="0.009">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add dmg to character when the event type is adddmg" time="0.002">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove dmg to character when the event type is removedmg" time="0.002">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem" time="0.003">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and add item to character when the event type is additem" time="0.002">
     </testcase>
-    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem" time="0.001">
+    <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output and remove item to character when the event type is removeitem" time="0.002">
     </testcase>
     <testcase classname="Test - Dungeon Actions" name="DungeonAction.performAction should call sendToClient with the correct output when the user performs a global action" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Damage to a Charakter" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 Attack and then have 11 in total" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 Attack and then have 11 in total" time="0">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much attack so that he reaches his max Attack" time="0.001">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual HP to a Charakter" time="0.003">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual HP to a Charakter" time="0.01">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 HP and then have 51 in total" time="0.001">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much life so that he reaches his max life" time="0">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much life so that he reaches his max life" time="0.001">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should add amount of actual Mana to a Charakter" time="0.002">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should get 1 mana and then have 51 in total" time="0.001">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should get so much mana so that he reaches his max mana" time="0.001">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="dungeonmaster should remove hp from player" time="0.002">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose 2 Hp and then have 48 in total" time="0.001">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he dies and gets 100 hp again" time="0.001">
+    <testcase classname="Test - DungeonMaster Actions" name="Jeff should lose so much hp so that he dies and gets 100 hp again" time="0.002">
     </testcase>
     <testcase classname="Test - DungeonMaster Actions" name="PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player" time="0.001">
     </testcase>
-    <testcase classname="Test - DungeonMaster Actions" name="BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message" time="0">
+    <testcase classname="Test - DungeonMaster Actions" name="BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message" time="0.001">
+    </testcase>
+    <testcase classname="Test - DungeonMaster Actions" name="ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection" time="0.016">
     </testcase>
   </testsuite>
 </testsuites>

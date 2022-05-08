@@ -6,7 +6,6 @@
  */
 
 import React, { FormEvent } from 'react'
-import $ from "jquery";
 import { Row } from 'react-bootstrap';
 import { Send } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";

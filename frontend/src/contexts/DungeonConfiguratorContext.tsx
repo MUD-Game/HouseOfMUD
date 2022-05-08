@@ -17,34 +17,12 @@ import { supervisor } from 'src/services/supervisor';
 import { CreateDungeonRequest } from '@supervisor/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
-import { CharacterSpecies } from '../../../backend/data/src/interfaces/characterSpecies';
-import { CharacterGender } from '../../../backend/data/src/interfaces/characterGender';
 import { useTranslation } from 'react-i18next';
 import AddRoomModal from 'src/components/Modals/DungeonConfigurator/AddRoomModal';
 import AddNpcModal from 'src/components/Modals/DungeonConfigurator/AddNpcModal';
 import AddGenderModal from 'src/components/Modals/DungeonConfigurator/AddGenderModal';
 import AddSpeciesModal from 'src/components/Modals/DungeonConfigurator/AddSpeciesModal';
 type Option = string | { [key: string]: any };
-
-const processToSend = (array: any[]) => {
-    // renames the keys to match the backend naming convention (label => name, customOption falls away)
-    let t = array.map(({
-        label: name,
-        customOption,
-        ...rest
-    }) => ({
-        name,
-        ...rest
-    }));
-    // Finally removes the id-prefix from the id (new-id-x => x)
-    return t.map(({
-        id,
-        ...rest
-    }) => ({
-        id: (id as string).split("-")[2],
-        ...rest
-    }));
-}
 
 const processAfterReceive = (array: any[]) => {
     // Deletes the _id and  __v keys
@@ -222,10 +200,9 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         // If the dungeonID exists we load the dungeon in the background and fill the states with the data.
         if (dungeonId) {
             supervisor.getDungeon(dungeonId, {}, (dungeon: any) => {
-                console.log(dungeon);
                 if(dungeon.globalActions){
                     dungeon.globalActions.forEach((globalActionId:string)=>{
-                        dungeon.actions.find((action:MudActionElement)=>{
+                        dungeon.actions.forEach((action:MudActionElement)=>{
                             if(action.id===globalActionId){
                                 action.isGlobal=true;
                             }
@@ -236,27 +213,27 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 setDescription(dungeon.description);
                 setMaxPlayers(dungeon.maxPlayers);
                 setClasses(markAsFromServer(processAfterReceive(dungeon.characterClasses)));
-                setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length });
+                setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length+1 });
                 setItems(processAfterReceive(dungeon.items));
-                setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length });
+                setItemsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.items.length+1 });
                 setActions(processAfterReceive(dungeon.actions));
-                setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length });
+                setActionsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.actions.length+1 });
 
                 setRooms(arrayToMap(dungeon.rooms));
 
                 setNpcs(dungeon.npcs);
-                setNpcsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length });
+                setNpcsKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.npcs.length+1 });
                 setSpecies(markAsFromServer(processAfterReceive(dungeon.characterSpecies)));
-                setSpeciesKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterSpecies.length });
+                setSpeciesKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterSpecies.length+1 });
                 setGenders(markAsFromServer(processAfterReceive(dungeon.characterGenders)));
-                setGendersKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterGenders.length });
+                setGendersKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterGenders.length+1 });
                 setIsLoading(false);
             }, error => setError(error.error));
         }
         return () => {
 
         }
-    }, [])
+    }, [dungeonId])
 
 
 
@@ -307,7 +284,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editGender = (key: number) => {
         const editIndex = genders.findIndex(c => c.id === key + "");
         setEditData(genders[editIndex]);
-        setGendersKey({ selected: editIndex, nextKey: gendersKey.nextKey });
+        setGendersKey({ selected: key, nextKey: gendersKey.nextKey });
         setShowAddGenderModal(true);
     }
 
@@ -329,7 +306,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editSpecies = (key: number) => {
         const editIndex = species.findIndex(c => c.id === key + "");
         setEditData(species[editIndex]);
-        setSpeciesKey({ selected: editIndex, nextKey: speciesKey.nextKey });
+        setSpeciesKey({ selected: key, nextKey: speciesKey.nextKey });
         setShowAddSpeciesModal(true);
     }
 
@@ -362,7 +339,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editClass = (key: number) => {
         const editIndex = classes.findIndex(c => c.id === key+"");
         setEditData(classes[editIndex]);
-        setCharacterClassKey({ selected: editIndex, nextKey: characterClassKey.nextKey });
+        setCharacterClassKey({ selected: key, nextKey: characterClassKey.nextKey });
         setShowCharacterClassModal(true);
     }
     const deleteClass = (key: number) => {
@@ -565,7 +542,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editItem = (key: number) => {
         const editIndex = items.findIndex(i => i.id === key + "");
         setEditData(items[editIndex]);
-        setItemsKey({ selected: editIndex, nextKey: itemsKey.nextKey });
+        setItemsKey({ selected: key, nextKey: itemsKey.nextKey });
         setShowAddItemsModal(true);
     }
 
@@ -618,7 +595,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editNpc = (key: number) => {
         const editIndex = npcs.findIndex(i => i.id === key + "");
         setEditData(npcs[editIndex]);
-        setNpcsKey({ selected: editIndex, nextKey: npcsKey.nextKey });
+        setNpcsKey({ selected: key, nextKey: npcsKey.nextKey });
         setShowAddNpcModal(true);
     }
 
@@ -648,7 +625,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     const editAction = (key: number) => {
         const editIndex = actions.findIndex(i => i.id === key + "");
         setEditData(actions[editIndex]);
-        setActionsKey({ selected: editIndex, nextKey: actionsKey.nextKey });
+        setActionsKey({ selected: key, nextKey: actionsKey.nextKey });
         setShowAddActionsModal(true);
     }
     const deleteAction = (actionKey: number) => {
@@ -718,8 +695,8 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             setError('');
             busyCallback(true);
             let temp = rooms;
-            // save the last changes before saving the dungeon
-            if ((currentRoom && roomsKey !== "" && roomCoordiantes)) {
+            // Dungeon-Rooms are saved when you switch the room selection, so the last selection needs to be saved before saving the dungeon
+            if ((currentRoom && roomsKey !== "" && roomCoordiantes)) { // Only "save" it when there was a room selected
                 let oldRoom = temp[roomsKey];
                 oldRoom.name = selectedRoomName;
                 oldRoom.description = selectedRoomDescription;
@@ -768,7 +745,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 npcs,
                 blacklist: []
             };
-            console.log(createBody);
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
                     busyCallback(false);
@@ -819,7 +795,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = characterClassKey.selected + "";
                 // Set the key to a new id 
-                setCharacterClassKey({ ...characterClassKey, selected: characterClassKey.nextKey });
                 let temp = classes;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -839,7 +814,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = itemsKey.selected + "";
                 // Set the key to a new id
-                setItemsKey({ ...itemsKey, selected: itemsKey.nextKey });
                 let temp = items;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -858,7 +832,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             } else {
                 cc.id = gendersKey.selected + "";
                 // Set the key to a new id
-                setGendersKey({ ...gendersKey, selected: gendersKey.nextKey });
                 let temp = genders;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -870,14 +843,12 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             if (speciesKey.selected === speciesKey.nextKey) {
 
                 cc.id = speciesKey.nextKey + "";
-                console.log(cc);
                 setSpecies([...species, cc]);
                 setShowAddSpeciesModal(false);
                 setSpeciesKey({ nextKey: speciesKey.nextKey + 1, selected: speciesKey.selected + 1 });
             } else {
                 cc.id = speciesKey.selected + "";
                 // Set the key to a new id
-                setSpeciesKey({ ...speciesKey, selected: speciesKey.nextKey });
                 let temp = species;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -896,7 +867,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = npcsKey.selected + "";
                 // Set the key to a new id
-                setNpcsKey({ ...npcsKey, selected: npcsKey.nextKey });
                 let temp = npcs;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;
@@ -910,7 +880,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             const newKey: [number, number] = [cc.xCoordinate, cc.yCoordinate];
             let temp_rooms = rooms;
             temp_rooms[String(newKey)] = cc;
-            console.log(selectedRoomName);
             setRooms(temp_rooms);
             setRoomsKey(String(newKey));
             setInitialRoomConnections(newKey);
@@ -931,7 +900,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 // User is editing
                 cc.id = actionsKey.selected + "";
                 // Set the key to a new id
-                setActionsKey({ ...actionsKey, selected: actionsKey.nextKey });
                 let temp = actions;
                 let index = temp.findIndex((c) => c.id === cc.id);
                 temp[index] = cc;

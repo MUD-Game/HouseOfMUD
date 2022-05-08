@@ -234,6 +234,38 @@
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch!"
         },
+        "actionalreadyexists":{
+            "title": "Aktion existiert bereits",
+            "text": "Es existiert bereits eine Aktion mit diesem Command!"
+        },
+        "classalreadyexists":{
+            "title": "Klasse existiert bereits",
+            "text": "Es existiert bereits eine Klasse mit diesem Namen!"
+        },
+        "itemalreadyexists":{
+            "title": "Item existiert bereits",
+            "text": "Es existiert bereits ein Item mit diesem Namen!"
+        },
+        "npcalreadyexists":{
+            "title": "NPC existiert bereits",
+            "text": "Es existiert bereits ein NPC mit diesem Namen!"
+        },
+        "dungeonalreadyexists":{
+            "title": "Dungeon existiert bereits",
+            "text": "Es existiert bereits ein Dungeon mit diesem Namen!"
+        },
+        "speciesalreadyexists":{
+            "title": "Spezies existiert bereits",
+            "text": "Es existiert bereits eine Spezies mit diesem Namen!"
+        },
+        "genderalreadyexists":{
+            "title": "Geschlecht existiert bereits",
+            "text": "Es existiert bereits ein Geschlecht mit diesem Namen!"
+        },
+        "roomalreadyexists":{
+            "title": "Raum existiert bereits",
+            "text": "Es existiert bereits ein Raum mit diesem Namen!"
+        },
         "reference_in_action": {
             "title": "Du kannst dieses Item nicht löschen",
             "text": "Es existiert mindestens eine Aktion die auf dieses Item drauf zugreift, löse den Konflikt und versuche es erneut!"

@@ -9,7 +9,7 @@ import { Group, Layer, Line, Rect, Stage, Text } from 'react-konva';
 import { MudRoom } from 'src/types/dungeon';
 import { useRabbitMQ } from '../../hooks/useRabbitMQ';
 import './index.css'
-import { ArrowsAngleContract, ArrowsFullscreen, Compass, Fullscreen, FullscreenExit, GeoAlt } from 'react-bootstrap-icons';
+import { ArrowsAngleContract, ArrowsFullscreen } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
 import Konva from 'konva';
 
@@ -17,7 +17,6 @@ const roomSize = 60;
 const roomMargin = 40
 const roomOffset = roomSize + roomMargin;
 const connectionStrokeWidth = 10;
-const connectionBlobRadius = connectionStrokeWidth;
 const initialScaleSmall = 0.8;
 const initialScaleLarge = 4;
 const minScale = 0.1;
@@ -27,22 +26,9 @@ let bodyStyles = window.getComputedStyle(document.body);
 
 const roomStrokeWidth = 4;
 
-const background = bodyStyles.getPropertyValue('--room-background');
 
 const fillActive = bodyStyles.getPropertyValue('--room-active-fill');
 const strokeActive = bodyStyles.getPropertyValue('--room-active-stroke');
-const strokeActiveSelected = bodyStyles.getPropertyValue('--room-selected-stroke');
-const fillCurrentRoom = bodyStyles.getPropertyValue('--room-current-fill');
-
-const fillStartSelected = bodyStyles.getPropertyValue('--room-start-selected-fill');
-const fillStart = bodyStyles.getPropertyValue('--room-start-fill');  // Start-Room color
-const strokeStart = bodyStyles.getPropertyValue('--room-start-stroke');
-const strokeStartSelected = bodyStyles.getPropertyValue('--room-start-selected-stroke');
-const strokeSelected = bodyStyles.getPropertyValue('--room-selected-stroke');
-
-const fillInactive = bodyStyles.getPropertyValue('--room-fill');
-const strokeInactive = bodyStyles.getPropertyValue('--room-stroke');
-
 
 const connectionOpen = bodyStyles.getPropertyValue('--connection-open');
 const connectionInactive = bodyStyles.getPropertyValue('--connection-inactive');
@@ -71,9 +57,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     const sizeRef = useRef<any>();
     const stageRef = useRef<any>();
-    const currentPositionCircleRef = useRef<any>();
-    const [currentRoomId, setCurrentRoomId] = React.useState<string>(props.startRoom);
-    const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
+    const [rooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     // const [width, height] = useRefSize(sizeRef);
     const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
     const [size, setSize] = React.useState<{ width: number, height: number }>({ width: 0, height: 0 });
@@ -151,8 +135,8 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     const focusOnRoom = (roomId: string, isFullscreen: boolean) => {
         if (stageRef.current) {
-            const xc = parseInt((roomId || currentRoomId).split(",")[0]);
-            const yc = parseInt((roomId || currentRoomId).split(",")[1]);
+            const xc = parseInt((roomId).split(",")[0]);
+            const yc = parseInt((roomId).split(",")[1]);
             const usedScale = isFullscreen ? initialScaleLarge : initialScaleSmall;
             const x = -xc * roomOffset * usedScale;
             const y = -yc * roomOffset * usedScale;
@@ -164,7 +148,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         <div ref={sizeRef}>
             <div id={`konva-buttons-container${isFullscreen ? "-fullscreen" : ""}`}>
                 <img src={compassPng} draggable={false} alt="compass" id={`compass${isFullscreen ? "-fullscreen" : ""}`} onClick={() => {
-                    focusOnRoom(currentRoomId, isFullscreen);
+                    focusOnRoom("0,0", isFullscreen);
                 }} />
                 {isFullscreen ? <ArrowsAngleContract id={`fullscreenbutton-fullscreen`} onClick={() => {
                     setIsFullscreen(!isFullscreen);
@@ -322,7 +306,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     wrap: "word",
                                     verticalAlign: "top"
                                 }
-                                let text = new Konva.Text(roomNameText)
+                                // let text = new Konva.Text(roomNameText)
                                 // console.log(text.getSize());
 
                                 return (

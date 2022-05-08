@@ -9,16 +9,13 @@
 import React from 'react'
 import {Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Busy from 'src/components/Busy';
 import Alert from 'src/components/Custom/Alert';
 import { useAuth } from 'src/hooks/useAuth';
 type ResetPasswordProps = {}
 
-interface LocationState {
-    from: { pathname: string }
-}
 const ResetPassword: React.FC<ResetPasswordProps> = (props) => {
     let navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);

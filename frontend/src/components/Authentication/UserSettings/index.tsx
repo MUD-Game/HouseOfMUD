@@ -10,9 +10,8 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
-import ConfirmationDialog, { ConfirmationDialogProps } from 'src/components/Modals/BasicModals/ConfirmationDialog';
+import { useNavigate } from 'react-router-dom';
+import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 import { useAuth } from 'src/hooks/useAuth';
 import MudSelect from '../../Custom/Select';
 type UserSettingsProps = {}

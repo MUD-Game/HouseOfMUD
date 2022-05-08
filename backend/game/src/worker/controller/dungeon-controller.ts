@@ -94,7 +94,7 @@ export class DungeonController {
         if (characterName !== 'dungeonmaster') {
             await this.persistCharacterData(this.dungeon.getCharacter(characterName))
             delete this.dungeon.characters[characterName];
-            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
+            sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
         } else {
             this.stopDungeon();
         }

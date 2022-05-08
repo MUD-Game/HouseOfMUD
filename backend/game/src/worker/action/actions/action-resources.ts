@@ -4,6 +4,7 @@
 
 import { parse } from "path";
 import { Room } from "../../../data/interfaces/room";
+import format from "./format";
 
 export const triggers = {
     discard: "ablegen",
@@ -89,6 +90,9 @@ export const dungeonMasterSendMessages = {
     removeHp: "Du hast %s Leben verloren",
     hpRemoved: "%s hat %s Leben verloren",
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
+    toggleConnection: "Der Durchgang zwischen %s und %s wurde %s!",
+    connectionOpen: "geoeffnet",
+    connectionClosed: "geschlossen"
 }
 
 export const extras = {
@@ -147,4 +151,3 @@ export function parseResponseString(str: string, ...args: string[]): string {
     let i = 0;
     return str.replace(/%s/g, () => args[i++]);
 }
-

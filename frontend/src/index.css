@@ -317,6 +317,10 @@ a:hover {
 .onlineplayers {
   height: 40%;
 }
+.onlineplayers-wrap {
+  height: 100%;
+  overflow-y: auto;
+}
 .chatqueue {
   height: 45%;
 }

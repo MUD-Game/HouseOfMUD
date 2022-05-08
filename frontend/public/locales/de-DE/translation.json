@@ -110,7 +110,8 @@
         "leave": "Verlassen",
         "queue": "Warteschlange",
         "inventory": "Inventar",
-        "filter": "Raum-Filter"
+        "filter": "Raum-Filter",
+        "onlineplayers": "Spieler online"
     },
     "verify_email": {
         "title": "Email-Verifizierung",

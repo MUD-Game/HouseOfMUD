@@ -3,6 +3,7 @@
  */
 
 import { parse } from "path";
+import { ItemImpl } from "../../../data/interfaces/item";
 import { Room } from "../../../data/interfaces/room";
 
 export const triggers = {
@@ -28,7 +29,11 @@ export const triggers = {
     removeMana: "remmana",
     removeHp: "remhp",
     removeDamage: "remdmg",
-    changeRoom: "verschiebe"
+    changeRoom: "verschiebe",
+    removeItem: "remitem",
+    removeRoomItem: "remroomitem",
+    addRoomItem: "addroomitem",
+    addItem: "additem"
 }
 
 export const actionMessages = {
@@ -64,10 +69,12 @@ export const actionMessages = {
 export const errorMessages = {
     itemNotOwned: "Du besitzt dieses Item nicht!",
     itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
+    itemDoesntexist: "Dieses Item existiert nicht!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
     actionDoesNotExist: "Diese Aktion ist nicht möglich!",
     lookError: " Fehler!",
+    charakterHasntItem: "%s besitzt dieses Item nicht!"
 }
 
 export const dungeonMasterSendMessages = {
@@ -86,7 +93,10 @@ export const dungeonMasterSendMessages = {
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
     dmRoomMove: "%s wurde in Raum %s verschoben",
     roomMove: "Du wurdest vom Dungeon Master in den Raum %s verschoben",
-    alreadyRoom: "Der Spieler ist bereits im gewünschten Raum"
+    alreadyRoom: "Der Spieler ist bereits im gewünschten Raum",
+    removeItem: "Der Dungeon Master hat dir das Item %s entrissen",
+    itemRemoved: "%s hat das Item %s verloren",
+    itemRoomRemoved: "aus %s wurde das Item %s entfernt"
 }
 
 export const extras = {

@@ -11,6 +11,8 @@ import { actionMessages, MiniMapData, parseResponseString, triggers } from "../a
 import { ToggleConnectionAction } from "../action/dmactions/toggleRoomConnection-action";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
+const DUNGEONMASTER = 'dungeonmaster';
+
 function sendToHost(hostAction: string, data: any): void {
     if (process.send) {
         process.send({
@@ -79,8 +81,9 @@ export class DungeonController {
         await this.amqpAdapter.initClient(characterName);
         await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
         this.amqpAdapter.broadcastAction('message', { message: `${characterName} ist dem Dungeon beigetreten!` });
+        this.sendPlayerListToDM();
         sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
-        if (characterName !== 'dungeonmaster') {
+        if (characterName !== DUNGEONMASTER) {
             await this.amqpAdapter.sendActionToClient(characterName, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
         }
         await this.sendStatsData(characterName)
@@ -91,13 +94,18 @@ export class DungeonController {
     private async logout(user: string, characterName: string) {
         console.log(`logout ${characterName}`);
 
-        if (characterName !== 'dungeonmaster') {
+        if (characterName !== DUNGEONMASTER) {
             await this.persistCharacterData(this.dungeon.getCharacter(characterName))
             delete this.dungeon.characters[characterName];
+            this.sendPlayerListToDM();
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
         } else {
             this.stopDungeon();
         }
+    }
+
+    sendPlayerListToDM() {
+        this.amqpAdapter.sendActionToClient(DUNGEONMASTER, 'updateOnlinePlayers', Object.keys(this.dungeon.characters));
     }
 
     async stopDungeon() {
@@ -185,7 +193,7 @@ export class DungeonController {
 
     async sendMiniMapData(character: string) {
         let rooms:MiniMapData["rooms"] = {};
-        const isDm: boolean = 'dungeonmaster' === character; // TODO: Find it in another way
+        const isDm: boolean = DUNGEONMASTER === character; // TODO: Find it in another way
         const exploredRooms = this.dungeon.getCharacter(character).exploredRooms;
         for (let room in this.dungeon.rooms) {
             rooms[room] = {

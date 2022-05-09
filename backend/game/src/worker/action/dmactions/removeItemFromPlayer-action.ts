@@ -32,7 +32,7 @@ export class RemoveItem extends Action { //test me
                     let indexOfItemToDiscardInInventory: number = characterInventory.indexOf(itemInInventory)
                     characterInventory.splice(indexOfItemToDiscardInInventory, 1)
                 }
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(dungeonMasterSendMessages.itemRemoved, recipientCharacterName, nameOfItemToDiscard)})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(dungeonMasterSendMessages.itemRemoved, nameOfItemToDiscard, recipientCharacterName,)})
                 this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacterName, "message", {message: parseResponseString(dungeonMasterSendMessages.removeItem, nameOfItemToDiscard)})
                 this.dungeonController.sendInventoryData(recipientCharacterName)
 
@@ -41,7 +41,7 @@ export class RemoveItem extends Action { //test me
             }
         } catch(e) {
             console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemDoesntexist})
         }
     }
 

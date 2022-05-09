@@ -28,12 +28,15 @@ import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
 import { ChangeRoom } from './dmactions/changePlayerPosition-action';
 import { RemoveItem } from './dmactions/removeItemFromPlayer-action';
 import { ToggleConnectionAction } from './dmactions/toggleRoomConnection-action';
+import { AddItem } from './dmactions/addItemToPlayer-action';
+import { AddRoomItem } from './dmactions/addItemToRoom-action';
+import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
 
 
 const regExpression = {
     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
-    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper}))`, "i")
+    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom}))`, "i")
 }
 /**
  * Processes Actions received by the dungeon controller.
@@ -123,7 +126,10 @@ export class ActionHandlerImpl implements ActionHandler {
            new PrivateMessageFromDm(dungeonController),
            new BroadcastMessageAction(dungeonController),
            new ChangeRoom(dungeonController),
+           new AddItem(dungeonController),
            new RemoveItem(dungeonController),
+           new AddRoomItem(dungeonController),
+           new removeRoomItem(dungeonController),
            new ToggleConnectionAction(dungeonController)
         ];
         dmActions.forEach(dmaction => {

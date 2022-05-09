@@ -14,35 +14,29 @@ export class AddItem extends Action { //test me
         super(triggers.addItem, dungeonController);
     }
 
-    performAction(user: string, args: string[]) {
+    async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacter: Character = dungeon.getCharacter(args[0])
         let recipientCharacterName: string = args[0]
         args.shift()
-        let nameOfItemToAdd: string = args[0]
+        let nameOfItemToAdd: string = args.join(' ')
         let characterInventory: ItemInfo[] = recipientCharacter.getInventory()
-
         try {
             let itemToAdd: Item = dungeon.getItemByName(nameOfItemToAdd)
             let idOfItemToAdd: string = itemToAdd.getId()
-            let itemInRoom: ItemInfo = characterInventory.filter(it => it.item == idOfItemToAdd)[0]
+            let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == idOfItemToAdd)[0]
             if (characterInventory.some(it => it.item == idOfItemToAdd)) {
-                let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == idOfItemToAdd)[0]
-                if (characterInventory.some(it => it.item == idOfItemToAdd)) {
-                    itemInInventory.count += 1
-                } else {
-                    characterInventory.push(new ItemInfo(itemInRoom.item, 1))
-                }
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(dungeonMasterSendMessages.itemRemoved, recipientCharacterName, nameOfItemToAdd)})
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacterName, "message", {message: parseResponseString(dungeonMasterSendMessages.removeItem, nameOfItemToAdd)})
-                this.dungeonController.sendInventoryData(recipientCharacterName)
-
+                itemInInventory.count += 1
             } else {
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.charakterHasntItem, recipientCharacterName)})
+                characterInventory.push(new ItemInfo(idOfItemToAdd, 1))
+                console.log(characterInventory)
             }
+            await this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(dungeonMasterSendMessages.itemAdded, nameOfItemToAdd, recipientCharacterName)})
+            await this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacterName, "message", {message: parseResponseString(dungeonMasterSendMessages.addItem, nameOfItemToAdd)})
+            await this.dungeonController.sendInventoryData(recipientCharacterName)
         } catch(e) {
             console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemDoesntexist})
         }
     }
 

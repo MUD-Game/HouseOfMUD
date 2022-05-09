@@ -4,6 +4,7 @@ import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
+import { Room } from "../../../data/interfaces/room";
 
 
 export class ChangeRoom implements Action {
@@ -27,7 +28,9 @@ export class ChangeRoom implements Action {
             let actualroom: string = recipientCharacter.getPosition()
         
             try {
-                let newRoom: string = args[0]
+                let newRoom: string = args.join(' ')
+                let newRoomObject: Room = dungeon.getRoomByName(newRoom)
+                let newRoomId: string = newRoomObject.getId()
          
                 if (actualroom == newRoom) {
 
@@ -36,7 +39,7 @@ export class ChangeRoom implements Action {
 
                 } else if (actualroom !== newRoom) {
    
-                    recipientCharacter.modifyPosition(newRoom)
+                    recipientCharacter.modifyPosition(newRoomId)
 
                     roomstring = parseResponseString(dungeonMasterSendMessages.dmRoomMove, recipientCharacterName ,args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring } })
@@ -44,11 +47,11 @@ export class ChangeRoom implements Action {
                     roomstring = parseResponseString(dungeonMasterSendMessages.roomMove, args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: roomstring } })
                 }
-                await this.dungeonController.sendStatsData(recipientCharacter.position)
+                await amqpAdapter.sendActionToClient(recipientCharacterName, 'minimap.move', newRoomId);
 
             } catch (e) {
                 console.log(e)
-                amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) } })
+                amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.roomDoesNotExist) } })
             }
 
 

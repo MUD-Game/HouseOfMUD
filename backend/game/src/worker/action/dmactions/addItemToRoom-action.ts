@@ -15,27 +15,20 @@ export class AddRoomItem extends Action { //test me
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let roomName: string = args[0]
-
         let room: Room = dungeon.getRoomByName(args[0])
         args.shift()
-        let nameOfItemToAdd: string = args[0]
-    
+        let nameOfItemToAdd: string = args.join(' ')
         let roomItems: ItemInfo[] = room.getItemInfos()
         try {
             let itemToAdd: Item = dungeon.getItemByName(nameOfItemToAdd)
             let idOfitemToAdd: string = itemToAdd.getId()
+            if (roomItems.some(it => it.item == idOfitemToAdd)) { 
                 let itemInRoom: ItemInfo = roomItems.filter(it => it.item == idOfitemToAdd)[0]
-                console.log(itemInRoom)
-                let indexOfitemToAddInRoom: number = roomItems.indexOf(itemInRoom)
-                roomItems.splice(indexOfitemToAddInRoom, 1)
-                if (roomItems.some(it => it.item == roomName)) {
-                    itemInRoom.count += 1
-                    console.log(itemInRoom)
-                    roomItems.push(itemInRoom) 
-                }else{
-                    roomItems.push(new ItemInfo(itemInRoom.item, 1))
-                }
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(dungeonMasterSendMessages.itemRoomRemoved, roomName, nameOfItemToAdd) }})
+                itemInRoom.count += 1
+            } else {
+                roomItems.push(new ItemInfo(idOfitemToAdd, 1))
+            }
+            this.dungeonController.getAmqpAdapter().broadcastAction("message", {message: parseResponseString(dungeonMasterSendMessages.itemRoomAdded, roomName, nameOfItemToAdd)})
             
         } catch(e) {
             console.log(e)

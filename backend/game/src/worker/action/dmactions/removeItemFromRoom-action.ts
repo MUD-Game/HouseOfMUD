@@ -14,13 +14,10 @@ export class removeRoomItem extends Action { //test me
     }
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
-        let senderCharacter: Character = dungeon.getCharacter(user)
         let roomName: string = args[0]
-
         let room: Room = dungeon.getRoomByName(args[0])
         args.shift()
-        let nameOfItemToDelete: string = args[0]
-    
+        let nameOfItemToDelete: string = args.join(' ')
         let roomItems: ItemInfo[] = room.getItemInfos()
         try {
             let itemToDelete: Item = dungeon.getItemByName(nameOfItemToDelete)
@@ -35,13 +32,13 @@ export class removeRoomItem extends Action { //test me
                     console.log(itemInRoom)
                     roomItems.push(itemInRoom) 
                 }
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(dungeonMasterSendMessages.itemRoomRemoved, roomName, nameOfItemToDelete) }})
+                this.dungeonController.getAmqpAdapter().broadcast({action: "message", data: {message: parseResponseString(dungeonMasterSendMessages.itemRoomRemoved, roomName, nameOfItemToDelete) }})
             } else {
                 this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
             }
         } catch(e) {
             console.log(e)
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
+            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemDoesntexist}})
         }
     }
 }

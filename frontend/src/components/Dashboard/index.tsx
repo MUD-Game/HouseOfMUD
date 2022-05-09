@@ -35,11 +35,16 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     const [dungeonView, setDungeonView] = useState<"all" | "my">("all");
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const[error, setError] = useState<string>("");
+    const [alert, setAlert] = useState({title: "", text: ""});
+
+    const [error, setError] = useState<string>("");
 
     useEffect(() => {
         fetchDungeons();
         console.log(location.state);
+        if(location.state){
+            setAlert({title: "Du wurdest gekickt", text:location.state as string});
+        }
     }, [])
 
     const handleSelect = (eventKey: string | null) => {
@@ -65,6 +70,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         <Container className="mb-5">
             <Row>
                 <Alert message={error} setMessage={setError} type="error" />
+                <Alert message={alert.text} setMessage={() => setAlert({title: "", text: ""})} title={alert.title} type={'error'} />
             </Row>
             <Row className="align-items-center mb-3">
                 <div className="col-8">

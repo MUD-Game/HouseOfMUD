@@ -44,6 +44,11 @@ const Game: React.FC<GameProps> = () => {
         setMiniMapData(roomData);
     }
 
+    const kickSubscriber = (kickMessage: string) => {
+        setError(kickMessage);
+        navigate('/');
+    }
+
     useEffect(() => {
         const onUnload = (e: any) => {
             e.preventDefault();
@@ -57,6 +62,7 @@ const Game: React.FC<GameProps> = () => {
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.setInventorySubscriber(setInventoryData);
             rabbit.setHudSubscriber(setHudData);
+            rabbit.setKickSubscriber(kickSubscriber);
             rabbit.login(() => {
                 
             }, (error) => {

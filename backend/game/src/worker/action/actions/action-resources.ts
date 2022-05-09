@@ -32,7 +32,8 @@ export const triggers = {
     removeRoomItem: "remroomitem",
     addRoomItem: "addroomitem",
     addItem: "additem",
-    toggleConnection: "toggle"
+    toggleConnection: "toggle",
+    kickPlayer: "kick"
 }
 
 export const actionMessages = {

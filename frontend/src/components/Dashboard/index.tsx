@@ -16,7 +16,7 @@ import { Container, Nav, Row } from 'react-bootstrap';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
@@ -29,6 +29,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
     const [allDungeons, setAllDungeons] = useState<DungeonResponseData[]>();
     const [myDungeons, setMyDungeons] = useState<DungeonResponseData[]>();
     const [dungeonView, setDungeonView] = useState<"all" | "my">("all");
@@ -38,6 +39,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
     useEffect(() => {
         fetchDungeons();
+        console.log(location.state);
     }, [])
 
     const handleSelect = (eventKey: string | null) => {
@@ -48,6 +50,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         }
         setSearchTerm('');
     }
+
 
     const fetchDungeons = () => {
         supervisor.getDungeons({}, setAllDungeons, error => setError(error.error))

@@ -4,7 +4,7 @@ import { DisplaysMessageProps } from 'src/types/misc';
 import { Alert as ReactAlert } from 'react-bootstrap';
 import "./index.css";
 
-const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?: number }> = ({ setMessage, message, type, duration }) =>{
+const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?: number, title?: string, text?:string }> = ({ setMessage, message, type, duration, title, text }) =>{
 
     const { t } = useTranslation();
     const alertRef = useRef<any>();
@@ -37,9 +37,9 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
         <div className="alert-container">
 
         <ReactAlert transition={true} variant={variant} dismissible onClose={() => setMessage("")}>
-            <ReactAlert.Heading>{t(`${type}.${message}.title`)}</ReactAlert.Heading>
+            <ReactAlert.Heading>{title ? title : t(`${type}.${message}.title`)}</ReactAlert.Heading>
             <p ref={alertRef}>
-                {t(`${type}.${message}.text`)}
+                {text ? text : t(`${type}.${message}.text`)}
             </p>
         </ReactAlert>
         </div>

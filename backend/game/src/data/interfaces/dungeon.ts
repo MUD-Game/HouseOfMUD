@@ -18,7 +18,6 @@ export interface Dungeon {
   globalActions: string[];
   masterId: string;
   maxPlayers: number;
-  currentPlayers: number;
   characterSpecies: { [id: string]: CharacterSpecies };
   characterClasses: { [id: string]: CharacterClass };
   characterGenders: { [id: string]: CharacterGender };
@@ -65,7 +64,6 @@ export class DungeonImpl implements Dungeon {
   masterId: string;
   maxPlayers: number;
   globalActions: string[];
-  currentPlayers: number;
   characterSpecies: { [id: string]: CharacterSpecies };
   characterClasses: { [id: string]: CharacterClass };
   characterGenders: { [id: string]: CharacterGender };
@@ -101,7 +99,7 @@ export class DungeonImpl implements Dungeon {
   }
 
   getCurrentPlayers(): number {
-    return this.currentPlayers;
+    return Object.keys(this.characters).length;
   }
 
   getSpecies(speciesId: string): CharacterSpecies {
@@ -250,7 +248,6 @@ export class DungeonImpl implements Dungeon {
     creatorId: string,
     masterId: string,
     maxPlayers: number,
-    currentPlayers: number,
     species: CharacterSpecies[],
     classes: CharacterClass[],
     genders: CharacterGender[],
@@ -269,7 +266,6 @@ export class DungeonImpl implements Dungeon {
     this.masterId = masterId;
     this.maxPlayers = maxPlayers;
     this.globalActions = globalActions;
-    this.currentPlayers = currentPlayers;
     this.characterSpecies = arrayToMap(species);
     this.characterClasses = arrayToMap(classes);
     this.characterGenders = arrayToMap(genders);

@@ -24,7 +24,7 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
                 clearTimeout(autoHide);
             }
         }
-    }, [message, alertRef])
+    }, [message, alertRef, duration, setMessage]);
 
     if (message === '') {
         return null;

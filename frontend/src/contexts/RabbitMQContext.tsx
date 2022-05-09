@@ -10,19 +10,29 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useGame } from 'src/hooks/useGame';
 import { Client, IFrame, IMessage } from '@stomp/stompjs';
 import { RabbitMQPayload, SendActions } from 'src/types/rabbitMQ';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { MiniMapData } from 'src/components/Game/Minimap';
+import {  useNavigate } from 'react-router-dom';
+import { MiniMapData } from 'src/components/DungeonMaster/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
 import { HUDProps } from 'src/components/Game/HUD';
+import OnlinePlayers from 'src/components/DungeonMaster/OnlinePlayers';
 
 const debug = true;
 
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
   logout: (callback: VoidFunction, error: (error: string) => void) => void;
-  sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+
+
+  
+  // Dm-Stuff
   sendDmMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+  sendToggleConnection: (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed',callback: VoidFunction, error: (error: string) => void) => void;
+  
+  // Character Message
+  sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
+  // Subscriber
   setChatSubscriber: (subscriber: (message: string) => void) => void;
+  setOnlinePlayersSubscriber: (subscriber: (players: string[]) => void) => void;
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
   setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
   setRoomSubscriber: (subscriber: (roomId: string) => void) => void;
@@ -50,6 +60,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { character, dungeon, verifyToken } = useGame();
   
   let chatSubscriber: (message: string) => void = () => { };
+  let onlinePlayersSubscriber: (players: string[]) => void = () => { };
   let errorSubscriber: (error: string, ...optionalParams: any[]) => void = (error) => { };
   let inventorySubscriber: (message: any) => void = () => { };
   let hudSubscriber: (message: any) => void = () => { };
@@ -72,6 +83,9 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       switch (command[0]) {
         case 'message':
           chatSubscriber(jsonData.data); // atm only chats
+          break;
+        case 'updateOnlinePlayers':
+          onlinePlayersSubscriber(jsonData.data);
           break;
         case 'minimap':
           minimapHandler(command.splice(1), jsonData.data);
@@ -191,10 +205,30 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     sendMessage(message, 'dmmessage', callback, error);
   }
 
+  const sendData = (data: any, action: SendActions, callback: VoidFunction, error: (error: string) => void) => {
+    if (!rabbit.connected) {
+      error("RabbitMQ is not connected");
+      return;
+    }
+    let dataPayload: RabbitMQPayload = {
+      action,
+      ...payloadTemplate,
+      data
+    }
+    sendPayload(dataPayload);
+    callback();	
+  }
 
+  const sendToggleConnection =  (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed', callback: VoidFunction, error: (error: string) => void) => {
+    sendData({roomId, direction, status}, 'connection.toggle', callback, error);
+  }
 
   const setChatSubscriber = (subscriber: (message: string) => void) => {
     chatSubscriber = subscriber;
+  }
+  
+  const setOnlinePlayersSubscriber = (subscriber: (players: string[]) => void) => {
+    onlinePlayersSubscriber = subscriber;
   }
 
   const setMiniMapSubscriber = (subscriber: (rooms: MiniMapData) => void) => {
@@ -224,7 +258,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage };
+  let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber,setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

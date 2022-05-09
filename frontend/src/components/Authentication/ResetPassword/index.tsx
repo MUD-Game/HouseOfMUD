@@ -1,42 +1,45 @@
 /**
- * @module Register
+ * @module ResetPassword
  * @category React Components
- * @description Component used for user-Registration
- * @hooks {@linkcode useAuth}`
+ * @description Component to handle Loggin In
+ * @hooks {@linkcode useAuth}
  */
 
 
 import React from 'react'
-import { Container, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { useAuth } from 'src/hooks/useAuth';
-import Busy from 'src/components/Busy';
-import { useTranslation } from 'react-i18next';
-import Alert from 'src/components/Custom/Alert';
-import { validator } from 'src/utils/validator';
+import { Col, Container, Row } from 'react-bootstrap';
 import { Check2Circle, X } from 'react-bootstrap-icons';
-type RegisterProps = {}
+import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Busy from 'src/components/Busy';
+import Alert from 'src/components/Custom/Alert';
+import { useAuth } from 'src/hooks/useAuth';
+import { validator } from 'src/utils/validator';
+import { iconSize } from '../Register';
+type ResetPasswordProps = {}
 
-export const iconSize = 20;
 
-const Register: React.FC<RegisterProps> = () => {
+const ResetPassword: React.FC<ResetPasswordProps> = (props) => {
+    let navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
+    const [password, setPassword] = React.useState("");
+    const [repeatPassword, setRepeatPassword] = React.useState("");
     const [error, setError] = React.useState("");
     const [pwError, setPwError] = React.useState("");
     const [confirmError, setConfirmError] = React.useState("");
-    const [info, setInfo] = React.useState("");
-    let auth = useAuth();
     const { t } = useTranslation();
-
-    const [username, setUsername] = React.useState("");
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [confirm, setConfirm] = React.useState("");
+    let location = useLocation();
+    let auth = useAuth();
+    let token = new URLSearchParams(location.search).get('token');
+    if (!token) {
+        return <Navigate to="/requestpasswordreset" />
+    }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsLoading(true);
-        const passworderror = validator.password(password, confirm)[0];
+        const passworderror = validator.password(password, repeatPassword)[0];
         if (passworderror) {
             setIsLoading(false);
             if (passworderror === "password.nomatch") {
@@ -49,14 +52,16 @@ const Register: React.FC<RegisterProps> = () => {
             }
             return;
         }
-        auth.register(email, username, password, () => {
+
+        auth.changePassword(token!, password, () => {
             setIsLoading(false);
-            setInfo("verifyemail");
-        }, (err) => {
-            console.log(err);
+            navigate('/login');
+        },
+        (error) => {
             setIsLoading(false);
-            setError(err.toLowerCase());
+            setError(error);
         });
+
     }
 
     const getLengthStatus = () => {
@@ -73,7 +78,7 @@ const Register: React.FC<RegisterProps> = () => {
         let status = true;
         results.forEach(result => {
             if (result === "password.nolower") status = false;
-            else if ( result === "password.nocapital") status = false;
+            else if (result === "password.nocapital") status = false;
         });
         return status;
     }
@@ -101,24 +106,18 @@ const Register: React.FC<RegisterProps> = () => {
             <Row className="justify-content-center">
                 <div className="col-lg-4 col-md-6 col-sm-8">
                     <Alert message={error} setMessage={setError} type="error" />
-                    <Alert message={info} setMessage={setInfo} type="info" />
                     {isLoading ? <Busy /> :
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} autoComplete="new-password">
                             <div className="input-group pt-2">
-                                <input name="email" value={email} onChange={evt => setEmail(evt.target.value)} className="input-standard drawn-border" type="email" placeholder={t("login.email")} />
-                            </div>
-                            <div className="input-group pt-2">
-                                <input name="username" value={username} onChange={evt => setUsername(evt.target.value)} className="input-standard drawn-border" type="text" placeholder={t("login.username")} />
-                            </div>
-                            <div className="input-group pt-3">
-                                <input name="password" value={password} onChange={evt => setPassword(evt.target.value)} className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
+                                <input value={password} name="password" onChange={(event) => setPassword(event.target.value)} className="input-standard drawn-border" type="password" placeholder={t("login.new_password")} />
                                 <span className="inputerror">{pwError}</span>
                             </div>
                             <div className="input-group pt-2">
-                                <input name="confirm" value={confirm} onChange={evt => setConfirm(evt.target.value)} className="input-standard drawn-border" type="password" placeholder={t("login.confirm_password")} />
+                                <input value={repeatPassword} name="password" onChange={(event) => setRepeatPassword(event.target.value)} className="input-standard drawn-border" type="password" placeholder={t("login.confirm_new_password")} />
                                 <span className="inputerror">{pwError}</span>
                                 <span className="inputerror">{confirmError}</span>
                             </div>
+                            <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.submit")}</button>
                             <div className="col-md-12" id="pwrequirements">
                                 <span>{t("password.requirements.title")}</span>
                                 <Row>
@@ -146,8 +145,6 @@ const Register: React.FC<RegisterProps> = () => {
                                     </Col>
                                 </Row>
                             </div>
-                            <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">{t("button.register")}</button> <br />
-                            <span>{t("login.have_account")} <Link to="/login">{t("login.login_here")}</Link></span>
                         </form>
                     }
                 </div>
@@ -156,5 +153,4 @@ const Register: React.FC<RegisterProps> = () => {
     );
 }
 
-export default Register;    
-
+export default ResetPassword;    

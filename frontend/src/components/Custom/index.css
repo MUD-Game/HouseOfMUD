@@ -31,6 +31,10 @@ input:focus-visible, select:focus-visible, select:focus, input:focus {
   display: none;
 }
 
+.rbt-input-main {
+  color: var(--textcolor);
+}
+
 /**
  * Menu
  */
@@ -59,7 +63,7 @@ input:focus-visible, select:focus-visible, select:focus, input:focus {
   color: var(--textcolor);
   width: 100%;
   border: solid var(--accent);
-  caret-color: black;
+  caret-color: var(--textcolor);
   border-width: 3px 4px 3px 5px;
   border-radius: 1% 98% 2% 99% /99% 2% 98% 1%;
 }

@@ -3,7 +3,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages } from "./action-resources";
+import { actionMessages, extras, parseResponseString } from "./action-resources";
 
 export class DieAction extends Action {
 
@@ -14,7 +14,11 @@ export class DieAction extends Action {
     async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let characterToDie: Character = dungeon.getCharacter(user)
+        if (!characterToDie.isDead()){
+            return;
+        }
         let currentPosition: string = characterToDie.getPosition()
+        let roomName: string = dungeon.getRoom(currentPosition).name
         let inventoryItems: ItemInfo[] = characterToDie.getInventory()
 
         //remove items from inventory and add them to the current room
@@ -44,7 +48,9 @@ export class DieAction extends Action {
 
         const amqpAdapter = this.dungeonController.getAmqpAdapter()
         //reset the stats to start amount
-        characterToDie.currentStats = characterToDie.maxStats
+        characterToDie.currentStats.hp = characterToDie.maxStats.hp
+        characterToDie.currentStats.mana = characterToDie.maxStats.mana
+        characterToDie.currentStats.dmg = characterToDie.maxStats.dmg
         await amqpAdapter.sendToClient(user, {
             action: 'minimap.move',
             data: "0,0"
@@ -52,6 +58,8 @@ export class DieAction extends Action {
         this.dungeonController.sendInventoryData(user)
         this.dungeonController.sendStatsData(user)
         const description = actionMessages.die
-        amqpAdapter.sendActionToClient(user, "message", {message: description})
+        await amqpAdapter.sendActionToClient(user, "message", {message: description})
+        // message send to dungeon master
+        await amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.dieDungeonMaster, user, roomName), player: user, room: roomName})
     }
 }

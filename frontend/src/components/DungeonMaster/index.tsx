@@ -19,9 +19,11 @@ import ChatQueue from './ChatQueue';
 import PlayerInfo from './PlayerInfo';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { MinimapProps } from './Minimap';
+import ChatFilter from './ChatFilter';
 export interface GameProps { }
 
-const Game: React.FC<GameProps> = ({ }) => {
+const Game: React.FC<GameProps> = () => {
     const {t} = useTranslation();
     let navigate = useNavigate();
 
@@ -29,9 +31,31 @@ const Game: React.FC<GameProps> = ({ }) => {
     const [messageQueue, setMessageQueue] = useState<string[]>([]);
     const { isAbleToJoinGame } = useGame();
     const [error, setError] = React.useState<string>("");
+    const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
+    const [selectedRooms, setSelectedRooms] = React.useState<string[]>([]);
+    const [onlinePlayers, setOnlinePlayers] = React.useState<string[]>([]);
+
+    const onUnload = (e: any) => {
+        e.preventDefault();
+        rabbit.logout(() => { }, (error) => {
+            setError("rabbitmq.logout")
+        });
+    }
+
+    const miniMapSubscriber = (roomData: MinimapProps) => {
+        setMiniMapData(roomData);
+    }
+
+    const onlinePlayerSubscriber = (players: string[]) => {
+        setOnlinePlayers(players);
+    }
+
     useEffect(() => {
+        window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
+            rabbit.setOnlinePlayersSubscriber(onlinePlayerSubscriber);
+            rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.login(() => {
                 // Success
             }, (error) => {
@@ -39,11 +63,12 @@ const Game: React.FC<GameProps> = ({ }) => {
             });
         }
         return () => {
+            window.removeEventListener('unload', onUnload);
             rabbit.logout(() => { }, (error) => {
                 setError("rabbitmq.logout")
             });
         }
-    }, [])
+    }, [isAbleToJoinGame, rabbit]);
 
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
@@ -71,12 +96,13 @@ const Game: React.FC<GameProps> = ({ }) => {
             </Row>
             <Row className="game-body">
                 <div className="col col-md-3 col-lg-2">
-                    <Minimap mapData={null} />
-                    <OnlinePlayers players={null} />
+                    {miniMapData && <Minimap {...miniMapData} />}
+                    <OnlinePlayers players={onlinePlayers} />
+                    {miniMapData && <ChatFilter selectedRooms={selectedRooms} setSelectedRooms={setSelectedRooms} allRooms={ Object.values(miniMapData.rooms).map( room => room.name) } />}
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>
                 <div className="col col-md-6 col-lg-8">
-                    <Chat onSendCommand={addMessage} messageCallback={setError}/>
+                    <Chat selectedRooms={selectedRooms} onSendCommand={addMessage} messageCallback={setError}/>
                 </div>
                 <div className="col col-md-3 col-lg-2">
                     <ChatQueue commandQueue={messageQueue} onSendQueue={sendQueue} />

@@ -6,23 +6,28 @@
  * @props {@linkcode ChatOutputProps}
  */
 
-import { IMessage } from '@stomp/stompjs';
 import React, { useRef, useState } from 'react'
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { useEffect } from 'react';
 import { Row } from 'react-bootstrap';
+import { default as AnsiUp } from 'ansi_up';
+
+const RESET = '\x1b[0m';
 
 export interface ChatOutputProps {}
 
-
 const ChatOutput: React.FC<ChatOutputProps> = () => {
+
+    const ansi_up = new AnsiUp();
 
     const [messages, setMessages] = useState<string[]>([]);
 
     const {setChatSubscriber} = useRabbitMQ();
 
-    setChatSubscriber((data: any)=>{
-        setMessages([...messages, data.message]);
+    setChatSubscriber((data: any) => {
+        setMessages((prevState) => {
+            return [...prevState, data.message]
+        });
     });
 
     const messagesEndRef = useRef<HTMLInputElement>(null);
@@ -41,7 +46,8 @@ const ChatOutput: React.FC<ChatOutputProps> = () => {
                         {messages.map((message, index) => {
                             return (
                                 <span key={index} className={"chat-message channel-global"}>
-                                    {message} <br />
+                                    <span dangerouslySetInnerHTML={{__html: ansi_up.ansi_to_html(RESET + message)}}></span>
+                                    <br />
                                 </span>
                             )
                         })}

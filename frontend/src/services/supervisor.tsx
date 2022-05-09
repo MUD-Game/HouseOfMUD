@@ -128,6 +128,14 @@ const supervisor = {
         genericRequest("/auth/verify", "POST", { token: token }, {}, dataCallBack, error);
     },
 
+    requestResetPassword(email: string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/requestpassword", "POST", { email }, {}, dataCallBack, error);
+    },
+
+    changePassword(token: string, password:string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest("/auth/resetpassword", "POST", { token, password }, {}, dataCallBack, error);
+    },
+
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
         genericRequest(`/login/${dungeonID}`, "POST", body, {}, dataCallBack, error, "verifyToken");
     },

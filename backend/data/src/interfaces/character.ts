@@ -4,37 +4,38 @@ import { ItemInfo } from "./itemInfo";
 export interface Character {
     name: string;
     userId: string;
-    dungeonId: string;
     characterClass: string;
     characterSpecies: string;
     characterGender: string;
     maxStats: CharacterStats;
     currentStats: CharacterStats;
     position: string;
+    exploredRooms: { [roomId: string]: boolean },
     inventory: ItemInfo[];
-  
+
     getName(): string
     getPosition(): string
     modifyPosition(destinationRoom: string): any
     getInventory(): ItemInfo[]
     isDead(): boolean
+    getCharakterStats(): CharacterStats
+    getMaxStats(): CharacterStats
 }
 
 export class CharacterImpl implements Character {
     name: string;
     userId: string;
-    dungeonId: string;
     characterClass: string;
     characterSpecies: string;
     characterGender: string;
     maxStats: CharacterStats;
     currentStats: CharacterStats;
     position: string;
+    exploredRooms: { [roomId: string]: boolean };
     inventory: ItemInfo[];
 
     constructor(
         userId: string,
-        dungeonId: string,
         name: string,
         className: string,
         species: string,
@@ -42,17 +43,18 @@ export class CharacterImpl implements Character {
         maxStats: CharacterStats,
         currentStats: CharacterStats,
         position: string,
+        exploredRooms: { [roomId: string]: boolean },
         inventory: ItemInfo[]
     ) {
         this.userId = userId;
-        this.dungeonId = dungeonId;
         this.name = name;
         this.characterClass = className;
-        this.characterSpecies = species; 
+        this.characterSpecies = species;
         this.characterGender = gender;
         this.maxStats = maxStats;
         this.currentStats = currentStats;
         this.position = position;
+        this.exploredRooms = exploredRooms;
         this.inventory = inventory;
     }
 
@@ -66,6 +68,7 @@ export class CharacterImpl implements Character {
 
     modifyPosition(destinationRoom: string): any {
         this.position = destinationRoom;
+        this.exploredRooms[destinationRoom] = true;
     }
 
     getInventory(): ItemInfo[] {
@@ -73,11 +76,19 @@ export class CharacterImpl implements Character {
     }
 
     isDead(): boolean {
-        if(this.currentStats.hp > 0){
+        if (this.currentStats.hp > 0) {
             return false
         }
         else {
             return true
         }
+    }
+
+    getCharakterStats(): CharacterStats {
+        return this.currentStats
+    }
+
+    getMaxStats(): CharacterStats {
+        return this.maxStats
     }
 }

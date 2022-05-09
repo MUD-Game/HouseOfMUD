@@ -1,12 +1,12 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import { MudConnectionInfo, MudRoom } from 'src/types/dungeon';
-import { Stage, Layer, Rect, Transformer, Circle, Group, Line, Image } from 'react-konva';
+import React, { useRef } from 'react';
+import { MudRoom } from 'src/types/dungeon';
+import { Stage, Layer, Rect, Group, Line } from 'react-konva';
 import './index.css'
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import MudInput from 'src/components/Custom/Input';
 import { useTranslation } from 'react-i18next';
 import MudTypeahead from '../Custom/Typeahead';
-import { GeoAlt, Question, QuestionCircle } from 'react-bootstrap-icons';
+import { GeoAlt, QuestionCircle } from 'react-bootstrap-icons';
 import { Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import connectionOpenPng from 'src/assets/connection_open.png';
 import connectionClosedPng from 'src/assets/connection_closed.png';
@@ -15,18 +15,13 @@ import Konva from 'konva';
 import { useRefSize } from 'src/hooks/useRefSize';
 import Alert from '../Custom/Alert';
 
+const bodyStyles = window.getComputedStyle(document.body);
 const roomSize = 60;
 const roomMargin = 40
 const roomOffset = roomSize + roomMargin;
 const connectionStrokeWidth = 8;
 
-const sizeX = 20;
-const sizeY = 20;
-let bodyStyles = window.getComputedStyle(document.body);
-
 const roomStrokeWidth = 4;
-
-const background = bodyStyles.getPropertyValue('--room-background');
 
 const fillActive = bodyStyles.getPropertyValue('--room-active-fill');
 const strokeActive = bodyStyles.getPropertyValue('--room-active-stroke');
@@ -54,18 +49,13 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
     const widthRef = useRef<any>();
     const roomRefs = useRef<any>({});
     const stageRef = useRef<any>();
-    const [width, height] = useRefSize(widthRef);
+    const [width] = useRefSize(widthRef);
     const [error, setError] = React.useState<string>("");
 
 
 
 
-    const { rooms, currentRoom, items, npcs, actions, saveRoom: saveRoom, addRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItemValues, setSelectedRoomItems, setSelectedRoomNpcs, selectedRoomActions, selectedRoomItems, selectedRoomItemValues, selectedRoomNpcs, toggleRoomConnection, setSelectedRoomDescription, setSelectedRoomName, selectedRoomDescription, selectedRoomName } = useDungeonConfigurator();
-
-    useEffect(() => {
-
-    }, []);
-
+    const { rooms, currentRoom, items, npcs, actions, addRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItemValues, setSelectedRoomItems, setSelectedRoomNpcs, selectedRoomActions, selectedRoomItems, selectedRoomItemValues, selectedRoomNpcs, toggleRoomConnection, setSelectedRoomDescription, setSelectedRoomName, selectedRoomDescription, selectedRoomName } = useDungeonConfigurator();
 
     const [selectedRoomObject, setSelectedRoomObject] = React.useState<any>(null);
     const onWheelHandle = (e: any) => {
@@ -252,7 +242,6 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
             <br />
         </Tooltip>
     );
-    const tl = 'dungeon_configurator';
     return (
         <>
             <Row className="mt-5">
@@ -262,7 +251,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                 </div>
             </Row>
             <Row>
-                <div id="konva-buttons-container">
+                <div id="konva-buttons-container-rooms">
                     <GeoAlt size={37} id="refocus-button" onClick={() => {
                         // stageRef.current.scale({ x: 1, y: 1 });
                         stageRef.current.to({ x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 0.2, easing: Konva.Easings.EaseInOut });
@@ -425,12 +414,6 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                             multiple
                             onChange={(e: any) => {
                                 setSelectedRoomItems(e);
-                                let temp = selectedRoomItemValues;
-                                // e.forEach((element:any) => {
-                                //     if (selectedRoomItemValues[element.id] === undefined) {
-                                //         temp = { ...temp, [element.id]: 1};
-                                //     }
-                                // });
                                 const createdItem = e.filter((x: any) => !selectedRoomItems.includes(x))[0];
                                 const createdItemId = createdItem?.id;
                                 const deletedItemId = (selectedRoomItems.filter((x: any) => !e.includes(x))[0] as any)?.id;

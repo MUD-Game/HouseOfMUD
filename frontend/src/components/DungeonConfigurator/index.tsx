@@ -13,10 +13,8 @@ import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import Busy from '../Busy';
 import Alert from '../Custom/Alert';
 import MudInput from '../Custom/Input';
-import MudTypeahead from '../Custom/Typeahead';
 import DungeonObjectList from './DungeonObjectList';
 import RoomConfigurator from './RoomConfigurator';
-type Option = string | { [key: string]: any };
 
 export interface DungeonConfiguratorProps { }
 
@@ -24,7 +22,7 @@ interface LocationState {
     dungeonId?: string;
 }
 
-const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
+const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const tl = "dungeon_configurator";
@@ -46,15 +44,11 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = ({ }) => {
                 <MudInput maxLength={50} colmd={12} defaultValue={dungeonConfig.description} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="description" placeholder={t(`${tl}.inputs.description.placeholder`)} />
                 </Row>
                 
-            <Row>
-                <div className="col-md-6">
-                            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editGender} onDeleteElement={dungeonConfig.deleteGender} data={dungeonConfig.genders} displayKeys={["name"]} onAdd={dungeonConfig.addGender} title={t(`dungeon_keys.gender`)} buttonText={t(`${tl}.buttons.create_gender`)} />
-                </div>
-                <div className="col-md-6">
-                            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editSpecies} onDeleteElement={dungeonConfig.deleteSpecies} data={dungeonConfig.species} displayKeys={["name"]} onAdd={dungeonConfig.addSpecies} title={t(`dungeon_keys.species`)} buttonText={t(`${tl}.buttons.create_species`)} />
-                </div>
-            </Row>
-
+            
+            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editGender} onDeleteElement={dungeonConfig.deleteGender} data={dungeonConfig.genders} displayKeys={["name"]} onAdd={dungeonConfig.addGender} title={t(`dungeon_keys.gender`)} buttonText={t(`${tl}.buttons.create_gender`)} />
+                
+            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editSpecies} onDeleteElement={dungeonConfig.deleteSpecies} data={dungeonConfig.species} displayKeys={["name"]} onAdd={dungeonConfig.addSpecies} title={t(`dungeon_keys.species`)} buttonText={t(`${tl}.buttons.create_species`)} />
+                
             <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
 
             <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={["name", "description"]} onAdd={dungeonConfig.addItem} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_item`)} />

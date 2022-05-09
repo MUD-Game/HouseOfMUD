@@ -13,9 +13,8 @@
  */
 import React, { useEffect, useState } from 'react'
 import { Container, Nav, Row } from 'react-bootstrap';
-import { useAuth } from 'src/hooks/useAuth';
 import { supervisor } from 'src/services/supervisor';
-import { DungeonResponseData, GetDungeonsRequest } from '@supervisor/api';
+import { DungeonResponseData } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
 import { useNavigate } from 'react-router-dom';
 import MyDungeons from './MyDungeons/MyDungeons';
@@ -29,7 +28,6 @@ export type DashboardProps = {
 const Dashboard: React.FC<DashboardProps> = (props) => {
     
     const {t} = useTranslation();
-    const auth = useAuth();
     const navigate = useNavigate();
     const [allDungeons, setAllDungeons] = useState<DungeonResponseData[]>();
     const [myDungeons, setMyDungeons] = useState<DungeonResponseData[]>();

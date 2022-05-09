@@ -36,6 +36,7 @@ interface Dungeons {
  * responsable for handling the communication between the supervisor and the host
  */
 export class HostLink {
+
    
     private port: number;
     private tls: TLS;
@@ -80,11 +81,12 @@ export class HostLink {
         serverSocket.on('error', console.error);
 
         serverSocket.on('connection', socket => {
-            const key: string | undefined = socket.handshake.query.key as | string | undefined;
             const name: string | undefined = socket.handshake.query.name as | string | undefined;
+            const key: string | undefined = socket.handshake.query.key as | string | undefined;
+            const database: string | undefined = socket.handshake.query.database as | string | undefined;
 
-            if (key !== undefined && name !== undefined) {
-                if (key === this.authKey && !(name in this.hosts)) {
+            if (key !== undefined && name !== undefined && database !== undefined) {
+                if (key === this.authKey && database === this.databaseAdapter.database && !(name in this.hosts)) {
                     this.hosts[name] = {
                         socket: socket,
                         dungeons: [],
@@ -148,11 +150,15 @@ export class HostLink {
         });
     }
 
+    public dungeonNameExists(name: string) {
+        return Object.keys(this.dungeons).some(dungeon => this.dungeons[dungeon].name === name);
+    }
+
     /**
      * @returns best available host
      */
     private getBestHost(): string {
-        return Object.keys(this.hosts)[0];
+        return Object.keys(this.hosts)[Math.floor(Math.random()*Object.keys(this.hosts).length)];
     }
 
     /**

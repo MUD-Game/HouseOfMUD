@@ -32,7 +32,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
       return () => {
         
       }
-    }, [])
+    }, [auth])
     
    
     if(isLoading){

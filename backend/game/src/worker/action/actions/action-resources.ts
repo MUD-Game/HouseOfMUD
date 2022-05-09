@@ -27,6 +27,11 @@ export const triggers = {
     removeMana: "remmana",
     removeHp: "remhp",
     removeDamage: "remdmg",
+    changeRoom: "verschiebe",
+    removeItem: "remitem",
+    removeRoomItem: "remroomitem",
+    addRoomItem: "addroomitem",
+    addItem: "additem",
     toggleConnection: "toggle"
 }
 
@@ -68,10 +73,13 @@ export const actionMessages = {
 export const errorMessages = {
     itemNotOwned: "Du besitzt dieses Item nicht!",
     itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
+    itemDoesntexist: "Dieses Item existiert nicht!",
+    roomDoesNotExist: "Dieser Raum existiert nicht!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
     actionDoesNotExist: "Diese Aktion ist nicht möglich!",
     lookError: " Fehler!",
+    charakterHasntItem: "%s besitzt dieses Item nicht!"
 }
 
 export const dungeonMasterSendMessages = {
@@ -88,6 +96,15 @@ export const dungeonMasterSendMessages = {
     removeHp: "Du hast %s Leben verloren",
     hpRemoved: "%s hat %s Leben verloren",
     dmWhisper: "[privat] Dungeon Master -> %s: %s",
+    dmRoomMove: "%s wurde in Raum %s verschoben",
+    roomMove: "Du wurdest vom Dungeon Master in den Raum %s verschoben",
+    alreadyRoom: "Der Spieler ist bereits im gewünschten Raum",
+    addItem: "Der Dungeon Master hat das Item %s deinem Inventar hinzugefuegt",
+    itemAdded: "Das Item %s wurde in %s's Inventar hinzugefuegt",
+    removeItem: "Der Dungeon Master hat das Item %s aus deinem Inventar entfernt",
+    itemRemoved: "Das Item %s wurde aus %s's Inventar entfernt",
+    itemRoomAdded: "In %s wurde das Item %s hinzugefuegt",
+    itemRoomRemoved: "Aus %s wurde das Item %s entfernt",
     toggleConnection: "Der Durchgang zwischen %s und %s wurde %s!",
     connectionOpen: "geoeffnet",
     connectionClosed: "geschlossen"

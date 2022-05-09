@@ -19,15 +19,15 @@ export interface Dungeon {
   masterId: string;
   maxPlayers: number;
   currentPlayers: number;
-  characterSpecies: {[id: string]: CharacterSpecies};
-  characterClasses: {[id: string]: CharacterClass};
-  characterGenders: {[id: string]: CharacterGender};
-  characters: {[name: string]: Character};
-  rooms: {[id: string]: Room};
+  characterSpecies: { [id: string]: CharacterSpecies };
+  characterClasses: { [id: string]: CharacterClass };
+  characterGenders: { [id: string]: CharacterGender };
+  characters: { [name: string]: Character };
+  rooms: { [id: string]: Room };
   blacklist: string[];
-  actions: {[id: string]: ActionElement};
-  items: {[id: string]: Item};
-  npcs: {[id: string]: Npc};
+  actions: { [id: string]: ActionElement };
+  items: { [id: string]: Item };
+  npcs: { [id: string]: Npc };
 
   getId(): string
   getName(): string
@@ -43,6 +43,7 @@ export interface Dungeon {
   getCharacter(characterName: string): Character
   getRoom(roomId: string): Room
   getRoomByCoordinates(x: number, y: number): Room
+  getRoomByName(roomName: string): Room
   getNorthernRoom(initialRoom: Room): Room
   getEasternRoom(initialRoom: Room): Room
   getSouthernRoom(initialRoom: Room): Room
@@ -65,21 +66,21 @@ export class DungeonImpl implements Dungeon {
   maxPlayers: number;
   globalActions: string[];
   currentPlayers: number;
-  characterSpecies: {[id: string]: CharacterSpecies};
-  characterClasses: {[id: string]: CharacterClass};
-  characterGenders: {[id: string]: CharacterGender};
-  characters: {[name: string]: Character};
-  rooms: {[id: string]: Room};
+  characterSpecies: { [id: string]: CharacterSpecies };
+  characterClasses: { [id: string]: CharacterClass };
+  characterGenders: { [id: string]: CharacterGender };
+  characters: { [name: string]: Character };
+  rooms: { [id: string]: Room };
   blacklist: string[];
-  actions: {[id: string]: ActionElement};
-  items: {[id: string]: Item};
-  npcs: {[id: string]: Npc};
+  actions: { [id: string]: ActionElement };
+  items: { [id: string]: Item };
+  npcs: { [id: string]: Npc };
 
   getId(): string {
     return this.id;
   }
 
-  getName(): string{
+  getName(): string {
     return this.name;
   }
 
@@ -157,6 +158,15 @@ export class DungeonImpl implements Dungeon {
     }
   }
 
+  getRoomByName(roomName: string):Room {
+    let room: Room | undefined = Object.values(this.rooms).find(room => room.name === roomName)
+    if (room === undefined) {
+      throw new Error("Room does not exist");
+    } else {
+      return room;
+    }
+  }
+
   getGlobalActions(): string[] {
     return this.globalActions;
   }
@@ -208,11 +218,11 @@ export class DungeonImpl implements Dungeon {
 
   getItem(itemId: string): Item {
     let item: Item = this.items[itemId]
-      if (item === undefined) {
-        throw new Error("Item does not exist");
-      } else {
-        return item;
-      }
+    if (item === undefined) {
+      throw new Error("Item does not exist");
+    } else {
+      return item;
+    }
   }
 
   getItemByName(itemName: string): Item {
@@ -226,11 +236,11 @@ export class DungeonImpl implements Dungeon {
 
   getNpc(npcId: string): Npc {
     let npc: Npc = this.npcs[npcId]
-      if (npc === undefined) {
-        throw new Error("Npc does not exist");
-      } else {
-        return npc;
-      }
+    if (npc === undefined) {
+      throw new Error("Npc does not exist");
+    } else {
+      return npc;
+    }
   }
 
   constructor(
@@ -273,19 +283,19 @@ export class DungeonImpl implements Dungeon {
 }
 
 function arrayToMap(array: any[]): any {
-  let map: {[id: string]: any} = {};
+  let map: { [id: string]: any } = {};
   array.forEach((obj: any) => {
-      //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
-      map[obj.id] = obj;
+    //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
+    map[obj.id] = obj;
   });
   return map;
 }
 
 function arrayToMapCharacters(array: any[]): any {
-  let map: {[name: string]: any} = {};
+  let map: { [name: string]: any } = {};
   array.forEach((obj: any) => {
-      //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
-      map[obj.name] = obj;
+    //let objWithoutID = (({ id, ...o}) => o)(obj); // remove id from object
+    map[obj.name] = obj;
   });
   return map;
 }

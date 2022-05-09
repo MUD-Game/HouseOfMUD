@@ -41,8 +41,13 @@ import { ShowActions } from "../src/worker/action/actions/show-actions";
 import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMessage-action";
 import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
 import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
+import { ChangeRoom } from "../src/worker/action/dmactions/changePlayerPosition-action";
 import { DieAction } from "../src/worker/action/actions/die-action";
 import { ToggleConnectionAction } from "../src/worker/action/dmactions/toggleRoomConnection-action";
+import { AddItem } from "../src/worker/action/dmactions/addItemToPlayer-action";
+import { AddRoomItem } from "../src/worker/action/dmactions/addItemToRoom-action";
+import { RemoveItem } from "../src/worker/action/dmactions/removeItemFromPlayer-action";
+import { removeRoomItem } from "../src/worker/action/dmactions/removeItemFromRoom-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -85,6 +90,7 @@ const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
 const TestItemRemoveHp: Item = new ItemImpl('4', 'Giftpilz', 'Test');
 const TestItemAddMana: Item = new ItemImpl('5', 'Manatrank', 'Test');
 const TestItemRemoveItem: Item = new ItemImpl('6', 'Stein', 'Test');
+const TestItemDungeonMaster: Item = new ItemImpl('7', 'Schluessel', 'Test')
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
     'open',
@@ -338,7 +344,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     ],
     ['abc'],
     [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing, TestGlobalAction],
-    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem],
+    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem, TestItemDungeonMaster],
     [TestNpc],
     [TestGlobalAction.id]
 );
@@ -1293,6 +1299,8 @@ describe("DungeonMaster Actions", () => {
         TestDungeon.characters['Jeff'].currentStats.hp = 50
         TestDungeon.characters['Jeff'].currentStats.dmg = 10
         TestDungeon.characters['Jeff'].currentStats.mana = 50
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,1)]
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id,1)]
     })
     afterEach(() => {
         jest.clearAllMocks();
@@ -1301,6 +1309,8 @@ describe("DungeonMaster Actions", () => {
         TestDungeon.characters['Jeff'].currentStats.hp = 50
         TestDungeon.characters['Jeff'].currentStats.dmg = 10
         TestDungeon.characters['Jeff'].currentStats.mana = 50
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,1)]
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id,1)]
     })
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
@@ -1310,8 +1320,13 @@ describe("DungeonMaster Actions", () => {
     const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
     const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
     const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const changePlayerPosition: ChangeRoom = actionHandler.dmActions[triggers.changeRoom] as ChangeRoom;
     const dieAction: DieAction = actionHandler.dieAction;
     const toggleConnectionAction: ToggleConnectionAction = actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
+    const addItemToPlayer: AddItem = actionHandler.dmActions[triggers.addItem] as AddItem;
+    const addItemToRoom: AddRoomItem = actionHandler.dmActions[triggers.addRoomItem] as AddRoomItem;
+    const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem;
+    const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
 
 
     amqpAdapter.sendToClient = jest.fn();
@@ -1417,6 +1432,23 @@ describe("DungeonMaster Actions", () => {
         });
     });
 
+    test('dungeonmaster changes the position of Jeff (text)', () => {
+        changePlayerPosition.performAction('dungeonmaster', [
+            'Jeff', 'Raum-N'
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Jeff wurde in Raum Raum-N verschoben` },
+        });
+    });
+
+    test('dungeonmaster changes the position of Jeff', async () => {
+        await  changePlayerPosition.performAction('dungeonmaster', [
+            'Jeff', 'Raum-N'
+        ]);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id)
+    });
+    
     test('ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection', () => {
         toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'closed');
         expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('closed')
@@ -1443,4 +1475,119 @@ describe("DungeonMaster Actions", () => {
             data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geoeffnet!` },
         });
     });
+
+    test('AddItem should add an item to the players inventory and call sendToClient on the AmqpAdapter when dungeon master adds an item to a players inventory', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Schluessel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id, 1)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Das Item Schluessel wurde in Jeff's Inventar hinzugefuegt` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff',{
+            action: 'message',
+            data: { message: `Der Dungeon Master hat das Item Schluessel deinem Inventar hinzugefuegt` },
+        });
+    })
+
+    test('AddItem should increment the item count when the player receives an item he already owns', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('AddItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in this dungeon', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Dieses Item existiert nicht!` },
+        });
+    })
+
+    test('AddRoomItem should add an item to the room and call broadcast on the AmqpAdapter when dungeon master adds an item to a room', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Schluessel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id,1)])
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `In Raum-1 wurde das Item Schluessel hinzugefuegt` },
+        });
+    })
+
+    test('AddRoomItem should increment the item count when the room receives an item he already has', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('AddRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in this dungeon', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Dieses Item existiert nicht!` },
+        });
+    })
+
+    //
+    test('RemoveItem should remove an item from the players inventory and call sendToClient on the AmqpAdapter when dungeon master removes an item from a players inventory', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Das Item Apfel wurde aus Jeff's Inventar entfernt` },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff',{
+            action: 'message',
+            data: { message: `Der Dungeon Master hat das Item Apfel aus deinem Inventar entfernt` },
+        });
+    })
+
+    test('RemoveItem should decrement the item count when the player gets an item removed he already owns twice or more', async () => {
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,3)]
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('RemoveItem should call sendToClient on the amqpAdapter to notify the dungeon master that the item does not exist in the dungeon when he tries to remove an item that does not exist in the dungeon', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Dieses Item existiert nicht!` },
+        });
+    })
+
+    test('RemoveItem should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not have the item when he tries to remove an item that the character does not have', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Gold'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Jeff besitzt dieses Item nicht!` },
+        });
+    })
+
+    test('RemoveRoomItem should remove an item from the room and call broadcast on the AmqpAdapter when dungeon master removes an item from a room', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([])
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `Aus Raum-1 wurde das Item Apfel entfernt` },
+        });
+    })
+
+    test('RemoveRoomItem should decrement the item count when the room gets an item removed it already has', async () => {
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id,3)]
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('RemoveRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in this dungeon', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Dieses Item existiert nicht!` },
+        });
+    })
+
+    test('RemoveRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in the room', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Gold'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: `Dieses Item existiert nicht in diesem Raum!` },
+        });
+    })
 })

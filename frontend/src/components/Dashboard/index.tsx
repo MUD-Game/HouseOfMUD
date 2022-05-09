@@ -43,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         fetchDungeons();
         console.log(location.state);
         if(location.state){
-            setAlert({title: "Du wurdest gekickt", text:location.state as string});
+            setAlert({title: t("alert.kicked.title"), text:location.state as string});
         }
     }, [])
 

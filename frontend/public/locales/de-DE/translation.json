@@ -226,6 +226,11 @@
         "login": "Anmelden",
         "register": "Registrieren"
     },
+    "alert": {
+        "kicked": {
+            "title": "Du wurdest aus folgendem Grund gekickt:"
+        }
+    },
     "error": {
         "internal": {
             "title": "Interner Server Fehler",

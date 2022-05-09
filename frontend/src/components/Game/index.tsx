@@ -46,7 +46,7 @@ const Game: React.FC<GameProps> = () => {
 
     const kickSubscriber = (kickMessage: string) => {
         setError(kickMessage);
-        navigate('/');
+        navigate('/', {state: {title: "Du wurdest gekickt.", text: kickMessage}});
     }
 
     useEffect(() => {

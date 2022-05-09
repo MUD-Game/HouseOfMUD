@@ -41,6 +41,10 @@ export class DungeonController {
 
     public init() {
         // comsume messages from clients
+        setInterval(() => {
+            this.persistAllRooms();
+            this.persistAllCharacters();
+        }, 300000);
         this.amqpAdapter.consume(async (consumeMessage: ConsumeMessage) => {
             try {
                 let data = JSON.parse(consumeMessage.content.toString());
@@ -120,6 +124,7 @@ export class DungeonController {
     }
 
     async persistAllRooms(){
+        console.log("persisting rooms...")
         let rooms: Room[] = this.mapToArray(this.dungeon.rooms)
         this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
     }
@@ -132,7 +137,16 @@ export class DungeonController {
         return array;
     }
 
+    async persistAllCharacters(){
+        console.log('Persisting all Characters');
+        let characters = this.mapToArray(this.dungeon.characters)
+        characters.filter(char => char.name !== 'dungeonmaster').forEach(async char => {
+            await this.persistCharacterData(char);
+        });
+    }
+
     async persistCharacterData(character: Character){
+        console.log(`persisting ${character.name}`);
         this.databaseAdapter?.updateCharacterInDungeon({
             name: character.name,
             userId: character.userId,

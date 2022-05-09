@@ -24,6 +24,7 @@ import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { DashboardLocationState } from '../Dashboard/index';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = () => {
@@ -45,7 +46,10 @@ const Game: React.FC<GameProps> = () => {
     }
 
     const kickSubscriber = (kickMessage: string) => {
-        navigate('/', {state: kickMessage});
+        navigate('/', {state: {
+            message: kickMessage,
+            title: t("alert.kicked.title")
+        } as DashboardLocationState});
     }
 
     useEffect(() => {

@@ -25,6 +25,11 @@ import Alert from '../Custom/Alert';
 export type DashboardProps = {
 }
 
+export interface DashboardLocationState {
+    message: string;
+    title: string;
+}
+
 const Dashboard: React.FC<DashboardProps> = (props) => {
     
     const {t} = useTranslation();
@@ -41,9 +46,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
     useEffect(() => {
         fetchDungeons();
-        console.log(location.state);
         if(location.state){
-            setAlert({title: t("alert.kicked.title"), text:location.state as string});
+            const dState = location.state as DashboardLocationState;
+            setAlert({ title: dState.title, text: dState.message});
         }
     }, [])
 

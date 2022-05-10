@@ -40,7 +40,7 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", npcs)) {
+        if (!props.editData && validator.alreadyExists(name, "name", npcs)) {
             setError(t(`npcalreadyexists`));
             return;
         }
@@ -83,8 +83,8 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
+                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                     <MudSelect value={speciesSelection} colmd={6} title={t(`dungeon_keys.species`)} onChange={(event) => setSpeciesSelection(event.target.value)} placeholder={t(`common.select_species`)} label={t(`dungeon_keys.species`)}>
                         <option value="-1" hidden>{t(`common.select_species`)}</option>
                         {species.map(({name, id})=>{

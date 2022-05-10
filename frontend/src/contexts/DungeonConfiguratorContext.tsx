@@ -55,9 +55,8 @@ function arrayToMap(array: any[]): any {
 export interface DungeonConfiguratorContextMethods {
     setName: (name: string) => void;
     setDescription: (description: string) => void;
-    setMaxPlayers: (maxPlayers: number) => void;
+    setMaxPlayers: (maxPlayers: number | "") => void;
 
-    handleOnBlurInput: (event: React.FocusEvent<HTMLInputElement>) => void;
 
 
     addGender: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -129,7 +128,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     // States
     const [name, setName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
-    const [maxPlayers, setMaxPlayers] = React.useState<number>(0);
+    const [maxPlayers, setMaxPlayers] = React.useState<number | "">("");
     const [species, setSpecies] = React.useState<MudCharacterSpecies[]>([]);
     const [genders, setGenders] = React.useState<MudCharacterGender[]>([]);
     const [classes, setClasses] = React.useState<MudCharacterClass[]>([]);
@@ -237,37 +236,6 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
 
 
-
-    const handleOnBlurInput = (event: React.FocusEvent<HTMLInputElement>) => {
-        // What happens when the user leaves the input field --> Validates the inputs and either saves the data in state or handles the invalid data (happens in validator)
-        let target = event.target;
-        const value = target.value;
-        switch (target.name) {
-            case "name":
-                validator.string(target, setName);
-                break;
-            case "description":
-                validator.string(target, setDescription);
-                break;
-            case "maxPlayers":
-                let maxPlayers = validator.maxPlayers(value);
-                event.target.value = maxPlayers.toString();
-                setMaxPlayers(maxPlayers);
-                break;
-            case "species":
-                validator.string(target, () => {
-                    setCharacterDecorator(value, setSpecies);
-                })
-                break;
-            case "genders":
-                validator.string(target, () => {
-                    setCharacterDecorator(value, setGenders);
-                })
-                break;
-            default:
-                break;
-        }
-    }
 
     const showConfirmation = (localeString: string, onConfirm: () => void) => {
         setShowConfirmationDialog({
@@ -668,7 +636,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         else if (description === "") {
             valid = false;
         }
-        else if (maxPlayers === 0) {
+        else if (maxPlayers === "") {
             valid = false;
         }
         else if (species.length === 0) {
@@ -768,7 +736,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, handleOnBlurInput, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName, addGender, deleteGender, editGender, addSpecies, deleteSpecies, editSpecies
+        setName, setDescription, setMaxPlayers, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName, addGender, deleteGender, editGender, addSpecies, deleteSpecies, editSpecies
     }
 
     let fields: MudDungeon = {

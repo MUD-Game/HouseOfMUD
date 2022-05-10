@@ -64,6 +64,8 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+
 *::-webkit-scrollbar {
   width: 15px;
 }
@@ -71,6 +73,22 @@ html, body {
   box-shadow: inset 0 0 5px var(--accent);
   background-color: var(--accentlight);
   border-radius: 10px;
+}
+
+@keyframes shake {
+  0% {
+    left: -1px;
+  }
+
+  100% {
+    right: -1px;
+  }
+}
+input.is-invalid, input.is-invalid:focus{
+  border-color: var(--red);
+  position: relative;
+  animation: shake .1s linear;
+  animation-iteration-count: 3;
 }
 
 

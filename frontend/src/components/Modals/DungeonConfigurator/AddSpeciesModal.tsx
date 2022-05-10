@@ -36,7 +36,7 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", species)) {
+        if (!props.editData && validator.alreadyExists(name, "name", species)) {
             setError(t(`speciesalreadyexists`));
             return;
         }

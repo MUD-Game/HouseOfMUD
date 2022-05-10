@@ -40,7 +40,7 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", npcs)) {
+        if (!props.editData && validator.alreadyExists(name, "name", npcs)) {
             setError(t(`npcalreadyexists`));
             return;
         }

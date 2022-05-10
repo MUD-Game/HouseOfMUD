@@ -37,7 +37,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        console.log(validator.alreadyExists(name, "name", rooms))
         if (validator.alreadyExists(name, "name", rooms)) {
             setError(t(`roomalreadyexists`));
             return;

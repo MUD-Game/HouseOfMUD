@@ -37,7 +37,7 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", dconf.items)) {
+        if (!props.editData && validator.alreadyExists(name, "name", dconf.items)) {
             setError(t(`itemalreadyexists`));
             return;
         }

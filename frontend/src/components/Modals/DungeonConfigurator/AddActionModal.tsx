@@ -135,7 +135,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
-        if (validator.alreadyExists(command, "command", dconf.actions)){
+        if (!props.editData && validator.alreadyExists(command, "command", dconf.actions)){
             setError(t(`actionalreadyexists`));
             return;
         }

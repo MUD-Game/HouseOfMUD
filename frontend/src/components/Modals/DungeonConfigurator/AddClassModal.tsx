@@ -40,7 +40,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     }
     
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", dconf.classes)) {
+        if (!props.editData && validator.alreadyExists(name, "name", dconf.classes)) {
             setError(t(`classalreadyexists`));
             return;
         }

@@ -36,7 +36,7 @@ const AddGenderModal: React.FC<AddGenderModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", dconf.genders)) {
+        if (!props.editData && validator.alreadyExists(name, "name", dconf.genders)) {
             setError(t(`genderalreadyexists`));
             return;
         }

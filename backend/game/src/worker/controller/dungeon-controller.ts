@@ -150,8 +150,17 @@ export class DungeonController {
         } else {
             delete this.dungeon.characters[characterName];
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
+            this.kickAllPlayers('Der Dungeon wurde beendet'); // TODO: Recource
             // this.stopDungeon();
         }
+    }
+
+    public async kickPlayer(character: string, kickMessage: any) {
+        await this.amqpAdapter.sendActionToClient(character, 'kick', { message: kickMessage });
+    }
+
+    private async kickAllPlayers(kickMessag: string) {
+        await this.amqpAdapter.broadcastAction('kick', { message: kickMessag });
     }
 
     sendPlayerListToDM() {

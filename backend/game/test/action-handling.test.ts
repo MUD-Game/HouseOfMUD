@@ -48,6 +48,7 @@ import { AddItem } from "../src/worker/action/dmactions/addItemToPlayer-action";
 import { AddRoomItem } from "../src/worker/action/dmactions/addItemToRoom-action";
 import { RemoveItem } from "../src/worker/action/dmactions/removeItemFromPlayer-action";
 import { removeRoomItem } from "../src/worker/action/dmactions/removeItemFromRoom-action";
+import { KickPlayer } from "../src/worker/action/dmactions/kickPlayer-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -1327,6 +1328,7 @@ describe("DungeonMaster Actions", () => {
     const addItemToRoom: AddRoomItem = actionHandler.dmActions[triggers.addRoomItem] as AddRoomItem;
     const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem;
     const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
+    const kickPlayer: KickPlayer = actionHandler.dmActions[triggers.kickPlayer] as KickPlayer
 
 
     amqpAdapter.sendToClient = jest.fn();
@@ -1588,6 +1590,14 @@ describe("DungeonMaster Actions", () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
             data: { message: `Dieses Item existiert nicht in diesem Raum!` },
+        });
+    })
+
+    test('KickPlayer should call broadcast on the amqpAdapter to notify every player when the dungeon master kicks a player', async () => {
+        await kickPlayer.performAction('dungeonmaster', ['CoolerTyp', 'Nicht gut'])
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `CoolerTyp wurde aus dem Dungeon gekickt!` },
         });
     })
 })

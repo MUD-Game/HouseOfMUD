@@ -226,6 +226,16 @@
         "login": "Anmelden",
         "register": "Registrieren"
     },
+    "alert": {
+        "kick": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Vom Dungeon Master gekickt!"
+        },
+        "ban": {
+            "title": "Du wurdest aus folgendem Grund gebannt:",
+            "default": "Vom Dungeon Master gebannt!"
+        }
+    },
     "error": {
         "internal": {
             "title": "Interner Server Fehler",

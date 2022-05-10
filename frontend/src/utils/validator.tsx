@@ -1,21 +1,50 @@
+import { HTMLAttributeAnchorTarget } from "react";
+
 // TODO: Actually Write an validator
 const validator = {
-    maxPlayers: (maxPlayersString: string) => {
-        if (isNaN(Number(maxPlayersString))) return 2;
-        if (!isFinite(Number(maxPlayersString)) || maxPlayersString === '') return 1000000;
-        let maxPlayers = parseInt(maxPlayersString);
-        return Math.max(2, Math.min(maxPlayers, 1000000));
+    noSpace: (value: string) => {
+        return value.replace(/\s/g, "_");
     },
-    string(target: EventTarget & HTMLInputElement, onvalid: (value: string) => void) {
-        // Disable next line, because it thinks the regex is escaping uselessly 
-        //eslint-disable-next-line
-        if (target.value === '' || /^[a-z0-9-\'_\.,:\(\)&\[\]\/+=\?#@ \xC0-\xFF]+$/i.test(target.value)) {
-            onvalid(target.value);
-            target.spellcheck = false;
-        } else {
-            target.spellcheck = true;
-            target.focus();
+    name: (target: any) => {
+        return validator.stringConstraint(target, 50);
+    },
+    description: (target: any) =>{
+        return validator.stringConstraint(target, 500);
+    },
+    cirName: (target: any) => {
+        return validator.noSpace(validator.stringConstraint(target, 50));
+    },
+    command: (target: any) => {
+        return validator.stringConstraint(target, 50); 
+    },
+    output: (target: any) => {
+        return validator.stringConstraint(target, 100);
+    },
+    stringConstraint: (target: any, maxLen: number) => {
+        let value = target.value;
+        // Check if the last character is a space
+        if (value.length > maxLen) {
+            // Add a class to target
+            target.classList.add("is-invalid");
+            // Trim the value
+            value = value.substring(0, maxLen);
+        }else{
+            target.classList.remove("is-invalid");
         }
+        return value;
+    },
+    statValues: (stat: string) => {
+        return validator.numberConstraint(stat, 1, 1000000);
+    },
+    numberConstraint: (number: string, min: number, max: number) => {
+        if (number === "") return "";
+        if (isNaN(Number(number))) return min;
+        if (!isFinite(Number(number))) return max;
+        let parsedNumber = parseInt(number);
+        return Math.max(min, Math.min(parsedNumber, max));
+    },
+    maxPlayers: (maxPlayersString: string) => {
+        return validator.numberConstraint(maxPlayersString, 2, 1000000);
     },
     alreadyExists(value: any, key:string, list: any[] | {[key: string]: any}) {
         if (Array.isArray(list)) {
@@ -31,6 +60,19 @@ const validator = {
     isZero: (value: number, ...otherValues: number[]) => {
         return value === 0;
     },
+    /**
+     * 
+     * @param value The value to check
+     * @param failValue The value to return if the check fails
+     * @returns The validated number
+     */
+    positiveInteger(value: number, failValue: number) {
+        if (isNaN(value)) return failValue;
+        if (!isFinite(value)) return failValue;
+        if (value < 0) return failValue;
+        return value;
+    },
+
     password: (password:string, confirm:string) => {
         
         let returns = [];

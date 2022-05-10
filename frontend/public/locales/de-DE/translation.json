@@ -288,6 +288,10 @@
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um einen Raum zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
             },
+            "npc":{
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um einen NPC zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung und Spezies!"
+            },
             "gender": {
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Bitte gebe einen Namen für das Geschlecht an"

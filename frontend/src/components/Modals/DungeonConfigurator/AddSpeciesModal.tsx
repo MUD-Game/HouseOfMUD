@@ -36,7 +36,7 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (validator.alreadyExists(name, "name", species)) {
+        if (!props.editData && validator.alreadyExists(name, "name", species)) {
             setError(t(`speciesalreadyexists`));
             return;
         }
@@ -77,7 +77,7 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

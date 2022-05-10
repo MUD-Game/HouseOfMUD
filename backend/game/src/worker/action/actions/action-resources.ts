@@ -33,7 +33,8 @@ export const triggers = {
     addRoomItem: "addroomitem",
     addItem: "additem",
     toggleConnection: "toggle",
-    kickPlayer: "kick"
+    kickPlayer: "kick",
+    banPlayer: "ban"
 }
 
 export const actionMessages = {
@@ -68,7 +69,8 @@ export const actionMessages = {
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
     showActionsEnding: "\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.",
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
-    unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s"
+    unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s",
+    playerKicked: "%s wurde aus dem Dungeon gekickt!"
 }
 
 export const errorMessages = {

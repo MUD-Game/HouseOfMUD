@@ -109,7 +109,7 @@ export class DungeonController {
         }
     }
 
-    public async kickPlayer(character: string, kickMessage: string) {
+    public async kickPlayer(character: string, kickMessage: any) {
         await this.amqpAdapter.sendActionToClient(character, 'kick', { message: kickMessage });
     }
 

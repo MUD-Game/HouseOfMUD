@@ -45,10 +45,10 @@ const Game: React.FC<GameProps> = () => {
         setMiniMapData(roomData);
     }
 
-    const kickSubscriber = (kickMessage: string) => {
+    const kickSubscriber = (message: any) => {
         navigate('/', {state: {
-            message: kickMessage,
-            title: t("alert.kicked.title")
+            message: message.kickMessage,
+            title: t(`alert.${message.type}.title`)
         } as DashboardLocationState});
     }
 

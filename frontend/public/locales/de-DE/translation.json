@@ -227,8 +227,11 @@
         "register": "Registrieren"
     },
     "alert": {
-        "kicked": {
+        "kick": {
             "title": "Du wurdest aus folgendem Grund gekickt:"
+        },
+        "ban": {
+            "title": "Du wurdest aus folgendem Grund gebannt:"
         }
     },
     "error": {

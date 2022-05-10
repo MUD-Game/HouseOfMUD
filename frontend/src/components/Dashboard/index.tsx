@@ -12,7 +12,7 @@
  * ```
  */
 import React, { useEffect, useState } from 'react'
-import { Container, Nav, Row } from 'react-bootstrap';
+import { Container, Nav, Row, Col } from 'react-bootstrap';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
@@ -20,6 +20,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { Arrow90degLeft, ArrowCounterclockwise, Circle } from 'react-bootstrap-icons';
 
 
 export type DashboardProps = {
@@ -87,10 +88,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     }}>{t("dashboard.create_new_dungeon")}</button>
                 </div>
             </Row>
-            <Row className="mb-4">
-                <div className="col-md-6">
+            <Row className="align-items-center pt-1 pb-2 mb-4">
+                <Col md={6}>
                     <input id="search-input" className="input-standard drawn-border" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
-                </div>
+                </Col>
+                <Col md={1}>
+                    <button className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30} onClick={fetchDungeons}/></button>
+                </Col>
             </Row>
 
             <Row>

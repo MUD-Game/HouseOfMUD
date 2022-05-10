@@ -22,14 +22,6 @@ import { DungeonController } from "./controller/dungeon-controller";
 const dungeonID = process.argv[2];
 // const dungeonID = "626d1be8bd7036c89704263d";
 
-interface Tokens {
-    [userID: string]: {
-        [character: string]: string;
-    };
-}
-
-const userTokens: Tokens = {};
-
 function sendToHost(hostAction: string, data: any): void {
     if (process.send) {
         process.send({
@@ -68,35 +60,10 @@ async function main() {
     );
     dungeonController.init();
 
-    handleHostMessages(dungeonController);
-
     console.log(`Dungeon ${dungeonID} started`);
 
     sendToHost('started', {});
 
-}
-
-function handleHostMessages(dungeonController: DungeonController) {
-    process.on('message', async (msg: any) => {
-        let action = msg.action;
-        let data = msg.data;
-        switch (action) {
-            case 'setCharacterToken':
-                let userID = data.user;
-                let character = data.character;
-                let verifyToken = data.verifyToken;
-
-                if (!(userID in userTokens)) {
-                    userTokens[userID] = {};
-                }
-                console.log(`verify ${character}`);
-                userTokens[userID][character] = verifyToken;
-                break;
-            case 'stop':
-                dungeonController.stopDungeon();
-                break;
-        }
-    });
 }
 
 function getAmqpAdapterConfig() {

@@ -19,6 +19,8 @@ export class AmqpAdapter {
 
     // Connection Server -> Client
     private clientExchange: string;
+
+    private characterTokenTranslation: (character: string) => string | undefined;
     
     constructor(dungeonID: string, url: string, port: string, user: string, password: string, serverExchange: string, clientExchange: string) {
         this.dungeonID = dungeonID;
@@ -28,6 +30,12 @@ export class AmqpAdapter {
         this.password = password;
         this.serverExchange = serverExchange;
         this.clientExchange = clientExchange;
+        
+        this.characterTokenTranslation = a => a;
+    }
+
+    setCharacterTokenTranslation(ctt: (character: string) => string | undefined) {
+        this.characterTokenTranslation = ctt;
     }
 
     isConnected(): boolean {
@@ -86,14 +94,17 @@ export class AmqpAdapter {
 
     /**
      * Binds new queue with dungeon specific client exchange. Client subscribes to that queue to receive messages.
-     * @param user User to connect.
+     * @param character User to connect.
      */
-    async initClient(user: string): Promise<void> {
+    async initClient(character: string): Promise<void> {
         if (this.isConnected()) {
             try {
-                await this.channel!.assertQueue(`${this.dungeonID}-${user}`, { autoDelete: true });
-                await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.user.${user}`);
-                await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.broadcast`);
+                const token = this.characterTokenTranslation(character);
+                if (token) {
+                    await this.channel!.assertQueue(`${this.dungeonID}-${token}`, { autoDelete: true });
+                    await this.channel!.bindQueue(`${this.dungeonID}-${token}`, `${this.clientExchange}-${this.dungeonID}`, `*.user.${character}`);
+                    await this.channel!.bindQueue(`${this.dungeonID}-${token}`, `${this.clientExchange}-${this.dungeonID}`, `*.broadcast`);
+                }
             } catch (err) {
                 throw err;
             }
@@ -103,13 +114,16 @@ export class AmqpAdapter {
     /**
      * Binds the queue of a client to the ClientExchange with a pattern.
      * The pattern is used to filter the messages with a routingKey. 
-     * @param user Client that needs to be binded.
+     * @param character Client that needs to be binded.
      * @param pattern Key pattern.
      */
-    async bindClientQueue(user: string, pattern: string): Promise<void> {
+    async bindClientQueue(character: string, pattern: string): Promise<void> {
         if (this.isConnected()) {
             try {
-                await this.channel!.bindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
+                const token = this.characterTokenTranslation(character);
+                if (token) {
+                    await this.channel!.bindQueue(`${this.dungeonID}-${token}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
+                }
             } catch (err) {
                 throw err;
             }
@@ -118,13 +132,48 @@ export class AmqpAdapter {
 
     /**
      * Unbinds a pattern from the queue of a client.
-     * @param user Client that needs to be unbinded.
+     * @param character Client that needs to be unbinded.
      * @param pattern  Key pattern.
      */
-    async unbindClientQueue(user: string, pattern: string): Promise<void> {
+    async unbindClientQueue(character: string, pattern: string): Promise<void> {
         if (this.isConnected()) {
             try {
-                await this.channel!.unbindQueue(`${this.dungeonID}-${user}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
+                const token = this.characterTokenTranslation(character);
+                if (token) {
+                    await this.channel!.unbindQueue(`${this.dungeonID}-${token}`, `${this.clientExchange}-${this.dungeonID}`, `*.${pattern}`);
+                }
+            } catch (err) {
+                throw err;
+            }
+        }
+    }
+
+    /**
+     * Sends action to specified token.
+     * used to prevent multiple identical characters
+     * @param token token of user instance.
+     * @param action Action to send.
+     * @param data Data to send.
+     */
+     async sendActionToToken(token: string, action: string, data: any) {
+        this.sendToToken(token, {
+            action: action,
+            data: data
+        });
+    }
+
+    /**
+     * Sends action to specified token.
+     * used to prevent multiple identical characters
+     * @param token token of user instance.
+     * @param action Action to send.
+     * @param data Data to send.
+     */
+     async sendToToken(token: string, msg: any) {
+        if (this.isConnected()) {
+            try {
+                // this.clientChannel.publish(this.clientExchange, `${fork}.broadcast`, Buffer.from(msg));
+                this.channel!.sendToQueue(`${this.dungeonID}-${token}`, Buffer.from(JSON.stringify(msg)));
             } catch (err) {
                 throw err;
             }
@@ -133,12 +182,12 @@ export class AmqpAdapter {
 
     /**
      * Sends action to specified client.
-     * @param user Client that receives message.
+     * @param character Client that receives message.
      * @param action Action to send.
-     * @param data Data to send.
+     * @param msg Message to send.
      */
-    async sendActionToClient(user: string, action: string, data: any) {
-        this.sendToClient(user, {
+    async sendActionToClient(character: string, action: string, data: any) {
+        this.sendToClient(character, {
             action: action,
             data: data
         });
@@ -146,14 +195,14 @@ export class AmqpAdapter {
 
     /**
      * Sends message to specified client.
-     * @param user Client that receives message.
+     * @param character Client that receives message.
      * @param msg Message to send.
      */
-     async sendToClient(user: string, msg: any): Promise<void> {
+     async sendToClient(character: string, msg: any): Promise<void> {
         if (this.isConnected()) {
             try {
                 // this.clientChannel.publish(this.clientExchange, `${fork}.broadcast`, Buffer.from(msg));
-                this.channel!.publish(this.clientExchange, `${this.dungeonID}.user.${user}`, Buffer.from(JSON.stringify(msg)));
+                this.channel!.publish(this.clientExchange, `${this.dungeonID}.user.${character}`, Buffer.from(JSON.stringify(msg)));
             } catch (err) {
                 throw err;
             }

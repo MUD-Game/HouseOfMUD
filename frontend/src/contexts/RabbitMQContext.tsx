@@ -148,7 +148,7 @@
  
      rabbit.onConnect = () => {
        if (firstConnect) {
-         rabbit.subscribe(`/queue/${dungeon}-${character}`, (message: IMessage) => {
+         rabbit.subscribe(`/queue/${dungeon}-${verifyToken}`, (message: IMessage) => {
            processAction(message);
          }, { "auto-delete": "true" });
  

@@ -22,7 +22,12 @@ function sendToHost(hostAction: string, data: any): void {
     }
 }
 
+interface Tokens {
+    [character: string]: string;
+}
 export class DungeonController {
+    
+    private verifyTokens: Tokens;
 
     private dungeonID: string;
     private amqpAdapter: AmqpAdapter;
@@ -31,6 +36,8 @@ export class DungeonController {
     private dungeon: Dungeon;
 
     constructor(dungeonID: string, amqpAdapter: AmqpAdapter, databaseAdapter: DatabaseAdapter | null, dungeon: Dungeon) {
+        this.verifyTokens = {};
+
         this.dungeonID = dungeonID;
         this.amqpAdapter = amqpAdapter;
         this.databaseAdapter = databaseAdapter;
@@ -45,14 +52,49 @@ export class DungeonController {
             this.persistAllRooms();
             this.persistAllCharacters();
         }, 300000);
+        
+        this.handleHostMessages();
+
+        this.amqpAdapter.setCharacterTokenTranslation((character: string) => {
+            return this.characterTokenTranslation(character);
+        });
+
         this.amqpAdapter.consume(async (consumeMessage: ConsumeMessage) => {
             try {
                 let data = JSON.parse(consumeMessage.content.toString());
-                if (data.action !== undefined && data.user !== undefined && data.character !== undefined && data.data !== undefined) {
-                    this.handleAmqpMessages(data);
+                if (data.action !== undefined && data.user !== undefined && data.character !== undefined && data.verifyToken !== undefined && data.data !== undefined) {
+                    if (this.verifyTokens[data.character] === data.verifyToken) {
+                        this.handleAmqpMessages(data);
+                    } else {
+                        this.amqpAdapter.sendActionToToken(data.verifyToken, 'kick', { message: { type: 'alreadyConnected' }});
+                    }
                 }
             } catch (err) {
                 console.log(err);
+            }
+        });
+    }
+
+    characterTokenTranslation(character: string): string | undefined {
+        return this.verifyTokens[character];
+    }
+
+    private handleHostMessages() {
+        process.on('message', async (msg: any) => {
+            let action = msg.action;
+            let data = msg.data;
+            switch (action) {
+                case 'setCharacterToken':
+                    let character = data.character;
+                    if (!(character in this.verifyTokens)) {
+                        let verifyToken = data.verifyToken;
+                        console.log(`verify ${character}`);
+                        this.verifyTokens[character] = verifyToken;
+                    }
+                    break;
+                case 'stop':
+                    this.stopDungeon();
+                    break;
             }
         });
     }
@@ -99,7 +141,7 @@ export class DungeonController {
 
     private async logout(user: string, characterName: string) {
         console.log(`logout ${characterName}`);
-
+        delete this.verifyTokens[characterName];
         if (characterName !== DUNGEONMASTER) {
             await this.persistCharacterData(this.dungeon.getCharacter(characterName))
             delete this.dungeon.characters[characterName];

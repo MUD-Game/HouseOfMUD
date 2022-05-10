@@ -46,7 +46,7 @@ const Game: React.FC<GameProps> = () => {
     }
 
     const kickSubscriber = (message: any) => {
-        if(message.kickMessage === "") {
+        if(message.kickMessage === undefined || message.kickMessage === "") {
             message.kickMessage = t(`alert.${message.type}.default`);
         }
         navigate('/', {state: {

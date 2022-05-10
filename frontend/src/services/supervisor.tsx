@@ -137,7 +137,7 @@ const supervisor = {
     },
 
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {
-        genericRequest(`/login/${dungeonID}`, "POST", body, {}, dataCallBack, error, "verifyToken");
+        genericRequest(`/login/${dungeonID}`, "POST", body, {}, dataCallBack, error);
     },
 
     startDungeon(dungeonID: string, body: StartDungeonRequest, dataCallBack: (data: StartDungeonResponse) => void, error: (error: ErrorResponse) => void) {

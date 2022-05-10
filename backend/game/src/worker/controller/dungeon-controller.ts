@@ -30,6 +30,8 @@ export class DungeonController {
     private actionHandler: ActionHandler;
     private dungeon: Dungeon;
 
+    private selectedPlayer: string | undefined;
+
     constructor(dungeonID: string, amqpAdapter: AmqpAdapter, databaseAdapter: DatabaseAdapter | null, dungeon: Dungeon) {
         this.dungeonID = dungeonID;
         this.amqpAdapter = amqpAdapter;
@@ -67,13 +69,22 @@ export class DungeonController {
                 break;
             case 'message':
                 this.actionHandler.processAction(data.character, data.data.message);
+                // update playerInfo to Dungeon Master in case something has changed
+                if (data.character === this.selectedPlayer) {
+                    this.sendPlayerInformationData();
+                }
                 break;
             case 'dmmessage':
                 this.actionHandler.processDmAction(data.data.message);
+                // update playerInfo to Dungeon Master in case something has changed
+                this.sendPlayerInformationData();
                 break;
             case 'connection.toggle':
                 let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
                 toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
+            case 'playerInformation':
+                this.selectedPlayer = data.data.playerName;
+                this.sendPlayerInformationData()
         }
     }
 
@@ -265,5 +276,39 @@ export class DungeonController {
             }
         }
         this.amqpAdapter.sendActionToClient(character, "stats", data);
+    }
+
+    async sendPlayerInformationData() {
+        if (!this.selectedPlayer) {
+            return;
+        }
+        try {
+            let character: Character = this.dungeon.getCharacter(this.selectedPlayer)
+            let characterPosition: string = character.getPosition()
+            let roomName: string = this.dungeon.rooms[characterPosition].getName()
+            let currentCharacterStats: CharacterStats = character.getCharakterStats()
+            let maxCharacterStats: CharacterStats = character.getMaxStats()
+            let items = character.inventory.map(item => {
+                return { item:this.dungeon.items[item.item].name, count:item.count }
+            })
+            let data = {
+                playerName: this.selectedPlayer,
+                inventory: items,
+                room: roomName,
+                currentStats: {
+                    hp: currentCharacterStats.getHp(),
+                    dmg: currentCharacterStats.getDmg(),
+                    mana: currentCharacterStats.getMana()
+                },
+                maxStats: {
+                    hp: maxCharacterStats.getHp(),
+                    dmg: maxCharacterStats.getDmg(),
+                    mana: maxCharacterStats.getMana()
+                }
+            }
+            this.amqpAdapter.sendActionToClient('dungeonmaster', "updatePlayerInformation", data);
+        } catch(e) {
+            console.error(e);
+        }        
     }
 }

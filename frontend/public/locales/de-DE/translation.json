@@ -234,6 +234,10 @@
         "ban": {
             "title": "Du wurdest aus folgendem Grund gebannt:",
             "default": "Vom Dungeon Master gebannt!"
+        },
+        "alreadyConnected": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Dieser Charakter befindet sich bereits auf diesem Dungeon"
         }
     },
     "error": {

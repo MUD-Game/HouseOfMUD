@@ -66,7 +66,7 @@ export class DungeonController {
                     if (this.verifyTokens[data.character] === data.verifyToken) {
                         this.handleAmqpMessages(data);
                     } else {
-                        this.amqpAdapter.sendActionToToken(data.verifyToken, 'kick', {message: 'Dieser Karaktär befindet sich schon auf dem Dungeon!'});
+                        this.amqpAdapter.sendActionToToken(data.verifyToken, 'kick', { message: { type: 'alreadyConnected' }});
                     }
                 }
             } catch (err) {

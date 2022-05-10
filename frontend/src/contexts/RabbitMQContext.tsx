@@ -133,6 +133,8 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
       verifyToken: verifyToken,
     }
 
+    console.log(verifyToken);
+
     rabbit.activate();
     let loginPayload: RabbitMQPayload = {
       action: 'login',
@@ -144,7 +146,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
 
     rabbit.onConnect = () => {
       if (firstConnect) {
-        rabbit.subscribe(`/queue/${dungeon}-${character}`, (message: IMessage) => {
+        rabbit.subscribe(`/queue/${dungeon}-${verifyToken}`, (message: IMessage) => {
           processAction(message);
         }, { "auto-delete": "true" });
 

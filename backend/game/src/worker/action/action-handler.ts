@@ -31,12 +31,13 @@ import { ToggleConnectionAction } from './dmactions/toggleRoomConnection-action'
 import { AddItem } from './dmactions/addItemToPlayer-action';
 import { AddRoomItem } from './dmactions/addItemToRoom-action';
 import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
+import { KickPlayer } from './dmactions/kickPlayer-action';
 
 
 const regExpression = {
     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
-    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom}))`, "i")
+    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.kickPlayer}))`, "i")
 }
 /**
  * Processes Actions received by the dungeon controller.
@@ -130,7 +131,8 @@ export class ActionHandlerImpl implements ActionHandler {
            new RemoveItem(dungeonController),
            new AddRoomItem(dungeonController),
            new removeRoomItem(dungeonController),
-           new ToggleConnectionAction(dungeonController)
+           new ToggleConnectionAction(dungeonController),
+           new KickPlayer(dungeonController)
         ];
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;

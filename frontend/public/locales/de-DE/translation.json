@@ -238,6 +238,10 @@
         "alreadyConnected": {
             "title": "Du wurdest aus folgendem Grund gekickt:",
             "default": "Dieser Charakter befindet sich bereits auf diesem Dungeon"
+        },
+        "serverClosed": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Der Dungeon wurde vom Dungeon Master beendet."
         }
     },
     "error": {

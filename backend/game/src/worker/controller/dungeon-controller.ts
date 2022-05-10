@@ -66,6 +66,8 @@ export class DungeonController {
                     if (this.verifyTokens[data.character] === data.verifyToken) {
                         this.handleAmqpMessages(data);
                     } else {
+                        // kick Player where the character already exists
+                        // must directly send action via token because user is not logged in (at this point)
                         this.amqpAdapter.sendActionToToken(data.verifyToken, 'kick', { message: { type: 'alreadyConnected' }});
                     }
                 }
@@ -151,16 +153,16 @@ export class DungeonController {
             delete this.dungeon.characters[characterName];
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
             this.kickAllPlayers('Der Dungeon wurde beendet'); // TODO: Recource
-            // this.stopDungeon();
+            this.stopDungeon();
         }
     }
 
-    public async kickPlayer(character: string, kickMessage: any) {
-        await this.amqpAdapter.sendActionToClient(character, 'kick', { message: kickMessage });
+    public async kickPlayer(character: string, message: any) {
+        await this.amqpAdapter.sendActionToClient(character, 'kick', { message: message });
     }
 
-    private async kickAllPlayers(kickMessag: string) {
-        await this.amqpAdapter.broadcastAction('kick', { message: kickMessag });
+    private async kickAllPlayers(message: any) {
+        await this.amqpAdapter.broadcastAction('kick', { message: message });
     }
 
     sendPlayerListToDM() {
@@ -168,8 +170,9 @@ export class DungeonController {
     }
 
     async stopDungeon() {
-        // TODO: kick all players
-        await this.persistAllRooms()
+        await this.persistAllCharacters();
+        await this.kickAllPlayers({type: 'serverClosed'});
+        await this.persistAllRooms();
         await this.getAmqpAdapter().close();
         process.exit(0);
     }

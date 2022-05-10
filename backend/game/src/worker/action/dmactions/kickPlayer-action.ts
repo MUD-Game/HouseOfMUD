@@ -21,9 +21,8 @@ export class KickPlayer implements Action {
         let kickType: string = this.trigger
         let message: string = args.join(' ')
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
-       
         try {
-            this.dungeonController.kickPlayer(recipientCharacterName, {type: kickType, kickMessage: message})
+            await this.dungeonController.kickPlayer(recipientCharacterName, {type: kickType, kickMessage: message})
             amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerKicked, recipientCharacterName)})
         } catch (e) {
             console.log(e)

@@ -228,10 +228,12 @@
     },
     "alert": {
         "kick": {
-            "title": "Du wurdest aus folgendem Grund gekickt:"
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Vom Dungeon Master gekickt!"
         },
         "ban": {
-            "title": "Du wurdest aus folgendem Grund gebannt:"
+            "title": "Du wurdest aus folgendem Grund gebannt:",
+            "default": "Vom Dungeon Master gebannt!"
         }
     },
     "error": {

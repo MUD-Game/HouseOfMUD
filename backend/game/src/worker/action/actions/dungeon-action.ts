@@ -55,7 +55,7 @@ export class DungeonAction extends Action {
                                 characterInventory.push(new ItemInfo(actionEvent.value, 1))
                             }
                         }
-                        // actionevent is remove --> NICHT NOTWENDIG DA UEBER ITEMS NEEDED DIE ITEMS ENTFERNT WERDEN (???)
+                        // actionevent is remove --> ALAAARM NOTWENDIG!!!
                     // actionevent is stats
                     } else {
                         this.modifyCharacterStat(actionEvent.eventType, +actionEvent.value, senderCharacter)

@@ -18,24 +18,25 @@ export class ChangeRoom implements Action {
     async performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let recipientCharacterName: string = args[0]
-        args.shift()
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
         let roomstring: string = ''
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-            let actualroom: string = recipientCharacter.getPosition()
+            let actualroomId: string = recipientCharacter.getPosition()
+            let actualroom: Room = dungeon.getRoom(actualroomId)
+            let actualroomName: string = actualroom.getName()
             try {
-                let newRoom: string = args.join(' ')
+                let newRoom: string = args[1]
                 let newRoomObject: Room = dungeon.getRoomByName(newRoom)
                 let newRoomId: string = newRoomObject.getId()
-                if (actualroom == newRoom) {
+                if (actualroomName == newRoom) {
                     roomstring = parseResponseString(dungeonMasterSendMessages.alreadyRoom)
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring } })
-                } else if (actualroom !== newRoom) {
+                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring, room: newRoom } })
+                } else if (actualroomName !== newRoom) {
                     recipientCharacter.modifyPosition(newRoomId)
-                    roomstring = parseResponseString(dungeonMasterSendMessages.dmRoomMove, recipientCharacterName ,args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring } })
-                    roomstring = parseResponseString(dungeonMasterSendMessages.roomMove, args.join(' '))
+                    roomstring = parseResponseString(dungeonMasterSendMessages.dmRoomMove, recipientCharacterName , args[1])
+                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring, room: newRoom } })
+                    roomstring = parseResponseString(dungeonMasterSendMessages.roomMove, args[1])
                     this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: roomstring } })
                 }
                 await amqpAdapter.sendActionToClient(recipientCharacterName, 'minimap.move', newRoomId);

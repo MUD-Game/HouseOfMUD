@@ -753,7 +753,7 @@ describe('Actions', () => {
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Jeff -> Dungeon Master: Hallo`, player: "Jeff" },
+            data: { message: `[privat] Jeff -> Dungeon Master: Hallo`, player: "Jeff", room: "Raum-1" },
         });
     })
 
@@ -1340,7 +1340,7 @@ describe("DungeonMaster Actions", () => {
         await addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 1 Schaden erhalten" },
+            data: { message: "Jeff hat 1 Schaden erhalten", room: "Raum-1" },
         });
     });
 
@@ -1358,7 +1358,7 @@ describe("DungeonMaster Actions", () => {
         await addHp.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 1 Leben erhalten" },
+            data: { message: "Jeff hat 1 Leben erhalten", room: 'Raum-1' },
         });
     });
     
@@ -1376,7 +1376,7 @@ describe("DungeonMaster Actions", () => {
         await addMana.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 1 Mana erhalten" },
+            data: { message: "Jeff hat 1 Mana erhalten", room: 'Raum-1'},
         });
     });
         
@@ -1395,7 +1395,7 @@ describe("DungeonMaster Actions", () => {
         await removeHp.performAction('dungeonmaster', ['Jeff' , '2']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 2 Leben verloren" },
+            data: { message: "Jeff hat 2 Leben verloren", room: 'Raum-1'},
         });
     });
         
@@ -1416,7 +1416,7 @@ describe("DungeonMaster Actions", () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+            data: { message: `[privat] Dungeon Master -> Spieler: Hallo`, room: 'Raum-1' },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
             action: 'message',
@@ -1440,7 +1440,7 @@ describe("DungeonMaster Actions", () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Jeff wurde in Raum Raum-N verschoben` },
+            data: { message: `Jeff wurde in Raum Raum-N verschoben`, room: 'Raum-N' },
         });
     });
 
@@ -1483,7 +1483,7 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id, 1)])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Das Item Schluessel wurde in Jeff's Inventar hinzugefuegt` },
+            data: { message: `Das Item Schluessel wurde in Jeff's Inventar hinzugefuegt`, room: 'Raum-1' },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff',{
             action: 'message',
@@ -1500,7 +1500,7 @@ describe("DungeonMaster Actions", () => {
         await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Rubin'])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Dieses Item existiert nicht!` },
+            data: { message: `Dieses Item existiert nicht!`, room: 'Raum-1' },
         });
     })
 
@@ -1509,7 +1509,7 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id,1)])
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `In Raum-1 wurde das Item Schluessel hinzugefuegt` },
+            data: { message: `In Raum-1 wurde das Item Schluessel hinzugefuegt`, room: 'Raum-1' },
         });
     })
 
@@ -1532,7 +1532,7 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].inventory).toEqual([])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Das Item Apfel wurde aus Jeff's Inventar entfernt` },
+            data: { message: `Das Item Apfel wurde aus Jeff's Inventar entfernt`, room: 'Raum-1' },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff',{
             action: 'message',
@@ -1550,7 +1550,7 @@ describe("DungeonMaster Actions", () => {
         await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Rubin'])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Dieses Item existiert nicht!` },
+            data: { message: `Dieses Item existiert nicht!`, room: 'Raum-1' },
         });
     })
 
@@ -1558,7 +1558,7 @@ describe("DungeonMaster Actions", () => {
         await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Gold'])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Jeff besitzt dieses Item nicht!` },
+            data: { message: `Jeff besitzt dieses Item nicht!`, room: 'Raum-1' },
         });
     })
 
@@ -1567,7 +1567,7 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.rooms['1'].items).toEqual([])
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Aus Raum-1 wurde das Item Apfel entfernt` },
+            data: { message: `Aus Raum-1 wurde das Item Apfel entfernt`, room: 'Raum-1' },
         });
     })
 
@@ -1589,7 +1589,7 @@ describe("DungeonMaster Actions", () => {
         await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Gold'])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
-            data: { message: `Dieses Item existiert nicht in diesem Raum!` },
+            data: { message: `Dieses Item existiert nicht in diesem Raum!`, room: 'Raum-1' },
         });
     })
 

@@ -24,6 +24,7 @@ import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { DashboardLocationState } from '../Dashboard/index';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = () => {
@@ -44,6 +45,16 @@ const Game: React.FC<GameProps> = () => {
         setMiniMapData(roomData);
     }
 
+    const kickSubscriber = (message: any) => {
+        if(message.kickMessage === undefined || message.kickMessage === "") {
+            message.kickMessage = t(`alert.${message.type}.default`);
+        }
+        navigate('/', {state: {
+            message: message.kickMessage,
+            title: t(`alert.${message.type}.title`)
+        } as DashboardLocationState});
+    }
+
     useEffect(() => {
         const onUnload = (e: any) => {
             e.preventDefault();
@@ -57,6 +68,7 @@ const Game: React.FC<GameProps> = () => {
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.setInventorySubscriber(setInventoryData);
             rabbit.setHudSubscriber(setHudData);
+            rabbit.setKickSubscriber(kickSubscriber);
             rabbit.login(() => {
                 
             }, (error) => {

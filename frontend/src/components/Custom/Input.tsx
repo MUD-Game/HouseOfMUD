@@ -9,7 +9,7 @@ const MudInput: React.FC<MudInputProps> = (props) => {
     return (
         <div className={"col-md-" + props.colmd}>
             <label htmlFor={props.name}><b>{props.placeholder}:</b></label>
-            <input autoComplete="off" {...props} className={props.className + " input-standard drawn-border"}/>
+            <input spellCheck={false} autoComplete="off" {...props} className={props.className + " input-standard drawn-border"}/>
         </div>
     )
 }

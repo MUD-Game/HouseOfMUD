@@ -15,6 +15,7 @@ import Alert from '../Custom/Alert';
 import MudInput from '../Custom/Input';
 import DungeonObjectList from './DungeonObjectList';
 import RoomConfigurator from './RoomConfigurator';
+import { validator } from 'src/utils/validator';
 
 export interface DungeonConfiguratorProps { }
 
@@ -23,7 +24,7 @@ interface LocationState {
 }
 
 const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const tl = "dungeon_configurator";
     const dungeonConfig = useDungeonConfigurator();
@@ -36,48 +37,50 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
         <Container className="mb-5">
             <h2>{t(`${tl}.title`)}</h2>
 
-            {isBusy ? <Busy/> : 
-            <>
-                <Row className="my-3 g-3">
-                <MudInput maxLength={50} colmd={9} defaultValue={dungeonConfig.name} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="name" placeholder={ t(`${tl}.inputs.name.placeholder`)} />
-                <MudInput colmd={3} defaultValue={dungeonConfig.maxPlayers} onBlur={dungeonConfig.handleOnBlurInput} type="number" name="maxPlayers" placeholder={t(`${tl}.inputs.maxPlayers.placeholder`)} />
-                <MudInput maxLength={50} colmd={12} defaultValue={dungeonConfig.description} onBlur={dungeonConfig.handleOnBlurInput} type="text" name="description" placeholder={t(`${tl}.inputs.description.placeholder`)} />
-                </Row>
-                
-            <Row>
-                <div className="col-md-6">
-                            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editGender} onDeleteElement={dungeonConfig.deleteGender} data={dungeonConfig.genders} displayKeys={["name"]} onAdd={dungeonConfig.addGender} title={t(`dungeon_keys.gender`)} buttonText={t(`${tl}.buttons.create_gender`)} />
-                </div>
-                <div className="col-md-6">
-                            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editSpecies} onDeleteElement={dungeonConfig.deleteSpecies} data={dungeonConfig.species} displayKeys={["name"]} onAdd={dungeonConfig.addSpecies} title={t(`dungeon_keys.species`)} buttonText={t(`${tl}.buttons.create_species`)} />
-                </div>
-            </Row>
+            {isBusy ? <Busy /> :
+                <>
+                    <Row className="my-3 g-3">
+                        <MudInput className="max50" colmd={9} value={dungeonConfig.name} onChange={evt =>{
+                                dungeonConfig.setName(validator.name(evt.target));
+                        } } type="text" name="name" placeholder={t(`${tl}.inputs.name.placeholder`)} />
+                        <MudInput colmd={3} value={dungeonConfig.maxPlayers} onChange={evt => {
+                            dungeonConfig.setMaxPlayers(validator.maxPlayers(evt.target.value));
+                        }} type="number" name="maxPlayers" placeholder={t(`${tl}.inputs.maxPlayers.placeholder`)} />
+                        <MudInput colmd={12} onChange={evt =>{
+                            dungeonConfig.setDescription(validator.description(evt.target));
+                        } } value={dungeonConfig.description} type="text" name="description" placeholder={t(`${tl}.inputs.description.placeholder`)} />
+                    </Row>
 
-            <DungeonObjectList  identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
 
-            <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={["name", "description"]} onAdd={dungeonConfig.addItem} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_item`)} />
+                    <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editGender} onDeleteElement={dungeonConfig.deleteGender} data={dungeonConfig.genders} displayKeys={["name"]} onAdd={dungeonConfig.addGender} title={t(`dungeon_keys.gender`)} buttonText={t(`${tl}.buttons.create_gender`)} />
 
-            <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editNpc} onDeleteElement={dungeonConfig.deleteNpc} data={dungeonConfig.npcs} displayKeys={["name", "description"]} onAdd={dungeonConfig.addNpc} title={t(`dungeon_keys.npc`)} buttonText={t(`${tl}.buttons.create_npc`)} />
+                    <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editSpecies} onDeleteElement={dungeonConfig.deleteSpecies} data={dungeonConfig.species} displayKeys={["name"]} onAdd={dungeonConfig.addSpecies} title={t(`dungeon_keys.species`)} buttonText={t(`${tl}.buttons.create_species`)} />
 
-            <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editAction} onDeleteElement={dungeonConfig.deleteAction} data={dungeonConfig.actions} displayKeys={["command", "description"]} onAdd={dungeonConfig.addAction} title={t(`dungeon_keys.actions`)} buttonText={t(`${tl}.buttons.create_action`)} />
-            
+                    <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editClass} onDeleteElement={dungeonConfig.deleteClass} data={dungeonConfig.classes} displayKeys={["name", "description"]} onAdd={dungeonConfig.addClass} title={t(`dungeon_keys.class`)} buttonText={t(`${tl}.buttons.create_class`)} />
 
-            <Row className="mb-5">
-                <RoomConfigurator />                
-            </Row>
-            <hr />
-            <Row>
-                <Alert type="error" message={dungeonConfig.error} setMessage={dungeonConfig.setError} />
-            </Row>
-            <Row className="mt-3 justify-content-end">                
-                <div className="col-md-6">
-                    <button className="btn w-100 btn-red drawn-border" onClick={()=>navigate("/")}>{t(`button.cancel`)}</button>
-                </div>
-                <div className="col-md-6">
-                    <button className="btn w-100 btn-green drawn-border" onClick={(e)=>dungeonConfig.save(e,setIsBusy)}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>
-                </div>
-            </Row>
-            </>
+                    <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editItem} onDeleteElement={dungeonConfig.deleteItem} data={dungeonConfig.items} displayKeys={["name", "description"]} onAdd={dungeonConfig.addItem} title={t(`dungeon_keys.items`)} buttonText={t(`${tl}.buttons.create_item`)} />
+
+                    <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editNpc} onDeleteElement={dungeonConfig.deleteNpc} data={dungeonConfig.npcs} displayKeys={["name", "description"]} onAdd={dungeonConfig.addNpc} title={t(`dungeon_keys.npc`)} buttonText={t(`${tl}.buttons.create_npc`)} />
+
+                    <DungeonObjectList identifier="id" onEditElement={dungeonConfig.editAction} onDeleteElement={dungeonConfig.deleteAction} data={dungeonConfig.actions} displayKeys={["command", "description"]} onAdd={dungeonConfig.addAction} title={t(`dungeon_keys.actions`)} buttonText={t(`${tl}.buttons.create_action`)} />
+
+
+                    <Row className="mb-5">
+                        <RoomConfigurator />
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Alert type="error" message={dungeonConfig.error} setMessage={dungeonConfig.setError} />
+                    </Row>
+                    <Row className="mt-3 justify-content-end">
+                        <div className="col-md-6">
+                            <button className="btn w-100 btn-red drawn-border" onClick={() => navigate("/")}>{t(`button.cancel`)}</button>
+                        </div>
+                        <div className="col-md-6">
+                            <button className="btn w-100 btn-green drawn-border" onClick={(e) => dungeonConfig.save(e, setIsBusy)}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>
+                        </div>
+                    </Row>
+                </>
             }
         </Container>
 

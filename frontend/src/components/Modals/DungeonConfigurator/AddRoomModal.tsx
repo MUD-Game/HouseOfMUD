@@ -37,7 +37,6 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        console.log(validator.alreadyExists(name, "name", rooms))
         if (validator.alreadyExists(name, "name", rooms)) {
             setError(t(`roomalreadyexists`));
             return;
@@ -88,8 +87,8 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
                     <Alert message={error} type="error" setMessage={setError} />
                     <MudInput colmd={6} placeholder="x" value={props.coordinates[0]} disabled />
                     <MudInput colmd={6} placeholder="y" value={props.coordinates[1]} disabled />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.cirName(event.target))} />
+                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

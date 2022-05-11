@@ -21,17 +21,23 @@ import { AddDamage } from './dmactions/addDamage-action';
 import { AddHp } from './dmactions/addHp-action';
 import { AddMana } from './dmactions/addMana-action';
 import { RemoveHp } from './dmactions/removeHp-action';
-import { RemoveDamage } from './dmactions/removeDamage-action';
 import { RemoveMana } from './dmactions/removeMana-action';
 import { PrivateMessageFromDm } from './dmactions/privateMessage-action';
+import { RemoveDamage } from './dmactions/removeDamage-action';
 import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
+import { ChangeRoom } from './dmactions/changePlayerPosition-action';
+import { RemoveItem } from './dmactions/removeItemFromPlayer-action';
 import { ToggleConnectionAction } from './dmactions/toggleRoomConnection-action';
+import { AddItem } from './dmactions/addItemToPlayer-action';
+import { AddRoomItem } from './dmactions/addItemToRoom-action';
+import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
+import { KickPlayer } from './dmactions/kickPlayer-action';
 
 
 const regExpression = {
     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
-    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper}))`, "i")
+    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.kickPlayer}))`, "i")
 }
 /**
  * Processes Actions received by the dungeon controller.
@@ -120,7 +126,13 @@ export class ActionHandlerImpl implements ActionHandler {
            new RemoveHp(dungeonController),
            new PrivateMessageFromDm(dungeonController),
            new BroadcastMessageAction(dungeonController),
-           new ToggleConnectionAction(dungeonController)
+           new ChangeRoom(dungeonController),
+           new AddItem(dungeonController),
+           new RemoveItem(dungeonController),
+           new AddRoomItem(dungeonController),
+           new removeRoomItem(dungeonController),
+           new ToggleConnectionAction(dungeonController),
+           new KickPlayer(dungeonController)
         ];
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;
@@ -145,7 +157,7 @@ export class ActionHandlerImpl implements ActionHandler {
         return action;
     }
 
-    processDmAction(message: string) { //not finished
+    processDmAction(message: string) {
         let dmaction: Action | undefined = undefined;
         if (this.inputMatch(message, regExpression.dmActions)) {
             dmaction = this.getDmAction(message)

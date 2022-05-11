@@ -82,7 +82,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                     status = true;
                 }
             } else {
-                if (eventValues[event] === undefined) status = true;
+                if (eventValues[event] === undefined || eventValues[event] === "") status = true;
             }
         });
         return status;
@@ -135,7 +135,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     ]
 
     const onSubmit = () => {
-        if (validator.alreadyExists(command, "command", dconf.actions)){
+        if (!props.editData && validator.alreadyExists(command, "command", dconf.actions)){
             setError(t(`actionalreadyexists`));
             return;
         }
@@ -173,9 +173,9 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                 </Modal.Header>
                 <Alert type="error" message={error} setMessage={setError} />
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
-                    <MudInput autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(event.target.value)} />
+                    <MudInput autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(validator.command(event.target))} />
+                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
+                    <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(validator.output(event.target))} />
                     <MudTypeahead
                         colmd={12}
                         title={t(`dungeon_keys.itemsNeeded`)}
@@ -221,7 +221,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                             )
                         }
                         return (
-                            <MudInput type="number" required key={mudEvent as string} placeholder={mudEvent as string} colmd={12} value={eventValues[mudEvent as string] || ""} onChange={(event) => setEventValues({ ...eventValues, [mudEvent as string]: event.target.value })} />
+                            <MudInput type="number" required key={mudEvent as string} placeholder={mudEvent as string} colmd={12} value={eventValues[mudEvent as string] || ""} onChange={(event) => setEventValues({ ...eventValues, [mudEvent as string]: validator.statValues(event.target.value) })} />
                         )
                     })}
 

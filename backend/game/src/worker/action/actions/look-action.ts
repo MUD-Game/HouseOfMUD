@@ -33,7 +33,7 @@ export class LookAction extends Action {
                     let item: Item = dungeon.getItem(itemInfo.item)
                     let itemName: string = item.getName()
                     let itemCount: number = itemInfo.count
-                    itemString += ` ${itemName} (${itemCount}x)`
+                    itemString += `\n\t${itemName} (${itemCount}x)`
                 })
             } catch(e) {
                 //console.log(e)
@@ -52,7 +52,7 @@ export class LookAction extends Action {
                 roomNpcs.forEach(npcId => {
                     let npc: Npc = dungeon.getNpc(npcId)
                     let npcName: string = npc.getName()
-                    npcString += ` ${npcName}`
+                    npcString += `\n\t${npcName}`
                 })
             } catch(e) {
                 //console.log(e)
@@ -65,7 +65,7 @@ export class LookAction extends Action {
         // Refactorn, anliegende Raume ohne exceptions pruefen
         try {
             let northRoom: Room = dungeon.getNorthernRoom(room)
-            let northRoomString: string = `${actionMessages.lookNorth} ${northRoom.getName()}. `
+            let northRoomString: string = `${actionMessages.lookNorth}\n\t${northRoom.getName()}. `
             description += northRoomString
         } catch(e) {
             //console.log(e)
@@ -73,7 +73,7 @@ export class LookAction extends Action {
 
         try {
             let eastRoom: Room = dungeon.getEasternRoom(room)
-            let eastRoomString: string = `${actionMessages.lookEast} ${eastRoom.getName()}. `
+            let eastRoomString: string = `${actionMessages.lookEast}\n\t${eastRoom.getName()}. `
             description += eastRoomString
         } catch(e) {
             //console.log(e)
@@ -81,7 +81,7 @@ export class LookAction extends Action {
 
         try {
             let southRoom: Room = dungeon.getSouthernRoom(room)
-            let southRoomString: string = `${actionMessages.lookSouth} ${southRoom.getName()}. `
+            let southRoomString: string = `${actionMessages.lookSouth}\n\t${southRoom.getName()}. `
             description += southRoomString
         } catch(e) {
             //console.log(e)
@@ -89,7 +89,7 @@ export class LookAction extends Action {
 
         try {
             let westRoom: Room = dungeon.getWesternRoom(room)
-            let westRoomString: string = `${actionMessages.lookWest} ${westRoom.getName()}. `
+            let westRoomString: string = `${actionMessages.lookWest}\n\t${westRoom.getName()}. `
             description += westRoomString
         } catch(e) {
             //console.log(e)
@@ -101,7 +101,7 @@ export class LookAction extends Action {
             dungeonCharacters.forEach(character => {
                 if (character.getPosition() === roomId) {
                     let characterName: string = character.getName()
-                    playersString += ` ${characterName}`
+                    playersString += `\n\t${characterName}`
                 }
             })
         } catch(e) {

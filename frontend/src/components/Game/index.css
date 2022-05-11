@@ -3,59 +3,87 @@
     0% {
         transform: rotate(0deg);
     }
-    10%{
+    10% {
         transform: rotate(2deg);
     }
-    20%{
+    20% {
         transform: rotate(0deg);
     }
-    30%{
+    30% {
         transform: rotate(-1deg);
     }
-    40%{
+    40% {
         transform: rotate(1deg);
     }
-    50%{
+    50% {
         transform: rotate(3deg);
     }
-    60%{
+    60% {
         transform: rotate(1deg);
     }
-    70%{
+    70% {
         transform: rotate(2deg);
     }
-    80%{
+    80% {
         transform: rotate(1deg);
     }
-    90%{
+    90% {
         transform: rotate(-1deg);
     }
-    1000%{
+    100% {
         transform: rotate(0deg);
     }
 }
 
-#minimap canvas{
+#minimap canvas {
     border-radius: 3px 500px 2px 500px /500px 2px 500px 3px;
 }
 
+#minimap-fullscreen{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: aliceblue;
+    z-index: 1000;
+}
 
+#minimap-fullscreen canvas{
+    border-radius: 0 0 0 0;
+}
 
+body{
+    pointer-events: visible;
+}
+#minimap.fullscreen canvas, #minimap.fullscreen div{
+    width: 100vw;
+    height: 100vh;
+}
 
-#konva-buttons-container img {
+#minimap-fullscreen div{
+    background-color: var(--bgcolor);
+}
+
+#konva-buttons-container img, #konva-buttons-container-fullscreen img, #konva-buttons-container svg, #konva-buttons-container-fullscreen svg {
     position: absolute;
+    cursor: pointer;
 }
 
 #compass {
     animation: compassrotate 20s infinite;
-    width: 3.5em;
+    width: 3em;
     position: relative;
     right: .3em;
     top: .4em;
+    cursor: pointer;
 }
 
-#compass {
-    cursor: pointer;
+#compass-fullscreen {
+    position: relative;
+    width: 7em !important;
+    right: .7em !important;
+    top: .7em !important;
+    float: right;
+    pointer-events: all;
 }
 
 #refocus-button:hover {
@@ -67,5 +95,51 @@
     display: flex;
     position: relative;
     top: 0;
-    right: 0;
+    left: 5px;
+}
+
+
+#konva-buttons-container-fullscreen {
+    z-index: 2000;
+    display: flex;
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+}
+
+#fullscreenbutton {
+    width: 1.5em;
+    height: 1.5em;
+    position: relative;
+    left: .3em;
+    top: .4em;
+    cursor: pointer;
+    opacity: 1 !important;
+}
+
+#fullscreenbutton-fullscreen {
+    width: 1.5em;
+    height: 1.5em;
+    position: relative;
+    margin: .7em;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+#fullscreenbutton:hover {
+    background-color: var(--accentlight);
+    box-shadow: 0 0 5px .3em var(--accentlight);
+}
+
+#fullscreenbutton-fullscreen:hover {
+    background-color: var(--accentlight);
+    box-shadow: 0 0 5px .7em var(--accentlight);
+}
+
+.chat-filter-wrapper .form-label {
+    margin: 0;
+    display: none;
 }

@@ -12,32 +12,45 @@
  * ```
  */
 import React, { useEffect, useState } from 'react'
-import { Container, Nav, Row } from 'react-bootstrap';
+import { Container, Nav, Row, Col } from 'react-bootstrap';
 import { supervisor } from 'src/services/supervisor';
 import { DungeonResponseData } from '@supervisor/api';
 import AllDungeons from './AllDungeons/AllDungeons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { Arrow90degLeft, ArrowCounterclockwise, Circle } from 'react-bootstrap-icons';
 
 
 export type DashboardProps = {
+}
+
+export interface DashboardLocationState {
+    message: string;
+    title: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = (props) => {
     
     const {t} = useTranslation();
     const navigate = useNavigate();
+    const location = useLocation();
     const [allDungeons, setAllDungeons] = useState<DungeonResponseData[]>();
     const [myDungeons, setMyDungeons] = useState<DungeonResponseData[]>();
     const [dungeonView, setDungeonView] = useState<"all" | "my">("all");
     const [searchTerm, setSearchTerm] = useState<string>('');
 
-    const[error, setError] = useState<string>("");
+    const [alert, setAlert] = useState({title: "", text: ""});
+
+    const [error, setError] = useState<string>("");
 
     useEffect(() => {
         fetchDungeons();
+        if(location.state){
+            const dState = location.state as DashboardLocationState;
+            setAlert({ title: dState.title, text: dState.message});
+        }
     }, [])
 
     const handleSelect = (eventKey: string | null) => {
@@ -48,6 +61,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         }
         setSearchTerm('');
     }
+
 
     const fetchDungeons = () => {
         supervisor.getDungeons({}, setAllDungeons, error => setError(error.error))
@@ -62,6 +76,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         <Container className="mb-5">
             <Row>
                 <Alert message={error} setMessage={setError} type="error" />
+                <Alert message={alert.text} setMessage={() => setAlert({title: "", text: ""})} title={alert.title} type={'error'} />
             </Row>
             <Row className="align-items-center mb-3">
                 <div className="col-8">
@@ -73,10 +88,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     }}>{t("dashboard.create_new_dungeon")}</button>
                 </div>
             </Row>
-            <Row className="mb-4">
-                <div className="col-md-6">
+            <Row className="align-items-center pt-1 pb-2 mb-4">
+                <Col md={6}>
                     <input id="search-input" className="input-standard drawn-border" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
-                </div>
+                </Col>
+                <Col md={1}>
+                    <button className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30} onClick={fetchDungeons}/></button>
+                </Col>
             </Row>
 
             <Row>

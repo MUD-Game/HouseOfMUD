@@ -12,10 +12,9 @@ import { useEffect } from 'react';
 import { Row } from 'react-bootstrap';
 import { default as AnsiUp } from 'ansi_up';
 
-export interface ChatOutputProps {}
-
 const RESET = '\x1b[0m';
 
+export interface ChatOutputProps {}
 
 const ChatOutput: React.FC<ChatOutputProps> = () => {
 

@@ -5,11 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --coverage",
-    "start": "concurrently --names 'SUPERVISOR,HOST,FRONTEND' --prefix-colors 'red,yellow,blue' --kill-others  \"npm run startsupervisor\" \"npm run starthost\" \"npm run startfrontend\"",
-    "startfrontend": "cd ./frontend && npm start",
-    "starthost": "cd ./backend/game && npm start",
-    "startsupervisor": "cd ./backend/supervisor && npm start",
-    "buildsupervisor": "cd ./backend/supervisor && npm run build"
+    "start": "concurrently --names 'SUPERVISOR,HOST,FRONTEND' --prefix-colors 'red,yellow,blue' --kill-others  \"npm run supervisor\" \"npm run host\" \"npm run frontend\"",
+    "installfrontend": "cd frontend && npm install",
+    "installhost": "cd backend/game && npm install",
+    "installsupervisor": "cd backend/supervisor && npm install",
+    "installall": "npm install && npm run installfrontend && npm run installhost && npm run installsupervisor",
+    "frontend": "cd ./frontend && npm start",
+    "host": "cd ./backend/game && npm start",
+    "supervisor": "cd ./backend/supervisor && npm start",
+    "buildsupervisor": "cd ./backend/supervisor && npm run build",
+    "typedochost": "cd ./backend/game && npx typedoc",
+    "typedocfrontend": "cd ./frontend && npx typedoc",
+    "typedocsupervisor": "cd ./backend/supervisor && npx typedoc",
+    "typedoc": "npm run typedochost && npm run typedocfrontend && npm run typedocsupervisor"
   },
   "jest": {
     "coverageReporters": [

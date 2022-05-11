@@ -109,7 +109,9 @@
     "game": {
         "leave": "Verlassen",
         "queue": "Warteschlange",
-        "inventory": "Inventar"
+        "inventory": "Inventar",
+        "filter": "Raum-Filter",
+        "onlineplayers": "Spieler online"
     },
     "verify_email": {
         "title": "Email-Verifizierung",
@@ -224,6 +226,24 @@
         "login": "Anmelden",
         "register": "Registrieren"
     },
+    "alert": {
+        "kick": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Vom Dungeon Master gekickt!"
+        },
+        "ban": {
+            "title": "Du wurdest aus folgendem Grund gebannt:",
+            "default": "Vom Dungeon Master gebannt!"
+        },
+        "alreadyConnected": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Dieser Charakter befindet sich bereits auf diesem Dungeon"
+        },
+        "serverClosed": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Der Dungeon wurde vom Dungeon Master beendet."
+        }
+    },
     "error": {
         "internal": {
             "title": "Interner Server Fehler",
@@ -231,7 +251,7 @@
         },
         "unauthorized": {
             "title": "Falsche Anmeldedaten",
-            "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch!"
+            "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch! (Hinweis: Jedes Release verwendet eine neue Datenbank, du musst dich wahrscheinlich neu registrieren)"
         },
         "actionalreadyexists":{
             "title": "Aktion existiert bereits",
@@ -285,6 +305,10 @@
             "room": {
                 "title": "Bitte gebe alle geforderten Daten ein",
                 "text": "Um einen Raum zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung!"
+            },
+            "npc":{
+                "title": "Bitte gebe alle geforderten Daten ein",
+                "text": "Um einen NPC zu speichern, muss es einen Eintrag in den folgenden Feldern geben: Name, Beschreibung und Spezies!"
             },
             "gender": {
                 "title": "Bitte gebe alle geforderten Daten ein",
@@ -342,6 +366,21 @@
         "deletestartroom": {
             "title": "Das geht nicht!",
             "text": "Du kannst den Startraum nicht löschen!"
+        }
+    },
+    "password":{
+        "nonumeral": "Das Passwort muss mindesten eine Zahl enthalten!",
+        "nolower": "Das Passwort muss mindestens einen Kleinbuchstaben enthalten!",
+        "nosymbol": "Das Passwort muss mindestens 1 Symbol enthalten! (!@#$%^&*()_+-=[]{};':\"\\|,.<>?)",
+        "nocapital": "Das Passwort muss mindestens einen Großbuchstaben enthalten!",
+        "tooshort": "Das Passwort muss mindestens 8 Zeichen lang sein!",
+        "nomatch": "Die eingegebenen Passwörter stimmen nicht überein!",
+        "requirements": {
+            "title": "Das Passwort muss:",
+            "size": "Mindestens 8 Zeichen lang sein",
+            "alpha": "Mindestens ein Groß- und Kleinbuchstabe enthalten",
+            "number": "Mindestens eine Zahl enthalten",
+            "symbol": "Mindestens ein Symbol enthalten (!@#$%^&*()_+-=[]{};':\"\\|,.<>?)"
         }
     },
     "forgotlogin": {

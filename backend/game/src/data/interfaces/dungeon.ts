@@ -42,6 +42,7 @@ export interface Dungeon {
   getCharacter(characterName: string): Character
   getRoom(roomId: string): Room
   getRoomByCoordinates(x: number, y: number): Room
+  getRoomByName(roomName: string): Room
   getNorthernRoom(initialRoom: Room): Room
   getEasternRoom(initialRoom: Room): Room
   getSouthernRoom(initialRoom: Room): Room
@@ -148,6 +149,15 @@ export class DungeonImpl implements Dungeon {
 
   getRoomByCoordinates(x: number, y: number): Room {
     let room: Room | undefined = Object.values(this.rooms).find(room => room.xCoordinate === x && room.yCoordinate === y)
+    if (room === undefined) {
+      throw new Error("Room does not exist");
+    } else {
+      return room;
+    }
+  }
+
+  getRoomByName(roomName: string):Room {
+    let room: Room | undefined = Object.values(this.rooms).find(room => room.name === roomName)
     if (room === undefined) {
       throw new Error("Room does not exist");
     } else {

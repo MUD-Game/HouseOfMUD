@@ -9,7 +9,7 @@ import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersR
 import $ from "jquery";
 
 let connectionString = "";
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (!process.env.NODE_ENV || !process.env.REACT_APP_HOM_API && process.env.NODE_ENV === 'development') {
     connectionString = "http://localhost:43210"
 } else {
     connectionString = process.env.REACT_APP_HOM_API || "https://mud-ga.me:43210";

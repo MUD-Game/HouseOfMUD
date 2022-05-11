@@ -140,7 +140,7 @@ export class ActionHandlerImpl implements ActionHandler {
 
     }
 
-    processAction(user: string, message: string) {
+    async processAction(user: string, message: string) {
         let action: Action | undefined = undefined;
         let dungeonActions: DungeonAction[] = Object.values(this.dungeonActions)
         action = dungeonActions.find(dungeonAction => this.inputMatch(message, dungeonAction.regEx))
@@ -153,7 +153,7 @@ export class ActionHandlerImpl implements ActionHandler {
         }
         let actionArguments: string[] = this.getActionArguments(message)
         action.performAction(user, actionArguments);
-        this.dieAction.performAction(user, [])
+        await this.dieAction.performAction(user, [])
         return action;
     }
 

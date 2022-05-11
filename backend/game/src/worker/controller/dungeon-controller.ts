@@ -329,6 +329,10 @@ export class DungeonController {
         this.amqpAdapter.sendActionToClient(character, "stats", data);
     }
 
+    public getSelectedPlayer(): String | undefined {
+        return this.selectedPlayer;
+    }
+
     async sendPlayerInformationData() {
         if (!this.selectedPlayer) {
             return;

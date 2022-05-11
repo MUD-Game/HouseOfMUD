@@ -87,6 +87,7 @@ export class MoveAction extends Action {
                 await amqpAdapter.sendActionToClient(extras.dungeonMasterId, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName), player: senderCharacterName, room: destinationRoomName });
                 // Sends the new room id to the client.
                 await amqpAdapter.sendActionToClient(user, 'minimap.move', destinationRoomId);
+                this.dungeonController.sendPlayerListToDM();
             }
         } catch (e) {
             // console.log(e);

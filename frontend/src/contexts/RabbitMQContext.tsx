@@ -15,6 +15,7 @@ import { MiniMapData } from 'src/components/DungeonMaster/Minimap';
 import { InventoryProps } from 'src/components/Game/Inventory';
 import { HUDProps } from 'src/components/Game/HUD';
 import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
+import { OnlinePlayersData } from 'src/components/DungeonMaster/OnlinePlayers';
 
 const debug = true;
 
@@ -34,7 +35,7 @@ export interface RabbitMQContextType {
   sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
   // Subscriber
   setChatSubscriber: (subscriber: (message: string) => void) => void;
-  setOnlinePlayersSubscriber: (subscriber: (players: string[]) => void) => void;
+  setOnlinePlayersSubscriber: (subscriber: (players: OnlinePlayersData) => void) => void;
   setPlayerInformationSubscriber: (subscriber: (playerInformation: PlayerInfoData) => void) => void;
   setKickSubscriber: (subscriber: (kickMessage: string) => void) => void;
   setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
@@ -65,7 +66,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const { character, dungeon, verifyToken } = useGame();
 
   let chatSubscriber: (message: string) => void = () => { };
-  let onlinePlayersSubscriber: (players: string[]) => void = () => { };
+  let onlinePlayersSubscriber: (players: OnlinePlayersData) => void = () => { };
   let playerInformationSubscriber: (playerInfo: PlayerInfoData) => void = () => { }
   let kickSubscriber: (kickMessage: string) => void = () => { };
   let errorSubscriber: (error: string, ...optionalParams: any[]) => void = (error) => { };
@@ -245,7 +246,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     chatSubscriber = subscriber;
   }
 
-  const setOnlinePlayersSubscriber = (subscriber: (players: string[]) => void) => {
+  const setOnlinePlayersSubscriber = (subscriber: (players: OnlinePlayersData) => void) => {
     onlinePlayersSubscriber = subscriber;
   }
 

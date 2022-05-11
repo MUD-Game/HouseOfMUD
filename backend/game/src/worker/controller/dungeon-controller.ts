@@ -178,7 +178,15 @@ export class DungeonController {
     }
 
     sendPlayerListToDM() {
-        this.amqpAdapter.sendActionToClient(DUNGEONMASTER, 'updateOnlinePlayers', Object.keys(this.dungeon.characters));
+        this.amqpAdapter.sendActionToClient(DUNGEONMASTER, 'updateOnlinePlayers',  {
+            players: Object.keys(this.dungeon.characters).map((character: string) => {
+                return {
+                    character: character,
+                    room: this.dungeon.getRoom(this.dungeon.characters[character].position)?.getName()
+                }
+            })
+        });
+        this.sendPlayerInformationData();
     }
 
     async stopDungeon() {

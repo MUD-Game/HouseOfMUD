@@ -220,7 +220,7 @@ export class HostLink {
         const dungeons: any[] = [];
         for (let dungeon in this.dungeons) {
             if (this.dungeons[dungeon].status === 'online') {
-                dungeons.push(this.dungeons[dungeon]);
+                dungeons.push({...this.dungeons[dungeon], id:dungeon});
             }
         }
         return dungeons;

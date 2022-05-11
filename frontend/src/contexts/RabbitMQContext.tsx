@@ -14,6 +14,7 @@
  import { MiniMapData } from 'src/components/DungeonMaster/Minimap';
  import { InventoryProps } from 'src/components/Game/Inventory';
  import { HUDProps } from 'src/components/Game/HUD';
+import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
  
  const debug = true;
  
@@ -26,12 +27,14 @@
    // Dm-Stuff
    sendDmMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
    sendToggleConnection: (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed',callback: VoidFunction, error: (error: string) => void) => void;
+   sendPlayerInformation: (playerName: string, callback: VoidFunction, error: (error: string) => void) => void
    
    // Character Message
    sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
    // Subscriber
    setChatSubscriber: (subscriber: (message: string) => void) => void;
    setOnlinePlayersSubscriber: (subscriber: (players: string[]) => void) => void;
+   setPlayerInformationSubscriber: (subscriber: (playerInformation: PlayerInfoData) => void) => void;
    setKickSubscriber: (subscriber: (kickMessage: string) => void) => void;
    setErrorSubscriber: (subscriber: (message: any, ...optionalParams: any[]) => void) => void;
    setMiniMapSubscriber: (subscriber: (rooms: MiniMapData) => void) => void;
@@ -61,6 +64,7 @@
    
    let chatSubscriber: (message: string) => void = () => { };
    let onlinePlayersSubscriber: (players: string[]) => void = () => { };
+   let playerInformationSubscriber: (playerInfo: PlayerInfoData) => void = () => {}
    let kickSubscriber: (kickMessage: string) => void = () => { };
    let errorSubscriber: (error: string, ...optionalParams: any[]) => void = (error) => { };
    let inventorySubscriber: (message: any) => void = () => { };
@@ -87,6 +91,9 @@
            break;
          case 'updateOnlinePlayers':
            onlinePlayersSubscriber(jsonData.data);
+           break;
+         case 'updatePlayerInformation':
+           playerInformationSubscriber(jsonData.data);
            break;
          case 'kick':
            kickSubscriber(jsonData.data?.message);
@@ -222,6 +229,10 @@
      sendPayload(dataPayload);
      callback();	
    }
+
+   const sendPlayerInformation = (playerName: string, callback: VoidFunction, error: (error: string) => void) => {
+    sendData({playerName: playerName}, 'playerInformation', callback, error);
+  }
  
    const sendToggleConnection =  (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed', callback: VoidFunction, error: (error: string) => void) => {
      sendData({roomId, direction, status}, 'connection.toggle', callback, error);
@@ -233,6 +244,10 @@
    
    const setOnlinePlayersSubscriber = (subscriber: (players: string[]) => void) => {
      onlinePlayersSubscriber = subscriber;
+   }
+   
+   const setPlayerInformationSubscriber = (subscriber: (playerInfo: PlayerInfoData) => void) => {
+     playerInformationSubscriber = subscriber;
    }
  
    const setKickSubscriber = (subscriber: (kickMessage: string) => void) => {
@@ -266,7 +281,7 @@
      }
    }
  
-   let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection };
+   let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection, sendPlayerInformation };
  
    return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
  }

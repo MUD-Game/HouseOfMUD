@@ -6,14 +6,28 @@
  * @props {@linkcode OnlinePlayersProps}
  */
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
-export interface OnlinePlayersProps {
-    players: string[]; //TODO: define item data
-}
+import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 
-const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ players }) => {
-    const {t} = useTranslation();
+export interface OnlinePlayersProps { }
+
+const OnlinePlayers: React.FC<OnlinePlayersProps> = () => {
+    const {t} = useTranslation();    
+    const { sendPlayerInformation, setOnlinePlayersSubscriber } = useRabbitMQ();
+    const [onlinePlayers, setOnlinePlayers] = React.useState<string[]>([]);
+
+    const playerInformation = (playerName: string) => {
+        sendPlayerInformation(playerName, ()=>{}, console.error);
+    }
+
+    const onlinePlayerSubscriber = (players: string[]) => {
+        setOnlinePlayers(players);
+    }
+
+    useEffect(() => {        
+        setOnlinePlayersSubscriber(onlinePlayerSubscriber);
+    })
 
     return (
         <div className="onlineplayers drawn-border mb-2 p-2 pt-1">
@@ -21,8 +35,8 @@ const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ players }) => {
                 <p className='m-0'><u>{t("game.onlineplayers")}</u></p>
 
                 <ul className='ps-4'>
-                    {players.filter(player => player !== 'dungeonmaster').map((player) =>
-                        <li key={player}>{ player }</li>
+                    {onlinePlayers.filter(onlinePlayer => onlinePlayer !== 'dungeonmaster').map((onlinePlayer) =>
+                        <li className="link-li ps-1" key={onlinePlayer} onClick={() => {playerInformation(onlinePlayer)}}>{ onlinePlayer }</li>
                     )}
                 </ul>
             </div>

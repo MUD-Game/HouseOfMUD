@@ -317,6 +317,14 @@ export class DatabaseAdapter {
         }
     }
 
+    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string){
+        let dungeonToUpdate = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
+        if(dungeonToUpdate?.blacklist != undefined){
+            dungeonToUpdate.blacklist = updatedBlacklist;
+        }
+        dungeonToUpdate?.save();
+    }
+
     /**
      * updates a room inside from the rooms collection inside the database
      * @param room the updated room (has to have the same custom id as the room that should be updated)

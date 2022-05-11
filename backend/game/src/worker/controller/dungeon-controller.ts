@@ -53,6 +53,7 @@ export class DungeonController {
         setInterval(() => {
             this.persistAllRooms();
             this.persistAllCharacters();
+            this.persistBlacklist();
         }, 300000);
         
         this.handleHostMessages();
@@ -208,6 +209,11 @@ export class DungeonController {
         characters.filter(char => char.name !== 'dungeonmaster').forEach(async char => {
             await this.persistCharacterData(char);
         });
+    }
+
+    async persistBlacklist(){
+        console.log('Persisting blacklist');
+        await this.databaseAdapter?.updateBlacklistInDungeon(this.dungeon.blacklist, this.dungeonID)
     }
 
     async persistCharacterData(character: Character){

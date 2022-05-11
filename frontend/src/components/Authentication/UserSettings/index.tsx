@@ -85,7 +85,7 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
             <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />            
             <Alert type="error" message={error} setMessage={setError} />
 
-            {auth.user === "niklas" ?
+            {auth.user !== "asdkjgbadfb" ?
 
             <Container className="mt-4 mb-5">
                 <Row>

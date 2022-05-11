@@ -85,6 +85,13 @@
         "new_character": "Neuen Charakter anlegen"
     },
     "user_settings": {
+        "admin": {
+            "title": "Serveradministration",
+            "serverbroadcast": {
+                "title": "Serverbroadcast",
+                "confirmation": "Bist du sicher, dass du folgende Nachricht serverweit senden möchtest?"
+            }
+        },
         "title": "Benutzereinstellungen",
         "profile": "Profil",
         "account": "Account",

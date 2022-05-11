@@ -22,7 +22,8 @@ import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
    login: (callback: VoidFunction, error: (error: string) => void) => void;
    logout: (callback: VoidFunction, error: (error: string) => void) => void;
  
- 
+   //Admin-Stuff   
+   sendServerbroadcast: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
    
    // Dm-Stuff
    sendDmMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
@@ -123,10 +124,10 @@ import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
    }
  
  
-   const sendPayload = (payload: RabbitMQPayload) => {
+   const sendPayload = (payload: RabbitMQPayload, exchange?: string, routingKey?: string) => {
      if (rabbit.connected) {
        rabbit.publish({
-         destination: `/exchange/ServerExchange/${dungeon}`,
+         destination: `/exchange/${exchange || 'ServerExchange'}/${routingKey || dungeon}`,
          body: JSON.stringify(payload)
        });
      }
@@ -165,7 +166,7 @@ import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
          logout(() => { }, (error) => {
            errorSubscriber("rabbitmq.logout");
          });
-         rabbit.forceDisconnect();
+         rabbit.deactivate();
          // TODO: show idle timeout error 
          navigate('/');
        }
@@ -215,6 +216,20 @@ import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
    const sendDmMessage = (message: string, callback: VoidFunction, error: (error: string) => void) => {
      sendMessage(message, 'dmmessage', callback, error);
    }
+
+  //  const sendServerbroadcast = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+  //   if (!rabbit.connected) {
+  //     error("RabbitMQ is not connected");
+  //     return;
+  //   }
+  //   sendPayload({
+  //     action: 'message',
+  //     data: {
+  //       message: message
+  //     }
+  //   }, 'ClientExchange', 'broadcast.broadcast');
+  //   callback();
+  // }
  
    const sendData = (data: any, action: SendActions, callback: VoidFunction, error: (error: string) => void) => {
      if (!rabbit.connected) {
@@ -280,8 +295,24 @@ import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
          break;
      }
    }
- 
-   let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendToggleConnection, sendPlayerInformation };
+
+   const sendServerbroadcast = (message: string, callback: VoidFunction, error: (error: string) => void) => {
+    if (!rabbit.active) {
+      rabbit.activate();
+    }
+    rabbit.onConnect = () => {
+      sendPayload({
+        action: 'message',
+        data: {
+          message: message
+        }
+      }, 'ClientExchange', 'broadcast.broadcast');
+      rabbit.deactivate();
+      callback();
+    }
+  }
+
+   let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendServerbroadcast, sendToggleConnection, sendPlayerInformation };
  
    return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
  }

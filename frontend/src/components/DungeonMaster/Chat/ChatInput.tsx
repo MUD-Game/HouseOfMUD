@@ -21,12 +21,14 @@ const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallb
     const { sendDmMessage: sendMessage } = useRabbitMQ();
     const sendInput = (evt: any) => {
         evt.preventDefault()
-        sendMessage(message, () => {
-            // Success
-        }, (error) => {
-            messageCallback("rabbitmq.send");
-        })
-        setMessage("");
+        if(message !== "") {
+            sendMessage(message, () => {
+                // Success
+            }, (error) => {
+                messageCallback("rabbitmq.send");
+            })
+            setMessage("");
+        }
     }
     const [message, setMessage] = useState<string>("");
 

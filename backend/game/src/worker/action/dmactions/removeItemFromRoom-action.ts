@@ -32,13 +32,13 @@ export class removeRoomItem extends Action { //test me
                     console.log(itemInRoom)
                     roomItems.push(itemInRoom) 
                 }
-                this.dungeonController.getAmqpAdapter().broadcast({action: "message", data: {message: parseResponseString(dungeonMasterSendMessages.itemRoomRemoved, roomName, nameOfItemToDelete) }})
+                this.dungeonController.getAmqpAdapter().broadcastAction("message", {message: parseResponseString(dungeonMasterSendMessages.itemRoomRemoved, roomName, nameOfItemToDelete) })
             } else {
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotInRoom})
             }
         } catch(e) {
-            console.log(e)
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemDoesntexist}})
+            //console.log(e)
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemDoesntexist})
         }
     }
 }

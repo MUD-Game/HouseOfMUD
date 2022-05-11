@@ -23,47 +23,41 @@ export class RemoveHp implements Action {
         let lifestring: string = ''
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-
-
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let maxHp: number = recipientCharacter.getMaxStats().getHp()
             try {
                 let hpCount: number = +args[0]
-         
                 if (actualHp - hpCount <= 0) {
                     recipientCharacter.getCharakterStats().setHp(0)
-                    //sterbefunktion ? 
                     lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, (actualHp).toString())
-                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: lifestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: lifestring })
 
                     lifestring = parseResponseString(dungeonMasterSendMessages.hpRemoved, recipientCharacter.name , (actualHp).toString())
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: lifestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: lifestring })
 
                 } else if (actualHp - hpCount > 0) {
                     actualHp = actualHp - hpCount 
                     recipientCharacter.getCharakterStats().setHp(actualHp)
 
-
                     lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: lifestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: lifestring })
 
                     lifestring = parseResponseString(dungeonMasterSendMessages.hpRemoved, recipientCharacter.name , args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: lifestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: lifestring } )
 
-                   
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
                 await this.dungeonController.getActionHandler().dieAction.performAction(recipientCharacter.name, [])
 
             } catch (e) {
-                console.log(e)
-                amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) } })
+                //console.log(e)
+                amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) })
             }
 
 
         } catch (e) {
-            console.log(e)
-            amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) } })
+            //console.log(e)
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) })
         }
     }
 }

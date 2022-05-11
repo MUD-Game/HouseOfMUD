@@ -23,40 +23,30 @@ export class ChangeRoom implements Action {
         let roomstring: string = ''
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-
-
             let actualroom: string = recipientCharacter.getPosition()
-        
             try {
                 let newRoom: string = args.join(' ')
                 let newRoomObject: Room = dungeon.getRoomByName(newRoom)
                 let newRoomId: string = newRoomObject.getId()
-         
                 if (actualroom == newRoom) {
-
                     roomstring = parseResponseString(dungeonMasterSendMessages.alreadyRoom)
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring } })
-
                 } else if (actualroom !== newRoom) {
-   
                     recipientCharacter.modifyPosition(newRoomId)
-
                     roomstring = parseResponseString(dungeonMasterSendMessages.dmRoomMove, recipientCharacterName ,args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring } })
-
                     roomstring = parseResponseString(dungeonMasterSendMessages.roomMove, args.join(' '))
                     this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: roomstring } })
                 }
                 await amqpAdapter.sendActionToClient(recipientCharacterName, 'minimap.move', newRoomId);
 
             } catch (e) {
-                console.log(e)
+                //console.log(e)
                 amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.roomDoesNotExist) } })
             }
 
-
         } catch (e) {
-            console.log(e)
+            //console.log(e)
             amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) } })
         }
     }

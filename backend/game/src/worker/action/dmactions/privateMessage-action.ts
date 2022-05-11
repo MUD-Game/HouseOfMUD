@@ -23,12 +23,12 @@ export class PrivateMessageFromDm extends Action {
         let messageBody: string = args.join(' ')
         try {
             let responseMessage: string = parseResponseString(dungeonMasterSendMessages.dmWhisper, recipientCharacterName, messageBody)
-            amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-            amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})
+            amqpAdapter.sendActionToClient(user, "message", {message: responseMessage})
+            amqpAdapter.sendActionToClient(recipientCharacterName, "message", {message: responseMessage})
             
         } catch(e) {
-            console.log(e)
-            amqpAdapter.sendToClient(user, {action: "message", data: {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName)}})
+            //console.log(e)
+            amqpAdapter.sendActionToClient(user, "message", {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName)})
         }
     }
 }

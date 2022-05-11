@@ -25,8 +25,8 @@ export class KickPlayer implements Action {
             await this.dungeonController.kickPlayer(recipientCharacterName, {type: kickType, kickMessage: message})
             amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerKicked, recipientCharacterName)})
         } catch (e) {
-            console.log(e)
-            amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) } })
+            //console.log(e)
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) })
         }
     }
 }

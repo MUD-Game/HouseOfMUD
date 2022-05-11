@@ -34,8 +34,9 @@ export class AddItem extends Action { //test me
             await this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(dungeonMasterSendMessages.itemAdded, nameOfItemToAdd, recipientCharacterName)})
             await this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacterName, "message", {message: parseResponseString(dungeonMasterSendMessages.addItem, nameOfItemToAdd)})
             await this.dungeonController.sendInventoryData(recipientCharacterName)
+            
         } catch(e) {
-            console.log(e)
+            //console.log(e)
             this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemDoesntexist})
         }
     }

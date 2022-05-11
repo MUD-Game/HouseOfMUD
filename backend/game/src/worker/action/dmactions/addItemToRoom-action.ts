@@ -31,8 +31,8 @@ export class AddRoomItem extends Action { //test me
             this.dungeonController.getAmqpAdapter().broadcastAction("message", {message: parseResponseString(dungeonMasterSendMessages.itemRoomAdded, roomName, nameOfItemToAdd)})
             
         } catch(e) {
-            console.log(e)
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemDoesntexist}})
+            //console.log(e)
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemDoesntexist})
         }
     }
 }

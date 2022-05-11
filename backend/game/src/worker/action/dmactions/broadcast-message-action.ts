@@ -12,7 +12,7 @@ export class BroadcastMessageAction extends Action {
     performAction(user: string, args: string[]) {
         let messageBody: string = args.join(' ')
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
-        amqpAdapter.broadcast({action: "message", data: {message: messageBody}})
+        amqpAdapter.broadcastAction("message", {message: messageBody})
     }
 
     

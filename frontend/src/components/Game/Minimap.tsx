@@ -54,7 +54,7 @@ export interface MinimapProps extends MiniMapData {}
 
 const Minimap: React.FC<MinimapProps> = (props) => {
 
-    const { setRoomSubscriber } = useRabbitMQ()
+    const { setRoomSubscriber, setConnectionSubscriber } = useRabbitMQ()
 
     const sizeRef = useRef<any>();
     const stageRef = useRef<any>();
@@ -62,6 +62,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     const [currentRoomId, setCurrentRoomId] = React.useState<string>(props.startRoom);
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     const [width] = useRefSize(sizeRef);
+    const [forceReload, setForceReload] = React.useState(1);
 
     const startRoomPos : [number,number] = props.startRoom.split(',').map(Number).map(x=>x*roomOffset) as [number, number];
 
@@ -132,6 +133,14 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         });
         focusOnRoom(props.startRoom, true);
         //eslint-disable-next-line react-hooks/exhaustive-deps
+        setConnectionSubscriber((roomId: string, direction: 'east' | 'south', status: 'open' | 'closed')=>{
+            let tempRooms = rooms;
+            tempRooms[roomId].connections[direction] = status;
+            setRooms(tempRooms);
+            setForceReload((prev)=>{
+                return prev+1;
+            });
+        });
     },[]);
 
 
@@ -161,7 +170,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     }
 
 
-  
+    
 
     return (
         <>
@@ -170,13 +179,12 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                      focusOnRoom(currentRoomId, true);
                 }} />
             </div>
-            <div id="minimap" className="mb-2" ref={sizeRef}>
+            <div id="minimap"   className="mb-2" ref={sizeRef}>
                 <Stage ref={stageRef} onWheel={onWheelHandle} width={width} height={width} draggable offsetY={(-width / 2) / initialScale + (roomSize / 2)} offsetX={(-width / 2) / initialScale + (roomSize / 2)}>
                     <Layer>
-                        <Group name="connections">
+                        <Group key={forceReload}  name="connections">
                             {Object.keys(rooms).map(key => {
                                 const room = rooms[key];
-                                // used if this room isnt explored to draw the connections to the other rooms
                                 let eastExplored = true;
                                 let southExplored = true;
                                 const eastRoom = rooms[`${room.xCoordinate + 1},${room.yCoordinate}`];

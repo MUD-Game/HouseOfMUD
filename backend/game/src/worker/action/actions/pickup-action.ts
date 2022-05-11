@@ -46,15 +46,15 @@ export class PickupAction extends Action {
                     characterInventory.push(new ItemInfo(itemInRoom.item, 1))
                     //this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
                 }
-                await this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)}})
-                await this.dungeonController.getAmqpAdapter().sendToClient(extras.dungeonMasterId, {action: "message", data: {message: parseResponseString(actionMessages.pickupDungeonMaster, user, nameOfItemToPickup, roomName), player: user, room: roomName}})
+                await this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(actionMessages.pickup, nameOfItemToPickup)})
+                await this.dungeonController.getAmqpAdapter().sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.pickupDungeonMaster, user, nameOfItemToPickup, roomName), player: user, room: roomName})
                 await this.dungeonController.sendInventoryData(user)
             } else {
-                this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotInRoom})
             }
         } catch(e) {
-            console.log(e)
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotInRoom}})
+            //console.log(e)
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotInRoom})
         }
     }
 }

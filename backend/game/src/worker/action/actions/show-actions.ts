@@ -40,7 +40,7 @@ export class ShowActions extends Action {
                     actionString += `'${actionCommand}' - ${actionDescription}; `
                 })
             } catch(e) {
-                console.log(e)
+                //console.log(e)
                 actionString += errorMessages.lookError
             }
         }

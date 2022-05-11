@@ -9,6 +9,6 @@ export default class InvalidAction extends Action {
     }
 
     performAction(user: string, args: string[]) {
-        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.actionDoesNotExist}})
+        this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.actionDoesNotExist})
     }
 }

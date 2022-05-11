@@ -22,42 +22,39 @@ export class AddDamage implements Action {
         let damagestring: string = ''
         try {
             let recipientCharacter: Character = dungeon.getCharacter(recipientCharacterName)
-
-
             let actualDmg: number = recipientCharacter.getCharakterStats().getDmg()
             let maxDmg: number = recipientCharacter.getMaxStats().getDmg()
             try {
                 let dmgCount: number = +args[0]
-         
                 if (maxDmg - actualDmg >= dmgCount) {
                     actualDmg = actualDmg + dmgCount 
                     recipientCharacter.getCharakterStats().setDmg(actualDmg)
                     damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: damagestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring } )
 
                     damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: damagestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring } )
                 } else if (maxDmg - actualDmg < dmgCount) {
                 
                     damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, (maxDmg-actualDmg).toString())
-                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: damagestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring } )
 
                     damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , (maxDmg-actualDmg).toString())
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: damagestring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring } )
                     recipientCharacter.getCharakterStats().setDmg(maxDmg)
 
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
 
             } catch (e) {
-                console.log(e)
-                amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) } })
+                //console.log(e)
+                amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) })
             }
 
 
         } catch (e) {
-            console.log(e)
-            amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) } })
+            //console.log(e)
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) })
         }
     }
 }

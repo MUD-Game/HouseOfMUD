@@ -48,7 +48,7 @@ export class DiscardAction extends Action {
                 this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
             }
         } catch(e) {
-            console.log(e)
+            //console.log(e)
             this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
         }
     }

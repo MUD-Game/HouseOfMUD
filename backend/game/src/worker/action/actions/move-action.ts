@@ -29,6 +29,7 @@ export class MoveAction extends Action {
         let invalidDirection: boolean = false;
         let closedPath: boolean = false;
         let inactivePath: boolean = false;
+        // Refactorn, raume ohne exceptions abfragen
         try {
             switch (direction.toLowerCase()) {
                 case 'norden':

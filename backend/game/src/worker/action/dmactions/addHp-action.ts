@@ -32,36 +32,29 @@ export class AddHp implements Action {
                     recipientCharacter.getCharakterStats().setHp(actualHp)
                    
                     hpstring = parseResponseString(dungeonMasterSendMessages.addHp, args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: hpstring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: hpstring } )
 
                     hpstring = parseResponseString(dungeonMasterSendMessages.hpRecieved, recipientCharacter.name , args.join(' '))
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: hpstring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: hpstring } )
 
                 } else if (maxHp - actualHp < hpCount) {
-
-
                     hpstring = parseResponseString(dungeonMasterSendMessages.addHp, (maxHp-actualHp).toString())
-                    this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: hpstring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: hpstring } )
 
                     hpstring = parseResponseString(dungeonMasterSendMessages.hpRecieved, recipientCharacter.name , (maxHp-actualHp).toString())
-                    this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: hpstring } })
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: hpstring } )
                   
-
                     recipientCharacter.getCharakterStats().setHp(maxHp)
-                  
-
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
 
             } catch (e) {
-                console.log(e)
-                amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) } })
+                //console.log(e)
+                amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.actionDoesNotExist, recipientCharacterName) })
             }
-
-
         } catch (e) {
-            console.log(e)
-            amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) } })
+            //console.log(e)
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) })
         }
     }
 }

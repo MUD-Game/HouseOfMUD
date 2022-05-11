@@ -36,7 +36,7 @@ export class LookAction extends Action {
                     itemString += ` ${itemName} (${itemCount}x)`
                 })
             } catch(e) {
-                console.log(e)
+                //console.log(e)
                 itemString += errorMessages.lookError
             }
         }
@@ -55,19 +55,20 @@ export class LookAction extends Action {
                     npcString += ` ${npcName}`
                 })
             } catch(e) {
-                console.log(e)
+                //console.log(e)
                 npcString += errorMessages.lookError
             }
         }
         npcString += ". "
         description += npcString
 
+        // Refactorn, anliegende Raume ohne exceptions pruefen
         try {
             let northRoom: Room = dungeon.getNorthernRoom(room)
             let northRoomString: string = `${actionMessages.lookNorth} ${northRoom.getName()}. `
             description += northRoomString
         } catch(e) {
-            console.log(e)
+            //console.log(e)
         }
 
         try {
@@ -75,7 +76,7 @@ export class LookAction extends Action {
             let eastRoomString: string = `${actionMessages.lookEast} ${eastRoom.getName()}. `
             description += eastRoomString
         } catch(e) {
-            console.log(e)
+            //console.log(e)
         }
 
         try {
@@ -83,7 +84,7 @@ export class LookAction extends Action {
             let southRoomString: string = `${actionMessages.lookSouth} ${southRoom.getName()}. `
             description += southRoomString
         } catch(e) {
-            console.log(e)
+            //console.log(e)
         }
 
         try {
@@ -91,7 +92,7 @@ export class LookAction extends Action {
             let westRoomString: string = `${actionMessages.lookWest} ${westRoom.getName()}. `
             description += westRoomString
         } catch(e) {
-            console.log(e)
+            //console.log(e)
         }
 
         let dungeonCharacters: Character[] = Object.values(dungeon.characters)
@@ -104,11 +105,11 @@ export class LookAction extends Action {
                 }
             })
         } catch(e) {
-            console.log(e)
+            //console.log(e)
             playersString += errorMessages.lookError
         }
         playersString += ". "
         description += playersString
-        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: description}})
+        this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: description})
     }
 }

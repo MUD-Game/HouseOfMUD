@@ -107,7 +107,10 @@ export class DungeonController {
     private async handleAmqpMessages(data: any) {
         switch (data.action) {
             case 'login':
-                this.login(data.user, data.character);
+                let loggedIn: boolean = await this.login(data.user, data.character);
+                if (!loggedIn) {
+                    this.amqpAdapter.sendActionToToken(data.verifyToken, 'kick', { message: { type: 'internal' }});
+                }
                 break;
             case 'logout':
                 this.logout(data.user, data.character);
@@ -133,10 +136,13 @@ export class DungeonController {
         }
     }
 
-    private async login(user: string, characterName: string) {
+    private async login(user: string, characterName: string): Promise<boolean> {
         console.log(`login ${characterName}`);
 
-        let character = await this.getCharacter(characterName);
+        let character = await this.getCharacter(user, characterName);
+        if (character == undefined) {
+            return false;
+        }
         this.dungeon.characters[characterName] = character;
         await this.amqpAdapter.initClient(characterName);
         if (characterName !== 'dungeonmaster') {
@@ -151,6 +157,7 @@ export class DungeonController {
         await this.sendStatsData(characterName)
         await this.sendMiniMapData(characterName);
         await this.sendInventoryData(characterName);
+        return true;
     }
 
     private async logout(user: string, characterName: string) {
@@ -238,7 +245,7 @@ export class DungeonController {
         }, this.dungeonID)
     }
 
-    private async getCharacter(name: string): Promise<Character> {
+    private async getCharacter(user: string, name: string): Promise<Character | undefined> {
         if (this.databaseAdapter) {
             let char = await this.databaseAdapter.getCharacterFromDungeon(name, this.dungeonID);
             console.log(char);
@@ -258,18 +265,20 @@ export class DungeonController {
                     new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
         }
-        return this.createCharacter(name);
+        if (name === DUNGEONMASTER) {
+            return this.createDungeonMaster(user, name);
+        }
     }
 
-    private createCharacter(name: string): Character {
+    private createDungeonMaster(user: string, name: string): Character {
         let newCharacter: Character = new CharacterImpl(
+            user,
             name,
-            name,
             '',
             '',
             '',
-            new CharacterStatsImpl(1, 1, 1),
-            new CharacterStatsImpl(1, 1, 1),
+            new CharacterStatsImpl(0, 0, 0),
+            new CharacterStatsImpl(0, 0, 0),
             "0,0",
             {"0,0":true},
             []

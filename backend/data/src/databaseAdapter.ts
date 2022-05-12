@@ -36,6 +36,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
+    
 
     public database: string;
 
@@ -102,6 +103,13 @@ export class DatabaseAdapter {
         return this.user.updateOne({ email: email }, { password: password });
     }
 
+    async checkIfCharacterExists(name: string, dungeonID: string) {
+        const foundCharacter = await this.character.findOne({ name: name, dungeonID: dungeonID });
+        if (foundCharacter) {
+            return true;
+        }
+        return false;
+    }
 
 
     /**
@@ -240,6 +248,9 @@ export class DatabaseAdapter {
     }
 
     async getUserId(user: string): Promise<string | undefined> {
+        if (user==="root"){
+            return "root";
+        }
         const foundUser = await this.user.findOne({ username: user }, '_id');
         if (foundUser) {
             return foundUser._id.toString();
@@ -326,6 +337,16 @@ export class DatabaseAdapter {
             dungeonToUpdate.blacklist = updatedBlacklist;
         }
         dungeonToUpdate?.save();
+    }
+
+    async isBanned(userId: string, dungeonId: string): Promise<boolean> {
+        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: {$elemMatch: { $eq: userId }} });
+        if (dungeon) {
+            if (userId in dungeon.blacklist) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -158,7 +158,30 @@ export class HostLink {
      * @returns best available host
      */
     private getBestHost(): string {
-        return Object.keys(this.hosts)[Math.floor(Math.random()*Object.keys(this.hosts).length)];
+        // return Object.keys(this.hosts)[Math.floor(Math.random()*Object.keys(this.hosts).length)];
+
+        const hostPlayers: {[host: string]: number} = {}
+        
+        for (let hostName in this.hosts) {
+            let host = this.hosts[hostName];
+            let players: number = 0;
+            for (let dungeon of host.dungeons) {
+                players += this.dungeons[dungeon].currentPlayers;
+            }
+            hostPlayers[hostName] = players;
+        }
+
+        let bestHost: string = '';
+        let minPlayers: number = Number.MAX_SAFE_INTEGER;
+
+        for (let host in hostPlayers) {
+            if (hostPlayers[host] < minPlayers) {
+                bestHost = host;
+                minPlayers = hostPlayers[host];
+            }
+        }
+
+        return bestHost;
     }
 
     /**

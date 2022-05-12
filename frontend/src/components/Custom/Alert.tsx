@@ -7,7 +7,6 @@ import "./index.css";
 const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?: number, title?: string }> = ({ setMessage, message, type, duration, title }) =>{
 
     const { t } = useTranslation();
-    const alertRef = useRef<any>();
 
     const variant = type === 'error' ? 'danger' : 'info';
 
@@ -24,7 +23,7 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
                 clearTimeout(autoHide);
             }
         }
-    }, [message, alertRef, duration, setMessage]);
+    }, [message, duration, setMessage]);
 
     if (message === '') {
         return null;
@@ -38,7 +37,7 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
 
         <ReactAlert transition={true} variant={variant} dismissible onClose={() => setMessage("")}>
             <ReactAlert.Heading>{title ? title : t(`${type}.${message}.title`)}</ReactAlert.Heading>
-            <p ref={alertRef}>
+            <p>
                 {title ? message : t(`${type}.${message}.text`)}
             </p>
         </ReactAlert>

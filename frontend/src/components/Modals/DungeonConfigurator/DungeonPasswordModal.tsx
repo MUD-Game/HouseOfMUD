@@ -26,13 +26,13 @@ const DungeonPasswordModal: React.FC<DungeonPasswordModalProps> = ({
             <Container>
                 <Modal.Header>
                     <Modal.Title>
-                        {t(`dungeon_keys.dungeon_password`)}
+                        {t(`common.isprivate`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <MudInput
-                        colmd={6}
-                        name="dungeonpassword"
+                        colmd={12}
+                        name="dungeon_password"
                         placeholder={t(`dungeon_keys.dungeon_password`)}
                         value={password}
                         onChange={event => {
@@ -54,11 +54,10 @@ const DungeonPasswordModal: React.FC<DungeonPasswordModalProps> = ({
                         <Button
                             autoFocus
                             className="btn w-100 drawn-border  btn-green"
-                            onClick={e => {
+                            onClick={() => {
                                 onConfirm(password);
-                                onHide();
                             }}>
-                            {t(`button.send`)}
+                            {t(`button.ok`)}
                         </Button>
                     </div>
                 </Modal.Footer>

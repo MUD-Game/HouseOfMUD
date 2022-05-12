@@ -115,8 +115,10 @@ export class API {
                 if (this.hostLink.checkPassword(dungeonID, body.password)) {
                     res.status(200).json({ok:1});
                 } else {
-                    res.status(402).json({ok: 0, error: 'unauthorized'});
+                    res.status(401).json({ok: 0, error: 'dungeonunauthorized'});
                 }
+            }else{
+                res.status(400).json({ ok: 0, error: 'parameters' });
             }
         });
 

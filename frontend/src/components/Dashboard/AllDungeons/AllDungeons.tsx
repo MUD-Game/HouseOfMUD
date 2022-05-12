@@ -19,6 +19,7 @@ import { Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import {supervisor} from 'src/services/supervisor'
 import {useGame} from 'src/hooks/useGame'
+import { SendsMessagesProps } from '../../../types/misc';
 import DungeonPasswordModal, {
     DungeonPasswordModalProps,
 } from '../../Modals/DungeonConfigurator/DungeonPasswordModal';
@@ -28,10 +29,11 @@ export type AllDungeonProps = {
     allDungeons: DungeonResponseData[];
 };
 
-const AllDungeons: React.FC<AllDungeonProps> = ({
+const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
     allDungeons,
     filterValue,
     filterKey,
+    messageCallback
 }) => {
     const { t } = useTranslation();
     const game = useGame();
@@ -46,18 +48,21 @@ const AllDungeons: React.FC<AllDungeonProps> = ({
         setModalState({ show: true, onConfirm: password => {
             supervisor.checkPassword(
                 dungeonId,
-                'password',
+                password,
                 () => {
+                    setModalState({ show: false, onHide: () => { }, onConfirm: () => { } });
                     game.setDungeon(dungeonId);
                     game.setDungeonName(dungeonName);
                     navigate('/select-character');
                 },
                 error => {
-                    // handle error.error
+                    console.log(error.error);
+                    messageCallback(error.error);
                 }
             );
         }, onHide: () => {
-            setModalState({ show: true, onHide: () => {}, onConfirm: () =>{}});
+            setModalState({ show: false, onHide: () => {}, onConfirm: () =>{}});
+            messageCallback("");
         } });
     };
 

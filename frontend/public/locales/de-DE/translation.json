@@ -142,6 +142,10 @@
             "delete_room": "Raum löschen"
         },
         "confirmations": {
+            "canceldungeon":{
+                "title": "Sicher?",
+                "text": "Bist du sicher, dass du Zurück zum Dashboard gehen willst? Alle Änderungen werden verworfen!"
+            },
             "delete_class": {
                 "title": "Klasse löschen",
                 "text": "Bist du sicher, dass du diese Klasse löschen möchtest?"
@@ -204,6 +208,7 @@
     },
     "common": {
         "select_items": "Items auswählen",
+        "back": "Zurück",
         "select_npcs": "NPCs auswählen",
         "select_actions": "Aktionen auswählen",
         "select_species": "Spezies auswählen",

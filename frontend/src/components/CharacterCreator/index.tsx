@@ -19,18 +19,21 @@ import { supervisor } from 'src/services/supervisor';
 import { GetCharacterAttributesResponse } from '@supervisor/api';
 import CreateNewCharacter from './CreateNewCharacter';
 import AvailableCharacters from './AvailableCharacters';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { CharactersResponseData } from '@supervisor/api';
 import Alert from '../Custom/Alert';
+import { ChevronLeft } from 'react-bootstrap-icons';
+import { useTranslation } from 'react-i18next';
 export interface CharacterCreatorProps { }
 
 
 const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
 
     const { dungeon, dungeonName, isAbleToPickCharacter } = useGame();
-
+    const navigate = useNavigate();
     const [error, setError] = React.useState<string>("");
+    const {t} = useTranslation();
     const [characters, setCharacters] = React.useState<CharactersResponseData[]>([] as CharactersResponseData[]);
     const [dungeonData, setDungeonData] = React.useState<GetCharacterAttributesResponse>({} as GetCharacterAttributesResponse);
     useEffect(() => {
@@ -48,6 +51,8 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     if (!isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
     return (
         <Container className="mb-5">
+            <div id="backbutton" onClick={()=>navigate("/")} ><ChevronLeft size={30} /><span>{t("common.back")}</span></div>
+
             <h2>{dungeonName}</h2>
             <Alert message={error} setMessage={setError} type="error" />
             {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter messageCallback={setError} onCreate={fetchNewCharacters} {...dungeonData} /> : null}

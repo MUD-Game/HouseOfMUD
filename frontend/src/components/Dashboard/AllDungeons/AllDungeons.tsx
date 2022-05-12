@@ -94,6 +94,7 @@ const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
                         <AllDungeonLi
                             onPasswordRequest={onPasswordRequest}
                             key={index}
+                            messageCallback={messageCallback}
                             {...dungeon}
                         />
                     )

@@ -43,7 +43,7 @@ export const actionMessages = {
     inspect: "Du untersuchst %s: %s",
     inventory: "Du hast folgende Items im Inventar:",
     lookEmpty: " Keine",
-    lookRoom: "Du befindest dich im Raum %s: %s. Du schaust dich um. ",
+    lookRoom: "Du befindest dich im Raum %s: %s - Du schaust dich um. ",
     lookItems: "\nEs liegen folgende Items in dem Raum:",
     lookNpcs: "\nFolgende NPCs sind in diesem Raum:",
     lookNorth: "\nIm Norden befindet sich folgender Raum:",
@@ -70,19 +70,30 @@ export const actionMessages = {
     showActionsEnding: "\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.",
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
     unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s",
-    playerKicked: "%s wurde aus dem Dungeon gekickt!"
+    playerKicked: "%s wurde aus dem Dungeon gekickt!",
+    broadcast: "Dungeon Master sagt: %s"
 }
 
 export const errorMessages = {
-    itemNotOwned: "Du besitzt dieses Item nicht!",
-    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
+    itemNotOwned: "Du besitzt dieses Item nicht! Gib '%s' ein, um deine Items zu sehen.",
+    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum! Gib '%s' ein, um die Items im Raum zu sehen.",
     itemDoesntexist: "Dieses Item existiert nicht!",
     roomDoesNotExist: "Dieser Raum existiert nicht!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
-    characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion ist nicht möglich!",
+    moveAvailableDirections: " Folgende Richtungen sind moeglich: Norden, Osten, Sueden, Westen.",
+    characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon! Gib '%s' ein, um eine Liste der Spieler in deinem Raum zu sehen.",
+    actionDoesNotExist: "Diese Aktion ist nicht möglich! Gib '%s' ein um eine Liste der moeglichen Aktionen zu sehen.",
     lookError: " Fehler!",
-    charakterHasntItem: "%s besitzt dieses Item nicht!"
+    charakterHasntItem: "%s besitzt dieses Item nicht!",
+    noMessage: "Bitte geb eine Nachricht zum senden ein!"
+}
+
+export const helpMessagesForDM = {
+    characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden.",
+    itemDoesNotExist: "Dieses Item existiert nicht! Folgende Items existieren in diesem Dungeon: %s",
+    roomDoesNotExist: "Dieser Raum existiert nicht! Folgende Raeume existieren in diesem Dungeon: %s",
+    valueNotANumber: "Bitte gib als Wert eine Zahl ein!",
+    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!"
 }
 
 export const dungeonMasterSendMessages = {

@@ -30,9 +30,9 @@ export class InspectAction extends Action {
             }
         })
         if (userHasItem) {
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inspectMessage}})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: inspectMessage})
         } else {
-            this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: errorMessages.itemNotOwned}})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotOwned, triggers.inventory)})
         }
     }
 }

@@ -45,11 +45,11 @@ export class DiscardAction extends Action {
                 this.dungeonController.getAmqpAdapter().sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.discardDungeonMaster, user, nameOfItemToDiscard, roomName), player: user, room: roomName})
                 this.dungeonController.sendInventoryData(user)
             } else {
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotOwned, triggers.inventory)})
             }
         } catch(e) {
-            console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
+            //console.log(e)
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotOwned, triggers.inventory)})
         }
     }
 

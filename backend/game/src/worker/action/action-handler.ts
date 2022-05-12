@@ -152,8 +152,12 @@ export class ActionHandlerImpl implements ActionHandler {
             }
         }
         let actionArguments: string[] = this.getActionArguments(message)
-        action.performAction(user, actionArguments);
-        await this.dieAction.performAction(user, [])
+        try {
+            action.performAction(user, actionArguments);
+        } catch(e) {
+            console.log('Action invalid')
+        }
+        this.dieAction.performAction(user, [])
         return action;
     }
 

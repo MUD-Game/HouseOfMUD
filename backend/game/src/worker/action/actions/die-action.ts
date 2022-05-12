@@ -51,10 +51,7 @@ export class DieAction extends Action {
         characterToDie.currentStats.hp = characterToDie.maxStats.hp
         characterToDie.currentStats.mana = characterToDie.maxStats.mana
         characterToDie.currentStats.dmg = characterToDie.maxStats.dmg
-        await amqpAdapter.sendToClient(user, {
-            action: 'minimap.move',
-            data: "0,0"
-        });
+        await amqpAdapter.sendActionToClient(user, 'minimap.move', "0,0");
         this.dungeonController.sendInventoryData(user)
         this.dungeonController.sendStatsData(user)
         const description = actionMessages.die

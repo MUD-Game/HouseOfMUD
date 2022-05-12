@@ -23,7 +23,7 @@ export class InventoryAction extends Action {
             let itemCount: number = itemInfo.count
             inventoryMessage += `\n\t${itemName} (${itemCount}x)`
         })
-        this.dungeonController.getAmqpAdapter().sendToClient(user, {action: "message", data: {message: inventoryMessage}})
+        this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: inventoryMessage})
     }
 
 }

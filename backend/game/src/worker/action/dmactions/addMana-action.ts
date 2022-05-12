@@ -28,10 +28,9 @@ export class AddMana implements Action {
             let actualMana: number = recipientCharacter.getCharakterStats().getMana()
             let maxMana: number = recipientCharacter.getMaxStats().getMana()
             let manaCount: number = +args[1]
-            try {
-                if (isNaN(manaCount)) {
-                    throw new Error('Value is not a number!')
-                }
+            if (isNaN(manaCount)) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+            } else {
                 if (maxMana - actualMana >= manaCount) {
                     actualMana = actualMana + manaCount 
                     recipientCharacter.getCharakterStats().setMana(actualMana)
@@ -52,10 +51,8 @@ export class AddMana implements Action {
                     recipientCharacter.getCharakterStats().setMana(maxMana)
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
-                
-            } catch(e) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
+
         } catch (e) {
             //console.log(e)
             amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) })

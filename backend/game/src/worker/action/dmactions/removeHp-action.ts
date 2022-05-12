@@ -28,10 +28,9 @@ export class RemoveHp implements Action {
             let roomName: string = room.getName()
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let hpCount: number = +args[1]
-            try {
-                if (isNaN(hpCount)) {
-                    throw new Error('Value is not a number!')
-                }
+            if (isNaN(hpCount)) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+            } else {
                 if (actualHp - hpCount <= 0) {
                     recipientCharacter.getCharakterStats().setHp(0)
                     lifestring = parseResponseString(dungeonMasterSendMessages.removeHp, (actualHp).toString())
@@ -53,9 +52,6 @@ export class RemoveHp implements Action {
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
                 await this.dungeonController.getActionHandler().dieAction.performAction(recipientCharacter.name, [])
-
-            } catch(e) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
 
         } catch (e) {

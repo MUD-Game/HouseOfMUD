@@ -28,10 +28,9 @@ export class AddDamage implements Action {
             let actualDmg: number = recipientCharacter.getCharakterStats().getDmg()
             let maxDmg: number = recipientCharacter.getMaxStats().getDmg()
             let dmgCount: number = +args[1]
-            try {
-                if (isNaN(dmgCount)) {
-                    throw new Error('Value is not a number!')
-                }
+            if (isNaN(dmgCount)) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+            } else {
                 if (maxDmg - actualDmg >= dmgCount) {
                     actualDmg = actualDmg + dmgCount 
                     recipientCharacter.getCharakterStats().setDmg(actualDmg)
@@ -51,9 +50,6 @@ export class AddDamage implements Action {
     
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
-
-            } catch(e) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
 
         } catch (e) {

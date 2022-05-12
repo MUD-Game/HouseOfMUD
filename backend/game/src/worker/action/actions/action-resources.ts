@@ -43,7 +43,7 @@ export const actionMessages = {
     inspect: "Du untersuchst %s: %s",
     inventory: "Du hast folgende Items im Inventar:",
     lookEmpty: " Keine",
-    lookRoom: "Du befindest dich im Raum %s: %s. Du schaust dich um. ",
+    lookRoom: "Du befindest dich im Raum %s: %s - Du schaust dich um. ",
     lookItems: "\nEs liegen folgende Items in dem Raum:",
     lookNpcs: "\nFolgende NPCs sind in diesem Raum:",
     lookNorth: "\nIm Norden befindet sich folgender Raum:",
@@ -70,7 +70,8 @@ export const actionMessages = {
     showActionsEnding: "\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.",
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
     unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s",
-    playerKicked: "%s wurde aus dem Dungeon gekickt!"
+    playerKicked: "%s wurde aus dem Dungeon gekickt!",
+    broadcast: "Dungeon Master sagt: %s"
 }
 
 export const errorMessages = {
@@ -83,7 +84,8 @@ export const errorMessages = {
     characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon! Gib '%s' ein, um eine Liste der Spieler in deinem Raum zu sehen.",
     actionDoesNotExist: "Diese Aktion ist nicht möglich! Gib '%s' ein um eine Liste der moeglichen Aktionen zu sehen.",
     lookError: " Fehler!",
-    charakterHasntItem: "%s besitzt dieses Item nicht!"
+    charakterHasntItem: "%s besitzt dieses Item nicht!",
+    noMessage: "Bitte geb eine Nachricht zum senden ein!"
 }
 
 export const helpMessagesForDM = {

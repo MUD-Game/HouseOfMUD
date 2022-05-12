@@ -27,10 +27,9 @@ export class RemoveMana implements Action {
             let roomName: string = room.getName()
             let actualMana: number = recipientCharacter.getCharakterStats().getMana()
             let manaCount: number = +args[1]
-            try {
-                if (isNaN(manaCount)) {
-                    throw new Error('Value is not a number!')
-                }
+            if (isNaN(manaCount)) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+            } else {
                 if (actualMana - manaCount <= 0) {
                     manastring = parseResponseString(dungeonMasterSendMessages.removeMana, (actualMana).toString())
                     this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: manastring })
@@ -51,11 +50,8 @@ export class RemoveMana implements Action {
                     this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: manastring, room: roomName })
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
-
-            } catch(e) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
-
+                
         } catch (e) {
             //console.log(e)
             amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) })

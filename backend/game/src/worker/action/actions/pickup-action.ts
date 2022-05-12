@@ -45,11 +45,11 @@ export class PickupAction extends Action {
                 await this.dungeonController.getAmqpAdapter().sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.pickupDungeonMaster, user, nameOfItemToPickup, roomName), player: user, room: roomName})
                 await this.dungeonController.sendInventoryData(user)
             } else {
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotInRoom, triggers.pickup)})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotInRoom, triggers.look)})
             }
         } catch(e) {
             //console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotInRoom, triggers.pickup)})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotInRoom, triggers.look)})
         }
     }
 }

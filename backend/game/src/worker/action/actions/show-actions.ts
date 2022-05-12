@@ -28,10 +28,14 @@ export class ShowActions extends Action {
         } else {
             try {
                 roomActions.forEach(actionId => {
+                    if (globalActions.includes(actionId)) {
+                        return;
+                    } else {
                     let action: ActionElement = dungeon.getAction(actionId)
                     let actionCommand: string = action.getCommand()
                     let actionDescription: string = action.getDescription()
                     actionString += `\n\t'${actionCommand}' - ${actionDescription};`
+                    }
                 })
                 globalActions.forEach(actionId => {
                     let action: ActionElement = dungeon.getAction(actionId)

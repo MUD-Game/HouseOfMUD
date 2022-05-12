@@ -27,10 +27,9 @@ export class RemoveDamage implements Action {
             let roomName: string = room.getName()
             let actualDmg: number = recipientCharacter.getCharakterStats().getDmg()
             let dmgCount: number = +args[1]
-            try {
-                if (isNaN(dmgCount)) {
-                    throw new Error('Value is not a number!')
-                }
+            if (isNaN(dmgCount)) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+            } else {
                 if (actualDmg - dmgCount <= 0) {
                     damagestring = parseResponseString(dungeonMasterSendMessages.removeDmg, (actualDmg).toString())
                     this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring })
@@ -50,10 +49,8 @@ export class RemoveDamage implements Action {
                     this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring, room: roomName } )
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
-
-            } catch(e) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
+                
 
         } catch (e) {
             //console.log(e)

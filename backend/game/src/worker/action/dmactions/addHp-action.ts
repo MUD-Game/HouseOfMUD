@@ -28,10 +28,9 @@ export class AddHp implements Action {
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let maxHp: number = recipientCharacter.getMaxStats().getHp()
             let hpCount: number = +args[1]
-            try {
-                if (isNaN(hpCount)) {
-                    throw new Error('Value is not a number!')
-                }
+            if (isNaN(hpCount)) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+            } else {
                 if (maxHp - actualHp >= hpCount) {
                     actualHp = actualHp + hpCount
                     console.log(actualHp) 
@@ -53,9 +52,6 @@ export class AddHp implements Action {
                     recipientCharacter.getCharakterStats().setHp(maxHp)
                 }
                 await this.dungeonController.sendStatsData(recipientCharacter.name)
-
-            } catch(e) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
 
         } catch (e) {

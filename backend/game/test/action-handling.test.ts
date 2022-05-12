@@ -810,7 +810,7 @@ describe('Actions', () => {
         pickupAction.performAction('Jeff', ['Schwert']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Dieses Item existiert nicht in diesem Raum! Gib 'aufheben' ein, um die Items im Raum zu sehen." },
+            data: { message: "Dieses Item existiert nicht in diesem Raum! Gib 'umschauen' ein, um die Items im Raum zu sehen." },
         });
     })
 
@@ -1510,7 +1510,7 @@ describe("DungeonMaster Actions", () => {
         ]);
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Hallo` },
+            data: { message: `Dungeon Master sagt: Hallo` },
         });
     });
 

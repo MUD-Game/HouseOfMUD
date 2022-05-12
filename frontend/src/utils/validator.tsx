@@ -11,6 +11,9 @@ const validator = {
     description: (target: any) =>{
         return validator.stringConstraint(target, 500);
     },
+    dungeonPassword: (target: any) => {
+        return validator.stringConstraint(target, 50);
+    },
     cirName: (target: any) => {
         return validator.noSpace(validator.stringConstraint(target, 50));
     },

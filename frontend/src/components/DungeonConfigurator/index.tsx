@@ -43,12 +43,18 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
                         <MudInput className="max50" colmd={9} value={dungeonConfig.name} onChange={evt =>{
                                 dungeonConfig.setName(validator.name(evt.target));
                         } } type="text" name="name" placeholder={t(`${tl}.inputs.name.placeholder`)} />
+
                         <MudInput colmd={3} value={dungeonConfig.maxPlayers} onChange={evt => {
                             dungeonConfig.setMaxPlayers(validator.maxPlayers(evt.target.value));
                         }} type="number" name="maxPlayers" placeholder={t(`${tl}.inputs.maxPlayers.placeholder`)} />
-                        <MudInput colmd={12} onChange={evt =>{
+
+                        <MudInput colmd={12} value={dungeonConfig.description} onChange={evt =>{
                             dungeonConfig.setDescription(validator.description(evt.target));
-                        } } value={dungeonConfig.description} type="text" name="description" placeholder={t(`${tl}.inputs.description.placeholder`)} />
+                        } } type="text" name="description" placeholder={t(`${tl}.inputs.description.placeholder`)} />
+
+                        <MudInput colmd={12} value={dungeonConfig.password} onChange={evt => {
+                            dungeonConfig.setPassword(validator.dungeonPassword(evt.target));
+                        }} type="password" name="password" placeholder={t(`${tl}.inputs.password.placeholder`)} />
                     </Row>
 
 

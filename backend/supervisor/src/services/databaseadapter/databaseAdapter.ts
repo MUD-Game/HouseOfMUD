@@ -36,6 +36,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
+    
 
     public database: string;
 
@@ -102,6 +103,13 @@ export class DatabaseAdapter {
         return this.user.updateOne({ email: email }, { password: password });
     }
 
+    async checkIfCharacterExists(name: string, dungeonID: string) {
+        const foundCharacter = await this.character.findOne({ name: name, dungeonID: dungeonID });
+        if (foundCharacter) {
+            return true;
+        }
+        return false;
+    }
 
 
     /**

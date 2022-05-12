@@ -212,6 +212,7 @@
         }
     },
     "common": {
+        "string_chars":"Zeichen",
         "isprivate": "Passwortgeschützt",
         "select_items": "Items auswählen",
         "back": "Zurück",
@@ -437,5 +438,27 @@
     "cryingLlama":{
         "title": "Es sind momentan keine Dungeons gestartet",
         "text": "Erstelle doch selber einen Dungeon und starte ihn!"
+    },
+    "constraint":{
+        "max": "max.",
+        "name": 50,
+        "description": 500,
+        "maxPlayers": 1000000,
+        "dungeon_password": 50,
+        "maxhp": 1000000,
+        "maxmana": 1000000,
+        "maxdmg": 1000000,
+        "command": 50,
+        "output": 500,
+        "addhp": 1000000,
+        "addmana": 1000000,
+        "adddmg": 1000000,
+        "removehp": 1000000,
+        "removemana": 1000000,
+        "removedmg": 1000000,
+        "item_count": 1000000
+
+
     }
+
 }

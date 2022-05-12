@@ -85,10 +85,10 @@ const AddRoomModal: React.FC<AddRoomModalProps> = (props) => {
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput colmd={6} placeholder="x" value={props.coordinates[0]} disabled />
-                    <MudInput colmd={6} placeholder="y" value={props.coordinates[1]} disabled />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.cirName(event.target))} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
+                    <MudInput name="xcoord" noconstraint={1} colmd={6} placeholder="x" value={props.coordinates[0]} disabled />
+                    <MudInput name="ycoord" noconstraint={1} colmd={6} placeholder="y" value={props.coordinates[1]} disabled />
+                    <MudInput name="name" placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.cirName(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

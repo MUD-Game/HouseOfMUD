@@ -62,7 +62,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({
             </div>
             <div className="col-1 text-center">
                 {isPrivate ? (
-                    <Lock size={25} className="mx-1" />
+                    <Lock style={{ color: "var(--red)" }} size={25} className="mx-1" />
                 ) : (
                     <Unlock size={25} className="mx-1" />
                 )}

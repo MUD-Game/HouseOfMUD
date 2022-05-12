@@ -22,19 +22,23 @@ export class BanPlayer implements Action {
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
         try {
             let character: Character = dungeon.getCharacter(recipientCharacterName)
-            let userId: string = character.getUserId()
+            let idOfUserToBan: string = character.getUserId()
             let dungeonCreatorId: string = dungeon.getCreatorId()
             let dungeonMasterId: string = dungeon.getMasterId()
-            if (userId === dungeonCreatorId) {
+            if (idOfUserToBan === dungeonCreatorId) {
                 this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.cannotBanDungeonCreator})
-            } else if (userId === dungeonMasterId) {
+            } else if (idOfUserToBan === dungeonMasterId) {
                 this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.cannotBanOwnCharacter})
             } else {
                 // save banned user
-                dungeon.getBlacklist().push(userId)
+                dungeon.getBlacklist().push(idOfUserToBan)
                 let dungeonCharacters: Character[] = Object.values(dungeon.characters)
                 dungeonCharacters.forEach(async character => {
-                    await this.dungeonController.kickPlayer(character.getName(), {type: kickType, kickMessage: message})
+                    if (character.getUserId() === idOfUserToBan) {
+                        await this.dungeonController.kickPlayer(character.getName(), {type: kickType, kickMessage: message})
+                    } else {
+                        return;
+                    }
                 })
                 amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerBanned, recipientCharacterName)})
                 this.dungeonController.persistBlacklist()

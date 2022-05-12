@@ -232,11 +232,11 @@ export class DatabaseAdapter {
     /**
      * get the needed dungeon information for the supervisor 
      * @param id the id of the dungeon to get the information from
-     * @returns the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
+     * @returns the dungeon information (id, name, description, creatorId, password, masterId, maxPlayers, currentPlayers)
      */
     async getDungeonInfo(id: string) {
         return (this.dungeon.findOne({ id: id },
-            'id name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description password creatorId masterId maxPlayers currentPlayers'))
     }
 
     async getUserId(user: string): Promise<string | undefined> {
@@ -251,11 +251,11 @@ export class DatabaseAdapter {
 
     /**
      * get the dungeon information for the supervisor from all existing dungeons
-     * @returns an array of the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
+     * @returns an array of the dungeon information (id, name, description, password, creatorId, masterId, maxPlayers, currentPlayers)
      */
     async getAllDungeonInfos() {
         return (this.dungeon.find({},
-            'id name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description password creatorId masterId maxPlayers currentPlayers'))
     }
 
     /**

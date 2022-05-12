@@ -73,6 +73,7 @@ export class DatabaseAdapter {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
+            password: dungeonToStore.password,
             creatorId: dungeonToStore.creatorId,
             masterId: dungeonToStore.masterId,
             maxPlayers: dungeonToStore.maxPlayers,
@@ -116,6 +117,7 @@ export class DatabaseAdapter {
         return {
             name: foundDungeon.name,
             description: foundDungeon.description,
+            password: foundDungeon.password,
             creatorId: foundDungeon.creatorId,
             masterId: foundDungeon.masterId,
             maxPlayers: foundDungeon.maxPlayers,
@@ -210,6 +212,7 @@ export class DatabaseAdapter {
             _id: oldDungeon._id,
             name: newDungeon.name,
             description: newDungeon.description,
+            password: newDungeon.password,
             creatorId: oldDungeon.creatorId,
             masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,

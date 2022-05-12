@@ -248,6 +248,9 @@ export class DatabaseAdapter {
     }
 
     async getUserId(user: string): Promise<string | undefined> {
+        if (user==="root"){
+            return "root";
+        }
         const foundUser = await this.user.findOne({ username: user }, '_id');
         if (foundUser) {
             return foundUser._id.toString();

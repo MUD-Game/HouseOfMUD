@@ -31,19 +31,24 @@ export interface DashboardLocationState {
     title: string;
 }
 
+type boardtype = 'all' | 'my';
+
 const Dashboard: React.FC<DashboardProps> = (props) => {
     
     const {t} = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
+    // Get the search params
+    const searchParams = new URLSearchParams(location.search);
+    let board = searchParams.get('board') as boardtype;
+    if (board !== "all" && board !== "my") board = "all";
     const [allDungeons, setAllDungeons] = useState<DungeonResponseData[]>();
     const [myDungeons, setMyDungeons] = useState<DungeonResponseData[]>();
-    const [dungeonView, setDungeonView] = useState<"all" | "my">("all");
+    const [dungeonView, setDungeonView] = useState<boardtype>(board);
     const [searchTerm, setSearchTerm] = useState<string>('');
-
     const [alert, setAlert] = useState({title: "", text: ""});
-
     const [error, setError] = useState<string>("");
+
 
     useEffect(() => {
         fetchDungeons();
@@ -63,9 +68,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     }
 
 
-    const fetchDungeons = () => {
-        supervisor.getDungeons({}, setAllDungeons, error => setError(error.error))
-        supervisor.getMyDungeons({}, setMyDungeons, error => setError(error.error));
+    const fetchDungeons = (callback?: VoidFunction) => {
+        supervisor.getDungeons({}, (data)=>{ setAllDungeons(data); callback && callback()}, error => setError(error.error))
+        supervisor.getMyDungeons({}, (data)=>{ setMyDungeons(data);}, error => setError(error.error));
     }
 
     const handleSearch = (event: any) => {
@@ -93,13 +98,23 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     <input id="search-input" className="input-standard drawn-border" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
                 </Col>
                 <Col md={1}>
-                    <button className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30} onClick={fetchDungeons}/></button>
+                    <button onClick={(evt) => {
+                        const target: React.MouseEvent<HTMLButtonElement, MouseEvent>["currentTarget"] = evt.currentTarget;
+                        target.classList.add("spin");
+                        target.disabled = true;
+                        fetchDungeons(() => {
+                            target.classList.remove("spin");
+                            target.disabled = false;
+
+                        }
+                        )
+                    }} className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30}/></button>
                 </Col>
             </Row>
 
             <Row>
                 <div className="col">
-                    <Nav variant="tabs" defaultActiveKey="all" onSelect={handleSelect}>
+                    <Nav variant="tabs" defaultActiveKey={board} onSelect={handleSelect}>
                         <Nav.Item>
                             <Nav.Link eventKey="all">{t("dashboard.all_dungeons")}</Nav.Link>
                         </Nav.Item>

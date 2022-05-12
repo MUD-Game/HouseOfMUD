@@ -720,14 +720,14 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
                     busyCallback(false);
-                    navigate("/");
+                    navigate("/?board=my");
                 }, (error) => {
                     setError(error.error);
                 });
             } else {
                 supervisor.createDungeon({ dungeonData: createBody }, (data) => {
                     busyCallback(false);
-                    navigate("/");
+                    navigate("/?board=my");
                 }, (error) => {
                     busyCallback(false);
                     setError(error.error);

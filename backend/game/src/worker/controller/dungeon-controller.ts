@@ -161,10 +161,7 @@ export class DungeonController {
             delete this.dungeon.characters[characterName];
             this.sendPlayerListToDM();
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
-        } else {
-            delete this.dungeon.characters[characterName];
-            sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
-            this.kickAllPlayers('Der Dungeon wurde beendet'); // TODO: Recource
+        } else { // Dungeon Master
             this.stopDungeon();
         }
     }
@@ -200,7 +197,7 @@ export class DungeonController {
     async persistAllRooms(){
         console.log("persisting rooms...")
         let rooms: Room[] = this.mapToArray(this.dungeon.rooms)
-        this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
+        await this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
     }
 
     mapToArray(map: any): any[] {
@@ -214,9 +211,9 @@ export class DungeonController {
     async persistAllCharacters(){
         console.log('Persisting all Characters');
         let characters = this.mapToArray(this.dungeon.characters)
-        characters.filter(char => char.name !== 'dungeonmaster').forEach(async char => {
+        await Promise.all(characters.filter(char => char.name !== 'dungeonmaster').map(async char => {
             await this.persistCharacterData(char);
-        });
+        }));
     }
 
     async persistBlacklist(){

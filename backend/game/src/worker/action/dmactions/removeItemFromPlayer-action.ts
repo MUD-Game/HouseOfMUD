@@ -40,7 +40,7 @@ export class RemoveItem extends Action { //test me
                     this.dungeonController.sendInventoryData(recipientCharacterName)
 
                 } else {
-                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.charakterHasntItem, recipientCharacterName), room: roomName})
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.charakterHasntItem, recipientCharacterName)})
                 }
 
             } catch(e) {
@@ -50,7 +50,7 @@ export class RemoveItem extends Action { //test me
                     let itemName: string = item.getName()
                     availableItemsString += `\n\t${itemName}`
                 })
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.itemDoesNotExist, availableItemsString), room: roomName})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.itemDoesNotExist, availableItemsString)})
             }
 
         } catch(e) {

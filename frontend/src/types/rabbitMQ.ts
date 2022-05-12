@@ -1,5 +1,5 @@
 
-export type SendActions = 'login' | 'logout' | 'message' | 'dmmessage' | 'connection.toggle' | 'playerInformation' | 'serverbroadcast';
+export type SendActions = 'login' | 'logout' | 'message' | 'dmmessage' | 'connection.toggle' | 'playerInformation' | 'serverbroadcast' | 'dmgiveup';
 
 export type ReceiveActions = 'message' | 'inventoryupdate' | 'hudupdate' | 'minimapupdate';
 

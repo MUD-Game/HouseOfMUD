@@ -8,7 +8,7 @@
 
 import React, { useState } from 'react'
 import { Row } from 'react-bootstrap';
-import { CloudArrowUp, Send } from 'react-bootstrap-icons';
+import { CloudArrowUp, Send, SendPlus } from 'react-bootstrap-icons';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";
 import { SendsMessagesProps } from '../../../types/misc';
 export interface ChatInputProps {
@@ -48,12 +48,12 @@ const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallb
                     onSendCommand(message);
                     setMessage("");
                 }}>
-                    <CloudArrowUp />
+                    <SendPlus size={28} />
                 </button>
             </div>
             <div className="col-1">
                 <button className="btn px-0 w-100 drawn-border btn-green" onClick={sendInput}>
-                    <Send />
+                    <Send size={28} />
                 </button>
             </div>
         </Row>

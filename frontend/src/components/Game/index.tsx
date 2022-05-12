@@ -50,7 +50,8 @@ const Game: React.FC<GameProps> = () => {
         }
         navigate('/', {state: {
             message: message.kickMessage,
-            title: t(`alert.${message.type}.title`)
+            title: t(`alert.${message.type}.title`),
+            time: new Date()
         } as DashboardLocationState});
     }
 

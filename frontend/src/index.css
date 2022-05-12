@@ -145,6 +145,19 @@ h1, h2, h3, h4 {
   transition: all 0.8 ease-in-out;
 }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+#refreshButton.spin > svg{
+  animation: spin 1s linear infinite;
+}
+
 
 hr {
   border: 1px solid var(--textcolor);

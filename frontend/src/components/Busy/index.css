@@ -25,6 +25,11 @@
   left:50%;
 }
 
+#sadwrapper a{
+  text-decoration: underline;
+  font-weight: initial;
+}
+
 #sadwrapper{
   display:flex;
   justify-content: center;

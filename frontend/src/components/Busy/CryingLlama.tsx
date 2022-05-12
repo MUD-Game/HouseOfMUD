@@ -3,6 +3,7 @@ import { Col, Row } from 'react-bootstrap';
 import CryingLlamaPng from 'src/assets/LamaSad.png'
 import "./index.css"
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const CryingLlama : React.FC = () => {
 
@@ -15,7 +16,7 @@ const CryingLlama : React.FC = () => {
                  
                  <div>
                         <h1>{t("cryingLlama.title")}</h1>
-                        <h4>{t("cryingLlama.text")}</h4>
+                <h4><Link to="/dungeon-configurator">{t("cryingLlama.text")}</Link></h4>
                  </div>
              </div>
     );

@@ -115,6 +115,7 @@
         }
     },
     "game": {
+        "noplayers": "Momentan ist niemand online",
         "leave": "Verlassen",
         "queue": "Warteschlange",
         "inventory": "Inventar",
@@ -232,6 +233,8 @@
         "welcome": "Willkommen"
     },
     "button": {
+        "dmgive": "Dungeonmaster abgeben",
+        "shutdown": "Server stoppen",
         "submit": "Senden",
         "ok": "O.K.",
         "join": "Beitreten",
@@ -276,6 +279,10 @@
         "internal": {
             "title": "Interner Server Fehler",
             "text": "Es ist ein interner Server Fehler aufgetreten. Bitte versuche es später noch einmal, falls das Problem weiterhin besteht wenden Sie sich an einen Administrator."
+        },
+        "banned":{
+            "title": "Fehler beim beitreten",
+            "text": "Du bist von diesem Dungeon gebannt"
         },
         "unauthorized": {
             "title": "Falsche Anmeldedaten",
@@ -426,7 +433,7 @@
     "info": {
         "verifyemail": {
             "title": "Registrierung erfolgreich",
-            "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst."
+            "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst. (Bitte schau auch in dein Spam-Verzeichnis falls du die Mail nicht findest)"
         },
         "forgotlogin": {
             "email_sent": {
@@ -459,6 +466,10 @@
         "item_count": 1000000
 
 
-    }
-
+    },
+ "dungeonmasterleave":{
+     "title": "Dungeon Verlassen",
+     "text": "Der Dungeon läuft nicht ohne einen Dungeon-Master! Du kannst entweder den Dungeon verlassen, wodurch dieser gespeichter und gestoppt wird. Oder du kannst einem anderen zum Dungeon-Master ernennen",
+     "select": "Wähle einen neuen Dungeon-Master aus"
+ }
 }

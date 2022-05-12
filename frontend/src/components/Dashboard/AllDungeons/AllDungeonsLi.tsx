@@ -10,7 +10,7 @@
 
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import { CloudCheck, CloudSlash, Lock, Unlock } from 'react-bootstrap-icons';
+import { CloudCheck, CloudSlash, Lock, ShieldLock, Unlock } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from 'src/hooks/useGame';
@@ -62,7 +62,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({
             </div>
             <div className="col-1 text-center">
                 {isPrivate ? (
-                    <Lock style={{ color: "var(--red)" }} size={25} className="mx-1" />
+                    <ShieldLock style={{ color: "var(--red)" }} size={25} className="mx-1" />
                 ) : (
                     <Unlock size={25} className="mx-1" />
                 )}

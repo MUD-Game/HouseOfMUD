@@ -30,7 +30,7 @@ export interface RabbitMQContextType {
   sendDmMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
   sendToggleConnection: (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed', callback: VoidFunction, error: (error: string) => void) => void;
   sendPlayerInformation: (playerName: string, callback: VoidFunction, error: (error: string) => void) => void
-
+  sendDmGiveUp: (character:string, callback: VoidFunction, error: (error: string) => void) => void;
   // Character Message
   sendCharacterMessage: (message: string, callback: VoidFunction, error: (error: string) => void) => void;
   // Subscriber
@@ -220,6 +220,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     sendMessage(message, 'dmmessage', callback, error);
   }
 
+  const sendDmGiveUp = (user: string, callback: VoidFunction, error: (error: string) => void) => {
+    sendData({character}, 'dmgiveup', callback, error);
+  }
+
   const sendData = (data: any, action: SendActions, callback: VoidFunction, error: (error: string) => void) => {
     if (!rabbit.connected) {
       error("RabbitMQ is not connected");
@@ -308,7 +312,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendServerbroadcast, sendToggleConnection, sendPlayerInformation, setConnectionSubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendServerbroadcast, sendToggleConnection, sendPlayerInformation, sendDmGiveUp, setConnectionSubscriber };
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

@@ -52,7 +52,7 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
 
     const onCancel = () =>{
         showConfirmation("canceldungeon", ()=>{
-            navigate("/");
+            navigate("/?board=my");
         })
     }
     return (

@@ -283,6 +283,10 @@
             "title": "Aktion existiert bereits",
             "text": "Es existiert bereits eine Aktion mit diesem Command!"
         },
+        "characteralreadyexists":{
+            "title": "Charakter existiert bereits",
+            "text": "Es existiert bereits ein Charakter mit diesem Namen!"
+        },
         "classalreadyexists":{
             "title": "Klasse existiert bereits",
             "text": "Es existiert bereits eine Klasse mit diesem Namen!"

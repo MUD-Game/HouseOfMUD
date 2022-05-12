@@ -304,11 +304,15 @@ export class API {
                 characterData.userId = userID;
                 characterData.name = characterData.name;
                 characterData.exploredRooms = ["0,0"];
-                this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
-                    res.status(200).json({ ok: 1, character: character });
-                }).catch(err => {
-                    res.status(500).json({ ok: 0, error: err.message });
-                });
+                if(await this.dba.checkIfCharacterExists(characterData.name, dungeonID)){
+                    res.status(400).json({ ok: 0, error: 'characteralreadyexists' });
+                }else{
+                    this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
+                        res.status(200).json({ ok: 1, character: character });
+                    }).catch(err => {
+                        res.status(500).json({ ok: 0, error: err.message });
+                    });
+                }
             } else {
                 res.status(400).json({ ok: 0, error: 'parameters' });
             }

@@ -237,9 +237,15 @@ export class HostLink {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
             if (this.dungeons[dungeonID].creatorId === creatorId){
+                let dungeon = this.dungeons[dungeonID];
                 dungeons.push({
                     id: dungeonID,
-                    ...this.dungeons[dungeonID]
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
                 });
             }
         }

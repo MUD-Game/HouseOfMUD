@@ -385,6 +385,10 @@ describe('ActionHandler', () => {
     const removeManaAction: RemoveMana = actionHandler.dmActions[triggers.removeMana] as RemoveMana
     const addDamageAction: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage
     const removeDamageAction: RemoveDamage = actionHandler.dmActions[triggers.removeDamage] as RemoveDamage
+    const addItemToPlayer: AddItem = actionHandler.dmActions[triggers.addItem] as AddItem
+    const addItemToRoom: AddRoomItem = actionHandler.dmActions[triggers.addRoomItem] as AddRoomItem
+    const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem
+    const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
     
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
@@ -548,6 +552,10 @@ describe('ActionHandler', () => {
     test('ActionHandler should call performAction on RemoveDmg when the dungeon master removes dmg from a user', () => {
         actionHandler.processDmAction(`remdmg Jeff 1`);
         expect(removeDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
+    })
+    test('ActionHandler should call performAction on AddItem when the dungeon master adds an item to a user', () => {
+        actionHandler.processDmAction(`additem Jeff Apfel`);
+        expect(removeDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Apfel'])
     })
     
 });

@@ -71,6 +71,7 @@ export const actionMessages = {
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
     unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s",
     playerKicked: "%s wurde aus dem Dungeon gekickt!",
+    playerBanned: "%s wurde vom Dungeon gebannt!",
     broadcast: "Dungeon Master sagt: %s"
 }
 

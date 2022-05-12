@@ -32,6 +32,7 @@ import { AddItem } from './dmactions/addItemToPlayer-action';
 import { AddRoomItem } from './dmactions/addItemToRoom-action';
 import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
 import { KickPlayer } from './dmactions/kickPlayer-action';
+import { BanPlayer } from './dmactions/banPlayer-action';
 
 
 // const regExpression = {
@@ -133,8 +134,10 @@ export class ActionHandlerImpl implements ActionHandler {
            new AddRoomItem(dungeonController),
            new removeRoomItem(dungeonController),
            new ToggleConnectionAction(dungeonController),
-           new KickPlayer(dungeonController)
+           new KickPlayer(dungeonController),
+           new BanPlayer(dungeonController)
         ];
+        
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;
         });

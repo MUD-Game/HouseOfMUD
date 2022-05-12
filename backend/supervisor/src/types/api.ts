@@ -43,7 +43,7 @@ export interface AuthenticateResponse extends SupervisorResponse {
  * @category Request
  */
 export interface LoginRequest extends SupervisorRequest {
-    character: string
+    character: string;
 }
 
 /**
@@ -57,6 +57,13 @@ export interface LoginResponseData {
  * @category Response
  */
 export interface LoginResponse extends SupervisorResponse , LoginResponseData {}
+
+
+
+/**
+ * @category Response Data
+ */
+ export interface CheckPasswordResponse extends SupervisorResponse{}
 
 /**
  * Starts a dungeon via POST: /startDungeon/:dungeonId
@@ -101,6 +108,7 @@ export interface DungeonResponseData {
     description: string;
     maxPlayers: number;
     currentPlayers: number;
+    isPrivate: boolean;
     status: 'online' | 'offline';
 }
 /**

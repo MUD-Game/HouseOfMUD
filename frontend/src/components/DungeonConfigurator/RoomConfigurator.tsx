@@ -14,6 +14,7 @@ import connectionInactivePng from 'src/assets/connection_inactive.png';
 import Konva from 'konva';
 import { useRefSize } from 'src/hooks/useRefSize';
 import Alert from '../Custom/Alert';
+import { validator } from 'src/utils/validator';
 
 const bodyStyles = window.getComputedStyle(document.body);
 const roomSize = 60;
@@ -423,7 +424,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                             selected={selectedRoomItems}
                         />
                         {selectedRoomItems.map((item: any) => {
-                            return <MudInput colmd={2} type="number" placeholder={item.name + "-" + t("common.amount")} key={currentRoom.id + item.name} name={item.name} value={selectedRoomItemValues[item.id]} onChange={(event) => setSelectedRoomItemValues({ ...selectedRoomItemValues, [item.id]: event.target.value })} />
+                            return <MudInput colmd={2} type="number" placeholder={item.name + "-" + t("common.amount")} key={currentRoom.id + item.name} name="item_count" value={selectedRoomItemValues[item.id]} onChange={(event) => setSelectedRoomItemValues({ ...selectedRoomItemValues, [item.id]: validator.itemCount(event.target.value) })} />
                         })}
                     </Row>
                     <Row className="mt-4">

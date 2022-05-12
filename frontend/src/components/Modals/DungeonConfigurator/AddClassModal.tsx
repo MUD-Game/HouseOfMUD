@@ -86,11 +86,11 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert type="error" message={error} setMessage={setError} />
-                    <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
-                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(validator.statValues(event.target.value))} />
-                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number" onChange={(event) => setMana(validator.statValues(event.target.value))} />
-                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(validator.statValues(event.target.value))} />
+                    <MudInput name="name" placeholder='Name' colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
+                    <MudInput name="maxhp" noconstraint={props.editData?.from_server || 0 ? 1 : 0}  disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(validator.statValues(event.target.value))} />
+                    <MudInput name="maxmana" noconstraint={props.editData?.from_server || 0 ? 1 : 0} disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number"  onChange={(event) => setMana(validator.statValues(event.target.value))} />
+                    <MudInput name="maxdmg" noconstraint={props.editData?.from_server || 0 ? 1 : 0}  disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(validator.statValues(event.target.value))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

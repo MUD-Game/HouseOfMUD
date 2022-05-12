@@ -37,7 +37,7 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
     }
 
     const onSubmit = () => {
-        if (!props.editData &&  validator.alreadyExists(name, "name", dconf.items)) {
+        if (!props.editData && validator.alreadyExists(name, "name", dconf.items)) {
             setError(t(`itemalreadyexists`));
             return;
         }
@@ -80,8 +80,8 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.cirName(event.target))} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
+                    <MudInput name="name" placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.cirName(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

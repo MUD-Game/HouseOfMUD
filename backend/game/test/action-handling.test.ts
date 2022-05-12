@@ -326,6 +326,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     'TestDungeon1',
     'Test',
+    '',
     '1',
     '1',
     2,

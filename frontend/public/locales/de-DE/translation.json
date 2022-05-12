@@ -56,6 +56,7 @@
     "dungeon_keys": {
         "name": "Name",
         "description": "Beschreibung",
+        "dungeon_password": "Dungeonpasswort",
         "npc": "NPC",
         "players": "Spieler",
         "status": "Status",
@@ -142,6 +143,10 @@
             "delete_room": "Raum löschen"
         },
         "confirmations": {
+            "canceldungeon":{
+                "title": "Sicher?",
+                "text": "Bist du sicher, dass du Zurück zum Dashboard gehen willst? Alle Änderungen werden verworfen!"
+            },
             "delete_class": {
                 "title": "Klasse löschen",
                 "text": "Bist du sicher, dass du diese Klasse löschen möchtest?"
@@ -179,6 +184,9 @@
             "description": {
                 "placeholder": "Beschreibung"
             },
+            "password": {
+                "placeholder": "Dungeonpasswort"
+            },
             "maxPlayers": {
                 "placeholder": "Maximale Spieleranzahl"
             },
@@ -199,11 +207,15 @@
             "create_npc": "neuen NPC erstellen",
             "create_gender": "neues Geschlecht",
             "create_species": "neue Spezies",
-            "create_action": "neue Aktion anlegen"
+            "create_action": "neue Aktion anlegen",
+            "send_password": "Passwort abschicken"
         }
     },
     "common": {
+        "string_chars":"Zeichen",
+        "isprivate": "Passwortgeschützt",
         "select_items": "Items auswählen",
+        "back": "Zurück",
         "select_npcs": "NPCs auswählen",
         "select_actions": "Aktionen auswählen",
         "select_species": "Spezies auswählen",
@@ -269,9 +281,17 @@
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch! (Hinweis: Jedes Release verwendet eine neue Datenbank, du musst dich wahrscheinlich neu registrieren)"
         },
+        "dungeonunauthorized": {
+            "title": "Falsches Passwort",
+            "text": "Das angegebene Passwort ist falsch!"
+        },
         "actionalreadyexists":{
             "title": "Aktion existiert bereits",
             "text": "Es existiert bereits eine Aktion mit diesem Command!"
+        },
+        "characteralreadyexists":{
+            "title": "Charakter existiert bereits",
+            "text": "Es existiert bereits ein Charakter mit diesem Namen!"
         },
         "classalreadyexists":{
             "title": "Klasse existiert bereits",
@@ -414,5 +434,31 @@
                 "text": "Falls ein Account mit dieser E-Mail-Adresse existiert, wurde ein Link zum Ändern deines Passworts an deine E-Mail-Adresse geschickt."
             }
         }
+    },
+    "cryingLlama":{
+        "title": "Es sind momentan keine Dungeons gestartet",
+        "text": "Erstelle doch selber einen Dungeon und starte ihn!"
+    },
+    "constraint":{
+        "max": "max.",
+        "name": 50,
+        "description": 500,
+        "maxPlayers": 1000000,
+        "dungeon_password": 50,
+        "maxhp": 1000000,
+        "maxmana": 1000000,
+        "maxdmg": 1000000,
+        "command": 50,
+        "output": 500,
+        "addhp": 1000000,
+        "addmana": 1000000,
+        "adddmg": 1000000,
+        "removehp": 1000000,
+        "removemana": 1000000,
+        "removedmg": 1000000,
+        "item_count": 1000000
+
+
     }
+
 }

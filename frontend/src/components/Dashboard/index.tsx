@@ -110,8 +110,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 </div>
             </Row>
 
+            
 
-            {dungeonView === "all" && allDungeons ? <AllDungeons filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
+            {dungeonView === "all" && allDungeons ? <AllDungeons messageCallback={setError} filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <MyDungeons messageCallback={setError} fetchMyDungeons={fetchDungeons} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}
         </Container >
     )

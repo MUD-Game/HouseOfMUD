@@ -21,6 +21,7 @@ interface Dungeon {
     host?: string;
     name: string;
     description: string;
+    password: string;
     maxPlayers: number; 
     masterId: string;
     creatorId: string;
@@ -196,6 +197,7 @@ export class HostLink {
             this.dungeons[dungeonID] = {
                 name: dungeon.name,
                 description: dungeon.description,
+                password: dungeon.password,
                 maxPlayers: dungeon.maxPlayers,
                 masterId: dungeon.masterId,
                 creatorId: dungeon.creatorId,
@@ -219,6 +221,7 @@ export class HostLink {
         this.dungeons[id] = {
             name: dungeonData.name,
             description: dungeonData.description,
+            password: dungeonData.password,
             maxPlayers: dungeonData.maxPlayers,
             masterId: dungeonData.masterId,
             creatorId: dungeonData.creatorId,
@@ -227,23 +230,23 @@ export class HostLink {
         };
     }
 
-    public editDungeon(id:string, dungeonData: any){
-        this.dungeons[id].name = dungeonData.name;
-        this.dungeons[id].description = dungeonData.description;
-        this.dungeons[id].maxPlayers = dungeonData.maxPlayers;
-        this.dungeons[id].masterId = dungeonData.masterId;
-        this.dungeons[id].creatorId = dungeonData.creatorId;
-    }
-
-
     /**
      * @returns all online dungeons
      */
     public getOnlineDungeons(){
         const dungeons: any[] = [];
-        for (let dungeon in this.dungeons) {
-            if (this.dungeons[dungeon].status === 'online') {
-                dungeons.push({...this.dungeons[dungeon], id:dungeon});
+        for (let dungeonID in this.dungeons) {
+            if (this.dungeons[dungeonID].status === 'online') {
+                let dungeon = this.dungeons[dungeonID];
+                dungeons.push({
+                    id: dungeonID,
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
+                });
             }
         }
         return dungeons;
@@ -253,30 +256,41 @@ export class HostLink {
     /**
      * @returns dungeon informations for dashboard
      */
-    public getDungeons(creatorId?: string): any[] {
+    public getDungeonsOfCreator(creatorId: string): any[] {
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
-            if (!creatorId) {
+            if (this.dungeons[dungeonID].creatorId === creatorId){
+                let dungeon = this.dungeons[dungeonID];
                 dungeons.push({
                     id: dungeonID,
-                    ...this.dungeons[dungeonID]
-                });
-            } else if (this.dungeons[dungeonID].creatorId === creatorId){
-                dungeons.push({
-                    id: dungeonID,
-                    ...this.dungeons[dungeonID]
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
                 });
             }
         }
         return dungeons;
     }
 
-    public deleteDungeon(id: string) {
-        delete this.dungeons[id];
+    public deleteDungeon(dungeon: string) {
+        delete this.dungeons[dungeon];
     }
 
     public isDungeonMaster(dungeonID: string, masterId: string): boolean {
         return this.dungeons[dungeonID].masterId === masterId;
+    }
+
+    public checkPassword(dungeonID: string, password: string): boolean {
+        let dungeon = this.dungeons[dungeonID];
+        if (dungeon !== undefined) {
+            if (dungeon.password !== undefined && dungeon.password !== '') {
+                return dungeon.password === password;
+            }
+        }
+        return false;
     }
 
     /**

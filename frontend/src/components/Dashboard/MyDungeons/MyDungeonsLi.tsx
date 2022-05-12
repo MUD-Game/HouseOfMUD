@@ -89,8 +89,8 @@ const MyDungeonsLi: React.FC<MyDungeonsLiProps & SendsMessagesProps> = ({ id, na
                 {currentPlayers}/{maxPlayers}
             </div>
             <div className="col-1 text-center">
-                {isPrivate ? <Lock size={25} className="mx-1" /> : <Unlock size={25} className="mx-1" />}
-                {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "red" }} className="mx-1" />}
+                    {isPrivate ? <Lock style={{ color: "var(--red)" }} size={25} className="mx-1" /> : <Unlock size={25} className="mx-1" />}
+                    {status === "online" ? <CloudCheck size={25} style={{ color: "green" }} className="mx-1" /> : <CloudSlash size={25} style={{ color: "var(--red)" }} className="mx-1" />}
 
             </div>
                 {isBusy ?  <div className="col-2 text-end"> <Busy className="list-busy" /> </div>: <div className="col-2 text-end">

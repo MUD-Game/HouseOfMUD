@@ -11,22 +11,62 @@
  * ```
  */
 
-import React from 'react';
+import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom'
 import AllDungeonLi from './AllDungeonsLi';
 
 import { DungeonResponseData } from '@supervisor/api';
 import { Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import {supervisor} from 'src/services/supervisor'
+import {useGame} from 'src/hooks/useGame'
+import { SendsMessagesProps } from '../../../types/misc';
+import DungeonPasswordModal, {
+    DungeonPasswordModalProps,
+} from '../../Modals/DungeonConfigurator/DungeonPasswordModal';
 import CryingLlama from 'src/components/Busy/CryingLlama';
 export type AllDungeonProps = {
     filterKey: 'name' | 'description';
     filterValue: string;
     allDungeons: DungeonResponseData[];
-}
+};
 
-const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filterKey }) => {
+const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
+    allDungeons,
+    filterValue,
+    filterKey,
+    messageCallback
+}) => {
+    const { t } = useTranslation();
+    const game = useGame();
+    const navigate = useNavigate();
+    const [modalState, setModalState] = useState<DungeonPasswordModalProps>({
+        show: false,
+        onConfirm: (password: string) => {},
+        onHide: () => {},
+    });
 
-    const {t} = useTranslation();
+    const onPasswordRequest = (dungeonId: string, dungeonName: string) => {
+        setModalState({ show: true, onConfirm: password => {
+            supervisor.checkPassword(
+                dungeonId,
+                password,
+                () => {
+                    setModalState({ show: false, onHide: () => { }, onConfirm: () => { } });
+                    game.setDungeon(dungeonId);
+                    game.setDungeonName(dungeonName);
+                    navigate('/select-character');
+                },
+                error => {
+                    console.log(error.error);
+                    messageCallback(error.error);
+                }
+            );
+        }, onHide: () => {
+            setModalState({ show: false, onHide: () => {}, onConfirm: () =>{}});
+            messageCallback("");
+        } });
+    };
 
     return (
         <div className="dashboard pt-3">
@@ -48,7 +88,11 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filt
             
             {allDungeons.filter(dungeon => dungeon[filterKey].toLowerCase().includes(filterValue.toLowerCase())).map((dungeon, index) => {
                 return (
-                    <AllDungeonLi key={index} isPrivate={false} {...dungeon} />
+                    <AllDungeonLi
+                                onPasswordRequest={onPasswordRequest}
+                                key={index}
+                                {...dungeon}
+                            />
                 )
             })}</>
              : 
@@ -57,5 +101,10 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filt
         </div>
     )
 }
+
+            <DungeonPasswordModal {...modalState} />
+        </>
+    );
+};
 
 export default AllDungeons;

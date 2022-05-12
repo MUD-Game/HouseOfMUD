@@ -14,6 +14,7 @@ export interface Dungeon {
   id: string;
   name: string;
   description: string;
+  password: string;
   creatorId: string;
   globalActions: string[];
   masterId: string;
@@ -60,6 +61,7 @@ export class DungeonImpl implements Dungeon {
   id: string;
   name: string;
   description: string;
+  password: string;
   creatorId: string;
   masterId: string;
   maxPlayers: number;
@@ -84,6 +86,10 @@ export class DungeonImpl implements Dungeon {
 
   getDescription(): string {
     return this.description;
+  }
+
+  getPassword(): string {
+    return this.password;
   }
 
   getCreatorId(): string {
@@ -245,6 +251,7 @@ export class DungeonImpl implements Dungeon {
     id: string,
     name: string,
     description: string,
+    password: string,
     creatorId: string,
     masterId: string,
     maxPlayers: number,
@@ -262,6 +269,7 @@ export class DungeonImpl implements Dungeon {
     this.id = id;
     this.name = name;
     this.description = description;
+    this.password = password;
     this.creatorId = creatorId;
     this.masterId = masterId;
     this.maxPlayers = maxPlayers;

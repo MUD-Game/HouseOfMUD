@@ -11,6 +11,7 @@ import { RoomDataset } from "./roomDataset";
 export interface DungeonDataset {
   name: string;
   description: string;
+  password: string;
   creatorId: string;
   masterId: string;
   maxPlayers: number;
@@ -29,6 +30,7 @@ export interface DungeonDataset {
 export const dungeonSchema = new Schema<DungeonDataset>({
   name: { type: String, maxLength: 50 },
   description: { type: String },
+  password: {type: String },
   creatorId: { type: String },
   masterId: { type: String },
   maxPlayers: { type: Number },

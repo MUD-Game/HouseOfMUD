@@ -56,6 +56,7 @@
     "dungeon_keys": {
         "name": "Name",
         "description": "Beschreibung",
+        "dungeon_password": "Dungeonpasswort",
         "npc": "NPC",
         "players": "Spieler",
         "status": "Status",
@@ -183,6 +184,9 @@
             "description": {
                 "placeholder": "Beschreibung"
             },
+            "password": {
+                "placeholder": "Dungeonpasswort"
+            },
             "maxPlayers": {
                 "placeholder": "Maximale Spieleranzahl"
             },
@@ -203,10 +207,12 @@
             "create_npc": "neuen NPC erstellen",
             "create_gender": "neues Geschlecht",
             "create_species": "neue Spezies",
-            "create_action": "neue Aktion anlegen"
+            "create_action": "neue Aktion anlegen",
+            "send_password": "Passwort abschicken"
         }
     },
     "common": {
+        "isprivate": "Passwortgeschützt",
         "select_items": "Items auswählen",
         "back": "Zurück",
         "select_npcs": "NPCs auswählen",
@@ -274,9 +280,17 @@
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch! (Hinweis: Jedes Release verwendet eine neue Datenbank, du musst dich wahrscheinlich neu registrieren)"
         },
+        "dungeonunauthorized": {
+            "title": "Falsches Passwort",
+            "text": "Das angegebene Passwort ist falsch!"
+        },
         "actionalreadyexists":{
             "title": "Aktion existiert bereits",
             "text": "Es existiert bereits eine Aktion mit diesem Command!"
+        },
+        "characteralreadyexists":{
+            "title": "Charakter existiert bereits",
+            "text": "Es existiert bereits ein Charakter mit diesem Namen!"
         },
         "classalreadyexists":{
             "title": "Klasse existiert bereits",

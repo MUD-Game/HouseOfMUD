@@ -73,6 +73,7 @@ export class DatabaseAdapter {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
+            password: dungeonToStore.password,
             creatorId: dungeonToStore.creatorId,
             masterId: dungeonToStore.masterId,
             maxPlayers: dungeonToStore.maxPlayers,
@@ -116,6 +117,7 @@ export class DatabaseAdapter {
         return {
             name: foundDungeon.name,
             description: foundDungeon.description,
+            password: foundDungeon.password,
             creatorId: foundDungeon.creatorId,
             masterId: foundDungeon.masterId,
             maxPlayers: foundDungeon.maxPlayers,
@@ -210,6 +212,7 @@ export class DatabaseAdapter {
             _id: oldDungeon._id,
             name: newDungeon.name,
             description: newDungeon.description,
+            password: newDungeon.password,
             creatorId: oldDungeon.creatorId,
             masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
@@ -229,11 +232,11 @@ export class DatabaseAdapter {
     /**
      * get the needed dungeon information for the supervisor 
      * @param id the id of the dungeon to get the information from
-     * @returns the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
+     * @returns the dungeon information (id, name, description, creatorId, password, masterId, maxPlayers, currentPlayers)
      */
     async getDungeonInfo(id: string) {
         return (this.dungeon.findOne({ id: id },
-            'id name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description password creatorId masterId maxPlayers currentPlayers'))
     }
 
     async getUserId(user: string): Promise<string | undefined> {
@@ -248,11 +251,11 @@ export class DatabaseAdapter {
 
     /**
      * get the dungeon information for the supervisor from all existing dungeons
-     * @returns an array of the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
+     * @returns an array of the dungeon information (id, name, description, password, creatorId, masterId, maxPlayers, currentPlayers)
      */
     async getAllDungeonInfos() {
         return (this.dungeon.find({},
-            'id name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description password creatorId masterId maxPlayers currentPlayers'))
     }
 
     /**

@@ -108,6 +108,20 @@ export class API {
 
         app.post('/auth/logout', this.authProvider.auth, this.authProvider.logout);
 
+        app.post('/checkPassword/:dungeonID', this.authProvider.auth, (req, res) => {
+            let dungeonID: string = req.params.dungeonID;
+            let body: any = req.body;
+            if (body.password !== undefined) {
+                if (this.hostLink.checkPassword(dungeonID, body.password)) {
+                    res.status(200).json({ok:1});
+                } else {
+                    res.status(401).json({ok: 0, error: 'dungeonunauthorized'});
+                }
+            }else{
+                res.status(400).json({ ok: 0, error: 'parameters' });
+            }
+        });
+
         // login to dungeon
         app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
             let dungeonID: string = req.params.dungeonID;
@@ -162,7 +176,7 @@ export class API {
         // get my dungeons
         app.get('/myDungeons', this.authProvider.auth, async (req, res) => {
             let userID = req.cookies.userID; // TODO: get myDungeons based on user   
-            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons(userID) });
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeonsOfCreator(userID) });
         });
 
         // create dungeon
@@ -290,11 +304,15 @@ export class API {
                 characterData.userId = userID;
                 characterData.name = characterData.name;
                 characterData.exploredRooms = ["0,0"];
-                this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
-                    res.status(200).json({ ok: 1, character: character });
-                }).catch(err => {
-                    res.status(500).json({ ok: 0, error: err.message });
-                });
+                if(await this.dba.checkIfCharacterExists(characterData.name, dungeonID)){
+                    res.status(400).json({ ok: 0, error: 'characteralreadyexists' });
+                }else{
+                    this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
+                        res.status(200).json({ ok: 1, character: character });
+                    }).catch(err => {
+                        res.status(500).json({ ok: 0, error: err.message });
+                    });
+                }
             } else {
                 res.status(400).json({ ok: 0, error: 'parameters' });
             }

@@ -2,6 +2,7 @@ export interface MudDungeon {
     id: string;
     name: string;
     description: string;
+    password: string;
     creatorId: string;
     masterId: string;
     maxPlayers: number;

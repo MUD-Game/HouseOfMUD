@@ -179,6 +179,9 @@
             "description": {
                 "placeholder": "Beschreibung"
             },
+            "password": {
+                "placeholder": "Dungeon Passwort"
+            },
             "maxPlayers": {
                 "placeholder": "Maximale Spieleranzahl"
             },

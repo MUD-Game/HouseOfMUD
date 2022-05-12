@@ -48,16 +48,10 @@ const MyDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({ myDungeons
 
             {myDungeons.filter(dungeon => dungeon[filterKey].toLowerCase().includes(filterValue.toLowerCase())).map((dungeon, index) => {
                 return (
-                    <MyDungeonsLi key={index} isPrivate={false} fetchMyDungeons={fetchMyDungeons} messageCallback={messageCallback} {...dungeon} />
+                    <MyDungeonsLi key={index} fetchMyDungeons={fetchMyDungeons} messageCallback={messageCallback} {...dungeon} />
                 )
             })}
-
-            {/* {allDungeons.map((dungeon, index) => {
-                if (dungeon.name === filter)
-                return (
-                    <AllDungeonLi key={index} isPrivate={false} {...dungeon} />
-                )
-            })} */}
+            
         </div>
     )
 }

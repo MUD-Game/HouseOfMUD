@@ -124,7 +124,7 @@ export class API {
                     res.status(400).json({ ok: 0, error: 'parameters' });
                 }
             } else {
-                res.status(400).json({ ok: 0, error: 'banned' });
+                res.status(401).json({ ok: 0, error: 'banned' });
             }
         });
 

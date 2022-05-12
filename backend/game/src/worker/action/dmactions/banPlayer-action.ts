@@ -32,7 +32,10 @@ export class BanPlayer implements Action {
             } else {
                 // save banned user
                 dungeon.getBlacklist().push(userId)
-                await this.dungeonController.kickPlayer(recipientCharacterName, {type: kickType, kickMessage: message})
+                let dungeonCharacters: Character[] = Object.values(dungeon.characters)
+                dungeonCharacters.forEach(async character => {
+                    await this.dungeonController.kickPlayer(character.getName(), {type: kickType, kickMessage: message})
+                })
                 amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerBanned, recipientCharacterName)})
                 this.dungeonController.persistBlacklist()
             }

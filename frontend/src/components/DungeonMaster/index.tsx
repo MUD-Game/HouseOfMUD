@@ -51,7 +51,8 @@ const Game: React.FC<GameProps> = () => {
         navigate('/', {
             state: {
                 message: message.kickMessage,
-                title: t(`alert.${message.type}.title`)
+                title: t(`alert.${message.type}.title`),
+                time: new Date()
             } as DashboardLocationState
         });
     }
@@ -101,10 +102,10 @@ const Game: React.FC<GameProps> = () => {
 
     return (
         <Container fluid className="game-wrapper">
-            <DungeonMasterLeaveModal show={showLeaveModal} onDmGiveUp={()=>{
-                // Say to rabbitmq that youre giving up your dm status
+            <DungeonMasterLeaveModal show={showLeaveModal} onDmGiveUp={(character)=>{
+                rabbit.sendDmGiveUp(character, ()=>{}, ()=>{})
             }} onHide={()=>setShowLeaveModal(false)} onShutdown={()=>{
-                navigate("/");
+                navigate("/?board=my", {state:{delay:1000, time:new Date()}});
             }}  playerList={playerList}/>
             <Row className="game-header align-items-center">
                 <div className="col text-end">

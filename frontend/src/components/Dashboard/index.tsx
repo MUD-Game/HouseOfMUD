@@ -21,6 +21,7 @@ import MyDungeons from './MyDungeons/MyDungeons';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
 import { Arrow90degLeft, ArrowCounterclockwise, Circle } from 'react-bootstrap-icons';
+import Busy from '../Busy';
 
 
 export type DashboardProps = {
@@ -29,13 +30,15 @@ export type DashboardProps = {
 export interface DashboardLocationState {
     message: string;
     title: string;
+    delay: number;
+    time: Date;
 }
 
 type boardtype = 'all' | 'my';
 
 const Dashboard: React.FC<DashboardProps> = (props) => {
-    
-    const {t} = useTranslation();
+
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     // Get the search params
@@ -46,15 +49,26 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     const [myDungeons, setMyDungeons] = useState<DungeonResponseData[]>();
     const [dungeonView, setDungeonView] = useState<boardtype>(board);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [alert, setAlert] = useState({title: "", text: ""});
+    const [alert, setAlert] = useState({ title: "", text: "" });
     const [error, setError] = useState<string>("");
 
 
     useEffect(() => {
-        fetchDungeons();
-        if(location.state){
+        if (location.state) {
             const dState = location.state as DashboardLocationState;
-            setAlert({ title: dState.title, text: dState.message});
+            // If a timestamp was given, check if its too old
+            const isInTime = dState.time ? dState.time && dState.time.getTime() + 2000 > Date.now() : true;
+            if (isInTime && dState.message && dState.title) {
+                setAlert({ title: dState.title, text: dState.message });
+            }
+            const delay = dState.delay;
+            if (isInTime && delay) {
+                setTimeout(() => fetchDungeons(), delay);
+            } else {
+                fetchDungeons();
+            }
+        } else {
+            fetchDungeons();
         }
     }, [])
 
@@ -69,8 +83,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
 
     const fetchDungeons = (callback?: VoidFunction) => {
-        supervisor.getDungeons({}, (data)=>{ setAllDungeons(data); callback && callback()}, error => setError(error.error))
-        supervisor.getMyDungeons({}, (data)=>{ setMyDungeons(data);}, error => setError(error.error));
+        supervisor.getDungeons({}, (data) => { setAllDungeons(data); callback && callback() }, error => setError(error.error))
+        supervisor.getMyDungeons({}, (data) => { setMyDungeons(data); }, error => setError(error.error));
     }
 
     const handleSearch = (event: any) => {
@@ -81,7 +95,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         <Container className="mb-5">
             <Row>
                 <Alert message={error} setMessage={setError} type="error" />
-                <Alert message={alert.text} setMessage={() => setAlert({title: "", text: ""})} title={alert.title} type={'error'} />
+                <Alert message={alert.text} setMessage={() => setAlert({ title: "", text: "" })} title={alert.title} type={'error'} />
             </Row>
             <Row className="align-items-center mb-3">
                 <div className="col-8">
@@ -108,7 +122,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                         }
                         )
-                    }} className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30}/></button>
+                    }} className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30} /></button>
                 </Col>
             </Row>
 
@@ -125,7 +139,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 </div>
             </Row>
 
-            
+            {dungeonView === "all" && !allDungeons && <Busy />}
+            {dungeonView === "my" && !myDungeons && <Busy />}
 
             {dungeonView === "all" && allDungeons ? <AllDungeons messageCallback={setError} filterKey={'name'} filterValue={searchTerm} allDungeons={allDungeons} /> : null}
             {dungeonView === "my" && myDungeons ? <MyDungeons messageCallback={setError} fetchMyDungeons={fetchDungeons} filterKey={'name'} filterValue={searchTerm} myDungeons={myDungeons} /> : null}

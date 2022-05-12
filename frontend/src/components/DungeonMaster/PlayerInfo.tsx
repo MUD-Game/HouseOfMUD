@@ -49,14 +49,6 @@ const PlayerInfo: React.FC<PlayerInfoProps> = () => {
         <div className="playerinfo drawn-border mb-2 p-2">
             <div className="playerinfo-wrap h-100 p-1 pt-0">
                 <p className='m-0'><u><b>{t("game.playerInfo.player")}: {playerInformation?.playerName}</b></u></p>
-                <span><u>{t("game.playerInfo.room")}:</u> {playerInformation?.room}</span> <br />
-                <span><u>{t("game.playerInfo.inventory")}:</u><br />
-                    <ul>
-                        {playerInformation?.inventory.map(itemName => {
-                            return ( <li key={itemName.item}> {itemName.item} [{itemName.count}] </li> )
-                        })}
-                    </ul>
-                </span><br />
                 <span><u>{t("game.playerInfo.stats")}:</u> <br />
                 {playerInformation != undefined
                     ?   <div>
@@ -67,6 +59,14 @@ const PlayerInfo: React.FC<PlayerInfoProps> = () => {
                     :   ""
                 }
                 </span>
+                <span><u>{t("game.playerInfo.room")}:</u> {playerInformation?.room}</span> <br />
+                <span><u>{t("game.playerInfo.inventory")}:</u><br />
+                    <ul>
+                        {playerInformation?.inventory.map(itemName => {
+                            return ( <li key={itemName.item}> {itemName.item} [{itemName.count}] </li> )
+                        })}
+                    </ul>
+                </span><br />
 
             </div>
         </div>

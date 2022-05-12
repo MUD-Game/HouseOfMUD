@@ -47,7 +47,7 @@ const DungeonMasterLeaveModal: React.FC<DungeonMasterLeaveModalProps> = ({ onShu
                     </div>
                     <div className="col-4">
                     <Button className="btn w-100 drawn-border btn-red" onClick={(e:any) => {
-                        onDmGiveUp("someone");
+                        onDmGiveUp(user);
                         onHide();
                     }}>
                             {t(`button.dmgive`)}

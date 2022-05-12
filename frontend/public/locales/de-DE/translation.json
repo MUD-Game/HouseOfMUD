@@ -115,6 +115,7 @@
         }
     },
     "game": {
+        "noplayers": "Momentan ist niemand online",
         "leave": "Verlassen",
         "queue": "Warteschlange",
         "inventory": "Inventar",

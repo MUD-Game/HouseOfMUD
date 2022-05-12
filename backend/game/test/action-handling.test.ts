@@ -49,6 +49,7 @@ import { AddRoomItem } from "../src/worker/action/dmactions/addItemToRoom-action
 import { RemoveItem } from "../src/worker/action/dmactions/removeItemFromPlayer-action";
 import { removeRoomItem } from "../src/worker/action/dmactions/removeItemFromRoom-action";
 import { KickPlayer } from "../src/worker/action/dmactions/kickPlayer-action";
+import { BanPlayer } from "../src/worker/action/dmactions/banPlayer-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -328,7 +329,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     'Test',
     '',
     '1',
-    '1',
+    '2',
     2,
     [TestSpecies],
     [TestClass],
@@ -348,7 +349,7 @@ const TestDungeon: Dungeon = new DungeonImpl(
     [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing, TestGlobalAction],
     [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem, TestItemDungeonMaster],
     [TestNpc],
-    [TestGlobalAction.id]
+    [TestGlobalAction.id],
 );
 const TestDungeonController: DungeonController = new DungeonController(
     '1',
@@ -390,6 +391,9 @@ describe('ActionHandler', () => {
     const addItemToRoom: AddRoomItem = actionHandler.dmActions[triggers.addRoomItem] as AddRoomItem
     const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem
     const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
+    const kickPlayer: KickPlayer = actionHandler.dmActions[triggers.kickPlayer] as KickPlayer
+    const banPlayer: BanPlayer = actionHandler.dmActions[triggers.banPlayer] as BanPlayer
+    const changePlayerPosition: ChangeRoom = actionHandler.dmActions[triggers.changeRoom] as ChangeRoom
     
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
@@ -413,6 +417,13 @@ describe('ActionHandler', () => {
     removeManaAction.performAction = jest.fn();
     addDamageAction.performAction = jest.fn();
     removeDamageAction.performAction = jest.fn();
+    addItemToPlayer.performAction = jest.fn();
+    addItemToRoom.performAction = jest.fn();
+    removeItemFromPlayer.performAction = jest.fn();
+    removeItemFromRoom.performAction = jest.fn();
+    kickPlayer.performAction = jest.fn();
+    banPlayer.performAction = jest.fn();
+    changePlayerPosition.performAction = jest.fn();
 
     // NICHT MEHR NOTWENDIG!!!!!
     // test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
@@ -556,7 +567,31 @@ describe('ActionHandler', () => {
     })
     test('ActionHandler should call performAction on AddItem when the dungeon master adds an item to a user', () => {
         actionHandler.processDmAction(`additem Jeff Apfel`);
-        expect(removeDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(addItemToPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on AddRoomItem when the dungeon master adds an item to a room', () => {
+        actionHandler.processDmAction(`addroomitem Raum-1 Apfel`);
+        expect(addItemToRoom.performAction).toHaveBeenCalledWith('dungeonmaster', ['Raum-1', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on RemoveItem when the dungeon master removes an item from a user', () => {
+        actionHandler.processDmAction(`remitem Jeff Apfel`);
+        expect(removeItemFromPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on RemoveRoomItem when the dungeon master removes an item from a room', () => {
+        actionHandler.processDmAction(`remroomitem Raum-1 Apfel`);
+        expect(removeItemFromRoom.performAction).toHaveBeenCalledWith('dungeonmaster', ['Raum-1', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on KickPlayer when the dungeon master kicks a player', () => {
+        actionHandler.processDmAction(`kick Jeff`);
+        expect(kickPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff'])
+    })
+    test('ActionHandler should call performAction on KickPlayer when the dungeon master bans a player', () => {
+        actionHandler.processDmAction(`ban Jeff`);
+        expect(banPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff'])
+    })
+    test('ActionHandler should call performAction on ChangeRoom when the dungeon master changes the position of a player', () => {
+        actionHandler.processDmAction(`verschiebe Jeff Raum-1`);
+        expect(changePlayerPosition.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Raum-1'])
     })
     
 });
@@ -1357,12 +1392,10 @@ describe("DungeonMaster Actions", () => {
     const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem;
     const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
     const kickPlayer: KickPlayer = actionHandler.dmActions[triggers.kickPlayer] as KickPlayer
-
+    const banPlayer: BanPlayer = actionHandler.dmActions[triggers.banPlayer] as BanPlayer
 
     amqpAdapter.sendToClient = jest.fn();
     dieAction.performAction = jest.fn();
-
-    
 
     test('dungeonmaster should add amount of actual Damage to a Charakter', async () => {
         await addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
@@ -1753,6 +1786,39 @@ describe("DungeonMaster Actions", () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
             data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
+    test('BanPlayer should call broadcast on the amqpAdapter to notify every player when the dungeon master bans a player', async () => {
+        await banPlayer.performAction('dungeonmaster', ['CoolerTyp', 'Nicht gut'])
+        expect(TestDungeon.blacklist).toContainEqual('4')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: `CoolerTyp wurde vom Dungeon gebannt!` },
+        });
+    })
+
+    test('BanPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await banPlayer.performAction('dungeonmaster', ['Holger' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
+    test('BanPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that he cannot ban the dungeon creator', async () => {
+        await banPlayer.performAction('dungeonmaster', ['Jeff' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Du kannst nicht den Ersteller des Dungeons bannen!" },
+        });
+    })
+
+    test('BanPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that he cannot ban his own characters', async () => {
+        await banPlayer.performAction('dungeonmaster', ['Spieler' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Du kannst nicht deine eigenen Charaktere bannen!" },
         });
     })
 })

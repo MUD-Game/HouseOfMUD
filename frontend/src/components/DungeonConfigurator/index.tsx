@@ -5,7 +5,7 @@
  * @author Raphael Sack
  */
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useBeforeunload } from 'react-beforeunload';
@@ -19,7 +19,6 @@ import RoomConfigurator from './RoomConfigurator';
 import { validator } from 'src/utils/validator';
 import { ChevronLeft } from 'react-bootstrap-icons';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
-
 export interface DungeonConfiguratorProps { }
 
 interface LocationState {
@@ -42,6 +41,12 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
         return "";
         
     });
+
+    useEffect(()=>{
+        if(dungeonConfig.password){
+            setIsPrivate(true);
+        }
+    },[dungeonConfig.password])
 
 
     const showConfirmation = (localeString: string, onConfirm: () => void) => {

@@ -143,6 +143,10 @@
             "delete_room": "Raum löschen"
         },
         "confirmations": {
+            "canceldungeon":{
+                "title": "Sicher?",
+                "text": "Bist du sicher, dass du Zurück zum Dashboard gehen willst? Alle Änderungen werden verworfen!"
+            },
             "delete_class": {
                 "title": "Klasse löschen",
                 "text": "Bist du sicher, dass du diese Klasse löschen möchtest?"
@@ -210,6 +214,7 @@
     "common": {
         "isprivate": "Passwortgeschützt",
         "select_items": "Items auswählen",
+        "back": "Zurück",
         "select_npcs": "NPCs auswählen",
         "select_actions": "Aktionen auswählen",
         "select_species": "Spezies auswählen",
@@ -428,5 +433,9 @@
                 "text": "Falls ein Account mit dieser E-Mail-Adresse existiert, wurde ein Link zum Ändern deines Passworts an deine E-Mail-Adresse geschickt."
             }
         }
+    },
+    "cryingLlama":{
+        "title": "Es sind momentan keine Dungeons gestartet",
+        "text": "Erstelle doch selber einen Dungeon und starte ihn!"
     }
 }

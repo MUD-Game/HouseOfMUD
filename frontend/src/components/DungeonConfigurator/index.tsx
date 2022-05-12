@@ -8,6 +8,7 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useBeforeunload } from 'react-beforeunload';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDungeonConfigurator } from 'src/hooks/useDungeonConfigurator';
 import Busy from '../Busy';
@@ -16,6 +17,8 @@ import MudInput from '../Custom/Input';
 import DungeonObjectList from './DungeonObjectList';
 import RoomConfigurator from './RoomConfigurator';
 import { validator } from 'src/utils/validator';
+import { ChevronLeft } from 'react-bootstrap-icons';
+import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
 
 export interface DungeonConfiguratorProps { }
 
@@ -29,15 +32,37 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
     const tl = "dungeon_configurator";
     const dungeonConfig = useDungeonConfigurator();
     const location = useLocation();
+    const [showConfirmationDialog, setShowConfirmationDialog] = React.useState({ show: false, message: "", title: "", onConfirm: () => { } });
     const [isBusy, setIsBusy] = React.useState(false);
     let dungeonId = (location.state as LocationState)?.dungeonId || undefined;
 
     const [isPrivate, setIsPrivate] = React.useState(false);
+    useBeforeunload((event) => {
+        
+        return "";
+        
+    });
+
+
+    const showConfirmation = (localeString: string, onConfirm: () => void) => {
+        setShowConfirmationDialog({
+            show: true, message: t(`dungeon_configurator.confirmations.${localeString}.text`), title: t(`dungeon_configurator.confirmations.${localeString}.title`), onConfirm
+        });
+    }
+
+    const onCancel = () =>{
+        showConfirmation("canceldungeon", ()=>{
+            navigate("/");
+        })
+    }
     return (
 
         <Container className="mb-5">
-            <h2>{t(`${tl}.title`)}</h2>
 
+            <div id="backbutton" onClick={onCancel} ><ChevronLeft size={30}/><span>{t("common.back")}</span></div>
+
+            <h2>{t(`${tl}.title`)}</h2>
+            <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
             {isBusy ? <Busy /> :
                 <>
                     <Row className="my-3 g-3">
@@ -95,10 +120,10 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
                     </Row>
                     <Row className="mt-3 justify-content-end">
                         <div className="col-md-6">
-                            <button className="btn w-100 btn-red drawn-border" onClick={() => navigate("/")}>{t(`button.cancel`)}</button>
+                            <button className="btn w-100 btn-red drawn-border" onClick={onCancel}>{t(`button.cancel`)}</button>
                         </div>
                         <div className="col-md-6">
-                            <button className="btn w-100 btn-green drawn-border" onClick={(e) => dungeonConfig.save(e, setIsBusy)}>{dungeonId ? t(`button.create`) : t(`button.save`)}</button>
+                            <button className="btn w-100 btn-green drawn-border" onClick={(e) => dungeonConfig.save(e, setIsBusy)}>{dungeonId ? t(`button.save`) : t(`button.create`) }</button>
                         </div>
                     </Row>
                 </>

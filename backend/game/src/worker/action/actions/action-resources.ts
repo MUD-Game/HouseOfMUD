@@ -138,20 +138,20 @@ export const actionDescriptions = {
 
 export const dmActionDescriptions = {
     addDamage: parseResponseString("\n\t'%s <Spielername>' - Erhöhe den Schaden eines Spielers; ", triggers.addDamage),
-    addHp: parseResponseString("\n\t'%s' <Spielername>' - Erhöhe das Leben eines Spielers; ", triggers.addHp),
-    addMana: parseResponseString("\n\t'%s' <Spielername>' - Erhöhe das Mana eines Spielers; ", triggers.addMana),
+    addHp: parseResponseString("\n\t'%s <Spielername>' - Erhöhe das Leben eines Spielers; ", triggers.addHp),
+    addMana: parseResponseString("\n\t'%s <Spielername>' - Erhöhe das Mana eines Spielers; ", triggers.addMana),
     removeMana: parseResponseString("\n\t'%s <Spielername>' - Verringere das Mana eines Spielers; ", triggers.removeMana),
     removeHp: parseResponseString("\n\t'%s <Spielername>' - Verringere das Leben eines Spielers; ", triggers.removeHp),
     removeDamage: parseResponseString("\n\t'%s <Spielername>' - Verringere den Schaden eines Spielers; ", triggers.removeDamage),
-    changeRoom: parseResponseString("\n\t'%s <Spielername>' - Ändere die Position eines Spielers ", triggers.changeRoom),
+    changeRoom: parseResponseString("\n\t'%s <Spielername>' - Ändere die Position eines Spielers; ", triggers.changeRoom),
     removeItem: parseResponseString("\n\t'%s <Spielername> <Itemname>' - Entferne ein Item von einem Spieler; ", triggers.removeItem),
     removeRoomItem: parseResponseString("\n\t'%s <Spieler> <Raumname>' - Entferne ein Item aus einem Raum; ", triggers.removeRoomItem),
     addItem: parseResponseString("\n\t'%s <Spielername> <Itemname>' - Gebe einem Spieler ein Item; ", triggers.addItem),
-    addRoomItem: parseResponseString("\n\t'%s <Raumname> <Itemname>' - Lege ein Item in den Raum; ", triggers.addItem),
-    kickPlayer: parseResponseString("\n\t'%s' <Spielername> - Schmeiße einen Spieler aus der Lobby; ", triggers.kickPlayer),
-    banPlayer: parseResponseString("\n\t'%s' <Spielername> - Banne einen Spieler permanent aus deinem Dungeon", triggers.banPlayer),
-    showDmActions: parseResponseString("\n\t'%s' - Erhalte eine Beschreibung alle ausführbaren Aktionen; ", triggers.showDmActions),
-    toggleConnection: parseResponseString("\nÜber die Minimap können außerdem die Verbindungen getoggled werden. Klick dafür auf die Verbindung zwischen den Räumen. "),
+    addRoomItem: parseResponseString("\n\t'%s <Raumname> <Itemname>' - Lege ein Item in den Raum; ", triggers.addRoomItem),
+    kickPlayer: parseResponseString("\n\t'%s <Spielername> - Schmeiße einen Spieler aus der Lobby; ", triggers.kickPlayer),
+    banPlayer: parseResponseString("\n\t'%s <Spielername> - Banne einen Spieler permanent aus deinem Dungeon; ", triggers.banPlayer),
+    showDmActions: parseResponseString("\n\t'%s - Erhalte eine Beschreibung alle ausführbaren Aktionen; ", triggers.showDmActions),
+    toggleConnection: parseResponseString("\nÜber die Minimap können außerdem die Verbindungen getoggled werden. Klick dafür auf die Verbindung zwischen den Räumen."),
 }
 
 

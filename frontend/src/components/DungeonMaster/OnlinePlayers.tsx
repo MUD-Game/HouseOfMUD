@@ -17,9 +17,12 @@ export interface OnlinePlayersData {
     }]
 }
 
-export interface OnlinePlayersProps { }
+export interface OnlinePlayersProps {
+    setPlayers: (players: string[]) => void,
 
-const OnlinePlayers: React.FC<OnlinePlayersProps> = () => {
+ }
+
+const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ setPlayers }) => {
     const {t} = useTranslation();    
     const { sendPlayerInformation, setOnlinePlayersSubscriber } = useRabbitMQ();
     const [onlinePlayers, setOnlinePlayers] = React.useState<OnlinePlayersData>();
@@ -30,6 +33,11 @@ const OnlinePlayers: React.FC<OnlinePlayersProps> = () => {
 
     const onlinePlayerSubscriber = (players: OnlinePlayersData) => {
         setOnlinePlayers(players);
+        let playersList: string[] = [];
+        players.players.forEach((player) => {
+            playersList.push(player.character);
+        });
+        setPlayers(playersList);
     }
 
     useEffect(() => {        

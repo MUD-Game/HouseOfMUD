@@ -29,7 +29,8 @@ export interface PlayerInfoData {
     }
 }
 
-export interface PlayerInfoProps { }
+export interface PlayerInfoProps { 
+}
 
 const PlayerInfo: React.FC<PlayerInfoProps> = () => {
     const { t } = useTranslation();    

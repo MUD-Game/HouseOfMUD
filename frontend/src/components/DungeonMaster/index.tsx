@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
 import { MinimapProps } from './Minimap';
 import ChatFilter from './ChatFilter';
+import { DashboardLocationState } from '../Dashboard';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = () => {
@@ -40,6 +41,17 @@ const Game: React.FC<GameProps> = () => {
             setError("rabbitmq.logout")
         });
     }
+    const kickSubscriber = (message: any) => {
+        if (message.kickMessage === undefined || message.kickMessage === "") {
+            message.kickMessage = t(`alert.${message.type}.default`);
+        }
+        navigate('/', {
+            state: {
+                message: message.kickMessage,
+                title: t(`alert.${message.type}.title`)
+            } as DashboardLocationState
+        });
+    }
 
     const miniMapSubscriber = (roomData: MinimapProps) => {
         setMiniMapData(roomData);
@@ -52,6 +64,7 @@ const Game: React.FC<GameProps> = () => {
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
+            rabbit.setKickSubscriber(kickSubscriber);
             rabbit.login(() => {
                 // Success
             }, (error) => {

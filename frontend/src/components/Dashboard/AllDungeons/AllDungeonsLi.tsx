@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from 'src/hooks/useGame';
 import { supervisor } from 'src/services/supervisor';
+import { SendsMessagesProps } from '../../../types/misc';
 
 export interface AllDungeonLiProps {
     id: string;
@@ -27,7 +28,7 @@ export interface AllDungeonLiProps {
     onPasswordRequest: (dungeonId:string, dungeonName:string) => void;
 }
 
-const AllDungeonLi: React.FC<AllDungeonLiProps> = ({
+const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
     id,
     name,
     description,
@@ -35,7 +36,8 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({
     maxPlayers,
     isPrivate,
     status,
-    onPasswordRequest
+    onPasswordRequest,
+    messageCallback
 }) => {
     const game = useGame();
     const navigate = useNavigate();
@@ -45,9 +47,19 @@ const AllDungeonLi: React.FC<AllDungeonLiProps> = ({
         if (isPrivate) {
             onPasswordRequest(id, name);
         } else {
-            game.setDungeon(id);
-            game.setDungeonName(name);
-            navigate('/select-character');
+            supervisor.checkPassword(
+                "",
+                "",
+                () => {
+                    game.setDungeon(id);
+                    game.setDungeonName(name);
+                    navigate('/select-character');
+                },
+                error => {
+                    console.log(error.error);
+                    messageCallback(error.error);
+                }
+            );
         }
     };
 

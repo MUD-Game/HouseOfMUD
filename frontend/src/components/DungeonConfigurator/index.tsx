@@ -66,11 +66,11 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
             {isBusy ? <Busy /> :
                 <>
                     <Row className="my-3 g-3">
-                        <MudInput className="max50" colmd={9} value={dungeonConfig.name} onChange={evt => {
+                        <MudInput colmd={8} value={dungeonConfig.name} onChange={evt => {
                             dungeonConfig.setName(validator.name(evt.target));
                         }} type="text" name="name" placeholder={t(`${tl}.inputs.name.placeholder`)} />
 
-                        <MudInput colmd={3} value={dungeonConfig.maxPlayers} onChange={evt => {
+                        <MudInput colmd={4} value={dungeonConfig.maxPlayers} onChange={evt => {
                             dungeonConfig.setMaxPlayers(validator.maxPlayers(evt.target.value));
                         }} type="number" name="maxPlayers" placeholder={t(`${tl}.inputs.maxPlayers.placeholder`)} />
 
@@ -93,7 +93,7 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
 
                         {isPrivate ? <MudInput colmd={12} autoComplete="off" value={dungeonConfig.password} onChange={evt => {
                             dungeonConfig.setPassword(validator.dungeonPassword(evt.target));
-                        }} type="text" name="password" placeholder={t(`${tl}.inputs.password.placeholder`)} /> : null}
+                        }} type="text" name="dungeon_password" placeholder={t(`${tl}.inputs.password.placeholder`)} /> : null}
                     </Row>
 
 

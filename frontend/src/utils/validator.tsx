@@ -39,6 +39,9 @@ const validator = {
     statValues: (stat: string) => {
         return validator.numberConstraint(stat, 1, 1000000);
     },
+    itemCount: (itemCount: string) =>{
+        return validator.numberConstraint(itemCount, 1, 1000000);
+    },
     numberConstraint: (number: string, min: number, max: number) => {
         if (number === "") return "";
         if (isNaN(Number(number))) return min;

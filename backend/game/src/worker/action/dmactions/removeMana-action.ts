@@ -28,7 +28,7 @@ export class RemoveMana implements Action {
             let actualMana: number = recipientCharacter.getCharakterStats().getMana()
             let manaCount: number = +args[1]
             if (isNaN(manaCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
             } else {
                 if (actualMana - manaCount <= 0) {
                     manastring = parseResponseString(dungeonMasterSendMessages.removeMana, (actualMana).toString())

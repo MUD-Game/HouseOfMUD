@@ -61,7 +61,7 @@ var payloadTemplate = {
 }
 
 function RabbitMQProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { userID } = useAuth();
   const navigate = useNavigate();
   const { character, dungeon, verifyToken } = useGame();
 
@@ -143,7 +143,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
 
     payloadTemplate = {
-      user: user,
+      user: userID,
       character: character,
       verifyToken: verifyToken,
     }

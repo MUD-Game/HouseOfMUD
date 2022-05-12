@@ -12,7 +12,7 @@ export interface Character {
     position: string;
     exploredRooms: { [roomId: string]: boolean },
     inventory: ItemInfo[];
-  
+
     getName(): string
     getPosition(): string
     modifyPosition(destinationRoom: string): any
@@ -20,6 +20,7 @@ export interface Character {
     isDead(): boolean
     getCharakterStats(): CharacterStats
     getMaxStats(): CharacterStats
+    getUserId(): string
 }
 
 export class CharacterImpl implements Character {
@@ -43,13 +44,13 @@ export class CharacterImpl implements Character {
         maxStats: CharacterStats,
         currentStats: CharacterStats,
         position: string,
-        exploredRooms: {[roomId:string]:boolean},
+        exploredRooms: { [roomId: string]: boolean },
         inventory: ItemInfo[]
     ) {
         this.userId = userId;
         this.name = name;
         this.characterClass = className;
-        this.characterSpecies = species; 
+        this.characterSpecies = species;
         this.characterGender = gender;
         this.maxStats = maxStats;
         this.currentStats = currentStats;
@@ -76,19 +77,23 @@ export class CharacterImpl implements Character {
     }
 
     isDead(): boolean {
-        if(this.currentStats.hp > 0){
+        if (this.currentStats.hp > 0) {
             return false
         }
         else {
             return true
         }
     }
-    
+
     getCharakterStats(): CharacterStats {
         return this.currentStats
     }
-    
+
     getMaxStats(): CharacterStats {
         return this.maxStats
+    }
+
+    getUserId(): string {
+        return this.userId
     }
 }

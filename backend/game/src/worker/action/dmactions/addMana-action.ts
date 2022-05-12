@@ -29,7 +29,7 @@ export class AddMana implements Action {
             let maxMana: number = recipientCharacter.getMaxStats().getMana()
             let manaCount: number = +args[1]
             if (isNaN(manaCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
             } else {
                 if (maxMana - actualMana >= manaCount) {
                     actualMana = actualMana + manaCount 

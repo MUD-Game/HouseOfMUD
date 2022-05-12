@@ -32,13 +32,15 @@ import { AddItem } from './dmactions/addItemToPlayer-action';
 import { AddRoomItem } from './dmactions/addItemToRoom-action';
 import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
 import { KickPlayer } from './dmactions/kickPlayer-action';
+import { BanPlayer } from './dmactions/banPlayer-action';
 
 
-const regExpression = {
-    forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
-    predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
-    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.kickPlayer}))`, "i")
-}
+// const regExpression = {
+//     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
+//     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
+//     dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.kickPlayer}))`, "i")
+// }
+
 /**
  * Processes Actions received by the dungeon controller.
  * @category Action Handler
@@ -132,8 +134,10 @@ export class ActionHandlerImpl implements ActionHandler {
            new AddRoomItem(dungeonController),
            new removeRoomItem(dungeonController),
            new ToggleConnectionAction(dungeonController),
-           new KickPlayer(dungeonController)
+           new KickPlayer(dungeonController),
+           new BanPlayer(dungeonController)
         ];
+        
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;
         });
@@ -145,9 +149,8 @@ export class ActionHandlerImpl implements ActionHandler {
         let dungeonActions: DungeonAction[] = Object.values(this.dungeonActions)
         action = dungeonActions.find(dungeonAction => this.inputMatch(message, dungeonAction.regEx))
         if (action === undefined) {
-            if (this.inputMatch(message, regExpression.predefinedActions)) {
-                action = this.getAction(message)
-            } else {
+            action = this.getAction(message)
+            if (action === undefined) {
                 action = this.invalidAction
             }
         }
@@ -163,13 +166,16 @@ export class ActionHandlerImpl implements ActionHandler {
 
     processDmAction(message: string) {
         let dmaction: Action | undefined = undefined;
-        if (this.inputMatch(message, regExpression.dmActions)) {
-            dmaction = this.getDmAction(message)
-        } else {
+        dmaction = this.getDmAction(message);
+        if (dmaction === undefined) {
             dmaction = this.invalidAction
         }
         let actionArguments: string[] = this.getActionArguments(message)
-        dmaction.performAction(extras.dungeonMasterId, actionArguments);
+        try {
+            dmaction.performAction(extras.dungeonMasterId, actionArguments);
+        } catch(e) {
+            console.log('Action invalid')
+        }
         return dmaction;
     }
 

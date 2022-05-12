@@ -126,6 +126,24 @@ h1, h2, h3, h4 {
   margin: 0;
 }
 
+#backbutton{
+  cursor: pointer;
+  transform: translateX(0px);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: fit-content;
+}
+
+#backbutton:hover{
+  transform: translateX(-5px);
+}
+
+#backbutton:hover > span{
+  text-decoration: underline;
+  transition: all 0.8 ease-in-out;
+}
 
 
 hr {

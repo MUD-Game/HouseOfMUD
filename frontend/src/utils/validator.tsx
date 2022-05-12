@@ -44,7 +44,7 @@ const validator = {
         return Math.max(min, Math.min(parsedNumber, max));
     },
     maxPlayers: (maxPlayersString: string) => {
-        return validator.numberConstraint(maxPlayersString, 2, 1000000);
+        return validator.numberConstraint(maxPlayersString, 1, 1000000);
     },
     alreadyExists(value: any, key:string, list: any[] | {[key: string]: any}) {
         if (Array.isArray(list)) {

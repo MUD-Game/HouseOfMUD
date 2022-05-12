@@ -419,5 +419,9 @@
                 "text": "Falls ein Account mit dieser E-Mail-Adresse existiert, wurde ein Link zum Ändern deines Passworts an deine E-Mail-Adresse geschickt."
             }
         }
+    },
+    "cryingLlama":{
+        "title": "Es sind momentan keine Dungeons gestartet",
+        "text": "Erstelle doch selber einen Dungeon und starte ihn!"
     }
 }

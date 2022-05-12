@@ -13,9 +13,11 @@
 
 import React from 'react';
 import AllDungeonLi from './AllDungeonsLi';
+
 import { DungeonResponseData } from '@supervisor/api';
-import { Row } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import CryingLlama from 'src/components/Busy/CryingLlama';
 export type AllDungeonProps = {
     filterKey: 'name' | 'description';
     filterValue: string;
@@ -28,7 +30,7 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filt
 
     return (
         <div className="dashboard pt-3">
-            <Row className="py-2">
+            {allDungeons.length !== 0 ? <><Row className="py-2">
                 <div className="col-3">
                     <b><u>{t("dungeon_keys.name")}</u></b>
                 </div>
@@ -43,12 +45,15 @@ const AllDungeons: React.FC<AllDungeonProps> = ({ allDungeons, filterValue, filt
                 </div>
                 <div className="col-2"></div>
             </Row>
-
+            
             {allDungeons.filter(dungeon => dungeon[filterKey].toLowerCase().includes(filterValue.toLowerCase())).map((dungeon, index) => {
                 return (
                     <AllDungeonLi key={index} isPrivate={false} {...dungeon} />
                 )
-            })}
+            })}</>
+             : 
+             <CryingLlama />
+             }
         </div>
     )
 }

@@ -1371,6 +1371,14 @@ describe("DungeonMaster Actions", () => {
         });
     })
 
+    test('dungeonmaster inputs a character that does not exist, when trying to add dmg to a character', async () => {
+        await addDamage.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
     test('dungeonmaster should add amount of actual HP to a Charakter', async () => {
         await addHp.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
@@ -1397,6 +1405,14 @@ describe("DungeonMaster Actions", () => {
         });
     })
 
+    test('dungeonmaster inputs a character that does not exist, when trying to add hp to a character', async () => {
+        await addHp.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
     test('dungeonmaster should add amount of actual Mana to a Charakter', async () => {
         await addMana.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
@@ -1420,6 +1436,14 @@ describe("DungeonMaster Actions", () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
             data: { message: "Bitte gib als Wert eine Zahl ein!", room: "Raum-1" },
+        });
+    })
+
+    test('dungeonmaster inputs a character that does not exist, when trying to add mana to a character', async () => {
+        await addMana.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
         });
     })
  
@@ -1449,6 +1473,14 @@ describe("DungeonMaster Actions", () => {
         });
     })
 
+    test('dungeonmaster inputs a character that does not exist, when trying to remove hp to a character', async () => {
+        await removeHp.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
         privateMessageFromDm.performAction('dungeonmaster', [
             'Spieler',
@@ -1463,6 +1495,14 @@ describe("DungeonMaster Actions", () => {
             data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
         });
     });
+
+    test('PrivateMessageAciton should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await privateMessageFromDm.performAction('dungeonmaster', ['Holger' , 'Hallo']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
 
     test('BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message', () => {
         broadcastMessageAction.performAction('dungeonmaster', [
@@ -1485,11 +1525,27 @@ describe("DungeonMaster Actions", () => {
     });
 
     test('dungeonmaster changes the position of Jeff', async () => {
-        await  changePlayerPosition.performAction('dungeonmaster', [
+        await changePlayerPosition.performAction('dungeonmaster', [
             'Jeff', 'Raum-N'
         ]);
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id)
     });
+
+    test('changePlayerPosition should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await changePlayerPosition.performAction('dungeonmaster', ['Holger' , 'Raum-N']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
+    test('changePlayerPosition should call sendToClient on the amqpAdapter to notify the dungeon master that the room does not exist in this dungeon', async () => {
+        await changePlayerPosition.performAction('dungeonmaster', ['Jeff' , 'Raum-Test']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Dieser Raum existiert nicht! Folgende Raeume existieren in diesem Dungeon: \n\tRaum-1\n\tRaum-N\n\tRaum-O\n\tRaum-S\n\tRaum-W\n\tRaum-NN\n\tRaum-NE\n\tRaum-A" },
+        });
+    })
     
     test('ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection', () => {
         toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'closed');
@@ -1544,6 +1600,14 @@ describe("DungeonMaster Actions", () => {
         });
     })
 
+    test('AddItem should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Holger' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
     test('AddRoomItem should add an item to the room and call broadcast on the AmqpAdapter when dungeon master adds an item to a room', async () => {
         await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Schluessel'])
         expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id,1)])
@@ -1563,6 +1627,14 @@ describe("DungeonMaster Actions", () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
             action: 'message',
             data: { message: `Dieses Item existiert nicht! Folgende Items existieren in diesem Dungeon: \n\tApfel\n\tSchwert\n\tGold\n\tGiftpilz\n\tManatrank\n\tStein\n\tSchluessel`, room: 'Raum-1' },
+        });
+    })
+
+    test('AddRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that the room does not exist in this dungeon', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-Test' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Dieser Raum existiert nicht! Folgende Raeume existieren in diesem Dungeon: \n\tRaum-1\n\tRaum-N\n\tRaum-O\n\tRaum-S\n\tRaum-W\n\tRaum-NN\n\tRaum-NE\n\tRaum-A" },
         });
     })
 
@@ -1602,6 +1674,14 @@ describe("DungeonMaster Actions", () => {
         });
     })
 
+    test('RemoveItem should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Holger' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
+        });
+    })
+
     test('RemoveRoomItem should remove an item from the room and call broadcast on the AmqpAdapter when dungeon master removes an item from a room', async () => {
         await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
         expect(TestDungeon.rooms['1'].items).toEqual([])
@@ -1633,11 +1713,27 @@ describe("DungeonMaster Actions", () => {
         });
     })
 
+    test('RemoveRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that the room does not exist in this dungeon', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-Test' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Dieser Raum existiert nicht! Folgende Raeume existieren in diesem Dungeon: \n\tRaum-1\n\tRaum-N\n\tRaum-O\n\tRaum-S\n\tRaum-W\n\tRaum-NN\n\tRaum-NE\n\tRaum-A" },
+        });
+    })
+
     test('KickPlayer should call broadcast on the amqpAdapter to notify every player when the dungeon master kicks a player', async () => {
         await kickPlayer.performAction('dungeonmaster', ['CoolerTyp', 'Nicht gut'])
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
             data: { message: `CoolerTyp wurde aus dem Dungeon gekickt!` },
+        });
+    })
+
+    test('KickPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await kickPlayer.performAction('dungeonmaster', ['Holger' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: "Der Charakter Holger existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden." },
         });
     })
 })

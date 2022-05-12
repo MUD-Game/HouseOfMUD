@@ -36,7 +36,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
     const [error, setError] = React.useState<string>("");
 
     const modalIsInvalid = () => {
-        return dmg !== "" || mana !== "" || hitPoints !== "" || validator.isEmpty(name) || validator.isEmpty(description);
+        return dmg === "" || mana === "" || hitPoints === "" || validator.isEmpty(name) || validator.isEmpty(description);
     }
     
     const onSubmit = () => {

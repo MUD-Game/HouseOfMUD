@@ -35,7 +35,13 @@ const IndexRouter: React.FC = (): ReactElement => {
                         <Routes>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
-                            <Route path="/user-settings" element={<RequireAuth><UserSettings /></RequireAuth>} />
+                            
+                            <Route path="/user-settings" element={
+                            <RequireAuth>
+                                <RabbitMQProvider>
+                                    <UserSettings />
+                                </RabbitMQProvider>
+                            </RequireAuth>} />
                             <Route path="/" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
                             <Route path="/select-character" element={<RequireAuth><CharacterCreator /></RequireAuth>} />

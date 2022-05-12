@@ -317,6 +317,14 @@ export class DatabaseAdapter {
         }
     }
 
+    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string){
+        let dungeonToUpdate = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
+        if(dungeonToUpdate?.blacklist != undefined){
+            dungeonToUpdate.blacklist = updatedBlacklist;
+        }
+        dungeonToUpdate?.save();
+    }
+
     /**
      * updates a room inside from the rooms collection inside the database
      * @param room the updated room (has to have the same custom id as the room that should be updated)
@@ -326,10 +334,10 @@ export class DatabaseAdapter {
         let dungeonRoomIds: RoomDataset[] | undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
         console.log(dungeonRoomIds)
         if (dungeonRoomIds != undefined) {
-            dungeonRoomIds.forEach(async id => {
+            await Promise.all(dungeonRoomIds.map(async id => {
                 let foundRoom = (await this.room.findOne({ _id: id })) as RoomDataset
                 await this.room.updateOne(foundRoom, rooms.find(room => room.id == foundRoom.id));
-            });
+            }));
         }
     }
 

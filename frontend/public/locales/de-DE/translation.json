@@ -85,6 +85,13 @@
         "new_character": "Neuen Charakter anlegen"
     },
     "user_settings": {
+        "admin": {
+            "title": "Serveradministration",
+            "serverbroadcast": {
+                "title": "Serverbroadcast",
+                "confirmation": "Bist du sicher, dass du folgende Nachricht serverweit senden möchtest?"
+            }
+        },
         "title": "Benutzereinstellungen",
         "profile": "Profil",
         "account": "Account",
@@ -111,7 +118,16 @@
         "queue": "Warteschlange",
         "inventory": "Inventar",
         "filter": "Raum-Filter",
-        "onlineplayers": "Spieler online"
+        "onlineplayers": "Spieler online",
+        "playerInfo": {
+            "player": "Spieler",
+            "inventory": "Inventar",
+            "room": "Raum",
+            "stats": "Stats",
+            "health": "HP",
+            "mana": "Mana",
+            "damage": "DMG"
+        }
     },
     "verify_email": {
         "title": "Email-Verifizierung",

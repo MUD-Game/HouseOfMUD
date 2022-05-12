@@ -65,6 +65,7 @@ export class AmqpAdapter {
             // Assert Client Exchange
             await this.channel.assertExchange(`${this.clientExchange}-${this.dungeonID}`, 'topic', { autoDelete: false, internal: true });
             await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `${this.dungeonID}.#`);
+            await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `broadcast.#`);
         } catch (err) {
             await this.channel?.close();
             await this.connection?.close();

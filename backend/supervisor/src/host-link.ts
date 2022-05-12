@@ -212,6 +212,21 @@ export class HostLink {
         this.dungeons[id].creatorId = dungeonData.creatorId;
     }
 
+
+    /**
+     * @returns all online dungeons
+     */
+    public getOnlineDungeons(){
+        const dungeons: any[] = [];
+        for (let dungeon in this.dungeons) {
+            if (this.dungeons[dungeon].status === 'online') {
+                dungeons.push({...this.dungeons[dungeon], id:dungeon});
+            }
+        }
+        return dungeons;
+    }
+
+
     /**
      * @returns dungeon informations for dashboard
      */

@@ -6,14 +6,35 @@
  * @props {@linkcode OnlinePlayersProps}
  */
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
-export interface OnlinePlayersProps {
-    players: string[]; //TODO: define item data
+import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
+
+export interface OnlinePlayersData {
+    players: [{
+        character: string,
+        room: string
+    }]
 }
 
-const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ players }) => {
-    const {t} = useTranslation();
+export interface OnlinePlayersProps { }
+
+const OnlinePlayers: React.FC<OnlinePlayersProps> = () => {
+    const {t} = useTranslation();    
+    const { sendPlayerInformation, setOnlinePlayersSubscriber } = useRabbitMQ();
+    const [onlinePlayers, setOnlinePlayers] = React.useState<OnlinePlayersData>();
+
+    const playerInformation = (playerName: string) => {
+        sendPlayerInformation(playerName, ()=>{}, console.error);
+    }
+
+    const onlinePlayerSubscriber = (players: OnlinePlayersData) => {
+        setOnlinePlayers(players);
+    }
+
+    useEffect(() => {        
+        setOnlinePlayersSubscriber(onlinePlayerSubscriber);
+    })
 
     return (
         <div className="onlineplayers drawn-border mb-2 p-2 pt-1">
@@ -21,8 +42,8 @@ const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ players }) => {
                 <p className='m-0'><u>{t("game.onlineplayers")}</u></p>
 
                 <ul className='ps-4'>
-                    {players.filter(player => player !== 'dungeonmaster').map((player) =>
-                        <li key={player}>{ player }</li>
+                    {onlinePlayers?.players.filter(onlinePlayer => onlinePlayer.character !== 'dungeonmaster').map((onlinePlayer) =>
+                        <li className="link-li ps-1" key={onlinePlayer.character} onClick={() => {playerInformation(onlinePlayer.character)}}>{ `${onlinePlayer.character} [${onlinePlayer.room}]` }</li>
                     )}
                 </ul>
             </div>

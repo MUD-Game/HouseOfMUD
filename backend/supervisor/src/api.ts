@@ -156,7 +156,7 @@ export class API {
 
         // get dungeons
         app.get('/dungeons', this.authProvider.auth, (req, res) => {
-            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons() });
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getOnlineDungeons() });
         });
 
         // get my dungeons

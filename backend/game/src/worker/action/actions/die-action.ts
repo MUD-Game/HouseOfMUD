@@ -57,6 +57,11 @@ export class DieAction extends Action {
         const description = actionMessages.die
         await amqpAdapter.sendActionToClient(user, "message", {message: description})
         // message send to dungeon master
-        await amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.dieDungeonMaster, user, roomName), player: user, room: roomName})
+        await amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.dieDungeonMaster, user, roomName), player: user, room: roomName});
+
+        // send Playerinformation to DM if player dies and DM views its PlayerData
+        if (this.dungeonController.getSelectedPlayer() === user) {
+            await this.dungeonController.sendPlayerInformationData();
+        }
     }
 }

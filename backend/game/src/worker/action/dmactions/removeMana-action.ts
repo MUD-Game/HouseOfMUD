@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras } from "../actions/action-resources";
+import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { Room } from "../../../data/interfaces/room";
 
@@ -27,30 +27,38 @@ export class RemoveMana implements Action {
             let roomName: string = room.getName()
             let actualMana: number = recipientCharacter.getCharakterStats().getMana()
             let manaCount: number = +args[1]
-            if (actualMana - manaCount <= 0) {
-                manastring = parseResponseString(dungeonMasterSendMessages.removeMana, (actualMana).toString())
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: manastring })
+            try {
+                if (isNaN(manaCount)) {
+                    throw new Error('Value is not a number!')
+                }
+                if (actualMana - manaCount <= 0) {
+                    manastring = parseResponseString(dungeonMasterSendMessages.removeMana, (actualMana).toString())
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: manastring })
 
-                manastring = parseResponseString(dungeonMasterSendMessages.ManaRemoved, recipientCharacter.name , (actualMana).toString())
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: manastring, room: roomName } )
+                    manastring = parseResponseString(dungeonMasterSendMessages.ManaRemoved, recipientCharacter.name , (actualMana).toString())
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: manastring, room: roomName } )
 
-                recipientCharacter.getCharakterStats().setMana(0)
+                    recipientCharacter.getCharakterStats().setMana(0)
 
-            } else if (actualMana - manaCount > 0) {
-                actualMana = actualMana - manaCount 
-                recipientCharacter.getCharakterStats().setMana(actualMana)
-                
-                manastring = parseResponseString(dungeonMasterSendMessages.removeMana, args[1])
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message",{ message: manastring })
+                } else if (actualMana - manaCount > 0) {
+                    actualMana = actualMana - manaCount 
+                    recipientCharacter.getCharakterStats().setMana(actualMana)
+                    
+                    manastring = parseResponseString(dungeonMasterSendMessages.removeMana, args[1])
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message",{ message: manastring })
 
-                manastring = parseResponseString(dungeonMasterSendMessages.ManaRemoved, recipientCharacter.name , args[1])
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: manastring, room: roomName })
+                    manastring = parseResponseString(dungeonMasterSendMessages.ManaRemoved, recipientCharacter.name , args[1])
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: manastring, room: roomName })
+                }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
+
+            } catch(e) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
-            await this.dungeonController.sendStatsData(recipientCharacter.name)
 
         } catch (e) {
             //console.log(e)
-            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) })
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) })
         }
     }
 }

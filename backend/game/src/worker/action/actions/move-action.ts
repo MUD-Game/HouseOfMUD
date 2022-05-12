@@ -69,7 +69,7 @@ export class MoveAction extends Action {
                     break;
             }
             if (invalidDirection) {
-                amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.directionDoesNotExist });
+                amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.directionDoesNotExist + errorMessages.moveAvailableDirections});
             } else if (closedPath) {
                 amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.moveRoomClosed });
             } else if (inactivePath) {
@@ -91,7 +91,7 @@ export class MoveAction extends Action {
             }
         } catch (e) {
             // console.log(e);
-            amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.movePathNotAvailable });
+            amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.movePathNotAvailable});
         }
     }
 }

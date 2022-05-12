@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, errorMessages, dungeonMasterSendMessages, parseResponseString} from "../actions/action-resources";
+import { triggers, errorMessages, dungeonMasterSendMessages, parseResponseString, helpMessagesForDM} from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { Room } from "../../../data/interfaces/room";
 
@@ -28,31 +28,39 @@ export class AddHp implements Action {
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let maxHp: number = recipientCharacter.getMaxStats().getHp()
             let hpCount: number = +args[1]
-            if (maxHp - actualHp >= hpCount) {
-                actualHp = actualHp + hpCount
-                console.log(actualHp) 
-                recipientCharacter.getCharakterStats().setHp(actualHp)
-                
-                hpstring = parseResponseString(dungeonMasterSendMessages.addHp, args[1])
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: hpstring } )
+            try {
+                if (isNaN(hpCount)) {
+                    throw new Error('Value is not a number!')
+                }
+                if (maxHp - actualHp >= hpCount) {
+                    actualHp = actualHp + hpCount
+                    console.log(actualHp) 
+                    recipientCharacter.getCharakterStats().setHp(actualHp)
+                    
+                    hpstring = parseResponseString(dungeonMasterSendMessages.addHp, args[1])
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: hpstring } )
 
-                hpstring = parseResponseString(dungeonMasterSendMessages.hpRecieved, recipientCharacter.name , args[1])
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: hpstring, room: roomName } )
+                    hpstring = parseResponseString(dungeonMasterSendMessages.hpRecieved, recipientCharacter.name , args[1])
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: hpstring, room: roomName } )
 
-            } else if (maxHp - actualHp < hpCount) {
-                hpstring = parseResponseString(dungeonMasterSendMessages.addHp, (maxHp-actualHp).toString())
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: hpstring } )
+                } else if (maxHp - actualHp < hpCount) {
+                    hpstring = parseResponseString(dungeonMasterSendMessages.addHp, (maxHp-actualHp).toString())
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: hpstring } )
 
-                hpstring = parseResponseString(dungeonMasterSendMessages.hpRecieved, recipientCharacter.name , (maxHp-actualHp).toString())
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: hpstring, room: roomName } )
-                
-                recipientCharacter.getCharakterStats().setHp(maxHp)
+                    hpstring = parseResponseString(dungeonMasterSendMessages.hpRecieved, recipientCharacter.name , (maxHp-actualHp).toString())
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: hpstring, room: roomName } )
+                    
+                    recipientCharacter.getCharakterStats().setHp(maxHp)
+                }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
+
+            } catch(e) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
-            await this.dungeonController.sendStatsData(recipientCharacter.name)
 
         } catch (e) {
             //console.log(e)
-            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) })
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) })
         }
     }
 }

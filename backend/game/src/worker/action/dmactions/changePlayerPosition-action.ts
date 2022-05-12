@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras } from "../actions/action-resources";
+import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { Room } from "../../../data/interfaces/room";
 
@@ -43,12 +43,17 @@ export class ChangeRoom implements Action {
 
             } catch (e) {
                 //console.log(e)
-                amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.roomDoesNotExist) } })
+                let availableRoomsString: string = '';
+                Object.values(dungeon.rooms).forEach(room => {
+                    let roomName: string = room.getName()
+                    availableRoomsString += `\n\t${roomName}`
+                })
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.roomDoesNotExist, availableRoomsString)})
             }
 
         } catch (e) {
             //console.log(e)
-            amqpAdapter.sendToClient(user, { action: "message", data: { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName) } })
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName)})
         }
     }
 }

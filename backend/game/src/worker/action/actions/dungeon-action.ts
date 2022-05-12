@@ -8,7 +8,7 @@ import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages, characterStats, errorMessages, eventCases, operations } from "./action-resources";
+import { actionMessages, characterStats, errorMessages, eventCases, operations, parseResponseString, triggers } from "./action-resources";
 
 export class DungeonAction extends Action {
     regEx: RegExp
@@ -34,15 +34,6 @@ export class DungeonAction extends Action {
             let characterInventory: ItemInfo[] = senderCharacter.getInventory()
             let missingItems: string[] = this.returnMissingItems(characterInventory)
             if (missingItems.length === 0) {
-                this.actionElement.itemsneeded.forEach(itemNeeded => {
-                    let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == itemNeeded)[0]
-                    if (itemInInventory.count > 1){
-                        itemInInventory.count -= 1
-                    } else {
-                        let indexOfItemToDiscardInInventory: number = characterInventory.indexOf(itemInInventory)
-                        characterInventory.splice(indexOfItemToDiscardInInventory, 1)
-                    }
-                })
                 this.actionElement.events.forEach(actionEvent => {
                     // actionevent is item
                     if (actionEvent.eventType.toLowerCase().includes("item")) {
@@ -54,9 +45,17 @@ export class DungeonAction extends Action {
                             } else {
                                 characterInventory.push(new ItemInfo(actionEvent.value, 1))
                             }
+                        // actionevent is remove
+                        } else if (actionEvent.eventType.toLowerCase().includes(operations.remove)) {
+                            let itemInInventory: ItemInfo = characterInventory.filter(it => it.item == actionEvent.value)[0]
+                            if (itemInInventory.count > 1){
+                                itemInInventory.count -= 1
+                            } else {
+                                let indexOfItemToDiscardInInventory: number = characterInventory.indexOf(itemInInventory)
+                                characterInventory.splice(indexOfItemToDiscardInInventory, 1)
+                            }
                         }
-                        // actionevent is remove --> ALAAARM NOTWENDIG!!!
-                    // actionevent is stats
+                    // actionevent is stats (hp, mana, dmg)
                     } else {
                         this.modifyCharacterStat(actionEvent.eventType, +actionEvent.value, senderCharacter)
                     }
@@ -74,7 +73,7 @@ export class DungeonAction extends Action {
                 await amqpAdapter.sendActionToClient(user, 'message', { message: itemsMissingString });
             }
         } else {
-            await amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.actionDoesNotExist });
+            await amqpAdapter.sendActionToClient(user, 'message', {message: parseResponseString(errorMessages.actionDoesNotExist, triggers.showActions)});
         }
     }
 

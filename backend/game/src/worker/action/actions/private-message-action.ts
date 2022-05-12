@@ -38,7 +38,7 @@ export class PrivateMessageAction extends Action {
             
         } catch(e) {
             //console.log(e)
-            amqpAdapter.sendActionToClient(user, "message", {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName)})
+            amqpAdapter.sendActionToClient(user, "message", {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName, triggers.look)})
         }
     }
 }

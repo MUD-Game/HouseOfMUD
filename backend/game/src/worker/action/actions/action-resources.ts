@@ -74,15 +74,24 @@ export const actionMessages = {
 }
 
 export const errorMessages = {
-    itemNotOwned: "Du besitzt dieses Item nicht!",
-    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!",
+    itemNotOwned: "Du besitzt dieses Item nicht! Gib '%s' ein, um deine Items zu sehen.",
+    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum! Gib '%s' ein, um die Items im Raum zu sehen.",
     itemDoesntexist: "Dieses Item existiert nicht!",
     roomDoesNotExist: "Dieser Raum existiert nicht!",
     directionDoesNotExist: "Diese Richtung existiert nicht!",
-    characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon!",
-    actionDoesNotExist: "Diese Aktion ist nicht möglich!",
+    moveAvailableDirections: " Folgende Richtungen sind moeglich: Norden, Osten, Sueden, Westen.",
+    characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon! Gib '%s' ein, um eine Liste der Spieler in deinem Raum zu sehen.",
+    actionDoesNotExist: "Diese Aktion ist nicht möglich! Gib '%s' ein um eine Liste der moeglichen Aktionen zu sehen.",
     lookError: " Fehler!",
     charakterHasntItem: "%s besitzt dieses Item nicht!"
+}
+
+export const helpMessagesForDM = {
+    characterDoesNotExist: "Der Charakter %s existiert nicht in diesem Dungeon! Schaue links in der Liste welche Charaktere sich im Dungeon befinden.",
+    itemDoesNotExist: "Dieses Item existiert nicht! Folgende Items existieren in diesem Dungeon: %s",
+    roomDoesNotExist: "Dieser Raum existiert nicht! Folgende Raeume existieren in diesem Dungeon: %s",
+    valueNotANumber: "Bitte gib als Wert eine Zahl ein!",
+    itemNotInRoom: "Dieses Item existiert nicht in diesem Raum!"
 }
 
 export const dungeonMasterSendMessages = {

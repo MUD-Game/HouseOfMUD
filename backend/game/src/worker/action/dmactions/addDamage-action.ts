@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras } from "../actions/action-resources";
+import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { Room } from "../../../data/interfaces/room";
 
@@ -28,29 +28,37 @@ export class AddDamage implements Action {
             let actualDmg: number = recipientCharacter.getCharakterStats().getDmg()
             let maxDmg: number = recipientCharacter.getMaxStats().getDmg()
             let dmgCount: number = +args[1]
-            if (maxDmg - actualDmg >= dmgCount) {
-                actualDmg = actualDmg + dmgCount 
-                recipientCharacter.getCharakterStats().setDmg(actualDmg)
-                damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, args[1])
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring } )
+            try {
+                if (isNaN(dmgCount)) {
+                    throw new Error('Value is not a number!')
+                }
+                if (maxDmg - actualDmg >= dmgCount) {
+                    actualDmg = actualDmg + dmgCount 
+                    recipientCharacter.getCharakterStats().setDmg(actualDmg)
+                    damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, args[1])
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring } )
+    
+                    damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , args[1])
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring, room: roomName } )
+                } else if (maxDmg - actualDmg < dmgCount) {
+                
+                    damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, (maxDmg-actualDmg).toString())
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring } )
+    
+                    damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , (maxDmg-actualDmg).toString())
+                    this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring, room: roomName } )
+                    recipientCharacter.getCharakterStats().setDmg(maxDmg)
+    
+                }
+                await this.dungeonController.sendStatsData(recipientCharacter.name)
 
-                damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , args[1])
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring, room: roomName } )
-            } else if (maxDmg - actualDmg < dmgCount) {
-            
-                damagestring = parseResponseString(dungeonMasterSendMessages.addDmg, (maxDmg-actualDmg).toString())
-                this.dungeonController.getAmqpAdapter().sendActionToClient(recipientCharacter.name, "message", { message: damagestring } )
-
-                damagestring = parseResponseString(dungeonMasterSendMessages.damageRecieved, recipientCharacter.name , (maxDmg-actualDmg).toString())
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", { message: damagestring, room: roomName } )
-                recipientCharacter.getCharakterStats().setDmg(maxDmg)
-
+            } catch(e) {
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
             }
-            await this.dungeonController.sendStatsData(recipientCharacter.name)
 
         } catch (e) {
             //console.log(e)
-            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName)})
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName)})
         }
     }
 }

@@ -70,7 +70,8 @@ const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
 
     return (
         <div className="dashboard pt-3">
-            {allDungeons.length !== 0 ? <><Row className="py-2">
+            {allDungeons.length !== 0 ? <>
+            <Row className="py-2">
                 <div className="col-3">
                     <b><u>{t("dungeon_keys.name")}</u></b>
                 </div>
@@ -98,13 +99,9 @@ const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
              : 
              <CryingLlama />
              }
+        <DungeonPasswordModal {...modalState} />
         </div>
     )
 }
-
-            <DungeonPasswordModal {...modalState} />
-        </>
-    );
-};
 
 export default AllDungeons;

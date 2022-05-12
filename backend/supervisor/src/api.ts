@@ -30,13 +30,13 @@ export class API {
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, transporter: any, cookiehost: string) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, transporter: any, cookiehost: string, rootpw:string) {
         this.origin = origin;
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
-        this.authProvider = new AuthProvider(this.dba, salt, transporter, origin, cookiehost);
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, origin, cookiehost, rootpw);
     }
 
     /**

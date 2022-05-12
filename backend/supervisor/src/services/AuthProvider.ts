@@ -15,15 +15,17 @@ export default class AuthProvider {
     private password_reset_token: { [token: string]: string } = {};
     private sessioned_users: { [token: string]: string } = {};
     private cookiehost: string;
+    private rootpw: string;
 
 
-    constructor(dba: DatabaseAdapter, salt: string, transporter: any, origin:string, cookiehost: string) {
+    constructor(dba: DatabaseAdapter, salt: string, transporter: any, origin:string, cookiehost: string, rootpw:string) {
 
         this.dba = dba;
         this.salt = salt;
         this.transporter = transporter;
         this.origin = origin;
         this.cookiehost = cookiehost;
+        this.rootpw = rootpw;
         this.register = this.register.bind(this);
         this.verifyEmail = this.verifyEmail.bind(this);
         this.auth = this.auth.bind(this);
@@ -121,7 +123,7 @@ export default class AuthProvider {
             let user: string = body.user;
             let email: string = body.email;
             let password: string = hasher.update(body.password).digest('base64');
-            if (Object.keys(this.unverified_users).some(token => this.unverified_users[token].username === user) || await this.dba.checkIfUserExists(user)) {
+            if (user === "root" || Object.keys(this.unverified_users).some(token => this.unverified_users[token].username === user) || await this.dba.checkIfUserExists(user)) {
                 res.status(409).send({
                     ok: 0,
                     error: "exists.user"
@@ -244,7 +246,9 @@ export default class AuthProvider {
         return (user && token && userID) && (this.sessioned_users[token] === `${user}_${userID}`);
     }
     async validatePassword(user: string, password: string) {
-        // Fake wait
+        if(user === "root"){
+            return password === this.rootpw;
+        }
         const dbPw = await this.dba.getPassword(user);
         if (dbPw === undefined) return false;
         let hasher = crypto.createHmac('sha256', this.salt);

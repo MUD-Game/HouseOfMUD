@@ -3,7 +3,7 @@ import { Dungeon } from "../../../data/interfaces/dungeon";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, parseResponseString, actionMessages, helpMessagesForDM } from "../actions/action-resources";
+import { triggers, parseResponseString, actionMessages, helpMessagesForDM, errorMessages } from "../actions/action-resources";
 
 export class BanPlayer implements Action {
     trigger: string;
@@ -23,11 +23,20 @@ export class BanPlayer implements Action {
         try {
             let character: Character = dungeon.getCharacter(recipientCharacterName)
             let userId: string = character.getUserId()
-            // save banned user
-            dungeon.getBlacklist().push(userId)
-            await this.dungeonController.kickPlayer(recipientCharacterName, {type: kickType, kickMessage: message})
-            amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerBanned, recipientCharacterName)})
-            this.dungeonController.persistBlacklist()
+            let dungeonCreatorId: string = dungeon.getCreatorId()
+            let dungeonMasterId: string = dungeon.getMasterId()
+            if (userId === dungeonCreatorId) {
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.cannotBanDungeonCreator})
+            } else if (userId === dungeonMasterId) {
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.cannotBanOwnCharacter})
+            } else {
+                // save banned user
+                dungeon.getBlacklist().push(userId)
+                await this.dungeonController.kickPlayer(recipientCharacterName, {type: kickType, kickMessage: message})
+                amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerBanned, recipientCharacterName)})
+                this.dungeonController.persistBlacklist()
+            }
+
         } catch (e) {
             //console.log(e)
             this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName)})

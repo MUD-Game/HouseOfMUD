@@ -29,7 +29,7 @@ export class AddHp implements Action {
             let maxHp: number = recipientCharacter.getMaxStats().getHp()
             let hpCount: number = +args[1]
             if (isNaN(hpCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
             } else {
                 if (maxHp - actualHp >= hpCount) {
                     actualHp = actualHp + hpCount

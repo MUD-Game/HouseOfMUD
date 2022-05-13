@@ -339,6 +339,18 @@ export class DatabaseAdapter {
         dungeonToUpdate?.save();
     }
 
+    async isBanned(userId: string, dungeonId: string): Promise<boolean> {
+        console.log(userId);
+        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: {$elemMatch: { $eq: userId }} });
+        console.log(dungeon);
+        if (dungeon) {
+            if (dungeon.blacklist.includes(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * updates a room inside from the rooms collection inside the database
      * @param room the updated room (has to have the same custom id as the room that should be updated)

@@ -16,7 +16,7 @@ export class DiscardAction extends Action {
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)
-        let nameOfItemToDiscard: string = args.join(' ')
+        let nameOfItemToDiscard: string = args[0]
         let characterInventory: ItemInfo[] = senderCharacter.getInventory()
         let idOfCharacterPosition: string = senderCharacter.getPosition()
         let characterPosition: Room = dungeon.getRoom(idOfCharacterPosition)

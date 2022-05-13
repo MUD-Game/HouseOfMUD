@@ -28,7 +28,7 @@ export class RemoveDamage implements Action {
             let actualDmg: number = recipientCharacter.getCharakterStats().getDmg()
             let dmgCount: number = +args[1]
             if (isNaN(dmgCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
             } else {
                 if (actualDmg - dmgCount <= 0) {
                     damagestring = parseResponseString(dungeonMasterSendMessages.removeDmg, (actualDmg).toString())

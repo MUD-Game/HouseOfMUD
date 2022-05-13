@@ -20,6 +20,7 @@ export interface Character {
     isDead(): boolean
     getCharakterStats(): CharacterStats
     getMaxStats(): CharacterStats
+    getUserId(): string
 }
 
 export class CharacterImpl implements Character {
@@ -90,5 +91,9 @@ export class CharacterImpl implements Character {
 
     getMaxStats(): CharacterStats {
         return this.maxStats
+    }
+
+    getUserId(): string {
+        return this.userId
     }
 }

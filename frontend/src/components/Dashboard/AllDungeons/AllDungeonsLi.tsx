@@ -48,7 +48,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
             onPasswordRequest(id, name);
         } else {
             supervisor.checkPassword(
-                "",
+                id,
                 "",
                 () => {
                     game.setDungeon(id);

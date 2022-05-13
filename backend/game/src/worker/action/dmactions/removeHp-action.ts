@@ -29,7 +29,7 @@ export class RemoveHp implements Action {
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let hpCount: number = +args[1]
             if (isNaN(hpCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
             } else {
                 if (actualHp - hpCount <= 0) {
                     recipientCharacter.getCharakterStats().setHp(0)

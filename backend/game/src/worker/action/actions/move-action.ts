@@ -84,7 +84,8 @@ export class MoveAction extends Action {
                 await amqpAdapter.unbindClientQueue(user, routingKeyOldRoom);
                 await amqpAdapter.bindClientQueue(user, routingKeyNewRoom);
                 await amqpAdapter.sendActionWithRouting(routingKeyNewRoom, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)});
-                // message sent to dungeon master
+                // messages sent to dungeon master
+                await amqpAdapter.sendActionToClient(extras.dungeonMasterId, 'message', { message: parseResponseString(actionMessages.moveLeave, senderCharacterName, currentRoom.getName()), player: senderCharacterName, room: currentRoom.getName() });
                 await amqpAdapter.sendActionToClient(extras.dungeonMasterId, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName), player: senderCharacterName, room: destinationRoomName });
                 // Sends the new room id to the client.
                 await amqpAdapter.sendActionToClient(user, 'minimap.move', destinationRoomId);

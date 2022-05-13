@@ -13,6 +13,7 @@ type AuthContextType = {
   requestResetPassword:(email: string, success: VoidFunction, error: (error: string) => void)=> void;
   changePassword: (token: string, password: string, success: VoidFunction, error: (error: string) => void) => void;
   user: string;
+  userID: string;
   token: string;
   isAuthenticated: (success: VoidFunction, error: (error: string) => void) => void;
   login: (user: string, password: string, success: VoidFunction, error: (error: string) => void) => void;
@@ -26,11 +27,13 @@ let AuthContext = React.createContext<AuthContextType>({} as AuthContextType);
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   let [user, setUser] = React.useState<string>("");
+  let [userID, setUserID] = React.useState<string>("");
   let [token, setToken] = React.useState<string>('');
   let isAuthenticated = (success: VoidFunction, error: (error: string) => void) => {
     supervisor.authenticate({ user: user, password: token }, (data: any) => {
         let c = new Cookies();
         setUser(c.get('user'));
+        setUserID(c.get('userID'));
         success();
     }, (errRes) => error(errRes.error));
   }
@@ -69,7 +72,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   let verifyEmail = (token: string, success: VoidFunction, error: (error: string) => void) => {
     supervisor.verify(token, success, (errRes) => error(errRes.error));
   }
-  let value = { user, token, login, logout, register, isAuthenticated, verifyEmail, deleteUser, changePassword, requestResetPassword };
+  let value = { user, token, userID, login, logout, register, isAuthenticated, verifyEmail, deleteUser, changePassword, requestResetPassword };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

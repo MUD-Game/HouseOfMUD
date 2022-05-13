@@ -29,7 +29,7 @@ export class AddDamage implements Action {
             let maxDmg: number = recipientCharacter.getMaxStats().getDmg()
             let dmgCount: number = +args[1]
             if (isNaN(dmgCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber, room: roomName})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
             } else {
                 if (maxDmg - actualDmg >= dmgCount) {
                     actualDmg = actualDmg + dmgCount 

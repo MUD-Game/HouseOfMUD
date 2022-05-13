@@ -288,6 +288,8 @@ export class HostLink {
         if (dungeon !== undefined) {
             if (dungeon.password !== undefined && dungeon.password !== '') {
                 return dungeon.password === password;
+            } else {
+                return true;
             }
         }
         return false;

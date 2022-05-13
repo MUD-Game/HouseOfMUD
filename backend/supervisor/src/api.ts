@@ -108,17 +108,23 @@ export class API {
 
         app.post('/auth/logout', this.authProvider.auth, this.authProvider.logout);
 
-        app.post('/checkPassword/:dungeonID', this.authProvider.auth, (req, res) => {
+        app.post('/checkPassword/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
+            const { userID } = req.cookies;
             let body: any = req.body;
-            if (body.password !== undefined) {
-                if (this.hostLink.checkPassword(dungeonID, body.password)) {
-                    res.status(200).json({ok:1});
-                } else {
-                    res.status(401).json({ok: 0, error: 'dungeonunauthorized'});
+            let isBanned: boolean = await this.dba.isBanned(userID, dungeonID);
+            if (!isBanned) {
+                if (body.password !== undefined) {
+                    if (this.hostLink.checkPassword(dungeonID, body.password)) {
+                        res.status(200).json({ok:1});
+                    } else {
+                        res.status(401).json({ok: 0, error: 'dungeonunauthorized'});
+                    }
+                }else{
+                    res.status(400).json({ ok: 0, error: 'parameters' });
                 }
-            }else{
-                res.status(400).json({ ok: 0, error: 'parameters' });
+            } else {
+                res.status(401).json({ ok: 0, error: 'banned' });
             }
         });
 

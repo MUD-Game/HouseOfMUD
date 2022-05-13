@@ -36,7 +36,7 @@ export class AddRoomItem extends Action { //test me
                     let itemName: string = item.getName()
                     availableItemsString += `\n\t${itemName}`
                 })
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.itemDoesNotExist, availableItemsString), room: roomName})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.itemDoesNotExist, availableItemsString)})
             }
         
         } catch(e) {

@@ -71,6 +71,7 @@ export const actionMessages = {
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
     unspecifiedActionDungeonMaster: "%s hat folgende Aktion in %s angefragt: %s",
     playerKicked: "%s wurde aus dem Dungeon gekickt!",
+    playerBanned: "%s wurde vom Dungeon gebannt!",
     broadcast: "Dungeon Master sagt: %s"
 }
 
@@ -85,7 +86,9 @@ export const errorMessages = {
     actionDoesNotExist: "Diese Aktion ist nicht möglich! Gib '%s' ein um eine Liste der moeglichen Aktionen zu sehen.",
     lookError: " Fehler!",
     charakterHasntItem: "%s besitzt dieses Item nicht!",
-    noMessage: "Bitte geb eine Nachricht zum senden ein!"
+    noMessage: "Bitte geb eine Nachricht zum senden ein!",
+    cannotBanOwnCharacter: "Du kannst nicht deine eigenen Charaktere bannen!",
+    cannotBanDungeonCreator: "Du kannst nicht den Ersteller des Dungeons bannen!"
 }
 
 export const helpMessagesForDM = {

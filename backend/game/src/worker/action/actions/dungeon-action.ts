@@ -17,7 +17,7 @@ export class DungeonAction extends Action {
     constructor(trigger: string, dungeonController: DungeonController, actionElement: ActionElement) {
         super(trigger, dungeonController);
         let stringForRegEx: string = `^(${trigger})$`
-        this.regEx = new RegExp(stringForRegEx)
+        this.regEx = new RegExp(stringForRegEx, 'i')
         this.actionElement = actionElement
     }
 

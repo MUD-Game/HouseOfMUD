@@ -2,6 +2,7 @@ import { ConsumeMessage } from "amqplib";
 import { userInfo } from "os";
 import { DatabaseAdapter } from "../../data/databaseAdapter";
 import { CharacterDataset } from "../../data/datasets/characterDataset";
+import { ItemInfo } from "../../data/datasets/itemInfo";
 import { Character, CharacterImpl } from "../../data/interfaces/character";
 import { CharacterStats, CharacterStatsImpl } from "../../data/interfaces/characterStats";
 import { Dungeon } from "../../data/interfaces/dungeon";
@@ -236,7 +237,7 @@ export class DungeonController {
     async persistAllCharacters(){
         console.log('Persisting all Characters');
         let characters = this.mapToArray(this.dungeon.characters)
-        await Promise.all(characters.filter(char => char.name !== 'dungeonmaster').map(async char => {
+        await Promise.all(characters.filter(char => char.name !== DUNGEONMASTER).map(async char => {
             await this.persistCharacterData(char);
         }));
     }
@@ -279,6 +280,7 @@ export class DungeonController {
                 if (!(char.position in this.dungeon.rooms)) {
                     char.position = '0,0'; // Start Room
                 }
+                char.inventory = this.chekcInventory(char.inventory); // if items were deleted
                 return new CharacterImpl(char.userId, char.name, char.characterClass, char.characterSpecies, char.characterGender, new CharacterStatsImpl(maxStats.hp, maxStats.dmg, maxStats.mana), 
                     new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
@@ -286,6 +288,16 @@ export class DungeonController {
         if (name === DUNGEONMASTER) {
             return this.createDungeonMaster(user, name);
         }
+    }
+
+    private chekcInventory(inventory: ItemInfo[]): ItemInfo[] {
+        let checkedInv: ItemInfo[] = [];
+        for (let item of inventory) {
+            if (item.item in this.dungeon.items) {
+                checkedInv.push(item);
+            }
+        }
+        return checkedInv;
     }
 
     private createDungeonMaster(user: string, name: string): Character {
@@ -393,7 +405,7 @@ export class DungeonController {
                     mana: maxCharacterStats.getMana()
                 }
             }
-            this.amqpAdapter.sendActionToClient('dungeonmaster', "updatePlayerInformation", data);
+            this.amqpAdapter.sendActionToClient(DUNGEONMASTER, "updatePlayerInformation", data);
         } catch(e) {
             console.error(e);
         }        

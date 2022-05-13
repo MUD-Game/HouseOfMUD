@@ -35,7 +35,8 @@ export const triggers = {
     toggleConnection: "toggle",
     dmgiveup: "dmgiveup",
     kickPlayer: "kick",
-    banPlayer: "ban"
+    banPlayer: "ban",
+    showDmActions: "aktionen"
 }
 
 export const actionMessages = {
@@ -67,6 +68,7 @@ export const actionMessages = {
     pickupDungeonMaster: "%s hat %s aus %s aufgehoben!",
     dungeonActionItemsMissing: "Dir fehlen folgende Items fuer die Aktion:",
     helpMessage: "Willkommen in %s!\nGebe '%s' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe '%s' ein, um dich im Raum umzuschauen.\nWenn du nicht weiter kommst, gib '%s' ein.",
+    helpMessageDm: "Willkommen in %s!\nGebe '%s' ein, um eine Liste aller moeglichen Aktionen zu erhalten.",
     showActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
     showActionsEnding: "\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.",
     unspecifiedActionPlayer: "Du hast folgende Aktion beim Dungeon Master angefragt: %s",
@@ -125,7 +127,9 @@ export const dungeonMasterSendMessages = {
     itemRoomRemoved: "Aus %s wurde das Item %s entfernt",
     toggleConnection: "Der Durchgang zwischen %s und %s wurde %s!",
     connectionOpen: "geoeffnet",
-    connectionClosed: "geschlossen"
+    connectionClosed: "geschlossen",
+    showDmActionsBeginning: "Du kannst in diesem Raum folgende Aktionen ausfuehren: ",
+    showDmActionsEnding: "\nGebe gegebenenfalls geeignete Argumente fuer <> ein. Möchtest du weitere Informationen über einen Spieler haben, klicke in der Spielerliste auf den Namen des gewünschten Spielers."
 }
 
 export const extras = {
@@ -146,6 +150,25 @@ export const actionDescriptions = {
     help: parseResponseString("\n\t'%s' - Wenn du nicht mehr weiterkommst; ", triggers.help),
     showActions: parseResponseString("\n\t'%s' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; ", triggers.showActions)
 }
+
+export const dmActionDescriptions = {
+    addDamage: parseResponseString("\n\t'%s <Spielername>' - Erhöhe den Schaden eines Spielers; ", triggers.addDamage),
+    addHp: parseResponseString("\n\t'%s <Spielername>' - Erhöhe das Leben eines Spielers; ", triggers.addHp),
+    addMana: parseResponseString("\n\t'%s <Spielername>' - Erhöhe das Mana eines Spielers; ", triggers.addMana),
+    removeMana: parseResponseString("\n\t'%s <Spielername>' - Verringere das Mana eines Spielers; ", triggers.removeMana),
+    removeHp: parseResponseString("\n\t'%s <Spielername>' - Verringere das Leben eines Spielers; ", triggers.removeHp),
+    removeDamage: parseResponseString("\n\t'%s <Spielername>' - Verringere den Schaden eines Spielers; ", triggers.removeDamage),
+    changeRoom: parseResponseString("\n\t'%s <Spielername>' - Ändere die Position eines Spielers; ", triggers.changeRoom),
+    removeItem: parseResponseString("\n\t'%s <Spielername> <Itemname>' - Entferne ein Item von einem Spieler; ", triggers.removeItem),
+    removeRoomItem: parseResponseString("\n\t'%s <Spieler> <Raumname>' - Entferne ein Item aus einem Raum; ", triggers.removeRoomItem),
+    addItem: parseResponseString("\n\t'%s <Spielername> <Itemname>' - Gebe einem Spieler ein Item; ", triggers.addItem),
+    addRoomItem: parseResponseString("\n\t'%s <Raumname> <Itemname>' - Lege ein Item in den Raum; ", triggers.addRoomItem),
+    kickPlayer: parseResponseString("\n\t'%s <Spielername> - Schmeiße einen Spieler aus der Lobby; ", triggers.kickPlayer),
+    banPlayer: parseResponseString("\n\t'%s <Spielername> - Banne einen Spieler permanent aus deinem Dungeon; ", triggers.banPlayer),
+    showDmActions: parseResponseString("\n\t'%s - Erhalte eine Beschreibung alle ausführbaren Aktionen; ", triggers.showDmActions),
+    toggleConnection: parseResponseString("\nÜber die Minimap können außerdem die Verbindungen getoggled werden. Klick dafür auf die Verbindung zwischen den Räumen."),
+}
+
 
 export const eventCases: { [event: string]: number } = {
     "addhp": 1,

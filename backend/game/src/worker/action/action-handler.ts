@@ -32,6 +32,7 @@ import { AddItem } from './dmactions/addItemToPlayer-action';
 import { AddRoomItem } from './dmactions/addItemToRoom-action';
 import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
 import { KickPlayer } from './dmactions/kickPlayer-action';
+import { ShowDmActions } from './dmactions/show-dmactions';
 import { BanPlayer } from './dmactions/banPlayer-action';
 import { DmGiveUpAction } from './dmactions/dmgiveup-action';
 
@@ -39,7 +40,7 @@ import { DmGiveUpAction } from './dmactions/dmgiveup-action';
 // const regExpression = {
 //     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
 //     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
-//     dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.kickPlayer}))`, "i")
+//     dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.showDmActions})|(${triggers.kickPlayer}))`, "i")
 // }
 
 /**
@@ -121,23 +122,24 @@ export class ActionHandlerImpl implements ActionHandler {
         this.dieAction = new DieAction(dungeonController)
 
         let dmActions: Action[] = [
-            new AddDamage(dungeonController),
-            new AddHp(dungeonController),
-            new AddMana(dungeonController),
-            new RemoveMana(dungeonController),
-            new RemoveDamage(dungeonController),
-            new RemoveHp(dungeonController),
-            new PrivateMessageFromDm(dungeonController),
-            new BroadcastMessageAction(dungeonController),
-            new ChangeRoom(dungeonController),
-            new AddItem(dungeonController),
-            new RemoveItem(dungeonController),
-            new AddRoomItem(dungeonController),
-            new removeRoomItem(dungeonController),
-            new ToggleConnectionAction(dungeonController),
-            new KickPlayer(dungeonController),
-            new BanPlayer(dungeonController),
-            new DmGiveUpAction(dungeonController)
+           new AddDamage(dungeonController),
+           new AddHp(dungeonController),
+           new AddMana(dungeonController),
+           new RemoveMana(dungeonController),
+           new RemoveDamage(dungeonController),
+           new RemoveHp(dungeonController),
+           new PrivateMessageFromDm(dungeonController),
+           new BroadcastMessageAction(dungeonController),
+           new ChangeRoom(dungeonController),
+           new AddItem(dungeonController),
+           new RemoveItem(dungeonController),
+           new AddRoomItem(dungeonController),
+           new removeRoomItem(dungeonController),
+           new ToggleConnectionAction(dungeonController),
+           new KickPlayer(dungeonController),
+           new ShowDmActions(dungeonController),
+           new BanPlayer(dungeonController),
+           new DmGiveUpAction(dungeonController)
         ];
 
         dmActions.forEach(dmaction => {

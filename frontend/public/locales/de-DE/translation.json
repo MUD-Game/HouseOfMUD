@@ -258,6 +258,10 @@
         "register": "Registrieren"
     },
     "alert": {
+        "dmgiveup":{
+            "title": "Du hast die Dungeon-Master Rolle abgegeben",
+            "text": "Bis der Dungeon gestoppt ist, kannst du nur als normaler Character spielen."
+        },
         "kick": {
             "title": "Du wurdest aus folgendem Grund gekickt:",
             "default": "Vom Dungeon Master gekickt!"

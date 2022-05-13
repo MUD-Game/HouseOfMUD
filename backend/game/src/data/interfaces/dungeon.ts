@@ -18,6 +18,7 @@ export interface Dungeon {
   creatorId: string;
   globalActions: string[];
   masterId: string;
+  isMasterless: boolean;
   maxPlayers: number;
   characterSpecies: { [id: string]: CharacterSpecies };
   characterClasses: { [id: string]: CharacterClass };
@@ -54,6 +55,9 @@ export interface Dungeon {
   getItem(itemId: string): Item
   getItemByName(itemName: string): Item
   getNpc(npcId: string): Npc
+  setMasterId(masterId:string): void
+  getIsMasterless(): boolean
+  setIsMasterless(isMasterless: boolean): void
 
 }
 
@@ -75,7 +79,15 @@ export class DungeonImpl implements Dungeon {
   actions: { [id: string]: ActionElement };
   items: { [id: string]: Item };
   npcs: { [id: string]: Npc };
+  isMasterless: boolean;
 
+  setIsMasterless(isMasterless: boolean): void {
+    this.isMasterless = isMasterless;
+  }
+
+  getIsMasterless(): boolean {
+    return this.isMasterless;
+  }
   getId(): string {
     return this.id;
   }
@@ -115,6 +127,9 @@ export class DungeonImpl implements Dungeon {
     } else {
       return species;
     }
+  }
+  setMasterId(masterId: string): void {
+    this.masterId = masterId;
   }
 
   getClass(classId: string): CharacterClass {
@@ -283,6 +298,7 @@ export class DungeonImpl implements Dungeon {
     this.actions = arrayToMap(actions);
     this.items = arrayToMap(items)
     this.npcs = arrayToMap(npcs)
+    this.isMasterless = false;
   }
 }
 

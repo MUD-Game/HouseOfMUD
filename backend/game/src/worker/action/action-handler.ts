@@ -33,6 +33,7 @@ import { AddRoomItem } from './dmactions/addItemToRoom-action';
 import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
 import { KickPlayer } from './dmactions/kickPlayer-action';
 import { BanPlayer } from './dmactions/banPlayer-action';
+import { DmGiveUpAction } from './dmactions/dmgiveup-action';
 
 
 // const regExpression = {
@@ -69,7 +70,7 @@ export interface ActionHandler {
     /**
      * Predefined Dungeon Master Actions types to call performAction on.
      */
-     dmActions: { [trigger: string]: Action };
+    dmActions: { [trigger: string]: Action };
 
 
     /**
@@ -86,7 +87,7 @@ export class ActionHandlerImpl implements ActionHandler {
     dungeonActions: { [trigger: string]: DungeonAction } = {};
     invalidAction: InvalidAction;
     dieAction: DieAction;
-    dmActions:{ [trigger: string]: Action } = {};
+    dmActions: { [trigger: string]: Action } = {};
 
     /**
      * Creates an instance of ActionHandler with its necessary actions.
@@ -120,24 +121,25 @@ export class ActionHandlerImpl implements ActionHandler {
         this.dieAction = new DieAction(dungeonController)
 
         let dmActions: Action[] = [
-           new AddDamage(dungeonController),
-           new AddHp(dungeonController),
-           new AddMana(dungeonController),
-           new RemoveMana(dungeonController),
-           new RemoveDamage(dungeonController),
-           new RemoveHp(dungeonController),
-           new PrivateMessageFromDm(dungeonController),
-           new BroadcastMessageAction(dungeonController),
-           new ChangeRoom(dungeonController),
-           new AddItem(dungeonController),
-           new RemoveItem(dungeonController),
-           new AddRoomItem(dungeonController),
-           new removeRoomItem(dungeonController),
-           new ToggleConnectionAction(dungeonController),
-           new KickPlayer(dungeonController),
-           new BanPlayer(dungeonController)
+            new AddDamage(dungeonController),
+            new AddHp(dungeonController),
+            new AddMana(dungeonController),
+            new RemoveMana(dungeonController),
+            new RemoveDamage(dungeonController),
+            new RemoveHp(dungeonController),
+            new PrivateMessageFromDm(dungeonController),
+            new BroadcastMessageAction(dungeonController),
+            new ChangeRoom(dungeonController),
+            new AddItem(dungeonController),
+            new RemoveItem(dungeonController),
+            new AddRoomItem(dungeonController),
+            new removeRoomItem(dungeonController),
+            new ToggleConnectionAction(dungeonController),
+            new KickPlayer(dungeonController),
+            new BanPlayer(dungeonController),
+            new DmGiveUpAction(dungeonController)
         ];
-        
+
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;
         });
@@ -157,7 +159,7 @@ export class ActionHandlerImpl implements ActionHandler {
         let actionArguments: string[] = this.getActionArguments(message)
         try {
             action.performAction(user, actionArguments);
-        } catch(e) {
+        } catch (e) {
             console.log('Action invalid')
         }
         this.dieAction.performAction(user, [])
@@ -173,7 +175,7 @@ export class ActionHandlerImpl implements ActionHandler {
         let actionArguments: string[] = this.getActionArguments(message)
         try {
             dmaction.performAction(extras.dungeonMasterId, actionArguments);
-        } catch(e) {
+        } catch (e) {
             console.log('Action invalid')
         }
         return dmaction;
@@ -209,7 +211,7 @@ export class ActionHandlerImpl implements ActionHandler {
      * @param messageString Message string to get command from.
      * @returns Dm action matching the command.
      */
-     getDmAction(messageString: string): Action {
+    getDmAction(messageString: string): Action {
         let splitMessageString: string[] = messageString.split(' ');
         console.log(splitMessageString[0])
         let action: Action = this.dmActions[splitMessageString[0]]

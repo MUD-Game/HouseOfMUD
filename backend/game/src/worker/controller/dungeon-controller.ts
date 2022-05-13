@@ -8,10 +8,11 @@ import { Dungeon } from "../../data/interfaces/dungeon";
 import { Room } from "../../data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
+import { DmGiveUpAction } from "../action/dmactions/dmgiveup-action";
 import { ToggleConnectionAction } from "../action/dmactions/toggleRoomConnection-action";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
 
-const DUNGEONMASTER = 'dungeonmaster';
+export const DUNGEONMASTER = 'dungeonmaster';
 
 function sendToHost(hostAction: string, data: any): void {
     if (process.send) {
@@ -136,21 +137,25 @@ export class DungeonController {
                 this.sendPlayerInformationData()
                 break;
             case 'dmgiveup':
-                console.log(data.data.character);
+                console.log("dmgiveup", data.data.character);
+                let dmgiveupAction : DmGiveUpAction = this.actionHandler.dmActions[triggers.dmgiveup] as DmGiveUpAction
+                dmgiveupAction.changeDungeonMaster(data.data.character);
                 break;
         }
     }
 
     private async login(user: string, characterName: string): Promise<boolean> {
         console.log(`login ${characterName}`);
-
+        if(characterName === DUNGEONMASTER && this.getDungeon().getIsMasterless()) {
+            this.getDungeon().setIsMasterless(false);
+        }
         let character = await this.getCharacter(user, characterName);
         if (character == undefined) {
             return false;
         }
         this.dungeon.characters[characterName] = character;
         await this.amqpAdapter.initClient(characterName);
-        if (characterName !== 'dungeonmaster') {
+        if (characterName !== DUNGEONMASTER) {
             await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
         }
         this.amqpAdapter.broadcastAction('message', { message: `${characterName} ist dem Dungeon beigetreten!` });
@@ -167,14 +172,19 @@ export class DungeonController {
 
     private async logout(user: string, characterName: string) {
         console.log(`logout ${characterName}`);
+        if (!(characterName === DUNGEONMASTER && this.dungeon.getIsMasterless())) {
         delete this.verifyTokens[characterName];
+        }
         if (characterName !== DUNGEONMASTER) {
             await this.persistCharacterData(this.dungeon.getCharacter(characterName))
             delete this.dungeon.characters[characterName];
             this.sendPlayerListToDM();
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
         } else { // Dungeon Master
+            // Check if the dungeonmaster is actually the dungeonmasterid
+            if(!this.dungeon.getIsMasterless()) {
             this.stopDungeon();
+            }
         }
     }
 
@@ -384,5 +394,13 @@ export class DungeonController {
         } catch(e) {
             console.error(e);
         }        
+    }
+
+    getUserIdFromCharacter(character:string){
+        return this.dungeon.characters[character].getUserId();
+    }
+
+    getDungeonMasterToken(): string{
+        return this.verifyTokens[DUNGEONMASTER];
     }
 }

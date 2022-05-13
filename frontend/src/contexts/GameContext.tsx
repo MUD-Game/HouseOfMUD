@@ -28,7 +28,11 @@ function GameProvider({ children }: { children: React.ReactNode }) {
 
   const isAbleToJoinGame = () => {
     return (isAbleToPickCharacter() && character !== '' && verifyToken !== '')
-  } 
+  }
+  
+  const isAbleToBeDungeonMaster = () => {
+    return (dungeon !== "" && verifyToken !== "");
+  }
 
 
 

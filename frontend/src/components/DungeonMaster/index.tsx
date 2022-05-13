@@ -10,7 +10,7 @@ import React, { useState } from 'react'
 import Minimap from './Minimap';
 import { useEffect } from 'react';
 import { useGame } from 'src/hooks/useGame';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { Container, Row } from 'react-bootstrap';
 import Chat from './Chat';
@@ -30,6 +30,7 @@ const Game: React.FC<GameProps> = () => {
     let navigate = useNavigate();
 
     const rabbit = useRabbitMQ();
+    const location = useLocation();
     const [messageQueue, setMessageQueue] = useState<string[]>([]);
     const { isAbleToJoinGame } = useGame();
     const [error, setError] = React.useState<string>("");
@@ -65,15 +66,16 @@ const Game: React.FC<GameProps> = () => {
 
     useEffect(() => {
         window.addEventListener('unload', onUnload);
+        const delay = (location.state as {delay?:number})?.delay ?? 0;
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.setKickSubscriber(kickSubscriber);
-            rabbit.login(() => {
+            setTimeout(()=>rabbit.login(() => {
                 // Success
             }, (error) => {
                 setError("rabbitmq.login")
-            });
+            }),delay);
         }
         return () => {
             window.removeEventListener('unload', onUnload);

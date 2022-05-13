@@ -24,3 +24,27 @@
   position: relative;
   left:50%;
 }
+
+#sadwrapper a{
+  text-decoration: underline;
+  font-weight: initial;
+}
+
+#sadwrapper{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#sadwrapper > img{
+  max-height: 50vh;
+}
+
+#sadwrapper h1 {
+  margin-bottom:0;
+}
+
+#sadwrapper h4 {
+  text-align: center;
+}

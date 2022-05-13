@@ -38,8 +38,7 @@ const Game: React.FC<GameProps> = () => {
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
     const [inventoryData, setInventoryData] = React.useState<InventoryProps["inventoryData"]>([]);
     const [hudData, setHudData] = React.useState<HUDProps | null>(null);
-
-    
+        
 
     const miniMapSubscriber = (roomData: MinimapProps) => {
         setMiniMapData(roomData);
@@ -51,7 +50,8 @@ const Game: React.FC<GameProps> = () => {
         }
         navigate('/', {state: {
             message: message.kickMessage,
-            title: t(`alert.${message.type}.title`)
+            title: t(`alert.${message.type}.title`),
+            time: new Date()
         } as DashboardLocationState});
     }
 
@@ -86,8 +86,6 @@ const Game: React.FC<GameProps> = () => {
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
     }
-
-
 
 
     return (

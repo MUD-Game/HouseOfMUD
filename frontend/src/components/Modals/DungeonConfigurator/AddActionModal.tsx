@@ -173,9 +173,9 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                 </Modal.Header>
                 <Alert type="error" message={error} setMessage={setError} />
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
-                    <MudInput autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(validator.command(event.target))} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
-                    <MudInput placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(validator.output(event.target))} />
+                    <MudInput name="command" autoFocus placeholder={t(`dungeon_keys.command`)} colmd={12} value={command} onChange={(event) => setCommand(validator.command(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
+                    <MudInput name="output" placeholder={t(`dungeon_keys.output`)} colmd={12} value={output} onChange={(event) => setOutput(validator.output(event.target))} />
                     <MudTypeahead
                         colmd={12}
                         title={t(`dungeon_keys.itemsNeeded`)}
@@ -221,7 +221,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                             )
                         }
                         return (
-                            <MudInput type="number" required key={mudEvent as string} placeholder={mudEvent as string} colmd={12} value={eventValues[mudEvent as string] || ""} onChange={(event) => setEventValues({ ...eventValues, [mudEvent as string]: validator.statValues(event.target.value) })} />
+                            <MudInput name={mudEvent as string} type="number" required key={mudEvent as string} placeholder={mudEvent as string} colmd={12} value={eventValues[mudEvent as string] || ""} onChange={(event) => setEventValues({ ...eventValues, [mudEvent as string]: validator.statValues(event.target.value) })} />
                         )
                     })}
 

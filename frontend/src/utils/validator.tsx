@@ -11,6 +11,9 @@ const validator = {
     description: (target: any) =>{
         return validator.stringConstraint(target, 500);
     },
+    dungeonPassword: (target: any) => {
+        return validator.stringConstraint(target, 50);
+    },
     cirName: (target: any) => {
         return validator.noSpace(validator.stringConstraint(target, 50));
     },
@@ -36,6 +39,9 @@ const validator = {
     statValues: (stat: string) => {
         return validator.numberConstraint(stat, 1, 1000000);
     },
+    itemCount: (itemCount: string) =>{
+        return validator.numberConstraint(itemCount, 1, 1000000);
+    },
     numberConstraint: (number: string, min: number, max: number) => {
         if (number === "") return "";
         if (isNaN(Number(number))) return min;
@@ -44,7 +50,7 @@ const validator = {
         return Math.max(min, Math.min(parsedNumber, max));
     },
     maxPlayers: (maxPlayersString: string) => {
-        return validator.numberConstraint(maxPlayersString, 2, 1000000);
+        return validator.numberConstraint(maxPlayersString, 1, 1000000);
     },
     alreadyExists(value: any, key:string, list: any[] | {[key: string]: any}) {
         if (Array.isArray(list)) {

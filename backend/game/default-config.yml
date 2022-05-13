@@ -8,7 +8,7 @@ supervisorLink:
   authKey: SuperSecretKey
 
 amqpAdapter:
-  url: mud-ga.me
+  url: ...
   port: 5672
   user: guest
   password: guest
@@ -20,3 +20,4 @@ mongodb:
   port: 27017
   user: root
   password: root
+  database: app

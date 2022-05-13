@@ -65,6 +65,7 @@ export class AmqpAdapter {
             // Assert Client Exchange
             await this.channel.assertExchange(`${this.clientExchange}-${this.dungeonID}`, 'topic', { autoDelete: false, internal: true });
             await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `${this.dungeonID}.#`);
+            await this.channel.bindExchange(`${this.clientExchange}-${this.dungeonID}`, this.clientExchange, `broadcast.#`);
         } catch (err) {
             await this.channel?.close();
             await this.connection?.close();
@@ -241,7 +242,7 @@ export class AmqpAdapter {
      * @param action Action to send.
      * @param data Data to send.
      */
-     async sendActionWithRouting(routingKey: string, action: string, data: any) {
+    async sendActionWithRouting(routingKey: string, action: string, data: any) {
         this.sendWithRouting(routingKey, {
             action: action,
             data: data
@@ -254,7 +255,7 @@ export class AmqpAdapter {
      * @param routingKey Key that specifies receiver(s) (e.g. roomID).
      * @param msg Message to send.
      */
-     async sendWithRouting(routingKey: string, msg: any): Promise<void> {
+    async sendWithRouting(routingKey: string, msg: any): Promise<void> {
         if (this.isConnected()) {
             try {
                 this.channel!.publish(this.clientExchange, `${this.dungeonID}.${routingKey}`, Buffer.from(JSON.stringify(msg)));

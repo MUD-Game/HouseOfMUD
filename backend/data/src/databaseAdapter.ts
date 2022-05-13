@@ -36,6 +36,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
+    
 
     public database: string;
 
@@ -73,6 +74,7 @@ export class DatabaseAdapter {
         return this.dungeon.create({
             name: dungeonToStore.name,
             description: dungeonToStore.description,
+            password: dungeonToStore.password,
             creatorId: dungeonToStore.creatorId,
             masterId: dungeonToStore.masterId,
             maxPlayers: dungeonToStore.maxPlayers,
@@ -101,6 +103,13 @@ export class DatabaseAdapter {
         return this.user.updateOne({ email: email }, { password: password });
     }
 
+    async checkIfCharacterExists(name: string, dungeonID: string) {
+        const foundCharacter = await this.character.findOne({ name: name, dungeonID: dungeonID });
+        if (foundCharacter) {
+            return true;
+        }
+        return false;
+    }
 
 
     /**
@@ -116,6 +125,7 @@ export class DatabaseAdapter {
         return {
             name: foundDungeon.name,
             description: foundDungeon.description,
+            password: foundDungeon.password,
             creatorId: foundDungeon.creatorId,
             masterId: foundDungeon.masterId,
             maxPlayers: foundDungeon.maxPlayers,
@@ -210,6 +220,7 @@ export class DatabaseAdapter {
             _id: oldDungeon._id,
             name: newDungeon.name,
             description: newDungeon.description,
+            password: newDungeon.password,
             creatorId: oldDungeon.creatorId,
             masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
@@ -229,14 +240,17 @@ export class DatabaseAdapter {
     /**
      * get the needed dungeon information for the supervisor 
      * @param id the id of the dungeon to get the information from
-     * @returns the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
+     * @returns the dungeon information (id, name, description, creatorId, password, masterId, maxPlayers, currentPlayers)
      */
     async getDungeonInfo(id: string) {
         return (this.dungeon.findOne({ id: id },
-            'id name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description password creatorId masterId maxPlayers currentPlayers'))
     }
 
     async getUserId(user: string): Promise<string | undefined> {
+        if (user==="root"){
+            return "root";
+        }
         const foundUser = await this.user.findOne({ username: user }, '_id');
         if (foundUser) {
             return foundUser._id.toString();
@@ -248,11 +262,11 @@ export class DatabaseAdapter {
 
     /**
      * get the dungeon information for the supervisor from all existing dungeons
-     * @returns an array of the dungeon information (id, name, description, creatorId, masterId, maxPlayers, currentPlayers)
+     * @returns an array of the dungeon information (id, name, description, password, creatorId, masterId, maxPlayers, currentPlayers)
      */
     async getAllDungeonInfos() {
         return (this.dungeon.find({},
-            'id name description creatorId masterId maxPlayers currentPlayers'))
+            'id name description password creatorId masterId maxPlayers currentPlayers'))
     }
 
     /**
@@ -317,6 +331,24 @@ export class DatabaseAdapter {
         }
     }
 
+    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string){
+        let dungeonToUpdate = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
+        if(dungeonToUpdate?.blacklist != undefined){
+            dungeonToUpdate.blacklist = updatedBlacklist;
+        }
+        dungeonToUpdate?.save();
+    }
+
+    async isBanned(userId: string, dungeonId: string): Promise<boolean> {
+        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: {$elemMatch: { $eq: userId }} });
+        if (dungeon) {
+            if (userId in dungeon.blacklist) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * updates a room inside from the rooms collection inside the database
      * @param room the updated room (has to have the same custom id as the room that should be updated)
@@ -326,10 +358,10 @@ export class DatabaseAdapter {
         let dungeonRoomIds: RoomDataset[] | undefined = (await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, 'rooms'))?.rooms
         console.log(dungeonRoomIds)
         if (dungeonRoomIds != undefined) {
-            dungeonRoomIds.forEach(async id => {
+            await Promise.all(dungeonRoomIds.map(async id => {
                 let foundRoom = (await this.room.findOne({ _id: id })) as RoomDataset
                 await this.room.updateOne(foundRoom, rooms.find(room => room.id == foundRoom.id));
-            });
+            }));
         }
     }
 

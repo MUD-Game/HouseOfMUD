@@ -30,15 +30,15 @@ export class PrivateMessageAction extends Action {
                 let recipientCharacterRoomId: string = recipientCharacter.getPosition()
                 if (recipientCharacterRoomId === room.getId()) {
                     let responseMessage: string = parseResponseString(actionMessages.whisper, senderCharacterName, recipientCharacterName, messageBody)
-                    amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-                    amqpAdapter.sendToClient(recipientCharacterName, {action: "message", data: {message: responseMessage}})
+                    amqpAdapter.sendActionToClient(user, "message", {message: responseMessage})
+                    amqpAdapter.sendActionToClient(recipientCharacterName, "message", {message: responseMessage})
                 } else {
-                    amqpAdapter.sendToClient(user, {action: "message", data: {message: parseResponseString(actionMessages.whisperCharacterNotInSameRoom, recipientCharacterName)}})
+                    amqpAdapter.sendActionToClient(user, "message", {message: parseResponseString(actionMessages.whisperCharacterNotInSameRoom, recipientCharacterName)})
                 }
             
         } catch(e) {
-            console.log(e)
-            amqpAdapter.sendToClient(user, {action: "message", data: {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName)}})
+            //console.log(e)
+            amqpAdapter.sendActionToClient(user, "message", {message: parseResponseString(errorMessages.characterDoesNotExist, recipientCharacterName, triggers.look)})
         }
     }
 }

@@ -16,7 +16,7 @@ export class DiscardAction extends Action {
     performAction(user: string, args: string[]) {
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)
-        let nameOfItemToDiscard: string = args.join(' ')
+        let nameOfItemToDiscard: string = args[0]
         let characterInventory: ItemInfo[] = senderCharacter.getInventory()
         let idOfCharacterPosition: string = senderCharacter.getPosition()
         let characterPosition: Room = dungeon.getRoom(idOfCharacterPosition)
@@ -45,11 +45,11 @@ export class DiscardAction extends Action {
                 this.dungeonController.getAmqpAdapter().sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.discardDungeonMaster, user, nameOfItemToDiscard, roomName), player: user, room: roomName})
                 this.dungeonController.sendInventoryData(user)
             } else {
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotOwned, triggers.inventory)})
             }
         } catch(e) {
-            console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: errorMessages.itemNotOwned})
+            //console.log(e)
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(errorMessages.itemNotOwned, triggers.inventory)})
         }
     }
 

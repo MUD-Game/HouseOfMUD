@@ -29,6 +29,7 @@ export class MoveAction extends Action {
         let invalidDirection: boolean = false;
         let closedPath: boolean = false;
         let inactivePath: boolean = false;
+        // Refactorn, raume ohne exceptions abfragen
         try {
             switch (direction.toLowerCase()) {
                 case 'norden':
@@ -68,7 +69,7 @@ export class MoveAction extends Action {
                     break;
             }
             if (invalidDirection) {
-                amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.directionDoesNotExist });
+                amqpAdapter.sendActionToClient(user, 'message', { message: errorMessages.directionDoesNotExist + errorMessages.moveAvailableDirections});
             } else if (closedPath) {
                 amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.moveRoomClosed });
             } else if (inactivePath) {
@@ -83,14 +84,16 @@ export class MoveAction extends Action {
                 await amqpAdapter.unbindClientQueue(user, routingKeyOldRoom);
                 await amqpAdapter.bindClientQueue(user, routingKeyNewRoom);
                 await amqpAdapter.sendActionWithRouting(routingKeyNewRoom, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName)});
-                // message sent to dungeon master
+                // messages sent to dungeon master
+                await amqpAdapter.sendActionToClient(extras.dungeonMasterId, 'message', { message: parseResponseString(actionMessages.moveLeave, senderCharacterName, currentRoom.getName()), player: senderCharacterName, room: currentRoom.getName() });
                 await amqpAdapter.sendActionToClient(extras.dungeonMasterId, 'message', { message: parseResponseString(actionMessages.moveEnter, senderCharacterName, destinationRoomName), player: senderCharacterName, room: destinationRoomName });
                 // Sends the new room id to the client.
                 await amqpAdapter.sendActionToClient(user, 'minimap.move', destinationRoomId);
+                this.dungeonController.sendPlayerListToDM();
             }
         } catch (e) {
             // console.log(e);
-            amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.movePathNotAvailable });
+            amqpAdapter.sendActionToClient(user, 'message', { message: actionMessages.movePathNotAvailable});
         }
     }
 }

@@ -1,5 +1,6 @@
 import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
+import { Room } from "../../../data/interfaces/room";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
@@ -18,10 +19,13 @@ import { actionMessages, extras, parseResponseString, triggers } from "./action-
         let dungeon: Dungeon = this.dungeonController.getDungeon()
         let senderCharacter: Character = dungeon.getCharacter(user)
         let senderCharacterName: string = senderCharacter.getName()
+        let characterPosition: string = senderCharacter.getPosition()
+        let room: Room = dungeon.getRoom(characterPosition)
+        let roomName: string = room.getName()
         let messageBody: string = args.join(' ')
         let responseMessage: string = parseResponseString(actionMessages.whisperToDm, senderCharacterName, messageBody)
         let amqpAdapter: AmqpAdapter = this.dungeonController.getAmqpAdapter()
-        amqpAdapter.sendToClient(user, {action: "message", data: {message: responseMessage}})
-        amqpAdapter.sendToClient(extras.dungeonMasterId, {action: "message", data: {message: responseMessage, player: senderCharacterName}})
+        amqpAdapter.sendActionToClient(user, "message", {message: responseMessage})
+        amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: responseMessage, player: senderCharacterName, room: roomName})
     }
 }

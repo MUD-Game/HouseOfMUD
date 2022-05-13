@@ -5,11 +5,11 @@
  * @category Service
  */
 
-import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData } from "@supervisor/api";
+import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData , CheckPasswordResponse} from "@supervisor/api";
 import $ from "jquery";
 
 let connectionString = "";
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (!process.env.NODE_ENV || !process.env.REACT_APP_HOM_API && process.env.NODE_ENV === 'development') {
     connectionString = "http://localhost:43210"
 } else {
     connectionString = process.env.REACT_APP_HOM_API || "https://mud-ga.me:43210";
@@ -134,6 +134,10 @@ const supervisor = {
 
     changePassword(token: string, password:string, dataCallBack: (data: LoginResponse) => void, error: (error: ErrorResponse) => void) {
         genericRequest("/auth/resetpassword", "POST", { token, password }, {}, dataCallBack, error);
+    },
+
+    checkPassword(dungeonID: string, password: string, dataCallBack: (data: CheckPasswordResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest(`/checkPassword/${dungeonID}`, "POST", {password}, {}, dataCallBack, error);
     },
 
     login(dungeonID: string, body: LoginRequest, dataCallBack: (data: LoginResponseData) => void, error: (error: ErrorResponse) => void) {

@@ -8,8 +8,13 @@ async function main() {
     const config: Config | undefined = loadConfig();
 
     if (config !== undefined) {
+        let name = config.name;
+        if (process.argv.length >= 3) {
+            name = process.argv[2];
+        }
+
         const forkHandler = new ForkHandler(config.amqpAdapter, config.mongodb);
-        const supervisorLink = new SupervisorLink(config.name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, config.mongodb.database, forkHandler);
+        const supervisorLink = new SupervisorLink(name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, config.mongodb.database, forkHandler);
         supervisorLink.connect();
     } else {
         console.log("Cannot find Config");

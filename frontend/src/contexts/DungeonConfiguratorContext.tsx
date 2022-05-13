@@ -55,6 +55,7 @@ function arrayToMap(array: any[]): any {
 export interface DungeonConfiguratorContextMethods {
     setName: (name: string) => void;
     setDescription: (description: string) => void;
+    setPassword: (password: string) => void;
     setMaxPlayers: (maxPlayers: number | "") => void;
 
 
@@ -128,6 +129,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
     // States
     const [name, setName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
+    const [password, setPassword] = React.useState<string>("");
     const [maxPlayers, setMaxPlayers] = React.useState<number | "">("");
     const [species, setSpecies] = React.useState<MudCharacterSpecies[]>([]);
     const [genders, setGenders] = React.useState<MudCharacterGender[]>([]);
@@ -210,6 +212,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 }
                 setName(dungeon.name);
                 setDescription(dungeon.description);
+                setPassword(dungeon.password);
                 setMaxPlayers(dungeon.maxPlayers);
                 setClasses(markAsFromServer(processAfterReceive(dungeon.characterClasses)));
                 setCharacterClassKey({ selected: dungeon.characterClasses.length, nextKey: dungeon.characterClasses.length+1 });
@@ -694,6 +697,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
                 id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
                 name,
                 description,
+                password,
                 creatorId: "",
                 masterId: "",
                 currentPlayers: 0,
@@ -716,14 +720,14 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
             if (dungeonId) {
                 supervisor.editDungeon(dungeonId, { dungeonData: createBody }, (data) => {
                     busyCallback(false);
-                    navigate("/");
+                    navigate("/?board=my");
                 }, (error) => {
                     setError(error.error);
                 });
             } else {
                 supervisor.createDungeon({ dungeonData: createBody }, (data) => {
                     busyCallback(false);
-                    navigate("/");
+                    navigate("/?board=my");
                 }, (error) => {
                     busyCallback(false);
                     setError(error.error);
@@ -736,7 +740,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
 
     // You need to give the Provider a "value" prop that is an object, to make it more readable i put the methods and fields in seperated objects
     let methods: DungeonConfiguratorContextMethods = {
-        setName, setDescription, setMaxPlayers, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName, addGender, deleteGender, editGender, addSpecies, deleteSpecies, editSpecies
+        setName, setDescription, setPassword, setMaxPlayers, addClass, editClass, deleteClass, addItem, editItem, deleteItem, addAction, editAction, deleteAction, save, addRoom, saveRoom: saveRoom, deleteRoom, selectRoom, setSelectedRoomActions, setSelectedRoomItems, setSelectedRoomItemValues, setSelectedRoomNpcs, toggleRoomConnection, addNpc, editNpc, deleteNpc, setSelectedRoomDescription, setSelectedRoomName, addGender, deleteGender, editGender, addSpecies, deleteSpecies, editSpecies
     }
 
     let fields: MudDungeon = {
@@ -748,6 +752,7 @@ function DungeonConfiguratorProvider({ children }: { children: React.ReactNode }
         actions,
         rooms,
         description,
+        password,
     } as MudDungeon;
 
 

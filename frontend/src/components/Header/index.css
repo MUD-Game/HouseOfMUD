@@ -1,4 +1,7 @@
 a:hover svg{
-    transform: translateY(-6px) rotate(180deg) !important;
-    transition: transform 0.4s;
+    transform: translateY(-6px) rotate(-100deg) !important;
+}
+
+a svg{
+    transition: transform 0.2s ease-in-out;
 }

@@ -35,6 +35,8 @@ export class DungeonController {
     private actionHandler: ActionHandler;
     private dungeon: Dungeon;
 
+    private selectedPlayer: string | undefined;
+
     constructor(dungeonID: string, amqpAdapter: AmqpAdapter, databaseAdapter: DatabaseAdapter | null, dungeon: Dungeon) {
         this.verifyTokens = {};
 
@@ -51,6 +53,7 @@ export class DungeonController {
         setInterval(() => {
             this.persistAllRooms();
             this.persistAllCharacters();
+            this.persistBlacklist();
         }, 300000);
         
         this.handleHostMessages();
@@ -104,27 +107,42 @@ export class DungeonController {
     private async handleAmqpMessages(data: any) {
         switch (data.action) {
             case 'login':
-                this.login(data.user, data.character);
+                let loggedIn: boolean = await this.login(data.user, data.character);
+                if (!loggedIn) {
+                    this.amqpAdapter.sendActionToToken(data.verifyToken, 'kick', { message: { type: 'internal' }});
+                }
                 break;
             case 'logout':
                 this.logout(data.user, data.character);
                 break;
             case 'message':
                 this.actionHandler.processAction(data.character, data.data.message);
+                // update playerInfo to Dungeon Master in case something has changed
+                if (data.character === this.selectedPlayer) {
+                    this.sendPlayerInformationData();
+                }
                 break;
             case 'dmmessage':
                 this.actionHandler.processDmAction(data.data.message);
+                // update playerInfo to Dungeon Master in case something has changed
+                this.sendPlayerInformationData();
                 break;
             case 'connection.toggle':
                 let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
                 toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
+            case 'playerInformation':
+                this.selectedPlayer = data.data.playerName;
+                this.sendPlayerInformationData()
         }
     }
 
-    private async login(user: string, characterName: string) {
+    private async login(user: string, characterName: string): Promise<boolean> {
         console.log(`login ${characterName}`);
 
-        let character = await this.getCharacter(characterName);
+        let character = await this.getCharacter(user, characterName);
+        if (character == undefined) {
+            return false;
+        }
         this.dungeon.characters[characterName] = character;
         await this.amqpAdapter.initClient(characterName);
         if (characterName !== 'dungeonmaster') {
@@ -142,6 +160,7 @@ export class DungeonController {
         await this.sendStatsData(characterName)
         await this.sendMiniMapData(characterName);
         await this.sendInventoryData(characterName);
+        return true;
     }
 
     private async logout(user: string, characterName: string) {
@@ -152,10 +171,7 @@ export class DungeonController {
             delete this.dungeon.characters[characterName];
             this.sendPlayerListToDM();
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
-        } else {
-            delete this.dungeon.characters[characterName];
-            sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
-            this.kickAllPlayers('Der Dungeon wurde beendet'); // TODO: Recource
+        } else { // Dungeon Master
             this.stopDungeon();
         }
     }
@@ -169,7 +185,15 @@ export class DungeonController {
     }
 
     sendPlayerListToDM() {
-        this.amqpAdapter.sendActionToClient(DUNGEONMASTER, 'updateOnlinePlayers', Object.keys(this.dungeon.characters));
+        this.amqpAdapter.sendActionToClient(DUNGEONMASTER, 'updateOnlinePlayers',  {
+            players: Object.keys(this.dungeon.characters).map((character: string) => {
+                return {
+                    character: character,
+                    room: this.dungeon.getRoom(this.dungeon.characters[character].position)?.getName()
+                }
+            })
+        });
+        this.sendPlayerInformationData();
     }
 
     async stopDungeon() {
@@ -183,7 +207,7 @@ export class DungeonController {
     async persistAllRooms(){
         console.log("persisting rooms...")
         let rooms: Room[] = this.mapToArray(this.dungeon.rooms)
-        this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
+        await this.databaseAdapter?.updateRooms(rooms, this.dungeonID)
     }
 
     mapToArray(map: any): any[] {
@@ -197,9 +221,14 @@ export class DungeonController {
     async persistAllCharacters(){
         console.log('Persisting all Characters');
         let characters = this.mapToArray(this.dungeon.characters)
-        characters.filter(char => char.name !== 'dungeonmaster').forEach(async char => {
+        await Promise.all(characters.filter(char => char.name !== 'dungeonmaster').map(async char => {
             await this.persistCharacterData(char);
-        });
+        }));
+    }
+
+    async persistBlacklist(){
+        console.log('Persisting blacklist');
+        await this.databaseAdapter?.updateBlacklistInDungeon(this.dungeon.blacklist, this.dungeonID)
     }
 
     async persistCharacterData(character: Character){
@@ -219,7 +248,7 @@ export class DungeonController {
         }, this.dungeonID)
     }
 
-    private async getCharacter(name: string): Promise<Character> {
+    private async getCharacter(user: string, name: string): Promise<Character | undefined> {
         if (this.databaseAdapter) {
             let char = await this.databaseAdapter.getCharacterFromDungeon(name, this.dungeonID);
             console.log(char);
@@ -239,18 +268,20 @@ export class DungeonController {
                     new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
         }
-        return this.createCharacter(name);
+        if (name === DUNGEONMASTER) {
+            return this.createDungeonMaster(user, name);
+        }
     }
 
-    private createCharacter(name: string): Character {
+    private createDungeonMaster(user: string, name: string): Character {
         let newCharacter: Character = new CharacterImpl(
+            user,
             name,
-            name,
             '',
             '',
             '',
-            new CharacterStatsImpl(1, 1, 1),
-            new CharacterStatsImpl(1, 1, 1),
+            new CharacterStatsImpl(0, 0, 0),
+            new CharacterStatsImpl(0, 0, 0),
             "0,0",
             {"0,0":true},
             []
@@ -313,5 +344,43 @@ export class DungeonController {
             }
         }
         this.amqpAdapter.sendActionToClient(character, "stats", data);
+    }
+
+    public getSelectedPlayer(): String | undefined {
+        return this.selectedPlayer;
+    }
+
+    async sendPlayerInformationData() {
+        if (!this.selectedPlayer) {
+            return;
+        }
+        try {
+            let character: Character = this.dungeon.getCharacter(this.selectedPlayer)
+            let characterPosition: string = character.getPosition()
+            let roomName: string = this.dungeon.rooms[characterPosition].getName()
+            let currentCharacterStats: CharacterStats = character.getCharakterStats()
+            let maxCharacterStats: CharacterStats = character.getMaxStats()
+            let items = character.inventory.map(item => {
+                return { item:this.dungeon.items[item.item].name, count:item.count }
+            })
+            let data = {
+                playerName: this.selectedPlayer,
+                inventory: items,
+                room: roomName,
+                currentStats: {
+                    hp: currentCharacterStats.getHp(),
+                    dmg: currentCharacterStats.getDmg(),
+                    mana: currentCharacterStats.getMana()
+                },
+                maxStats: {
+                    hp: maxCharacterStats.getHp(),
+                    dmg: maxCharacterStats.getDmg(),
+                    mana: maxCharacterStats.getMana()
+                }
+            }
+            this.amqpAdapter.sendActionToClient('dungeonmaster', "updatePlayerInformation", data);
+        } catch(e) {
+            console.error(e);
+        }        
     }
 }

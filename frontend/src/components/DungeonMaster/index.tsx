@@ -21,6 +21,8 @@ import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
 import { MinimapProps } from './Minimap';
 import ChatFilter from './ChatFilter';
+import { DashboardLocationState } from '../Dashboard';
+import DungeonMasterLeaveModal from '../Modals/Game/DungeonMasterLeaveModal';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = () => {
@@ -33,12 +35,25 @@ const Game: React.FC<GameProps> = () => {
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
     const [selectedRooms, setSelectedRooms] = React.useState<string[]>([]);
-    const [onlinePlayers, setOnlinePlayers] = React.useState<string[]>([]);
+    const [showLeaveModal, setShowLeaveModal] = React.useState<boolean>(false);
 
+    const [playerList, setPlayerList] = React.useState<string[]>([]);
     const onUnload = (e: any) => {
         e.preventDefault();
         rabbit.logout(() => { }, (error) => {
             setError("rabbitmq.logout")
+        });
+    }
+    const kickSubscriber = (message: any) => {
+        if (message.kickMessage === undefined || message.kickMessage === "") {
+            message.kickMessage = t(`alert.${message.type}.default`);
+        }
+        navigate('/', {
+            state: {
+                message: message.kickMessage,
+                title: t(`alert.${message.type}.title`),
+                time: new Date()
+            } as DashboardLocationState
         });
     }
 
@@ -46,16 +61,14 @@ const Game: React.FC<GameProps> = () => {
         setMiniMapData(roomData);
     }
 
-    const onlinePlayerSubscriber = (players: string[]) => {
-        setOnlinePlayers(players);
-    }
+    
 
     useEffect(() => {
         window.addEventListener('unload', onUnload);
         if (isAbleToJoinGame()) {
             rabbit.setErrorSubscriber(console.error);
-            rabbit.setOnlinePlayersSubscriber(onlinePlayerSubscriber);
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
+            rabbit.setKickSubscriber(kickSubscriber);
             rabbit.login(() => {
                 // Success
             }, (error) => {
@@ -89,15 +102,22 @@ const Game: React.FC<GameProps> = () => {
 
     return (
         <Container fluid className="game-wrapper">
+            <DungeonMasterLeaveModal show={showLeaveModal} onDmGiveUp={(character)=>{
+                rabbit.sendDmGiveUp(character, ()=>{}, ()=>{})
+            }} onHide={()=>setShowLeaveModal(false)} onShutdown={()=>{
+                navigate("/?board=my", {state:{delay:1000, time:new Date()}});
+            }}  playerList={playerList}/>
             <Row className="game-header align-items-center">
                 <div className="col text-end">
-                    <button className="btn drawn-border btn-xpadding btn-red" onClick={() => navigate("/")}>{t("game.leave")}</button>
+                    <button className="btn drawn-border btn-xpadding btn-red" onClick={()=>{
+                        setShowLeaveModal(true);
+                    }}>{t("game.leave")}</button>
                 </div>
             </Row>
             <Row className="game-body">
                 <div className="col col-md-3 col-lg-2">
                     {miniMapData && <Minimap {...miniMapData} />}
-                    <OnlinePlayers players={onlinePlayers} />
+                    <OnlinePlayers setPlayers={setPlayerList} />
                     {miniMapData && <ChatFilter selectedRooms={selectedRooms} setSelectedRooms={setSelectedRooms} allRooms={ Object.values(miniMapData.rooms).map( room => room.name) } />}
                     <Alert type='error' message={error} setMessage={setError} />
                 </div>
@@ -106,7 +126,7 @@ const Game: React.FC<GameProps> = () => {
                 </div>
                 <div className="col col-md-3 col-lg-2">
                     <ChatQueue commandQueue={messageQueue} onSendQueue={sendQueue} />
-                    <PlayerInfo player={null} />
+                    <PlayerInfo />
                 </div>
             </Row>
         </Container>

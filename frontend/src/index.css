@@ -126,6 +126,37 @@ h1, h2, h3, h4 {
   margin: 0;
 }
 
+#backbutton{
+  cursor: pointer;
+  transform: translateX(0px);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: fit-content;
+}
+
+#backbutton:hover{
+  transform: translateX(-5px);
+}
+
+#backbutton:hover > span{
+  text-decoration: underline;
+  transition: all 0.8 ease-in-out;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+#refreshButton.spin > svg{
+  animation: spin 1s linear infinite;
+}
 
 
 hr {
@@ -297,12 +328,13 @@ a:hover {
   transform: scale(1.2);
 }
 
-.configurator-item, .character-item {
+.configurator-item, .character-item, .link-li {
   border-radius: .3em;
   transition: background-color .1s ease-in;
+  cursor: pointer;
 }
 
-.configurator-item:hover, .character-item:hover, .dashboard-list:hover {
+.configurator-item:hover, .character-item:hover, .dashboard-list:hover, .link-li:hover {
   background-color: rgba(146, 144, 141, 0.4);
   box-shadow: 0em 0em .3em rgb(146, 144, 141);
 }

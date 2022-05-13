@@ -51,15 +51,17 @@ export class DieAction extends Action {
         characterToDie.currentStats.hp = characterToDie.maxStats.hp
         characterToDie.currentStats.mana = characterToDie.maxStats.mana
         characterToDie.currentStats.dmg = characterToDie.maxStats.dmg
-        await amqpAdapter.sendToClient(user, {
-            action: 'minimap.move',
-            data: "0,0"
-        });
+        await amqpAdapter.sendActionToClient(user, 'minimap.move', "0,0");
         this.dungeonController.sendInventoryData(user)
         this.dungeonController.sendStatsData(user)
         const description = actionMessages.die
         await amqpAdapter.sendActionToClient(user, "message", {message: description})
         // message send to dungeon master
-        await amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.dieDungeonMaster, user, roomName), player: user, room: roomName})
+        await amqpAdapter.sendActionToClient(extras.dungeonMasterId, "message", {message: parseResponseString(actionMessages.dieDungeonMaster, user, roomName), player: user, room: roomName});
+
+        // send Playerinformation to DM if player dies and DM views its PlayerData
+        if (this.dungeonController.getSelectedPlayer() === user) {
+            await this.dungeonController.sendPlayerInformationData();
+        }
     }
 }

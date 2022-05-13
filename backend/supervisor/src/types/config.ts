@@ -16,6 +16,7 @@ export interface Config {
         emailadress: string;
         emailsecret: string;
         cookiehost: string;
+        rootpw: string;
     }
     mongodb: {
         host: string;

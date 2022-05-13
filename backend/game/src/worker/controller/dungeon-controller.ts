@@ -153,7 +153,10 @@ export class DungeonController {
         sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
         if (characterName !== DUNGEONMASTER) {
             await this.amqpAdapter.sendActionToClient(characterName, "message", {message: parseResponseString(actionMessages.helpMessage, this.dungeon.name, triggers.showActions, triggers.look, triggers.help)})
+        } else {
+            await this.amqpAdapter.sendActionToClient(characterName, "message", {message: parseResponseString(actionMessages.helpMessageDm, this.dungeon.name, triggers.showDmActions)}) 
         }
+        
         await this.sendStatsData(characterName)
         await this.sendMiniMapData(characterName);
         await this.sendInventoryData(characterName);

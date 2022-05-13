@@ -49,6 +49,7 @@ import { AddRoomItem } from "../src/worker/action/dmactions/addItemToRoom-action
 import { RemoveItem } from "../src/worker/action/dmactions/removeItemFromPlayer-action";
 import { removeRoomItem } from "../src/worker/action/dmactions/removeItemFromRoom-action";
 import { KickPlayer } from "../src/worker/action/dmactions/kickPlayer-action";
+import { ShowDmActions } from "../src/worker/action/dmactions/show-dmactions";
 import { BanPlayer } from "../src/worker/action/dmactions/banPlayer-action";
 
 // Testdaten
@@ -1382,6 +1383,8 @@ describe("DungeonMaster Actions", () => {
     const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
     const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
     const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
+    const removeMana: RemoveMana = actionHandler.dmActions[triggers.removeMana] as RemoveMana;
+    const removeDamage: RemoveDamage = actionHandler.dmActions[triggers.removeDamage] as RemoveDamage;
     const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
     const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
     const changePlayerPosition: ChangeRoom = actionHandler.dmActions[triggers.changeRoom] as ChangeRoom;
@@ -1392,6 +1395,7 @@ describe("DungeonMaster Actions", () => {
     const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem;
     const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
     const kickPlayer: KickPlayer = actionHandler.dmActions[triggers.kickPlayer] as KickPlayer
+    const showDmActions: ShowDmActions = actionHandler.dmActions[triggers.showDmActions] as ShowDmActions
     const banPlayer: BanPlayer = actionHandler.dmActions[triggers.banPlayer] as BanPlayer
 
     amqpAdapter.sendToClient = jest.fn();
@@ -1517,6 +1521,35 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
     });
 
+    
+    test('Jeff should lose 2 Mana and then have 48 in total', async () => {
+        await removeMana.performAction('dungeonmaster', ['Jeff' ,'2']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(48);
+    });
+
+    test('Jeff should lose so much mana so that he reaches 0', async () => {
+        await removeMana.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(0);
+    });
+
+    test('Jeff should lose 2 Damage and then have 8 in total', async () => {
+        await removeDamage.performAction('dungeonmaster', ['Jeff' ,'2']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(8);
+    });
+
+    test('Jeff should lose so much Damage so that he reaches 0', async () => {
+        await removeDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(0);
+    });
+
+
+    test('ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user', () => {
+        showDmActions.performAction('dungeonmaster', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: \n\t'adddmg <Spielername>' - Erhöhe den Schaden eines Spielers; \n\t'addhp <Spielername>' - Erhöhe das Leben eines Spielers; \n\t'addmana <Spielername>' - Erhöhe das Mana eines Spielers; \n\t'remmana <Spielername>' - Verringere das Mana eines Spielers; \n\t'remhp <Spielername>' - Verringere das Leben eines Spielers; \n\t'remdmg <Spielername>' - Verringere den Schaden eines Spielers; \n\t'verschiebe <Spielername>' - Ändere die Position eines Spielers; \n\t'remitem <Spielername> <Itemname>' - Entferne ein Item von einem Spieler; \n\t'remroomitem <Spieler> <Raumname>' - Entferne ein Item aus einem Raum; \n\t'additem <Spielername> <Itemname>' - Gebe einem Spieler ein Item; \n\t'addroomitem <Raumname> <Itemname>' - Lege ein Item in den Raum; \n\t'kick <Spielername> - Schmeiße einen Spieler aus der Lobby; \n\t'ban <Spielername> - Banne einen Spieler permanent aus deinem Dungeon; \n\t'aktionen - Erhalte eine Beschreibung alle ausführbaren Aktionen; \nÜber die Minimap können außerdem die Verbindungen getoggled werden. Klick dafür auf die Verbindung zwischen den Räumen.\nGebe gegebenenfalls geeignete Argumente fuer <> ein. Möchtest du weitere Informationen über einen Spieler haben, klicke in der Spielerliste auf den Namen des gewünschten Spielers.` },
+        });
+    })
     test('dungeonmaster inputs a value that is not a number, when trying to remove hp to a character', async () => {
         await removeHp.performAction('dungeonmaster', ['Jeff' , 'hallo']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {

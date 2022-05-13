@@ -127,9 +127,14 @@ export class DungeonController {
             case 'connection.toggle':
                 let toggleConnectionAction: ToggleConnectionAction = this.actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
                 toggleConnectionAction.modifyConnection(data.data.roomId, data.data.direction, data.data.status)
+                break;
             case 'playerInformation':
                 this.selectedPlayer = data.data.playerName;
                 this.sendPlayerInformationData()
+                break;
+            case 'dmgiveup':
+                console.log(data.data.character);
+                break;
         }
     }
 

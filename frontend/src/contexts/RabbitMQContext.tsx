@@ -44,6 +44,7 @@ export interface RabbitMQContextType {
   setInventorySubscriber: (subscriber: (items: InventoryProps["inventoryData"]) => void) => void;
   setHudSubscriber: (subscriber: (hud: HUDProps) => void) => void;
   setConnectionSubscriber: (subscriber: (roomId: string, direction: 'east' | 'south', status: 'open' | 'closed') => void) => void;
+  setNewDmSubscriber: (subscriber: (verifyToken:string) => void) => void;
 }
 
 let RabbitMQContext = React.createContext<RabbitMQContextType>({} as RabbitMQContextType);
@@ -65,6 +66,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const { character, dungeon, verifyToken } = useGame();
 
+  let newDmSubscriber: (verifyToken:string)=>void = ()=>{};
   let chatSubscriber: (message: string) => void = () => { };
   let onlinePlayersSubscriber: (players: OnlinePlayersData) => void = () => { };
   let playerInformationSubscriber: (playerInfo: PlayerInfoData) => void = () => { }
@@ -85,7 +87,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
         errorSubscriber("RabbitMQ-Message is missing a action-key");
         return;
       } else if (jsonData['data'] === undefined) {
-        errorSubscriber("RabbitMQ-Message is missing a data");
+        errorSubscriber("RabbitMQ-Message is missing a data object");
         return;
       }
       const command = jsonData['action'].split('.');
@@ -110,6 +112,9 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
           break;
         case 'stats':
           hudSubscriber(jsonData.data);
+          break;
+        case 'newdm':
+          newDmSubscriber(jsonData.data.verifyToken);
           break;
         default:
           errorSubscriber("RabbitMQ-Action not implemented yet: ", jsonData.action);
@@ -221,7 +226,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
   }
 
   const sendDmGiveUp = (user: string, callback: VoidFunction, error: (error: string) => void) => {
-    sendData({character}, 'dmgiveup', callback, error);
+    sendData({character:user}, 'dmgiveup', callback, error);
   }
 
   const sendData = (data: any, action: SendActions, callback: VoidFunction, error: (error: string) => void) => {
@@ -282,6 +287,10 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     connectionSubscriber = subscriber;
   }
 
+  const setNewDmSubscriber = (subscriber: (verifyToken: string) => void) => {
+    newDmSubscriber = subscriber;
+  }
+
   const minimapHandler = (command: string[], data: any) => {
     switch (command[0]) {
       case 'init':
@@ -312,7 +321,7 @@ function RabbitMQProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendServerbroadcast, sendToggleConnection, sendPlayerInformation, sendDmGiveUp, setConnectionSubscriber };
+  let value = { login, logout, sendMessage, setChatSubscriber, setOnlinePlayersSubscriber, setPlayerInformationSubscriber, setKickSubscriber, setErrorSubscriber, setMiniMapSubscriber, setRoomSubscriber, setInventorySubscriber, setHudSubscriber, sendCharacterMessage, sendDmMessage, sendServerbroadcast, sendToggleConnection, sendPlayerInformation, sendDmGiveUp, setConnectionSubscriber , setNewDmSubscriber};
 
   return <RabbitMQContext.Provider value={value}>{children}</RabbitMQContext.Provider>;
 }

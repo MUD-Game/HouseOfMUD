@@ -33,6 +33,7 @@ export const triggers = {
     addRoomItem: "addroomitem",
     addItem: "additem",
     toggleConnection: "toggle",
+    dmgiveup: "dmgiveup",
     kickPlayer: "kick",
     banPlayer: "ban",
     showDmActions: "aktionen"

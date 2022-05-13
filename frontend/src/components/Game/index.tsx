@@ -32,7 +32,7 @@ const Game: React.FC<GameProps> = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const rabbit = useRabbitMQ();
-    const { isAbleToJoinGame } = useGame();
+    const { isAbleToJoinGame, setCharacter, setVerifyToken } = useGame();
 
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
@@ -69,6 +69,13 @@ const Game: React.FC<GameProps> = () => {
             rabbit.setInventorySubscriber(setInventoryData);
             rabbit.setHudSubscriber(setHudData);
             rabbit.setKickSubscriber(kickSubscriber);
+            rabbit.setNewDmSubscriber((verifyToken:string)=>{
+                setCharacter("dungeonmaster");
+                setVerifyToken(verifyToken);
+                rabbit.logout(()=>{
+                    navigate('/dungeon-master', {state: {delay: 2000}});
+                },console.error);
+            })
             rabbit.login(() => {
                 
             }, (error) => {

@@ -225,7 +225,7 @@
         "404": "Seite nicht gefunden...",
         "amount": "Anzahl",
         "start_room": {
-            "name": "Start Raum",
+            "name": "Start_Raum",
             "description": "Dies ist der Startraum"
         }
     },

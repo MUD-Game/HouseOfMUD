@@ -13,6 +13,10 @@ import './index.css'
 import compassPng from 'src/assets/compass.png';
 import Konva from 'konva';
 import { useRefSize } from '../../hooks/useRefSize';
+import { t } from 'i18next';
+import { Tooltip, Container, Row, OverlayTrigger } from 'react-bootstrap';
+import { ArrowsFullscreen, QuestionCircle } from 'react-bootstrap-icons';
+import { useTranslation } from 'react-i18next';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -63,7 +67,44 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     const [rooms, setRooms] = React.useState<MiniMapData["rooms"]>(props.rooms);
     const [width] = useRefSize(sizeRef);
     const [forceReload, setForceReload] = React.useState(1);
+    const {t} = useTranslation();
+    const dt = "minimap";
 
+    const renderTooltip = (props: any) => (
+        <Tooltip id="help-tooltip" {...props}>
+            <Container>
+                <div>
+                    <h5>{t(`${dt}.navigation.title`)}</h5>
+
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u>{t(`${dt}.navigation.zoom_in_out`)}:</u>
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <kbd className="light">{t(`${dt}.navigation.scroll_wheel`)} ↑↓</kbd>
+                        </div>
+                    </Row>
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u>{t(`${dt}.navigation.drag.title`)}:</u>
+                        </div>
+                        <div className="col-md-9 text-start">
+                            {t(`${dt}.navigation.drag.text`)}
+                        </div>
+                    </Row>
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u> {t(`${dt}.navigation.refocus`)}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={compassPng} alt="compass" style={{ background: "var(--bgcolor)", padding: ".2em" }} width="40" height="40" />
+                        </div>
+                    </Row>
+                </div>
+            </Container>
+            <br />
+        </Tooltip>
+    );
     const startRoomPos : [number,number] = props.startRoom.split(',').map(Number).map(x=>x*roomOffset) as [number, number];
 
     const focusOnRoom = (roomId: string, isAnc: boolean) => {
@@ -355,7 +396,17 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                     </Layer>
                 </Stage>
             </div>
-            
+            <div style={{ width: width }}>
+               <OverlayTrigger
+                    placement="right"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={renderTooltip}
+                >
+                    <QuestionCircle id="help-button-minimap" size={37} onClick={() => {
+                    }} />
+                </OverlayTrigger>
+
+            </div>
         </>
     )
 }

@@ -475,5 +475,24 @@
      "title": "Dungeon Verlassen",
      "text": "Der Dungeon läuft nicht ohne einen Dungeon-Master! Du kannst entweder den Dungeon verlassen, wodurch dieser gespeichter und gestoppt wird. Oder du kannst einen anderen zum Dungeon-Master ernennen",
      "select": "Wähle einen neuen Dungeon-Master aus"
+ },
+ "minimap":{
+     "navigation":{
+         "title": "Minimap Navigation",
+         "zoom_in_out": "Rein und Raus-zoomen",
+         "drag": {
+             "title": "Minimap bewegen",
+             "text": "Die Map wird per Drag and Drop mit der Maus bewegt"
+         },
+         "refocus": "Focus auf deine Position",
+         "scroll_wheel": "Mausrad",
+         "toggle_connection":{
+             "title": "Verbindungen öffnen/schließen",
+             "text": "Durch einen Mausklick auf die Verbindungen werden sie geöffnet oder geschlossen"
+         },
+         "fullscreen": "Vollbild-Minimap"
+     }
  }
+
+ 
 }

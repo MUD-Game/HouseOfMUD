@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, errorMessages, dungeonMasterSendMessages, parseResponseString, actionMessages, helpMessagesForDM} from "../actions/action-resources";
+import { triggers, errorMessages, dungeonMasterSendMessages, parseResponseString, actionMessages, helpMessagesForDM, dmActionDescriptions} from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 
 
@@ -27,7 +27,7 @@ export class KickPlayer implements Action {
             amqpAdapter.broadcastAction('message', {message: parseResponseString(actionMessages.playerKicked, recipientCharacterName)})
         } catch (e) {
             //console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName)})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) + dmActionDescriptions.kickPlayer})
         }
     }
 }

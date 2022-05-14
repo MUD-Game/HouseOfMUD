@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM } from "../actions/action-resources";
+import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM, dmActionDescriptions } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { Room } from "../../../data/interfaces/room";
 
@@ -28,7 +28,7 @@ export class RemoveMana implements Action {
             let actualMana: number = recipientCharacter.getCharakterStats().getMana()
             let manaCount: number = +args[1]
             if (isNaN(manaCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber + dmActionDescriptions.removeMana})
             } else {
                 if (actualMana - manaCount <= 0) {
                     manastring = parseResponseString(dungeonMasterSendMessages.removeMana, (actualMana).toString())
@@ -54,7 +54,7 @@ export class RemoveMana implements Action {
                 
         } catch (e) {
             //console.log(e)
-            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) })
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) + dmActionDescriptions.removeMana })
         }
     }
 }

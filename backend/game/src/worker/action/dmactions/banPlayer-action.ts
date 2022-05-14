@@ -3,7 +3,7 @@ import { Dungeon } from "../../../data/interfaces/dungeon";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, parseResponseString, actionMessages, helpMessagesForDM, errorMessages } from "../actions/action-resources";
+import { triggers, parseResponseString, actionMessages, helpMessagesForDM, errorMessages, dmActionDescriptions } from "../actions/action-resources";
 
 export class BanPlayer implements Action {
     trigger: string;
@@ -46,7 +46,7 @@ export class BanPlayer implements Action {
 
         } catch (e) {
             //console.log(e)
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName)})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) + dmActionDescriptions.banPlayer})
         }
     }
 }

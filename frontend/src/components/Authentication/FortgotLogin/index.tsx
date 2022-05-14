@@ -45,9 +45,7 @@ const ForgotLogin: React.FC<ForgotLoginProps> = (props) => {
                     {isLoading ? <Busy/> :
                         <form onSubmit={handleSubmit} autoComplete="new-password">
                             <span>{t("forgotlogin.text")}</span>
-                        <div className="input-group pt-2">
-                            <input value={email} name="password" onChange={(event)=> setEmail(event.target.value)}className="input-standard drawn-border" type="email" placeholder={t("login.email")} />
-                        </div>
+                            <input value={email} name="password" onChange={(event)=> setEmail(event.target.value)} className="input-standard drawn-border mt-3" type="email" placeholder={t("login.email")} />
                             <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.submit")}</button>
                     </form>
                     }

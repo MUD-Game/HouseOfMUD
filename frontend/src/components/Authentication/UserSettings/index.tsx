@@ -85,8 +85,8 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
 
             <Container >
                 <div id="backbutton" onClick={() => navigate("/")} ><ChevronLeft size={30} /><span>{t("common.back")}</span></div>
-
             </Container>
+            
             {auth.user === "root" ?
 
             <Container className="mt-4 mb-5">

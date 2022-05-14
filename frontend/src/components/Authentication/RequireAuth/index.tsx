@@ -14,20 +14,28 @@ import { useEffect } from 'react';
 
 type RequireAuthProps = {
     children: JSX.Element
+    group?: 'admin' | 'user'
 }
 
-const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
+const RequireAuth: React.FC<RequireAuthProps> = ({ children, group }) => {
     let auth = useAuth();
     let location = useLocation();
     const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+    const [isAdmin, setIsAdmin] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(true);
     useEffect(() => {
         auth.isAuthenticated(() => {
-            setIsAuthenticated(true);
+                setIsAuthenticated(true);
+                if(auth.user === "root"){
+                    setIsAdmin(true);
+                }else{
+                    setIsAdmin(false);
+                }
             setIsLoading(false);
         }, () => {
             setIsAuthenticated(false);
             setIsLoading(false);
+            setIsAdmin(false);
         });
       return () => {
         
@@ -37,13 +45,16 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
    
     if(isLoading){
         return <Busy/>
-    } else if (!isAuthenticated){
-        return <Navigate to="/login" state={{ from: location }} replace />;
-    }else{
-        return children;
+    } else if (isAuthenticated) {
+        if(group === 'admin' && !isAdmin){
+            return <Navigate to="/login" />
+        }
+        if(group === 'user' && isAdmin){
+            return <Navigate to="/admin-panel" />
+        }
     }
     
-   
+    return children;
 
 }
 

@@ -80,7 +80,7 @@ export class DungeonAction extends Action {
     returnMissingItems(characterInventory: ItemInfo[]): string[] {
         let missingItems: string[] = []
         this.actionElement.itemsneeded.forEach(item => {
-            if (characterInventory.some(itemInInventory => itemInInventory.item === item)) {
+            if (characterInventory.some(itemInInventory => itemInInventory.item == item)) {
                 return;
             } else {
                 missingItems.push(item)

@@ -140,9 +140,9 @@ const Minimap: React.FC<MinimapProps> = (props) => {
 
     const toggleConnection = (event: any) => {
         // Change the attrs of the connection
-        const status = event.target.attrs["data-status"];
-        const roomId = event.target.attrs["data-room"];
-        const direction = event.target.attrs["data-direction"];
+        const status = event.target.attrs["data-status"] as string;
+        const roomId = event.target.attrs["data-room"] as string;
+        const direction = event.target.attrs["data-direction"] as 'east' | 'south';
 
         sendToggleConnection(roomId, direction, status === 'open' ? 'closed' : 'open', () => {
             switch (status) {
@@ -151,12 +151,14 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                         stroke: connectionClosed,
                         "data-status": "closed"
                     })
+                    rooms[roomId].connections[direction] = "closed";
                     break;
-                case "closed":
-                    event.target.setAttrs({
-                        stroke: connectionOpen,
-                        "data-status": "open"
-                    })
+                    case "closed":
+                        event.target.setAttrs({
+                            stroke: connectionOpen,
+                            "data-status": "open"
+                        })
+                        rooms[roomId].connections[direction] = "open";
                     break;
             }
         }, console.error);

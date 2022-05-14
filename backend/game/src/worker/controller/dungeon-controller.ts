@@ -184,6 +184,11 @@ export class DungeonController {
             await this.persistCharacterData(this.dungeon.getCharacter(characterName))
             delete this.dungeon.characters[characterName];
             this.sendPlayerListToDM();
+            if(this.selectedPlayer === characterName) {
+                this.selectedPlayer = undefined;
+                this.sendPlayerInformationData();
+            }
+            this.amqpAdapter.broadcastAction('message', { message: `${characterName} hat den Dungeon verlassen!` });
             sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
         } else { // Dungeon Master
             // Check if the dungeonmaster is actually the dungeonmasterid
@@ -379,9 +384,11 @@ export class DungeonController {
     }
 
     async sendPlayerInformationData() {
-        if (!this.selectedPlayer) {
+        if(this.selectedPlayer === undefined){
+            this.amqpAdapter.sendActionToClient(DUNGEONMASTER, "updatePlayerInformation", {});
             return;
-        }
+        }else{
+
         try {
             let character: Character = this.dungeon.getCharacter(this.selectedPlayer)
             let characterPosition: string = character.getPosition()
@@ -408,8 +415,9 @@ export class DungeonController {
             }
             this.amqpAdapter.sendActionToClient(DUNGEONMASTER, "updatePlayerInformation", data);
         } catch(e) {
-            console.error(e);
-        }        
+            // console.error(e);
+        }      
+        }
     }
 
     getUserIdFromCharacter(character:string){

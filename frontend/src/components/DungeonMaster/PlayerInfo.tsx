@@ -38,7 +38,11 @@ const PlayerInfo: React.FC<PlayerInfoProps> = () => {
     const [playerInformation, setPlayerInformation] = React.useState<PlayerInfoData | undefined>(undefined);
 
     const playerInformationSubscriber = (playerInformation: PlayerInfoData) => {
-        setPlayerInformation(playerInformation);
+     if(Object.keys(playerInformation).length === 5){
+         setPlayerInformation(playerInformation);
+     }else{
+            setPlayerInformation(undefined);
+     }
     }
 
     useEffect(() => {        

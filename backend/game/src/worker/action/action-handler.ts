@@ -150,6 +150,9 @@ export class ActionHandlerImpl implements ActionHandler {
 
     async processAction(user: string, message: string) {
         let action: Action | undefined = undefined;
+        let messageArray = message.trim().split(" ");
+        messageArray[0] = messageArray[0].toLowerCase();
+        message = messageArray.join(" ");
         let dungeonActions: DungeonAction[] = Object.values(this.dungeonActions)
         action = dungeonActions.find(dungeonAction => this.inputMatch(message, dungeonAction.regEx))
         if (action === undefined) {
@@ -170,6 +173,9 @@ export class ActionHandlerImpl implements ActionHandler {
 
     processDmAction(message: string) {
         let dmaction: Action | undefined = undefined;
+        let messageArray = message.trim().split(" ");
+        messageArray[0] = messageArray[0].toLowerCase();
+        message = messageArray.join(" ");
         dmaction = this.getDmAction(message);
         if (dmaction === undefined) {
             dmaction = this.invalidAction

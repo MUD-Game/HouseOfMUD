@@ -36,7 +36,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
-    
+
 
     public database: string;
 
@@ -224,7 +224,7 @@ export class DatabaseAdapter {
             creatorId: oldDungeon.creatorId,
             masterId: oldDungeon.creatorId,
             maxPlayers: newDungeon.maxPlayers,
-            blacklist: newDungeon.blacklist,
+            blacklist: oldDungeon.blacklist,
             globalActions: newDungeon.globalActions,
             characters: oldDungeon.characters,
             characterClasses: await this.characterClass.insertMany(newDungeon.characterClasses),
@@ -248,7 +248,7 @@ export class DatabaseAdapter {
     }
 
     async getUserId(user: string): Promise<string | undefined> {
-        if (user==="root"){
+        if (user === "root") {
             return "root";
         }
         const foundUser = await this.user.findOne({ username: user }, '_id');
@@ -331,18 +331,20 @@ export class DatabaseAdapter {
         }
     }
 
-    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string){
+    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string) {
         let dungeonToUpdate = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
-        if(dungeonToUpdate?.blacklist != undefined){
+        if (dungeonToUpdate?.blacklist != undefined) {
             dungeonToUpdate.blacklist = updatedBlacklist;
         }
         dungeonToUpdate?.save();
     }
 
     async isBanned(userId: string, dungeonId: string): Promise<boolean> {
-        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: {$elemMatch: { $eq: userId }} });
+        console.log(userId);
+        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: { $elemMatch: { $eq: userId } } });
+        console.log(dungeon);
         if (dungeon) {
-            if (userId in dungeon.blacklist) {
+            if (dungeon.blacklist.includes(userId)) {
                 return true;
             }
         }

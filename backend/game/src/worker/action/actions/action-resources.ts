@@ -158,7 +158,7 @@ export const dmActionDescriptions = {
     removeMana: parseResponseString("\n\t'%s <Spielername>' - Verringere das Mana eines Spielers; ", triggers.removeMana),
     removeHp: parseResponseString("\n\t'%s <Spielername>' - Verringere das Leben eines Spielers; ", triggers.removeHp),
     removeDamage: parseResponseString("\n\t'%s <Spielername>' - Verringere den Schaden eines Spielers; ", triggers.removeDamage),
-    changeRoom: parseResponseString("\n\t'%s <Spielername>' - Ändere die Position eines Spielers; ", triggers.changeRoom),
+    changeRoom: parseResponseString("\n\t'%s <Spielername> <Raumname>' - Ändere die Position eines Spielers; ", triggers.changeRoom),
     removeItem: parseResponseString("\n\t'%s <Spielername> <Itemname>' - Entferne ein Item von einem Spieler; ", triggers.removeItem),
     removeRoomItem: parseResponseString("\n\t'%s <Spieler> <Raumname>' - Entferne ein Item aus einem Raum; ", triggers.removeRoomItem),
     addItem: parseResponseString("\n\t'%s <Spielername> <Itemname>' - Gebe einem Spieler ein Item; ", triggers.addItem),

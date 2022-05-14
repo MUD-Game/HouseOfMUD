@@ -175,8 +175,8 @@ export class API {
         });
 
         // get dungeons
-        app.get('/dungeons', this.authProvider.auth, (req, res) => {
-            res.status(200).json({ ok: 1, dungeons: this.hostLink.getOnlineDungeons() });
+        app.get('/dungeons', this.authProvider.auth, async (req, res) => {
+            res.status(200).json({ ok: 1, dungeons: await this.hostLink.getOnlineDungeons(req.cookies.userID)});
         });
 
         // get my dungeons

@@ -45,8 +45,6 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
     const { t, i18n } = useTranslation();
     let auth = useAuth();
     const { sendServerbroadcast } = useRabbitMQ();
-    
-    console.log(i18n.language);
 
     
     const [error, setError] = React.useState<string>("");

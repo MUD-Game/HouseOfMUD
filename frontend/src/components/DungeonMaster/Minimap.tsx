@@ -132,12 +132,6 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         focusOnRoom("0,0", isFullscreen);
     }, [isFullscreen]);
 
-    // useEffect(() => {
-    //     console.log("d")
-    //     const s = sizeRef.current.getBoundingClientRect();
-    //     setSize({ width: s.width, height: s.height });
-    // }, [sizeRef]);
-
     const toggleConnection = (event: any) => {
         // Change the attrs of the connection
         const status = event.target.attrs["data-status"] as string;
@@ -364,8 +358,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     wrap: "word",
                                     verticalAlign: "top"
                                 }
-                                // let text = new Konva.Text(roomNameText)
-                                // console.log(text.getSize());
+                      
 
                                 return (
                                     <Group key={roomkey}>

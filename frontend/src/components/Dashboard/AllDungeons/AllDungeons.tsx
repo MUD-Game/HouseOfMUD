@@ -59,7 +59,6 @@ const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
                         navigate('/select-character');
                     },
                     error => {
-                        console.log(error.error);
                         messageCallback(error.error);
                     }
                 );

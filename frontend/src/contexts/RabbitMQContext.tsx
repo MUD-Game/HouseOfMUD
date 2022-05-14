@@ -17,7 +17,7 @@ import { HUDProps } from 'src/components/Game/HUD';
 import { PlayerInfoData } from 'src/components/DungeonMaster/PlayerInfo';
 import { OnlinePlayersData } from 'src/components/DungeonMaster/OnlinePlayers';
 
-const debug = true;
+const debug = false;
 
 export interface RabbitMQContextType {
   login: (callback: VoidFunction, error: (error: string) => void) => void;
@@ -53,7 +53,6 @@ const rabbit = new Client({
   brokerURL: process.env.REACT_APP_RABBITMQ || 'wss://mud-ga.me:15673/ws',
 });
 
-// rabbit.debug = console.log;
 
 var payloadTemplate = {
   user: '',

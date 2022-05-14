@@ -53,7 +53,6 @@ const Register: React.FC<RegisterProps> = () => {
             setIsLoading(false);
             setInfo("verifyemail");
         }, (err) => {
-            console.log(err);
             setIsLoading(false);
             setError(err.toLowerCase());
         });

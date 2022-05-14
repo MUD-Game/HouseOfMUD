@@ -52,6 +52,8 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, group }) => {
         if(group === 'user' && isAdmin){
             return <Navigate to="/admin-panel" />
         }
+    }else{
+        return <Navigate to="/login" />
     }
     
     return children;

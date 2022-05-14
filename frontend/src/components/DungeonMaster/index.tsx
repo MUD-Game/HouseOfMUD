@@ -127,7 +127,7 @@ const Game: React.FC<GameProps> = () => {
                     <Chat selectedRooms={selectedRooms} onSendCommand={addMessage} messageCallback={setError}/>
                 </div>
                 <div className="col col-md-3 col-lg-2">
-                    <ChatQueue commandQueue={messageQueue} onSendQueue={sendQueue} />
+                    <ChatQueue commandQueue={messageQueue} setCommandQueue={setMessageQueue} onSendQueue={sendQueue} />
                     <PlayerInfo />
                 </div>
             </Row>

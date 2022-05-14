@@ -9,7 +9,7 @@
 
 import React, { FormEvent, useEffect } from 'react'
 import { Container, Row } from 'react-bootstrap';
-import { Send } from 'react-bootstrap-icons';
+import { Send, ChevronLeft } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
@@ -85,9 +85,14 @@ const UserSettings: React.FC<UserSettingsProps> = (props) => {
             <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />            
             <Alert type="error" message={error} setMessage={setError} />
 
+            <Container >
+                <div id="backbutton" onClick={() => navigate("/")} ><ChevronLeft size={30} /><span>{t("common.back")}</span></div>
+
+            </Container>
             {auth.user === "root" ?
 
             <Container className="mt-4 mb-5">
+                
                 <Row>
                     <h1>{t("user_settings.admin.title")}</h1>
                 </Row>

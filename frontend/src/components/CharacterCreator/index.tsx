@@ -57,7 +57,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
             <Alert message={error} setMessage={setError} type="error" />
             {Object.keys(dungeonData).length !== 0 ? <CreateNewCharacter messageCallback={setError} onCreate={fetchNewCharacters} {...dungeonData} /> : null}
             <br /><hr /><br />
-            {characters !== [] ? <AvailableCharacters messageCallback={setError} characters={characters} fetchCharacters={fetchNewCharacters} characterAttributes={dungeonData}/> : null}
+            {characters.length !== 0 ? <AvailableCharacters messageCallback={setError} characters={characters} fetchCharacters={fetchNewCharacters} characterAttributes={dungeonData}/> : null}
         </Container>
     )
 }

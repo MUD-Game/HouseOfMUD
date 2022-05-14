@@ -16,6 +16,13 @@ const DungeonPasswordModal: React.FC<DungeonPasswordModalProps> = ({
 }) => {
     const { t } = useTranslation();
     const [password, setPassword] = useState("");
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && !validator.isEmpty(password)) {
+            e.preventDefault();
+            onConfirm(password);
+        }
+
+    }
     return (
         <Modal
             size="lg"
@@ -29,8 +36,9 @@ const DungeonPasswordModal: React.FC<DungeonPasswordModalProps> = ({
                         {t(`common.isprivate`)}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body onKeyDown={handleEnterKey}>
                     <MudInput
+                        autoFocus
                         colmd={12}
                         name="dungeon_password"
                         placeholder={t(`dungeon_keys.dungeon_password`)}

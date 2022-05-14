@@ -428,7 +428,7 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
                         })}
                     </Row>
                     <Row className="mt-4">
-                        <div className="col-md-6">
+                        <div className="col-md-6 p-0">
                             <button onClick={() => deleteRoom()} disabled={currentRoom.id === "0,0"} className="btn w-100 drawn-border btn-red">{t(`dungeon_configurator.rooms.delete_room`)}</button>
                         </div>
                     </Row>

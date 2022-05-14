@@ -5,10 +5,10 @@
  * @category Modal
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
-import { MudActionElement } from 'src/types/dungeon';
+import { MudActionElement, MudItem } from 'src/types/dungeon';
 import { validator } from 'src/utils/validator';
 import { useDungeonConfigurator } from '../../../hooks/useDungeonConfigurator';
 import { MudEvent } from '../../../types/dungeon';
@@ -31,16 +31,19 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
     const dconf = useDungeonConfigurator();
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
-    let initialItemsNeeded: Option[] = [];
-    let initialRemoveItems: Option[] = [];
-    let initialAddItems: Option[] = [];
-    let initialEvents: Option[] = [];
-    let initialEventValues: { [key: string]: number } = {};
+
 
     const constructToModalData = () => {
+        let initialItemsNeeded: Option[] = [];
+        let initialRemoveItems: Option[] = [];
+        let initialAddItems: Option[] = [];
+        let initialEvents: Option[] = [];
+        let initialEventValues: { [key: string]: number } = {};
         // initialItemsNeeded = props.editData.itemsneeded.map((item: number) => {id: item});
         props.editData?.itemsneeded?.forEach((item: number) => {
-            initialItemsNeeded.push({ id: item, name: dconf.items[item].name, description: dconf.items[item].description });
+            const itemToAdd = dconf.items.find((i: MudItem) => i.id === item+"");
+            if(!itemToAdd) return;
+            initialItemsNeeded.push({ id: item+"", name: itemToAdd.name, description: itemToAdd.description });
         });
         props.editData?.events?.forEach((mudEvent: MudEvent) => {
             initialEvents.push(mudEvent.eventType);
@@ -52,18 +55,23 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                 initialEventValues[mudEvent.eventType] = mudEvent.value;
             }
         });
-
-
+        setItemsNeeded(initialItemsNeeded);
+        setRemoveItems(initialRemoveItems);
+        setAddItems(initialAddItems);
+        setSelectedEvents(initialEvents);
+        setEventValues(initialEventValues);
 
 
     }
-    constructToModalData();
+    useEffect(()=>{
+        constructToModalData();
+    }, [props.editData])
 
-    const [itemsNeeded, setItemsNeeded] = React.useState<Option[]>(initialItemsNeeded);
-    const [removeItems, setRemoveItems] = React.useState<Option[]>(initialRemoveItems);
-    const [addItems, setAddItems] = React.useState<Option[]>(initialAddItems);
-    const [selectedEvents, setSelectedEvents] = React.useState<Option[]>(initialEvents);
-    const [eventValues, setEventValues] = React.useState<{ [key: string]: any }>(initialEventValues);
+    const [itemsNeeded, setItemsNeeded] = React.useState<Option[]>([]);
+    const [removeItems, setRemoveItems] = React.useState<Option[]>([]);
+    const [addItems, setAddItems] = React.useState<Option[]>([]);
+    const [selectedEvents, setSelectedEvents] = React.useState<Option[]>([]);
+    const [eventValues, setEventValues] = React.useState<{ [key: string]: any }>({});
     const [command, setCommand] = React.useState<string>(props.editData?.command || "");
     const [output, setOutput] = React.useState<string>(props.editData?.output || "");
     const [description, setDescription] = React.useState<string>(props.editData?.description || "");
@@ -109,14 +117,14 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             }
         });
         let itemsneedednumbers: number[] = [];
-        itemsNeeded.forEach((item) => {
-            itemsneedednumbers.push(parseInt((item as any).id));
+        itemsNeeded.forEach((item:any) => {
+            itemsneedednumbers.push(parseInt(item.id));
         });
         const characterAction: MudActionElement = {
             command,
             output,
             description,
-            itemsneeded: itemsneedednumbers as number[],
+            itemsneeded: itemsneedednumbers,
             events: allEvents,
             isGlobal: isGlobal
         } as MudActionElement;
@@ -180,7 +188,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
                         colmd={12}
                         title={t(`dungeon_keys.itemsNeeded`)}
                         id={"typeahead-items-needed"}
-                        labelKey={(option: any) => `${option.name} (${option.description})`}
+                        labelKey={(option: any) => `${option.name}`}
                         options={dconf.items}
                         multiple
                         onChange={setItemsNeeded}

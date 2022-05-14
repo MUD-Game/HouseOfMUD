@@ -1,7 +1,8 @@
 a:hover svg{
-    transform: translateY(-6px) rotate(-100deg) !important;
+    transform: scale(1) translateX(2px) translateY(-4px) rotate(-100deg) !important;
 }
 
 a svg{
+    transform: scale(0.7) translateX(-4px) translateY(-12px);
     transition: transform 0.2s ease-in-out;
 }

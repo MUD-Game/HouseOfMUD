@@ -5,7 +5,7 @@
  * @category Modal
  */
 
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
 import { validator } from 'src/utils/validator';
@@ -24,14 +24,25 @@ export interface AddClassModalProps {
 
 const AddClassModal: React.FC<AddClassModalProps> = (props) => {
 
+    useEffect(()=>{
+        if(props.editData?.name && props.editData?.description && props.editData?.startStats){
+            setName(props.editData.name);
+            setDescription(props.editData.description);
+            setHitPoints(props.editData.startStats.hp);
+            setMana(props.editData.startStats.mana);
+            setDmg(props.editData.startStats.dmg);
+
+        }
+    },[props.editData])
+
     const {t} = useTranslation();
     const dt = 'dungeon_configurator';
     const dconf = useDungeonConfigurator();
-    const [name, setName] = React.useState<string>(props.editData?.name || "");
-    const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const [hitPoints, setHitPoints] = React.useState<number | "">(props.editData?.startStats?.hp || "");
-    const [mana, setMana] = React.useState<number | "">(props.editData?.startStats?.mana || "");
-    const [dmg, setDmg] = React.useState<number | "">(props.editData?.startStats?.dmg || "");
+    const [name, setName] = React.useState<string>("");
+    const [description, setDescription] = React.useState<string>("");
+    const [hitPoints, setHitPoints] = React.useState<number | "">("");
+    const [mana, setMana] = React.useState<number | "">("");
+    const [dmg, setDmg] = React.useState<number | "">( "");
 
     const [error, setError] = React.useState<string>("");
 
@@ -86,7 +97,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert type="error" message={error} setMessage={setError} />
-                    <MudInput name="name" placeholder='Name' colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
+                    <MudInput autoFocus name="name" placeholder='Name' colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
                     <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                     <MudInput name="maxhp" noconstraint={props.editData?.from_server || 0 ? 1 : 0}  disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(validator.statValues(event.target.value))} />
                     <MudInput name="maxmana" noconstraint={props.editData?.from_server || 0 ? 1 : 0} disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number"  onChange={(event) => setMana(validator.statValues(event.target.value))} />

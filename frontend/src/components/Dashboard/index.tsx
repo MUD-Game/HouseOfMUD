@@ -107,23 +107,21 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     }}>{t("dashboard.create_new_dungeon")}</button>
                 </div>
             </Row>
-            <Row className="align-items-center pt-1 pb-2 mb-4">
-                <Col md={6}>
+            <Row className="align-items-center pt-1 pb-2 mb-4 g-2">
+                <div className="col-md-6">
                     <input id="search-input" className="input-standard drawn-border" typeof='text' value={searchTerm} onChange={handleSearch} placeholder={t("dashboard.search_dungeon")} />
-                </Col>
-                <Col md={1}>
+                </div>
+                <div className="col-md-2 col-lg-1 ms-md-2">
                     <button onClick={(evt) => {
                         const target: React.MouseEvent<HTMLButtonElement, MouseEvent>["currentTarget"] = evt.currentTarget;
                         target.classList.add("spin");
                         target.disabled = true;
                         fetchDungeons(() => {
-                            target.classList.remove("spin");
+                            setTimeout(()=>{target.classList.remove("spin")}, 750);
                             target.disabled = false;
-
-                        }
-                        )
-                    }} className="btn-primary btn" id="refreshButton" ><ArrowCounterclockwise size={30} /></button>
-                </Col>
+                        })
+                    }} className="btn drawn-border btn-blue w-100" id="refreshButton" ><ArrowCounterclockwise size={30} /></button>
+                </div>
             </Row>
 
             <Row>

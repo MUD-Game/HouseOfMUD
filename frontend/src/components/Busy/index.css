@@ -38,13 +38,14 @@
 }
 
 #sadwrapper > img{
-  max-height: 50vh;
+  max-height: 30vh;
 }
 
-#sadwrapper h1 {
-  margin-bottom:0;
+.crying-title {
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
-#sadwrapper h4 {
-  text-align: center;
+.crying-text {
+  font-size: 1.2rem;  
 }

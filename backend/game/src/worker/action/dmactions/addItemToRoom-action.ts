@@ -5,7 +5,7 @@ import { Item } from "../../../data/interfaces/item";
 import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { actionMessages, dungeonMasterSendMessages, errorMessages, helpMessagesForDM, parseResponseString, triggers } from "../actions/action-resources";
+import { actionMessages, dmActionDescriptions, dungeonMasterSendMessages, errorMessages, helpMessagesForDM, parseResponseString, triggers } from "../actions/action-resources";
 
 export class AddRoomItem extends Action { //test me
 
@@ -36,7 +36,7 @@ export class AddRoomItem extends Action { //test me
                     let itemName: string = item.getName()
                     availableItemsString += `\n\t${itemName}`
                 })
-                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.itemDoesNotExist, availableItemsString)})
+                this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.itemDoesNotExist, availableItemsString) + dmActionDescriptions.addRoomItem})
             }
         
         } catch(e) {
@@ -46,7 +46,7 @@ export class AddRoomItem extends Action { //test me
                     let roomName: string = room.getName()
                     availableRoomsString += `\n\t${roomName}`
                 })
-            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.roomDoesNotExist, availableRoomsString)})
+            this.dungeonController.getAmqpAdapter().sendActionToClient(user, "message", {message: parseResponseString(helpMessagesForDM.roomDoesNotExist, availableRoomsString) + dmActionDescriptions.addRoomItem})
         }
     }
 }

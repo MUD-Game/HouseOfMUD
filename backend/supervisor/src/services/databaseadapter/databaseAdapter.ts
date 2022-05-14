@@ -172,7 +172,7 @@ export class DatabaseAdapter {
             await this.room.findByIdAndDelete(r)
         })
         foundDungeon.items.forEach(async (it: any) => {
-            await this.item.findByIdAndDelete(it.item)
+            await this.item.findByIdAndDelete(it)
         })
         foundDungeon.npcs.forEach(async (npc: any) => {
             await this.npc.findByIdAndDelete(npc)
@@ -197,7 +197,7 @@ export class DatabaseAdapter {
             await this.room.findByIdAndDelete(r)
         })
         oldDungeon.items.forEach(async (it: any) => {
-            await this.item.findByIdAndDelete(it.item)
+            await this.item.findByIdAndDelete(it)
         })
         oldDungeon.npcs.forEach(async (npc: any) => {
             await this.npc.findByIdAndDelete(npc)

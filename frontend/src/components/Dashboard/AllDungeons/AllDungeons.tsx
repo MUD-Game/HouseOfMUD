@@ -29,13 +29,15 @@ export type AllDungeonProps = {
     filterKey: 'name' | 'description';
     filterValue: string;
     allDungeons: DungeonResponseData[];
+    fetchDungeons: ()=>void;
 };
 
 const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
     allDungeons,
     filterValue,
     filterKey,
-    messageCallback
+    messageCallback,
+    fetchDungeons
 }) => {
     const { t } = useTranslation();
     const game = useGame();
@@ -92,6 +94,7 @@ const AllDungeons: React.FC<AllDungeonProps & SendsMessagesProps> = ({
                     return (
                         <AllDungeonLi
                             onPasswordRequest={onPasswordRequest}
+                            fetchDungeons={fetchDungeons}
                             key={index}
                             messageCallback={messageCallback}
                             {...dungeon}

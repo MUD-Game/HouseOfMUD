@@ -280,6 +280,10 @@
         }
     },
     "error": {
+        "notstarted":{
+            "title": "Dungeon nicht gestartet",
+            "text": "Der Dungeon läuft nicht oder wurde bereits beendet."
+        },
         "isfull":{
             "title": "Der Dungeon ist voll",
             "text": "Der Dungeon hat seine maximale Spieleranzahl erreicht. Bitte warte bis ein anderer Spieler den Dungeon verlassen hat."

@@ -114,7 +114,13 @@ export class API {
             let body: any = req.body;
             // Check if dungeon is full
             const isFull:boolean = this.hostLink.isFull(dungeonID);
-            let isBanned: boolean = await this.dba.isBanned(userID, dungeonID);
+            const isStarted = this.hostLink.isRunning(dungeonID);
+            const isBanned: boolean = await this.dba.isBanned(userID, dungeonID);
+
+            if (!isStarted){
+                res.status(400).json({ok:0, error: "notstarted"});
+                return;
+            }
             if(isFull){
                 res.status(406).json({ok:0, error:"isfull"});
                 return;

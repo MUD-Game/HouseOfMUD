@@ -26,6 +26,7 @@ export interface AllDungeonLiProps {
     status: 'online' | 'offline';
     isPrivate: boolean;
     onPasswordRequest: (dungeonId:string, dungeonName:string) => void;
+    fetchDungeons: () => void;
 }
 
 const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
@@ -37,7 +38,8 @@ const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
     isPrivate,
     status,
     onPasswordRequest,
-    messageCallback
+    messageCallback,
+    fetchDungeons
 }) => {
     const game = useGame();
     const navigate = useNavigate();
@@ -58,6 +60,9 @@ const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
                 },
                 error => {
                     messageCallback(error.error);
+                    if (error.error === "notstarted"){
+                        fetchDungeons();
+                    }
                 }
             );
         }

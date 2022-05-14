@@ -37,7 +37,7 @@ interface Dungeons {
  * responsable for handling the communication between the supervisor and the host
  */
 export class HostLink {
-    
+  
 
    
     private port: number;
@@ -383,4 +383,9 @@ export class HostLink {
     public isFull(dungeonID: string) {
         return this.dungeons[dungeonID].currentPlayers >= this.dungeons[dungeonID].maxPlayers;
     }
+
+    isRunning(dungeonID: string) {
+        return this.dungeons[dungeonID].status === 'online';
+    }
+
 }

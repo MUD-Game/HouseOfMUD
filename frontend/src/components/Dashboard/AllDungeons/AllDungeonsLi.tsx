@@ -42,6 +42,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
     const game = useGame();
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const isFull = currentPlayers >= maxPlayers;
 
     let joinDungeon = () => {
         if (isPrivate) {
@@ -64,7 +65,7 @@ const AllDungeonLi: React.FC<AllDungeonLiProps & SendsMessagesProps> = ({
     };
 
     return (
-        <Row className="dashboard-list align-items-center pt-1 pb-2 mb-2">
+        <Row className={"dashboard-list align-items-center pt-1 pb-2 mb-2" + (isFull ? " disabled" : "")}>
             <div className="col-3">
                 <b>{name}</b>
             </div>

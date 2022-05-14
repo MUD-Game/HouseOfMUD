@@ -112,7 +112,13 @@ export class API {
             let dungeonID: string = req.params.dungeonID;
             const { userID } = req.cookies;
             let body: any = req.body;
+            // Check if dungeon is full
+            const isFull:boolean = this.hostLink.isFull(dungeonID);
             let isBanned: boolean = await this.dba.isBanned(userID, dungeonID);
+            if(isFull){
+                res.status(406).json({ok:0, error:"isfull"});
+                return;
+            }
             if (!isBanned) {
                 if (body.password !== undefined) {
                     if (this.hostLink.checkPassword(dungeonID, body.password)) {

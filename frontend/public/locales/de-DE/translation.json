@@ -280,6 +280,10 @@
         }
     },
     "error": {
+        "isfull":{
+            "title": "Der Dungeon ist voll",
+            "text": "Der Dungeon hat seine maximale Spieleranzahl erreicht. Bitte warte bis ein anderer Spieler den Dungeon verlassen hat."
+        },
         "internal": {
             "title": "Interner Server Fehler",
             "text": "Es ist ein interner Server Fehler aufgetreten. Bitte versuche es später noch einmal, falls das Problem weiterhin besteht wenden Sie sich an einen Administrator."

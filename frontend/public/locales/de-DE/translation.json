@@ -234,7 +234,7 @@
     },
     "button": {
         "dmgive": "Dungeonmaster abgeben",
-        "shutdown": "Server stoppen",
+        "shutdown": "Dungeon stoppen",
         "submit": "Senden",
         "ok": "O.K.",
         "join": "Beitreten",
@@ -473,7 +473,7 @@
     },
  "dungeonmasterleave":{
      "title": "Dungeon Verlassen",
-     "text": "Der Dungeon läuft nicht ohne einen Dungeon-Master! Du kannst entweder den Dungeon verlassen, wodurch dieser gespeichter und gestoppt wird. Oder du kannst einem anderen zum Dungeon-Master ernennen",
+     "text": "Der Dungeon läuft nicht ohne einen Dungeon-Master! Du kannst entweder den Dungeon verlassen, wodurch dieser gespeichter und gestoppt wird. Oder du kannst einen anderen zum Dungeon-Master ernennen",
      "select": "Wähle einen neuen Dungeon-Master aus"
  }
 }

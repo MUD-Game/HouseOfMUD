@@ -44,8 +44,8 @@ const ChatInput: React.FC<ChatInputProps & SendsMessagesProps> = ({ messageCallb
                 <input className="input-standard drawn-border" value={message} onChange={event => setMessage(event.target.value)} type="text" name="message" id="chat-input" required autoComplete='off' />
             </div>
             <div className="col-1">
-                <button className="btn px-0 w-100 drawn-border btn-blue" onClick={() => {
-                    onSendCommand(message);
+                <button className="btn px-0 w-100 <drawn-border btn-blue" onClick={() => {
+                    message !== "" && onSendCommand(message);
                     setMessage("");
                 }}>
                     <SendPlus size={28} />

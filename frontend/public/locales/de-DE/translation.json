@@ -83,7 +83,13 @@
     "character_creator": {
         "pick_character": "Charakter auswählen",
         "create": "Charakter Erstellen",
-        "new_character": "Neuen Charakter anlegen"
+        "new_character": "Neuen Charakter anlegen",
+        "delete_character": {
+            "confirmation": {
+                "title": "Charakter löschen",
+                "text": "Bist du sicher, dass du diesen Charakter löschen möchtest? Alle Spielfortschritte mit diesem Charakter werden gelöscht! Dieser Schritt kann nicht rückgängig gemacht werden!"
+            }
+        }
     },
     "user_settings": {
         "admin": {
@@ -456,7 +462,7 @@
     },
     "cryingLlama":{
         "title": "Es sind momentan keine Dungeons gestartet",
-        "text": "Erstelle doch selber einen Dungeon und starte ihn!"
+        "text": "Erstelle doch selbst einen Dungeon und starte ihn!"
     },
     "constraint":{
         "max": "max.",

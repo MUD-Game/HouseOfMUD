@@ -322,7 +322,7 @@ export class API {
                 characterData.userId = userID;
                 characterData.name = characterData.name;
                 characterData.exploredRooms = ["0,0"];
-                if(await this.dba.checkIfCharacterExists(characterData.name, dungeonID)){
+                if (await this.dba.characterExistsInDungeon(characterData.name, dungeonID)){
                     res.status(400).json({ ok: 0, error: 'characteralreadyexists' });
                 }else{
                     this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {

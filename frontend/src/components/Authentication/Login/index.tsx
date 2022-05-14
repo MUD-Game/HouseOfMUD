@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = (props) => {
                                 <input value={password} name="password" onChange={(event)=> setPassword(event.target.value)}className="input-standard drawn-border" type="password" placeholder={t("login.password")} />
                                     <span className="small font-weight-light"><Link className="small font-weight-light" to="/requestpasswordreset">{t("login.forgot_password")}</Link></span>
                             </div>
-                            <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.login")}</button>
+                            <button className="btn mt-3 mb-4 drawn-border btn-green" type="submit">{t("button.login")}</button>
                             <div className="w-100 text-center">
                                 <p>{t("login.no_account")} <Link to="/register">{t("login.register_here")}</Link></p>
                             </div>

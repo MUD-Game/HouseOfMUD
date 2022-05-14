@@ -7,7 +7,7 @@
 
 
 import React from 'react'
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useAuth } from 'src/hooks/useAuth';
 import Busy from 'src/components/Busy';
@@ -119,35 +119,37 @@ const Register: React.FC<RegisterProps> = () => {
                                 <span className="inputerror">{pwError}</span>
                                 <span className="inputerror">{confirmError}</span>
                             </div>
-                            <div className="col-md-12" id="pwrequirements">
+                            <div className="col mt-4" id="pwrequirements">
                                 <span>{t("password.requirements.title")}</span>
                                 <Row>
-                                    <Col md={1}>{getLengthStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
+                                    <div className="col-2 col-xl-1">{getLengthStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11">
                                         <span>{t("password.requirements.size")}</span>
-                                    </Col>
+                                    </div>
                                 </Row>
                                 <Row>
-                                    <Col md={1}>{getAlphaStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
+                                    <div className="col-2 col-xl-1">{getAlphaStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11">
                                         <span>{t("password.requirements.alpha")}</span>
-                                    </Col>
+                                    </div>
                                 </Row>
                                 <Row>
-                                    <Col md={1}>{getNumberStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
+                                    <div className="col-2 col-xl-1">{getNumberStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11">
                                         <span>{t("password.requirements.number")}</span>
-                                    </Col>
+                                    </div>
                                 </Row>
                                 <Row>
-                                    <Col md={1}>{getSymbolStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
+                                    <div className="col-2 col-xl-1">{getSymbolStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11">
                                         <span>{t("password.requirements.symbol")}</span>
-                                    </Col>
+                                    </div>
                                 </Row>
                             </div>
-                            <button className="btn mt-3 mb-5 drawn-border btn-green btn-xpadding" type="submit">{t("button.register")}</button> <br />
-                            <span>{t("login.have_account")} <Link to="/login">{t("login.login_here")}</Link></span>
+                            <button className="btn mt-3 mb-4 drawn-border btn-green btn-xpadding" type="submit">{t("button.register")}</button>
+                            <div className="w-100 text-center">
+                                <p>{t("login.have_account")} <Link to="/login">{t("login.login_here")}</Link></p>
+                            </div>
                         </form>
                     }
                 </div>

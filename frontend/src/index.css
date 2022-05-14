@@ -129,7 +129,7 @@ h1, h2, h3, h4 {
 #backbutton{
   cursor: pointer;
   transform: translateX(0px);
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: start;

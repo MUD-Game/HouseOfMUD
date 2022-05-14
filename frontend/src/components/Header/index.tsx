@@ -37,7 +37,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             {!(location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/passwordreset' || location.pathname === '/requestpasswordreset') ?
                 <Row className="mt-3 align-items-center">
                     <Col className="text-start">
-                        <p className="headline">{auth.user ? <>{t(`header.welcome`)} <Link to="/user-settings"><b>{auth.user}<Gear size={25}/></b></Link></>: null}</p>
+                        <p className="headline">{auth.user ? <>{t(`header.welcome`)} <Link to="/user-settings"><b>{auth.user}<Gear className="ali" size={25}/></b></Link></>: null}</p>
                     </Col>
                     <Col>
                         <Alert type="error" message={error} setMessage={setError}/>

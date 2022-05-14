@@ -18,6 +18,9 @@ export class DmGiveUpAction implements Action {
 
     async changeDungeonMaster(character: string){
         // Get user id from the character
+        if(!this.dungeonController.characterExists(character)){
+            return;
+        }
         let newDungeonMasterId: string = this.dungeonController.getUserIdFromCharacter(character);
         // Change the dungeon master 
         this.dungeonController.getDungeon().setMasterId(newDungeonMasterId);

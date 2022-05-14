@@ -28,6 +28,7 @@ interface Tokens {
     [character: string]: string;
 }
 export class DungeonController {
+ 
     
     private verifyTokens: Tokens;
 
@@ -417,5 +418,9 @@ export class DungeonController {
 
     getDungeonMasterToken(): string{
         return this.verifyTokens[DUNGEONMASTER];
+    }
+
+    characterExists(character: string) {
+        return character in this.dungeon.characters;
     }
 }

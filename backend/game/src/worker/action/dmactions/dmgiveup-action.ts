@@ -34,7 +34,7 @@ export class DmGiveUpAction implements Action {
         // Send the new dungeonmaster to the game
         this.dungeonController.getAmqpAdapter().sendActionToClient(character, "newdm", { verifyToken: this.dungeonController.getDungeonMasterToken()});
 
-        this.dungeonController.getAmqpAdapter().broadcastAction("message",`${character} ist nun der neue Dungeon Master`);
+        this.dungeonController.getAmqpAdapter().broadcastAction("message", {message: `${character} ist nun der neue Dungeon Master`});
 
     }
 }

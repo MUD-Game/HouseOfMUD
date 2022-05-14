@@ -51,7 +51,7 @@ const CharacterCreator: React.FC<CharacterCreatorProps> = (props) => {
     if (!isAbleToPickCharacter()) return <Navigate to="/dashboard" />;
     return (
         <Container className="mb-5">
-            <div id="backbutton" onClick={()=>navigate("/")} ><ChevronLeft size={30} /><span>{t("common.back")}</span></div>
+            <div className="mb-3" id="backbutton" onClick={()=>navigate("/")} ><ChevronLeft size={30} /><span>{t("common.back")}</span></div>
 
             <h2>{dungeonName}</h2>
             <Alert message={error} setMessage={setError} type="error" />

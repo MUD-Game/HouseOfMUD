@@ -331,6 +331,9 @@ a:hover {
 .configurator-item, .character-item, .link-li {
   border-radius: .3em;
   transition: background-color .1s ease-in;
+}
+
+.link-li {
   cursor: pointer;
 }
 

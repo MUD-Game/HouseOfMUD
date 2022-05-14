@@ -63,14 +63,13 @@ const DungeonConfigurator: React.FC<DungeonConfiguratorProps> = () => {
     return (
 
         <Container className="mb-5">
-
-            <div id="backbutton" onClick={onCancel} ><ChevronLeft size={30}/><span>{t("common.back")}</span></div>
+            <div className="mb-3" id="backbutton" onClick={onCancel} ><ChevronLeft size={30}/><span>{t("common.back")}</span></div>
 
             <h2>{t(`${tl}.title`)}</h2>
             <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
             {isBusy ? <Busy /> :
                 <>
-                    <Row className="my-3 g-3">
+                    <Row className="my-3 g-3 align-items-end">
                         <MudInput colmd={8} value={dungeonConfig.name} onChange={evt => {
                             dungeonConfig.setName(validator.name(evt.target));
                         }} type="text" name="name" placeholder={t(`${tl}.inputs.name.placeholder`)} />

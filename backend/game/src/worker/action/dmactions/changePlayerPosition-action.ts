@@ -40,7 +40,7 @@ export class ChangeRoom implements Action {
                     this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: roomstring } })
                 }
                 await amqpAdapter.sendActionToClient(recipientCharacterName, 'minimap.move', newRoomId);
-
+                this.dungeonController.sendPlayerListToDM();
             } catch (e) {
                 //console.log(e)
                 let availableRoomsString: string = '';

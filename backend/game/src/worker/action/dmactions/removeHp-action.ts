@@ -2,7 +2,7 @@ import { Character } from "../../../data/interfaces/character";
 import { Dungeon } from "../../../data/interfaces/dungeon";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
-import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM } from "../actions/action-resources";
+import { triggers, actionMessages, errorMessages, dungeonMasterSendMessages, parseResponseString, extras, helpMessagesForDM, dmActionDescriptions } from "../actions/action-resources";
 import { AmqpAdapter } from "../../amqp/amqp-adapter";
 import { DieAction } from "../actions/die-action";
 import { Room } from "../../../data/interfaces/room";
@@ -29,7 +29,7 @@ export class RemoveHp implements Action {
             let actualHp: number = recipientCharacter.getCharakterStats().getHp()
             let hpCount: number = +args[1]
             if (isNaN(hpCount)) {
-                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber})
+                amqpAdapter.sendActionToClient(user, "message", { message: helpMessagesForDM.valueNotANumber + dmActionDescriptions.removeHp})
             } else {
                 if (actualHp - hpCount <= 0) {
                     recipientCharacter.getCharakterStats().setHp(0)
@@ -56,7 +56,7 @@ export class RemoveHp implements Action {
 
         } catch (e) {
             //console.log(e)
-            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) })
+            amqpAdapter.sendActionToClient(user, "message", { message: parseResponseString(helpMessagesForDM.characterDoesNotExist, recipientCharacterName) + dmActionDescriptions.removeHp })
         }
     }
 }

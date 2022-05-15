@@ -35,13 +35,8 @@ export class DieAction extends Action {
             }
             //remove item from inventory or decrement count
             let itemInInventory: ItemInfo = inventoryItems.filter(it => it.item == item.item)[0]
-            if (itemInInventory.count > 1){
-                itemInInventory.count -= 1
-            }
-            else {
-                let indexOfItemToDiscardInInventory: number = inventoryItems.indexOf(itemInInventory)
-                inventoryItems.splice(indexOfItemToDiscardInInventory, 1)
-            }
+            let indexOfItemToDiscardInInventory: number = inventoryItems.indexOf(itemInInventory)
+            inventoryItems.splice(indexOfItemToDiscardInInventory, 1)
         })
         //set position to start room
         characterToDie.modifyPosition("0,0")

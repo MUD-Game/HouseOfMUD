@@ -5,7 +5,7 @@ import { Dungeon } from "../../../data/interfaces/dungeon";
 import { Item } from "../../../data/interfaces/item";
 import { Npc } from "../../../data/interfaces/npc";
 import { Room } from "../../../data/interfaces/room";
-import { DungeonController } from "../../controller/dungeon-controller";
+import { DungeonController, DUNGEONMASTER } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { triggers, actionMessages, errorMessages, parseResponseString } from "./action-resources";
 
@@ -101,7 +101,9 @@ export class LookAction extends Action {
             dungeonCharacters.forEach(character => {
                 if (character.getPosition() === roomId) {
                     let characterName: string = character.getName()
-                    playersString += `\n\t${characterName}`
+                    if(characterName !== DUNGEONMASTER){
+                        playersString += `\n\t${characterName}`
+                    }
                 }
             })
         } catch(e) {

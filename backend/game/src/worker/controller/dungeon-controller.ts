@@ -351,7 +351,7 @@ export class DungeonController {
         console.log(this.getDungeon().getCharacter(character).getPosition());
         await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
-                startRoom:  this.getDungeon().getCharacter(character).getPosition();
+                startRoom:  this.getDungeon().getCharacter(character).getPosition()
             } as MiniMapData);
     }	
 

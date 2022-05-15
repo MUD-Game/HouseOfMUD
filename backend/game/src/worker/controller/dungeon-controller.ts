@@ -9,6 +9,7 @@ import { Dungeon } from "../../data/interfaces/dungeon";
 import { Room } from "../../data/interfaces/room";
 import { ActionHandler, ActionHandlerImpl } from "../action/action-handler";
 import { actionMessages, MiniMapData, parseResponseString, triggers } from "../action/actions/action-resources";
+import format from "../action/actions/format";
 import { DmGiveUpAction } from "../action/dmactions/dmgiveup-action";
 import { ToggleConnectionAction } from "../action/dmactions/toggleRoomConnection-action";
 import { AmqpAdapter } from "../amqp/amqp-adapter";
@@ -160,7 +161,8 @@ export class DungeonController {
         if (characterName !== DUNGEONMASTER) {
             await this.amqpAdapter.bindClientQueue(characterName, `room.${character.getPosition()}`);
         }
-        this.amqpAdapter.broadcastAction('message', { message: `${characterName} ist dem Dungeon beigetreten!` });
+        this.amqpAdapter.broadcastAction('message', {
+            message: `${format.rgb(92, 92, 92)}${format.reset}${format.bold}${format.color.green}→${format.reset}${format.rgb(92, 92, 92)}${format.reset} ${characterName}` });
         this.sendPlayerListToDM();
         sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
         if (characterName !== DUNGEONMASTER) {
@@ -188,8 +190,9 @@ export class DungeonController {
                 this.selectedPlayer = undefined;
                 this.sendPlayerInformationData();
             }
-            this.amqpAdapter.broadcastAction('message', { message: `${characterName} hat den Dungeon verlassen!` });
-            sendToHost('dungeonState', { currentPlayers: this.dungeon.getCurrentPlayers() });
+            this.amqpAdapter.broadcastAction('message', {
+                message: `${format.rgb(92, 92, 92)}${format.reset}${format.bold}${format.color.red}←${format.reset}${format.rgb(92, 92, 92)}${format.reset} ${characterName}`
+            });
         } else { // Dungeon Master
             // Check if the dungeonmaster is actually the dungeonmasterid
             if(!this.dungeon.getIsMasterless()) {

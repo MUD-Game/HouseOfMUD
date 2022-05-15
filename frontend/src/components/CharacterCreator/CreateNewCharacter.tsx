@@ -52,7 +52,7 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps & SendsMessagesProps>
         <form onSubmit={onCreateCharacter}>
             <p className="headline">{t("character_creator.new_character")}</p>
             <Row className="py-3 g-4">
-                <MudInput required colmd={6} name="name" value={name} onChange={event=>setName(validator.name(event.target))} type="text" placeholder="Charaktername wählen" />
+                <MudInput required colmd={6} name="name" value={name} onChange={event=>setName(validator.cirName(event.target))} type="text" placeholder="Charaktername wählen" />
                 <MudSelect required colmd={6} name="class" label={t("dungeon_keys.class")}>
                     {classes.map((cl, index) => {
                         return (

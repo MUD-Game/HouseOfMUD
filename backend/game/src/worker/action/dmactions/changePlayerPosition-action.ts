@@ -38,6 +38,11 @@ export class ChangeRoom implements Action {
                     this.dungeonController.getAmqpAdapter().sendToClient(user, { action: "message", data: { message: roomstring, room: newRoom } })
                     roomstring = parseResponseString(dungeonMasterSendMessages.roomMove, args[1])
                     this.dungeonController.getAmqpAdapter().sendToClient(recipientCharacter.name, { action: "message", data: { message: roomstring } })
+                    
+                    let routingKeyOldRoom: string = `room.${actualroomId}`
+                    let routingKeyNewRoom: string = `room.${newRoomId}`;
+                    await amqpAdapter.unbindClientQueue(recipientCharacter.name, routingKeyOldRoom);
+                    await amqpAdapter.bindClientQueue(recipientCharacter.name, routingKeyNewRoom);
                 }
                 await amqpAdapter.sendActionToClient(recipientCharacterName, 'minimap.move', newRoomId);
                 this.dungeonController.sendPlayerListToDM();

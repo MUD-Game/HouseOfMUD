@@ -299,8 +299,13 @@ a:hover {
 .dashboard-list {
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
+  overflow:hidden;
   border-width: 0 0 3px;
   transition: background-color .1s ease-in;
+}
+
+.dashboard-list div{
+  overflow: hidden;
 }
 
 /* Listen und Icons */

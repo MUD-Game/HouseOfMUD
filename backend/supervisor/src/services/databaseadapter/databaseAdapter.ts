@@ -36,7 +36,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
-    
+
 
     public database: string;
 
@@ -248,7 +248,7 @@ export class DatabaseAdapter {
     }
 
     async getUserId(user: string): Promise<string | undefined> {
-        if (user==="root"){
+        if (user === "root") {
             return "root";
         }
         const foundUser = await this.user.findOne({ username: user }, '_id');
@@ -286,7 +286,7 @@ export class DatabaseAdapter {
      * @returns true if the character could be found inside the dungeon, false if not
      */
     async characterExistsInDungeon(characterName: string, dungeonId: string) {
-        return this.getCharacterFromDungeon(characterName, dungeonId) !== null;
+        return await this.getCharacterFromDungeon(characterName, dungeonId) !== null;
     }
 
     /**
@@ -331,9 +331,9 @@ export class DatabaseAdapter {
         }
     }
 
-    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string){
+    async updateBlacklistInDungeon(updatedBlacklist: string[], dungeonId: string) {
         let dungeonToUpdate = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) })
-        if(dungeonToUpdate?.blacklist != undefined){
+        if (dungeonToUpdate?.blacklist != undefined) {
             dungeonToUpdate.blacklist = updatedBlacklist;
         }
         dungeonToUpdate?.save();
@@ -341,7 +341,7 @@ export class DatabaseAdapter {
 
     async isBanned(userId: string, dungeonId: string): Promise<boolean> {
         console.log(userId);
-        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: {$elemMatch: { $eq: userId }} });
+        let dungeon = await this.dungeon.findOne({ _id: new mongoose.Types.ObjectId(dungeonId) }, { blacklist: { $elemMatch: { $eq: userId } } });
         console.log(dungeon);
         if (dungeon) {
             if (dungeon.blacklist.includes(userId)) {

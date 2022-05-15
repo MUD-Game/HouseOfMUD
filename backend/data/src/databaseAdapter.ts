@@ -286,7 +286,7 @@ export class DatabaseAdapter {
      * @returns true if the character could be found inside the dungeon, false if not
      */
     async characterExistsInDungeon(characterName: string, dungeonId: string) {
-        return this.getCharacterFromDungeon(characterName, dungeonId) !== null;
+        return await this.getCharacterFromDungeon(characterName, dungeonId) !== null;
     }
 
     /**

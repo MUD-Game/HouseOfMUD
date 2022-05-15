@@ -20,10 +20,10 @@ export interface OnlinePlayersData {
 
 export interface OnlinePlayersProps {
     setPlayers: (players: string[]) => void,
-
+    selectedRooms: string[];
 }
 
-const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ setPlayers }) => {
+const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ setPlayers, selectedRooms }) => {
     const { t } = useTranslation();
     const { sendPlayerInformation, setOnlinePlayersSubscriber } = useRabbitMQ();
     const [onlinePlayers, setOnlinePlayers] = React.useState<OnlinePlayersData>();
@@ -51,8 +51,11 @@ const OnlinePlayers: React.FC<OnlinePlayersProps> = ({ setPlayers }) => {
                 <p className='m-0'><u>{t("game.onlineplayers")}</u></p>
                 {onlinePlayers && onlinePlayers.players.length > 1 ?
                     <ul className='ps-4'>
-                        {onlinePlayers?.players.filter(onlinePlayer => onlinePlayer.character !== 'dungeonmaster').map((onlinePlayer) =>
-                            <li className="link-li ps-1" key={onlinePlayer.character} onClick={() => { playerInformation(onlinePlayer.character) }}>{`${onlinePlayer.character} [${onlinePlayer.room}]`}</li>
+                        {onlinePlayers?.players.filter(onlinePlayer => onlinePlayer.character !== 'dungeonmaster').map((onlinePlayer) => {
+                            if(selectedRooms.includes(onlinePlayer.room) || onlinePlayer.room === undefined || selectedRooms.length === 0) {
+                                return( <li className="link-li ps-1" key={onlinePlayer.character} onClick={() => { playerInformation(onlinePlayer.character) }}>{`${onlinePlayer.character} [${onlinePlayer.room}]`}</li> )
+                            }
+                        }
                         )}
                     </ul>
                     : t("game.noplayers")}

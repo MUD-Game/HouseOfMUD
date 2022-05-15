@@ -166,6 +166,7 @@ export const dmActionDescriptions = {
     addRoomItem: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Raumname> <Itemname>${format.reset} - Lege ein Item in den Raum `, triggers.addRoomItem),
     kickPlayer: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spielername>${format.reset} - Schmeiße einen Spieler aus der Lobby `, triggers.kickPlayer),
     whisper: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spieler> <Nachricht>${format.reset} - Sende eine private Nachricht an einen Spieler `, triggers.whisper),
+    broadcast: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Nachricht>${format.reset} - Sende eine Nachricht an alle Spieler `, triggers.broadcast),
     banPlayer: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spielername>${format.reset} - Banne einen Spieler permanent aus deinem Dungeon `, triggers.banPlayer),
     showDmActions: parseResponseString(`\n\t${format.bold}%s${format.reset} - Erhalte eine Beschreibung alle ausführbaren Aktionen `, triggers.showDmActions),
     toggleConnection: parseResponseString(`\nÜber die Minimap können außerdem die Verbindungen getoggled werden. Klick dafür auf die Verbindung zwischen den Räumen.`),

@@ -237,7 +237,7 @@ export class HostLink {
     public async getOnlineDungeons(userID: string){
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
-            if (this.dungeons[dungeonID].status === 'online' && !(await this.databaseAdapter.isBanned(userID, dungeonID))) {
+            if (this.dungeons[dungeonID].status === 'online') {
                 let dungeon = this.dungeons[dungeonID];
                 dungeons.push({
                     id: dungeonID,

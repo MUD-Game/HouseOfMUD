@@ -21,18 +21,28 @@ import { AddDamage } from './dmactions/addDamage-action';
 import { AddHp } from './dmactions/addHp-action';
 import { AddMana } from './dmactions/addMana-action';
 import { RemoveHp } from './dmactions/removeHp-action';
-import { RemoveDamage } from './dmactions/removeDamage-action';
 import { RemoveMana } from './dmactions/removeMana-action';
 import { PrivateMessageFromDm } from './dmactions/privateMessage-action';
+import { RemoveDamage } from './dmactions/removeDamage-action';
 import { BroadcastMessageAction } from './dmactions/broadcast-message-action';
+import { ChangeRoom } from './dmactions/changePlayerPosition-action';
+import { RemoveItem } from './dmactions/removeItemFromPlayer-action';
 import { ToggleConnectionAction } from './dmactions/toggleRoomConnection-action';
+import { AddItem } from './dmactions/addItemToPlayer-action';
+import { AddRoomItem } from './dmactions/addItemToRoom-action';
+import { removeRoomItem } from './dmactions/removeItemFromRoom-action';
+import { KickPlayer } from './dmactions/kickPlayer-action';
+import { ShowDmActions } from './dmactions/show-dmactions';
+import { BanPlayer } from './dmactions/banPlayer-action';
+import { DmGiveUpAction } from './dmactions/dmgiveup-action';
 
 
-const regExpression = {
-    forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
-    predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
-    dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper}))`, "i")
-}
+// const regExpression = {
+//     forDungeonMaster: new RegExp("^((fluester )|(broadcast))", "i"),
+//     predefinedActions: new RegExp(`^((${triggers.message})|(${triggers.whisper})|(${triggers.discard})|(${triggers.inspect})|(${triggers.inventory})|(${triggers.look})|(${triggers.move})|(${triggers.pickup})|(${triggers.unspecified})|(${triggers.help})|(${triggers.showActions}))`, "i"),
+//     dmActions: new RegExp(`^((${triggers.addDamage})|(${triggers.addHp})|(${triggers.addMana})|(${triggers.removeMana})|(${triggers.removeHp})|(${triggers.removeMana})|(${triggers.removeDamage})|(${triggers.broadcast})|(${triggers.whisper})|(${triggers.addItem})|(${triggers.addRoomItem})|(${triggers.removeItem})|(${triggers.removeRoomItem})|(${triggers.changeRoom})|(${triggers.showDmActions})|(${triggers.kickPlayer}))`, "i")
+// }
+
 /**
  * Processes Actions received by the dungeon controller.
  * @category Action Handler
@@ -61,7 +71,7 @@ export interface ActionHandler {
     /**
      * Predefined Dungeon Master Actions types to call performAction on.
      */
-     dmActions: { [trigger: string]: Action };
+    dmActions: { [trigger: string]: Action };
 
 
     /**
@@ -78,7 +88,7 @@ export class ActionHandlerImpl implements ActionHandler {
     dungeonActions: { [trigger: string]: DungeonAction } = {};
     invalidAction: InvalidAction;
     dieAction: DieAction;
-    dmActions:{ [trigger: string]: Action } = {};
+    dmActions: { [trigger: string]: Action } = {};
 
     /**
      * Creates an instance of ActionHandler with its necessary actions.
@@ -120,40 +130,62 @@ export class ActionHandlerImpl implements ActionHandler {
            new RemoveHp(dungeonController),
            new PrivateMessageFromDm(dungeonController),
            new BroadcastMessageAction(dungeonController),
-           new ToggleConnectionAction(dungeonController)
+           new ChangeRoom(dungeonController),
+           new AddItem(dungeonController),
+           new RemoveItem(dungeonController),
+           new AddRoomItem(dungeonController),
+           new removeRoomItem(dungeonController),
+           new ToggleConnectionAction(dungeonController),
+           new KickPlayer(dungeonController),
+           new ShowDmActions(dungeonController),
+           new BanPlayer(dungeonController),
+           new DmGiveUpAction(dungeonController)
         ];
+
         dmActions.forEach(dmaction => {
             this.dmActions[dmaction.trigger!] = dmaction;
         });
 
     }
 
-    processAction(user: string, message: string) {
+    async processAction(user: string, message: string) {
         let action: Action | undefined = undefined;
+        let messageArray = message.trim().split(" ");
+        messageArray[0] = messageArray[0].toLowerCase();
+        message = messageArray.join(" ");
         let dungeonActions: DungeonAction[] = Object.values(this.dungeonActions)
         action = dungeonActions.find(dungeonAction => this.inputMatch(message, dungeonAction.regEx))
         if (action === undefined) {
-            if (this.inputMatch(message, regExpression.predefinedActions)) {
-                action = this.getAction(message)
-            } else {
+            action = this.getAction(message)
+            if (action === undefined) {
                 action = this.invalidAction
             }
         }
         let actionArguments: string[] = this.getActionArguments(message)
-        action.performAction(user, actionArguments);
+        try {
+            action.performAction(user, actionArguments);
+        } catch (e) {
+            console.log('Action invalid')
+        }
         this.dieAction.performAction(user, [])
         return action;
     }
 
-    processDmAction(message: string) { //not finished
+    processDmAction(message: string) {
         let dmaction: Action | undefined = undefined;
-        if (this.inputMatch(message, regExpression.dmActions)) {
-            dmaction = this.getDmAction(message)
-        } else {
+        let messageArray = message.trim().split(" ");
+        messageArray[0] = messageArray[0].toLowerCase();
+        message = messageArray.join(" ");
+        dmaction = this.getDmAction(message);
+        if (dmaction === undefined) {
             dmaction = this.invalidAction
         }
         let actionArguments: string[] = this.getActionArguments(message)
-        dmaction.performAction(extras.dungeonMasterId, actionArguments);
+        try {
+            dmaction.performAction(extras.dungeonMasterId, actionArguments);
+        } catch (e) {
+            console.log('Action invalid')
+        }
         return dmaction;
     }
 
@@ -187,7 +219,7 @@ export class ActionHandlerImpl implements ActionHandler {
      * @param messageString Message string to get command from.
      * @returns Dm action matching the command.
      */
-     getDmAction(messageString: string): Action {
+    getDmAction(messageString: string): Action {
         let splitMessageString: string[] = messageString.split(' ');
         console.log(splitMessageString[0])
         let action: Action = this.dmActions[splitMessageString[0]]

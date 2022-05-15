@@ -64,6 +64,8 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+
 *::-webkit-scrollbar {
   width: 15px;
 }
@@ -71,6 +73,22 @@ html, body {
   box-shadow: inset 0 0 5px var(--accent);
   background-color: var(--accentlight);
   border-radius: 10px;
+}
+
+@keyframes shake {
+  0% {
+    left: -1px;
+  }
+
+  100% {
+    right: -1px;
+  }
+}
+input.is-invalid, input.is-invalid:focus{
+  border-color: var(--red);
+  position: relative;
+  animation: shake .1s linear;
+  animation-iteration-count: 3;
 }
 
 
@@ -107,6 +125,39 @@ h1, h2, h3, h4 {
   font-size: 1.5rem;
   margin: 0;
 }
+
+#backbutton{
+  cursor: pointer;
+  transform: translateX(0px);
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: fit-content;
+}
+
+#backbutton:hover{
+  transform: translateX(-5px);
+}
+
+#backbutton:hover > span{
+  text-decoration: underline;
+  transition: all 0.8 ease-in-out;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+#refreshButton.spin > svg{
+  animation: spin 1s linear infinite;
+}
+
 
 hr {
   border: 1px solid var(--textcolor);
@@ -277,12 +328,16 @@ a:hover {
   transform: scale(1.2);
 }
 
-.configurator-item, .character-item {
+.configurator-item, .character-item, .link-li {
   border-radius: .3em;
   transition: background-color .1s ease-in;
 }
 
-.configurator-item:hover, .character-item:hover, .dashboard-list:hover {
+.link-li {
+  cursor: pointer;
+}
+
+.configurator-item:hover, .character-item:hover, .dashboard-list:hover, .link-li:hover {
   background-color: rgba(146, 144, 141, 0.4);
   box-shadow: 0em 0em .3em rgb(146, 144, 141);
 }

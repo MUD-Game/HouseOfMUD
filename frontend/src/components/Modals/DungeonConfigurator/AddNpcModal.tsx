@@ -5,7 +5,7 @@
  * @category Modal
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';
@@ -25,13 +25,21 @@ export interface AddNpcModalProps {
 
 const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
 
+    useEffect(()=>{
+        if(props.editData?.name && props.editData?.description && props.editData?.species){
+            setName(props.editData.name);
+            setDescription(props.editData.description);
+            setSpeciesSelection(props.editData.species);
+        }
+    })
+
     const { t } = useTranslation();
     const { species, npcs } = useDungeonConfigurator();
     const dt = 'dungeon_configurator';
 
-    const [name, setName] = React.useState<string>(props.editData?.name || "");
-    const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const [speciesSelection, setSpeciesSelection] = React.useState<string>(props?.editData?.species || "");
+    const [name, setName] = React.useState<string>( "");
+    const [description, setDescription] = React.useState<string>( "");
+    const [speciesSelection, setSpeciesSelection] = React.useState<string>("");
 
     const [error, setError] = React.useState<string>("");
 
@@ -78,13 +86,13 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_npc`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_npc`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput autoFocus name="name" placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                     <MudSelect value={speciesSelection} colmd={6} title={t(`dungeon_keys.species`)} onChange={(event) => setSpeciesSelection(event.target.value)} placeholder={t(`common.select_species`)} label={t(`dungeon_keys.species`)}>
                         <option value="-1" hidden>{t(`common.select_species`)}</option>
                         {species.map(({name, id})=>{

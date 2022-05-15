@@ -5,7 +5,7 @@
  * @category Modal
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';
@@ -24,10 +24,16 @@ export interface AddSpeciesModalProps {
 
 const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
 
+    useEffect(()=>{
+        if(props.editData?.name){
+            setName(props.editData.name);
+        }
+    })
+
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
     const {species} = useDungeonConfigurator();
-    const [name, setName] = React.useState<string>(props.editData?.name || "");
+    const [name, setName] = React.useState<string>("");
 
     const [error, setError] = React.useState<string>("");
 
@@ -72,12 +78,12 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_species`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_species`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
+                    <MudInput autoFocus name="name" placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

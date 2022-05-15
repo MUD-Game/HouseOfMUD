@@ -31,7 +31,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ onConfirm, onHi
                         </Button>
                     </div>
                     <div className="col-6">
-                    <Button autoFocus className="btn w-100 drawn-border btn-red" onClick={(e) => {
+                    <Button autoFocus className="btn w-100 drawn-border btn-red" onClick={(e:any) => {
                         onConfirm();
                         onHide();
                     }}>

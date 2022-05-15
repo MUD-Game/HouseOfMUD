@@ -30,13 +30,13 @@ export class API {
      * @param hostLink host link object
      * @param dba databaseAdapter object
      */
-    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, transporter: any, cookiehost: string) {
+    constructor(origin: string, port: number, tls: TLS, hostLink: HostLink, dba: DatabaseAdapter, salt: string, transporter: any, cookiehost: string, rootpw:string) {
         this.origin = origin;
         this.port = port;
         this.tls = tls;
         this.hostLink = hostLink;
         this.dba = dba;
-        this.authProvider = new AuthProvider(this.dba, salt, transporter, origin, cookiehost);
+        this.authProvider = new AuthProvider(this.dba, salt, transporter, origin, cookiehost, rootpw);
     }
 
     /**
@@ -96,7 +96,6 @@ export class API {
         app.post('/auth/requestpassword', this.authProvider.requestPasswordReset);
         app.post('/auth/resetpassword', this.authProvider.resetPassword);
 
-        // TODO: Create actual authentication
         // platform authentication
         app.post('/auth/login', this.authProvider.auth ,  (req, res) => {
             res.status(200).json({ok:1});
@@ -107,6 +106,38 @@ export class API {
         });
 
         app.post('/auth/logout', this.authProvider.auth, this.authProvider.logout);
+
+        app.post('/checkPassword/:dungeonID', this.authProvider.auth, async (req, res) => {
+            let dungeonID: string = req.params.dungeonID;
+            const { userID } = req.cookies;
+            let body: any = req.body;
+            // Check if dungeon is full
+            const isFull:boolean = this.hostLink.isFull(dungeonID);
+            const isStarted = this.hostLink.isRunning(dungeonID);
+            const isBanned: boolean = await this.dba.isBanned(userID, dungeonID);
+
+            if (!isStarted){
+                res.status(400).json({ok:0, error: "notstarted"});
+                return;
+            }
+            if(isFull){
+                res.status(406).json({ok:0, error:"isfull"});
+                return;
+            }
+            if (!isBanned) {
+                if (body.password !== undefined) {
+                    if (this.hostLink.checkPassword(dungeonID, body.password)) {
+                        res.status(200).json({ok:1});
+                    } else {
+                        res.status(401).json({ok: 0, error: 'dungeonunauthorized'});
+                    }
+                }else{
+                    res.status(400).json({ ok: 0, error: 'parameters' });
+                }
+            } else {
+                res.status(401).json({ ok: 0, error: 'banned' });
+            }
+        });
 
         // login to dungeon
         app.post('/login/:dungeonID', this.authProvider.auth, (req, res) => {
@@ -124,9 +155,8 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
+        app.post('/startDungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
                 try {
                     if (await this.hostLink.startDungeon(dungeonID)) {
@@ -143,9 +173,8 @@ export class API {
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
+        app.post('/stopDungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
                 await this.hostLink.stopDungeon(dungeonID);
                 res.status(200).json({ ok: 1 });
@@ -155,14 +184,14 @@ export class API {
         });
 
         // get dungeons
-        app.get('/dungeons', this.authProvider.auth, (req, res) => {
-            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons() });
+        app.get('/dungeons', this.authProvider.auth, async (req, res) => {
+            res.status(200).json({ ok: 1, dungeons: await this.hostLink.getOnlineDungeons(req.cookies.userID)});
         });
 
         // get my dungeons
         app.get('/myDungeons', this.authProvider.auth, async (req, res) => {
-            let userID = req.cookies.userID; // TODO: get myDungeons based on user   
-            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeons(userID) });
+            let userID = req.cookies.userID;  
+            res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeonsOfCreator(userID) });
         });
 
         // create dungeon
@@ -272,7 +301,6 @@ export class API {
         app.get('/characters/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             const userID = req.cookies.userID; // Cant be undefined because of auth middleware
-            //TODO: Get user-characters for dungeon
             this.dba.getAllCharactersFromUserInDungeon(userID!, dungeonID).then(characters => {
                 res.status(200).json({ ok: 1, characters: characters });
             }).catch(err => {
@@ -290,11 +318,15 @@ export class API {
                 characterData.userId = userID;
                 characterData.name = characterData.name;
                 characterData.exploredRooms = ["0,0"];
-                this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
-                    res.status(200).json({ ok: 1, character: character });
-                }).catch(err => {
-                    res.status(500).json({ ok: 0, error: err.message });
-                });
+                if (await this.dba.characterExistsInDungeon(characterData.name, dungeonID)){
+                    res.status(400).json({ ok: 0, error: 'characteralreadyexists' });
+                }else{
+                    this.dba.storeCharacterInDungeon(characterData, dungeonID).then(character => {
+                        res.status(200).json({ ok: 1, character: character });
+                    }).catch(err => {
+                        res.status(500).json({ ok: 0, error: err.message });
+                    });
+                }
             } else {
                 res.status(400).json({ ok: 0, error: 'parameters' });
             }

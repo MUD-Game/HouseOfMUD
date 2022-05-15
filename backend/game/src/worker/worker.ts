@@ -22,14 +22,6 @@ import { DungeonController } from "./controller/dungeon-controller";
 const dungeonID = process.argv[2];
 // const dungeonID = "626d1be8bd7036c89704263d";
 
-interface Tokens {
-    [userID: string]: {
-        [character: string]: string;
-    };
-}
-
-const userTokens: Tokens = {};
-
 function sendToHost(hostAction: string, data: any): void {
     if (process.send) {
         process.send({
@@ -41,7 +33,6 @@ function sendToHost(hostAction: string, data: any): void {
 
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
-    // TODO: get Dungeon from database
     const mongoConnString: string = process.argv[9];
     const database: string = process.argv[10];
     const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);
@@ -68,35 +59,10 @@ async function main() {
     );
     dungeonController.init();
 
-    handleHostMessages(dungeonController);
-
     console.log(`Dungeon ${dungeonID} started`);
 
     sendToHost('started', {});
 
-}
-
-function handleHostMessages(dungeonController: DungeonController) {
-    process.on('message', async (msg: any) => {
-        let action = msg.action;
-        let data = msg.data;
-        switch (action) {
-            case 'setCharacterToken':
-                let userID = data.user;
-                let character = data.character;
-                let verifyToken = data.verifyToken;
-
-                if (!(userID in userTokens)) {
-                    userTokens[userID] = {};
-                }
-                console.log(`verify ${character}`);
-                userTokens[userID][character] = verifyToken;
-                break;
-            case 'stop':
-                dungeonController.stopDungeon();
-                break;
-        }
-    });
 }
 
 function getAmqpAdapterConfig() {
@@ -119,7 +85,7 @@ function translateDungeonFromDatabase(databaseDungeon: DungeonDataset | undefine
         let dungeonItems: Item[] = translateItemsFromDatabase(databaseDungeon)
         let dungeonNpcs: Npc[] = translateNpcsFromDatabase(databaseDungeon)
         let dungeonClasses: CharacterClass[] = translateClassesFromDatabase(databaseDungeon)
-        let dungeonObject: Dungeon = new DungeonImpl(dungeonID, databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs,databaseDungeon?.globalActions )
+        let dungeonObject: Dungeon = new DungeonImpl(dungeonID, databaseDungeon?.name, databaseDungeon?.description, databaseDungeon?.password, databaseDungeon?.creatorId, databaseDungeon?.masterId, databaseDungeon?.maxPlayers, databaseDungeon?.characterSpecies, databaseDungeon?.characterClasses, databaseDungeon?.characterGenders, [], dungeonRooms, databaseDungeon?.blacklist, dungeonActions, dungeonItems, dungeonNpcs,databaseDungeon?.globalActions )
         return dungeonObject
     }
 }

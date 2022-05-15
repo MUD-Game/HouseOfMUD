@@ -5,7 +5,7 @@
  * @category Modal
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from 'src/components/Custom/Alert';
@@ -23,6 +23,14 @@ export interface AddItemModalProps {
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = (props) => {
+
+
+    useEffect(()=>{
+        if(props.editData?.name && props.editData?.description){
+            setName(props.editData.name);
+            setDescription(props.editData.description);
+        }
+    },[props.editData])
 
     const { t } = useTranslation();
     const dt = 'dungeon_configurator';
@@ -74,14 +82,14 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_item`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_item`)}
 
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert message={error} type="error" setMessage={setError} />
-                    <MudInput placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
+                    <MudInput autoFocus name="name" placeholder={t(`dungeon_keys.name`)} colmd={12} value={name} onChange={(event) => setName(validator.cirName(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

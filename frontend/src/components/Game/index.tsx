@@ -24,6 +24,7 @@ import { useRabbitMQ } from 'src/hooks/useRabbitMQ';
 import { Container, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import Alert from '../Custom/Alert';
+import { DashboardLocationState } from '../Dashboard/index';
 export interface GameProps { }
 
 const Game: React.FC<GameProps> = () => {
@@ -31,17 +32,27 @@ const Game: React.FC<GameProps> = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const rabbit = useRabbitMQ();
-    const { isAbleToJoinGame } = useGame();
+    const { isAbleToJoinGame, setCharacter, setVerifyToken } = useGame();
 
     const [error, setError] = React.useState<string>("");
     const [miniMapData, setMiniMapData] = React.useState<MinimapProps | null>(null);
     const [inventoryData, setInventoryData] = React.useState<InventoryProps["inventoryData"]>([]);
     const [hudData, setHudData] = React.useState<HUDProps | null>(null);
-
-    
+        
 
     const miniMapSubscriber = (roomData: MinimapProps) => {
         setMiniMapData(roomData);
+    }
+
+    const kickSubscriber = (message: any) => {
+        if(message.kickMessage === undefined || message.kickMessage === "") {
+            message.kickMessage = t(`alert.${message.type}.default`);
+        }
+        navigate('/', {state: {
+            message: message.kickMessage,
+            title: t(`alert.${message.type}.title`),
+            time: new Date()
+        } as DashboardLocationState});
     }
 
     useEffect(() => {
@@ -57,6 +68,14 @@ const Game: React.FC<GameProps> = () => {
             rabbit.setMiniMapSubscriber(miniMapSubscriber);
             rabbit.setInventorySubscriber(setInventoryData);
             rabbit.setHudSubscriber(setHudData);
+            rabbit.setKickSubscriber(kickSubscriber);
+            rabbit.setNewDmSubscriber((verifyToken:string)=>{
+                setCharacter("dungeonmaster");
+                setVerifyToken(verifyToken);
+                rabbit.logout(()=>{
+                    navigate('/dungeon-master', {state: {delay: 2000}});
+                },console.error);
+            })
             rabbit.login(() => {
                 
             }, (error) => {
@@ -74,8 +93,6 @@ const Game: React.FC<GameProps> = () => {
     if (!isAbleToJoinGame()) {
         return <Navigate to="/" />
     }
-
-
 
 
     return (

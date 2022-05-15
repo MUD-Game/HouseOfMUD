@@ -63,6 +63,7 @@ body{
     background-color: var(--bgcolor);
 }
 
+
 #konva-buttons-container img, #konva-buttons-container-fullscreen img, #konva-buttons-container svg, #konva-buttons-container-fullscreen svg {
     position: absolute;
     cursor: pointer;
@@ -142,4 +143,38 @@ body{
 .chat-filter-wrapper .form-label {
     margin: 0;
     display: none;
+}
+#help-button-minimap {
+    width:1.5em;
+    height:1.5em;
+    position:relative;
+    transform: translateY(calc(-100% - 1em)) translateX(-.6em);
+    float:right;
+
+}
+
+#help-tooltip>.tooltip-inner {
+    background-color: var(--offcolor);
+    z-index: 2000;
+}
+
+#help-tooltip>.tooltip-arrow::before {
+    border-left-color: var(--offcolor)
+}
+
+
+#help-tooltip>.tooltip-inner {
+    padding-top: 1em;
+    max-width: 70vw;
+    min-width: 50vw;
+}
+
+#help-tooltip>.tooltip-inner div {
+    
+    text-align: left;
+    max-width: 70vw;
+}
+
+#help-tooltip>.tooltip-inner h4 {
+    text-align: center;
 }

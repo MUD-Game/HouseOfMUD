@@ -5,7 +5,7 @@
  * @category Modal
  */
 
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Modal, Button, Container } from 'react-bootstrap';
 import MudInput from 'src/components/Custom/Input';
 import { validator } from 'src/utils/validator';
@@ -24,19 +24,30 @@ export interface AddClassModalProps {
 
 const AddClassModal: React.FC<AddClassModalProps> = (props) => {
 
+    useEffect(()=>{
+        if(props.editData?.name && props.editData?.description && props.editData?.startStats){
+            setName(props.editData.name);
+            setDescription(props.editData.description);
+            setHitPoints(props.editData.startStats.hp);
+            setMana(props.editData.startStats.mana);
+            setDmg(props.editData.startStats.dmg);
+
+        }
+    },[props.editData])
+
     const {t} = useTranslation();
     const dt = 'dungeon_configurator';
     const dconf = useDungeonConfigurator();
-    const [name, setName] = React.useState<string>(props.editData?.name || "");
-    const [description, setDescription] = React.useState<string>(props.editData?.description || "");
-    const [hitPoints, setHitPoints] = React.useState<number>(props.editData?.startStats?.hp || 0);
-    const [mana, setMana] = React.useState<number>(props.editData?.startStats?.mana || 0);
-    const [dmg, setDmg] = React.useState<number>(props.editData?.startStats?.dmg || 0);
+    const [name, setName] = React.useState<string>("");
+    const [description, setDescription] = React.useState<string>("");
+    const [hitPoints, setHitPoints] = React.useState<number | "">("");
+    const [mana, setMana] = React.useState<number | "">("");
+    const [dmg, setDmg] = React.useState<number | "">( "");
 
     const [error, setError] = React.useState<string>("");
 
     const modalIsInvalid = () => {
-        return validator.isEmpty(name) || validator.isEmpty(description) || validator.isZero(hitPoints) || validator.isZero(mana) || validator.isZero(dmg);
+        return dmg === "" || mana === "" || hitPoints === "" || validator.isEmpty(name) || validator.isEmpty(description);
     }
     
     const onSubmit = () => {
@@ -48,9 +59,9 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
             setError("failvalidation.class");
         } else {
             const stats: MudCharacterStats = {
-                hp: hitPoints,
-                mana: mana,
-                dmg: dmg
+                hp: hitPoints as number,
+                mana: mana as number,
+                dmg: dmg as number
             }
             const characterClass: MudCharacterClass = {
                 name,
@@ -81,16 +92,16 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_class`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_class`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>
                     <Alert type="error" message={error} setMessage={setError} />
-                    <MudInput placeholder='Name' colmd={12} value={name} onChange={(event) => setName(event.target.value)} />
-                    <MudInput placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(event.target.value)} />
-                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(parseInt(event.target.value))} />
-                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number" onChange={(event) => setMana(parseInt(event.target.value))} />
-                    <MudInput disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(parseInt(event.target.value))} />
+                    <MudInput autoFocus name="name" placeholder='Name' colmd={12} value={name} onChange={(event) => setName(validator.name(event.target))} />
+                    <MudInput name="description" placeholder={t(`dungeon_keys.description`)} colmd={12} value={description} onChange={(event) => setDescription(validator.description(event.target))} />
+                    <MudInput name="maxhp" noconstraint={props.editData?.from_server || 0 ? 1 : 0}  disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxhp`)} colmd={4} value={hitPoints} type="number" onChange={(event) => setHitPoints(validator.statValues(event.target.value))} />
+                    <MudInput name="maxmana" noconstraint={props.editData?.from_server || 0 ? 1 : 0} disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxmana`)} colmd={4} value={mana} type="number"  onChange={(event) => setMana(validator.statValues(event.target.value))} />
+                    <MudInput name="maxdmg" noconstraint={props.editData?.from_server || 0 ? 1 : 0}  disabled={props.editData?.from_server || false ? true : false} placeholder={t(`dungeon_keys.maxdmg`)} colmd={4} value={dmg} type="number" onChange={(event) => setDmg(validator.statValues(event.target.value))} />
                 </Modal.Body>
                 <Modal.Footer className="justify-content-between">
                     <div className="col-3">

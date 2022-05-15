@@ -9,9 +9,11 @@ import { Group, Layer, Line, Rect, Stage, Text } from 'react-konva';
 import { MudRoom } from 'src/types/dungeon';
 import { useRabbitMQ } from '../../hooks/useRabbitMQ';
 import './index.css'
-import { ArrowsAngleContract, ArrowsFullscreen } from 'react-bootstrap-icons';
+import { ArrowsAngleContract, ArrowsFullscreen, QuestionCircle } from 'react-bootstrap-icons';
 import compassPng from 'src/assets/compass.png';
 import Konva from 'konva';
+import { Container, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const roomSize = 60;
 const roomMargin = 40
@@ -61,7 +63,61 @@ const Minimap: React.FC<MinimapProps> = (props) => {
     // const [width, height] = useRefSize(sizeRef);
     const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
     const [size, setSize] = React.useState<{ width: number, height: number }>({ width: 0, height: 0 });
-    
+    const {t} = useTranslation();
+    const dt = "minimap";
+
+    const renderTooltip = (props: any) => (
+        <Tooltip id="help-tooltip" {...props}>
+            <Container>
+                <div>
+                    <h5>{t(`${dt}.navigation.title`)}</h5>
+
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u>{t(`${dt}.navigation.zoom_in_out`)}:</u>
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <kbd className="light">{t(`${dt}.navigation.scroll_wheel`)} ↑↓</kbd>
+                        </div>
+                    </Row>
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u>{t(`${dt}.navigation.drag.title`)}:</u>
+                        </div>
+                        <div className="col-md-9 text-start">
+                            {t(`${dt}.navigation.drag.text`)}
+                        </div>
+                    </Row>
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u> {t(`${dt}.navigation.refocus`)}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <img src={compassPng} alt="compass" style={{ background: "var(--bgcolor)", padding: ".2em" }} width="40" height="40" />
+                        </div>
+                    </Row>
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u> {t(`${dt}.navigation.fullscreen`)}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            <ArrowsFullscreen style={{ background: "var(--bgcolor)", padding: ".2em" }} color="var(--accent)" width="40" height="40" />
+                        </div>
+                    </Row>
+                    <Row className="py-1">
+                        <div className="col-md-3">
+                            <u> {t(`${dt}.navigation.toggle_connection.title`)}</u>:
+                        </div>
+                        <div className="col-md-9 text-start">
+                            {t(`${dt}.navigation.toggle_connection.text`)}
+                        </div>
+                    </Row>
+                </div>
+            </Container>
+            <br />
+        </Tooltip>
+    );
+
     // Get the new Size of sizeRef on resize
     useLayoutEffect(() => {
         let windowListener = () => setSize({ width: sizeRef?.current?.clientWidth, height: sizeRef?.current?.clientHeight });
@@ -76,17 +132,11 @@ const Minimap: React.FC<MinimapProps> = (props) => {
         focusOnRoom("0,0", isFullscreen);
     }, [isFullscreen]);
 
-    // useEffect(() => {
-    //     console.log("d")
-    //     const s = sizeRef.current.getBoundingClientRect();
-    //     setSize({ width: s.width, height: s.height });
-    // }, [sizeRef]);
-
     const toggleConnection = (event: any) => {
         // Change the attrs of the connection
-        const status = event.target.attrs["data-status"];
-        const roomId = event.target.attrs["data-room"];
-        const direction = event.target.attrs["data-direction"];
+        const status = event.target.attrs["data-status"] as string;
+        const roomId = event.target.attrs["data-room"] as string;
+        const direction = event.target.attrs["data-direction"] as 'east' | 'south';
 
         sendToggleConnection(roomId, direction, status === 'open' ? 'closed' : 'open', () => {
             switch (status) {
@@ -95,12 +145,14 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                         stroke: connectionClosed,
                         "data-status": "closed"
                     })
+                    rooms[roomId].connections[direction] = "closed";
                     break;
-                case "closed":
-                    event.target.setAttrs({
-                        stroke: connectionOpen,
-                        "data-status": "open"
-                    })
+                    case "closed":
+                        event.target.setAttrs({
+                            stroke: connectionOpen,
+                            "data-status": "open"
+                        })
+                        rooms[roomId].connections[direction] = "open";
                     break;
             }
         }, console.error);
@@ -306,8 +358,7 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                                     wrap: "word",
                                     verticalAlign: "top"
                                 }
-                                // let text = new Konva.Text(roomNameText)
-                                // console.log(text.getSize());
+                      
 
                                 return (
                                     <Group key={roomkey}>
@@ -338,7 +389,17 @@ const Minimap: React.FC<MinimapProps> = (props) => {
                     </Layer>
                 </Stage>}
             </div>
-
+            <div style={{ width: size.width }}>
+                {isFullscreen ? null : <OverlayTrigger
+                    placement="right"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={renderTooltip}
+                >
+                     <QuestionCircle id="help-button-minimap" size={37} onClick={() => {
+                    }} />
+                </OverlayTrigger>}
+            
+            </div>
         </div>
     )
 }

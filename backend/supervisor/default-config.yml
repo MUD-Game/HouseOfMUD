@@ -19,10 +19,12 @@ auth:
   emailservice: gmail
   emailadress: houseofmud2022@gmail.com
   emailsecret: ...
-  cookiehost: .mud-ga.me
+  cookiehost: localhost
+  rootpw: ...
 
 mongodb:
   host: 127.0.0.1
   port: 27017
   user: root
   password: root
+  database: app

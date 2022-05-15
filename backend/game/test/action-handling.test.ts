@@ -41,8 +41,16 @@ import { ShowActions } from "../src/worker/action/actions/show-actions";
 import { PrivateMessageFromDm } from "../src/worker/action/dmactions/privateMessage-action";
 import { RemoveMana } from "../src/worker/action/dmactions/removeMana-action";
 import { RemoveDamage } from "../src/worker/action/dmactions/removeDamage-action";
+import { ChangeRoom } from "../src/worker/action/dmactions/changePlayerPosition-action";
 import { DieAction } from "../src/worker/action/actions/die-action";
 import { ToggleConnectionAction } from "../src/worker/action/dmactions/toggleRoomConnection-action";
+import { AddItem } from "../src/worker/action/dmactions/addItemToPlayer-action";
+import { AddRoomItem } from "../src/worker/action/dmactions/addItemToRoom-action";
+import { RemoveItem } from "../src/worker/action/dmactions/removeItemFromPlayer-action";
+import { removeRoomItem } from "../src/worker/action/dmactions/removeItemFromRoom-action";
+import { KickPlayer } from "../src/worker/action/dmactions/kickPlayer-action";
+import { ShowDmActions } from "../src/worker/action/dmactions/show-dmactions";
+import { BanPlayer } from "../src/worker/action/dmactions/banPlayer-action";
 
 // Testdaten
 const amqpAdapter: AmqpAdapter = new AmqpAdapter(
@@ -85,6 +93,7 @@ const TestItemPickup: Item = new ItemImpl('3', 'Gold', 'Goldiges Gold')
 const TestItemRemoveHp: Item = new ItemImpl('4', 'Giftpilz', 'Test');
 const TestItemAddMana: Item = new ItemImpl('5', 'Manatrank', 'Test');
 const TestItemRemoveItem: Item = new ItemImpl('6', 'Stein', 'Test');
+const TestItemDungeonMaster: Item = new ItemImpl('7', 'Schluessel', 'Test')
 
 const TestConnections: ConnectionInfo = new ConnectionInfoImpl(
     'open',
@@ -319,8 +328,9 @@ const TestDungeon: Dungeon = new DungeonImpl(
     '1',
     'TestDungeon1',
     'Test',
+    '',
     '1',
-    '1',
+    '2',
     2,
     [TestSpecies],
     [TestClass],
@@ -338,9 +348,9 @@ const TestDungeon: Dungeon = new DungeonImpl(
     ],
     ['abc'],
     [TestActionAddHp, TestActionRemoveHp, TestActionAddMana, TestActionRemoveMana, TestActionAddDamage, TestActionRemoveDamage, TestActionAddItem, TestActionRemoveItem, TestActionInOtherRoom, TestActionItemMissing, TestGlobalAction],
-    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem],
+    [TestItem, TestItemDiscard, TestItemPickup, TestItemAddMana, TestItemRemoveHp, TestItemRemoveItem, TestItemDungeonMaster],
     [TestNpc],
-    [TestGlobalAction.id]
+    [TestGlobalAction.id],
 );
 const TestDungeonController: DungeonController = new DungeonController(
     '1',
@@ -378,6 +388,13 @@ describe('ActionHandler', () => {
     const removeManaAction: RemoveMana = actionHandler.dmActions[triggers.removeMana] as RemoveMana
     const addDamageAction: AddDamage = actionHandler.dmActions[triggers.addDamage] as AddDamage
     const removeDamageAction: RemoveDamage = actionHandler.dmActions[triggers.removeDamage] as RemoveDamage
+    const addItemToPlayer: AddItem = actionHandler.dmActions[triggers.addItem] as AddItem
+    const addItemToRoom: AddRoomItem = actionHandler.dmActions[triggers.addRoomItem] as AddRoomItem
+    const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem
+    const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
+    const kickPlayer: KickPlayer = actionHandler.dmActions[triggers.kickPlayer] as KickPlayer
+    const banPlayer: BanPlayer = actionHandler.dmActions[triggers.banPlayer] as BanPlayer
+    const changePlayerPosition: ChangeRoom = actionHandler.dmActions[triggers.changeRoom] as ChangeRoom
     
     messageAction.performAction = jest.fn();
     privateMessageAction.performAction = jest.fn();
@@ -401,6 +418,13 @@ describe('ActionHandler', () => {
     removeManaAction.performAction = jest.fn();
     addDamageAction.performAction = jest.fn();
     removeDamageAction.performAction = jest.fn();
+    addItemToPlayer.performAction = jest.fn();
+    addItemToRoom.performAction = jest.fn();
+    removeItemFromPlayer.performAction = jest.fn();
+    removeItemFromRoom.performAction = jest.fn();
+    kickPlayer.performAction = jest.fn();
+    banPlayer.performAction = jest.fn();
+    changePlayerPosition.performAction = jest.fn();
 
     // NICHT MEHR NOTWENDIG!!!!!
     // test('ActionHandler should call performAction on InvalidAction when the dungeon master tries an action that isnt either fluester or broadcast', () => {
@@ -475,6 +499,12 @@ describe('ActionHandler', () => {
             'Apfel',
         ]);
     });
+    test('ActionHandler should call performAction on DungeonAction with the correct parameters when it receives a non standard action message in lowercase', () => {
+        actionHandler.processAction('Jeff', 'essen apfel');
+        expect(dungeonAction.performAction).toHaveBeenCalledWith('Jeff', [
+            'apfel',
+        ]);
+    });
     test('ActionHandler should call performAction on UnspecifiedAction with the correct parameters when it receives an action message for the dungeon master', () => {
         actionHandler.processAction('Jeff', `dm Test`);
         expect(unspecifiedAction.performAction).toHaveBeenCalledWith('Jeff', [
@@ -536,6 +566,34 @@ describe('ActionHandler', () => {
         actionHandler.processDmAction(`remdmg Jeff 1`);
         expect(removeDamageAction.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', '1'])
     })
+    test('ActionHandler should call performAction on AddItem when the dungeon master adds an item to a user', () => {
+        actionHandler.processDmAction(`additem Jeff Apfel`);
+        expect(addItemToPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on AddRoomItem when the dungeon master adds an item to a room', () => {
+        actionHandler.processDmAction(`addroomitem Raum-1 Apfel`);
+        expect(addItemToRoom.performAction).toHaveBeenCalledWith('dungeonmaster', ['Raum-1', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on RemoveItem when the dungeon master removes an item from a user', () => {
+        actionHandler.processDmAction(`remitem Jeff Apfel`);
+        expect(removeItemFromPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on RemoveRoomItem when the dungeon master removes an item from a room', () => {
+        actionHandler.processDmAction(`remroomitem Raum-1 Apfel`);
+        expect(removeItemFromRoom.performAction).toHaveBeenCalledWith('dungeonmaster', ['Raum-1', 'Apfel'])
+    })
+    test('ActionHandler should call performAction on KickPlayer when the dungeon master kicks a player', () => {
+        actionHandler.processDmAction(`kick Jeff`);
+        expect(kickPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff'])
+    })
+    test('ActionHandler should call performAction on KickPlayer when the dungeon master bans a player', () => {
+        actionHandler.processDmAction(`ban Jeff`);
+        expect(banPlayer.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff'])
+    })
+    test('ActionHandler should call performAction on ChangeRoom when the dungeon master changes the position of a player', () => {
+        actionHandler.processDmAction(`verschiebe Jeff Raum-1`);
+        expect(changePlayerPosition.performAction).toHaveBeenCalledWith('dungeonmaster', ['Jeff', 'Raum-1'])
+    })
     
 });
 
@@ -578,11 +636,11 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`},
+            data: { message: expect.anything()},
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[Raum-1] Jeff sagt Hallo zusammen!`, player: "Jeff", room: "Raum-1"},
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-1"},
         });
     });
 
@@ -593,11 +651,11 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: '[privat] Jeff -> Spieler: Hallo' },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
             action: 'message',
-            data: { message: '[privat] Jeff -> Spieler: Hallo' },
+            data: { message: expect.anything() },
         });
     });
 
@@ -608,7 +666,7 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Bob ist nicht in diesem Raum!` },
+            data: { message: expect.anything() },
         });
     });
 
@@ -620,9 +678,8 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: {
-                message:
-                    `Der Charakter Held existiert nicht in diesem Dungeon!`,
-            },
+                message: expect.anything()
+            }
         });
     });
 
@@ -633,7 +690,7 @@ describe('Actions', () => {
         expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id);
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.1', {
             action: 'message',
-            data: { message: `Jeff hat Raum-1 verlassen!` },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.unbindClientQueue).toHaveBeenCalledWith(
             'Jeff',
@@ -642,11 +699,15 @@ describe('Actions', () => {
         expect(amqpAdapter.bindClientQueue).toHaveBeenCalledWith('Jeff', 'room.2');
         expect(amqpAdapter.sendWithRouting).toHaveBeenCalledWith('room.2', {
             action: 'message',
-            data: { message: `Jeff ist Raum-N beigetreten!` },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `Jeff ist Raum-N beigetreten!`, player: "Jeff", room: "Raum-N" },
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-1" },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-N" },
         });
     });
 
@@ -670,7 +731,7 @@ describe('Actions', () => {
         await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "In diese Richtung geht es nicht weiter!" },
+            data: { message: expect.anything() },
         });
     });
 
@@ -679,7 +740,7 @@ describe('Actions', () => {
         await moveAction.performAction('Jeff', ['Nord-Sueden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Diese Richtung existiert nicht!" },
+            data: { message: expect.anything() },
         });
     });
 
@@ -688,7 +749,7 @@ describe('Actions', () => {
         await moveAction.performAction('Jeff', ['Norden']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "In diese Richtung ist der Raum geschlossen!" },
+            data: { message: expect.anything() },
         });
     });
     test('MoveAction should call sendToClient on AmqpAdapter to the initial sender saying the path does not exist', async () => {
@@ -696,7 +757,7 @@ describe('Actions', () => {
         await moveAction.performAction('Jeff', ['Osten']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "In diese Richtung geht es nicht weiter!" },
+            data: { message: expect.anything() },
         });
     });
     //MOVEACTION TEST
@@ -706,9 +767,8 @@ describe('Actions', () => {
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
             data: {
-                message:
-                    'Du befindest dich im Raum Raum-1: Der Raum in dem alles begann. Du schaust dich um. \nEs liegen folgende Items in dem Raum:\n\tApfel (1x). \nFolgende NPCs sind in diesem Raum:\n\tBernd. \nIm Norden befindet sich folgender Raum:\n\tRaum-N. \nIm Osten befindet sich folgender Raum:\n\tRaum-O. \nIm Sueden befindet sich folgender Raum:\n\tRaum-S. \nIm Westen befindet sich folgender Raum:\n\tRaum-W. \nIn diesem Raum befinden sich folgende Spieler:\n\tJeff\n\tSpieler. ',
-            },
+                message: expect.anything()
+            }
         });
     });
 
@@ -716,7 +776,7 @@ describe('Actions', () => {
         inventoryAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du hast folgende Items im Inventar:\n\tApfel (1x)` },
+            data: { message: expect.anything() },
         });
     });
 
@@ -724,7 +784,7 @@ describe('Actions', () => {
         inspectAction.performAction('Jeff', ['Apfel']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du untersuchst Apfel: Apfliger Apfel` },
+            data: { message: expect.anything() },
         });
     });
 
@@ -732,7 +792,7 @@ describe('Actions', () => {
         inspectAction.performAction('Jeff', ['Birne']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Du besitzt dieses Item nicht!" },
+            data: { message: expect.anything() },
         });
     });
 
@@ -742,11 +802,11 @@ describe('Actions', () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `[privat] Jeff -> Dungeon Master: Hallo` },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Jeff -> Dungeon Master: Hallo`, player: "Jeff" },
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-1" },
         });
     })
 
@@ -757,11 +817,11 @@ describe('Actions', () => {
         expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}, {"count": 1, "item": TestItemDiscard.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du hast folgendes Item abgelegt: Schwert` },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `Jeff hat Schwert in Raum-1 abgelegt!`, player: "Jeff", room: "Raum-1" },
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.rooms['1'].items.pop()
     })
@@ -770,7 +830,7 @@ describe('Actions', () => {
         discardAction.performAction('Jeff', ['Gold']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Du besitzt dieses Item nicht!" },
+            data: { message: expect.anything() },
         });
     })
 
@@ -778,7 +838,7 @@ describe('Actions', () => {
         discardAction.performAction('Jeff', ['Rubin']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Du besitzt dieses Item nicht!" },
+            data: { message: expect.anything() },
         });
     })
 
@@ -789,12 +849,12 @@ describe('Actions', () => {
         expect(TestDungeon.rooms['1'].items).toEqual([{"count": 1, "item": TestItem.id}])
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du hast folgendes Item aufgehoben: Gold` },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalled()
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `Jeff hat Gold aus Raum-1 aufgehoben!`, player: "Jeff", room: "Raum-1" },
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-1" },
         });
         TestDungeon.characters['Jeff'].inventory.pop()
     })
@@ -803,7 +863,7 @@ describe('Actions', () => {
         pickupAction.performAction('Jeff', ['Schwert']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Dieses Item existiert nicht in diesem Raum!" },
+            data: { message: expect.anything() },
         });
     })
 
@@ -811,7 +871,7 @@ describe('Actions', () => {
         invalidAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Diese Aktion ist nicht möglich!" },
+            data: { message: expect.anything() },
         });
     })
 
@@ -819,7 +879,7 @@ describe('Actions', () => {
         helpAction.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Willkommen in TestDungeon1!\nGebe 'aktionen' ein, um eine Liste aller moeglichen Aktionen in einem Raum zu erhalten.\nGebe 'umschauen' ein, um dich im Raum umzuschauen.\nWenn du nicht weiter kommst, gib 'hilfe' ein." },
+            data: { message: expect.anything() },
         });
     })
 
@@ -827,7 +887,7 @@ describe('Actions', () => {
         showActions.performAction('Jeff', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: `Du kannst in diesem Raum folgende Aktionen ausfuehren: \n\t'gehe <norden|osten|sueden|westen>' - Gehe in einen anschliessenden Raum, falls eine Verbindung besteht; \n\t'umschauen' - Erhalte Informationen ueber den Raum in dem du dich gerade befindest; \n\t'inv' - Zeigt die Items in deinem Inventar an; \n\t'aufheben <Itemname>' - Hebe ein Item aus dem Raum auf; \n\t'ablegen <Itemname>' - Lege ein Item aus deinem Inventar in den Raum ab; \n\t'untersuche <Itemname>' - Erhalte eine Beschreibung ueber ein Item in deinem Inventar; \n\t'dm <aktion>' - Frage eine Aktion beim Dungeon Master an; \n\t'sag <Nachricht>' - Sende eine Nachricht in den Raum; \n\t'fluester <Spieler> <Nachricht>' - Sende eine Nachricht an einen Spieler in dem Raum; \n\t'fluesterdm <Nachricht>' - Sende eine private Nachricht an den Dungeon Master; \n\t'hilfe' - Wenn du nicht mehr weiterkommst; \n\t'aktionen' - Erhalte eine Beschreibung alle ausfuehrbaren Aktionen; \n\t'essen Apfel' - test;\n\t'global' - test;\n\tGebe gegebenenfalls geeignete Argumente fuer <> ein.` },
+            data: { message: expect.anything() },
         });
     })
 
@@ -835,11 +895,11 @@ describe('Actions', () => {
         unspecifiedAction.performAction('Jeff', ['teste mich']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff', {
             action: 'message',
-            data: { message: "Du hast folgende Aktion beim Dungeon Master angefragt: teste mich" },
+            data: { message: expect.anything() },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat folgende Aktion in Raum-1 angefragt: teste mich", player: "Jeff", room: "Raum-1" },
+            data: { message: expect.anything(), player: "Jeff", room: "Raum-1" },
         });
     })
 });
@@ -877,7 +937,7 @@ describe("Dungeon Actions", () => {
         await dungeonActionItemMissing.performAction('CoolerTyp', ['leben']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Dir fehlen folgende Items fuer die Aktion: Gold" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -885,13 +945,14 @@ describe("Dungeon Actions", () => {
         await dungeonActionInOtherRoom.performAction('CoolerTyp', []);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Diese Aktion ist nicht möglich!" },
+            data: { message: expect.anything() },
         })
     })
 
     test("DungeonAction.performAction should call sendToClient with the correct output and add hp to character when the event type is addhp", async () => {
         await dungeonActionAddHp.performAction('CoolerTyp', ['Apfel']);
         expect(TestDungeon.characters['CoolerTyp'].currentStats.hp).toBe(60)
+        expect(TestDungeon.characters['CoolerTyp'].inventory).toContainEqual(new ItemInfo('1', 1))
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'stats',
             data: { 
@@ -912,6 +973,10 @@ describe("Dungeon Actions", () => {
             data: [
                 {
                     count: 1,
+                    item: "Apfel"
+                },
+                {
+                    count: 1,
                     item: "Manatrank"
                 },
                 {
@@ -926,7 +991,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast einen Apfel gegessen!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -960,7 +1025,7 @@ describe("Dungeon Actions", () => {
                     item: "Manatrank"
                 },
                 {
-                    count: 1,
+                    count: 2,
                     item: "Giftpilz"
                 },
                 {
@@ -971,7 +1036,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast einen Giftpilz gegessen!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1001,18 +1066,22 @@ describe("Dungeon Actions", () => {
                     item: "Apfel"
                 },
                 {
+                    count: 1,
+                    item: "Manatrank"
+                },
+                {
                     count: 2,
                     item: "Giftpilz"
                 },
                 {
                     count: 1,
                     item: "Stein"
-                },
+                }
             ],
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast einen Manatrank getrunken!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1057,7 +1126,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast aus dem Brunnen getrunken!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1102,7 +1171,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast ein Bier getrunken!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1147,7 +1216,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du wechselst in den Nahkampf!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1196,7 +1265,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast die Truhe geoeffnet!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1237,7 +1306,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast einen Stein geworfen!" },
+            data: { message: expect.anything() },
         })
     })
 
@@ -1282,7 +1351,7 @@ describe("Dungeon Actions", () => {
         })
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('CoolerTyp', {
             action: 'message',
-            data: { message: "Du hast eine globale Aktion ausgefuehrt!" },
+            data: { message: expect.anything() },
         })
     })
 })
@@ -1293,6 +1362,8 @@ describe("DungeonMaster Actions", () => {
         TestDungeon.characters['Jeff'].currentStats.hp = 50
         TestDungeon.characters['Jeff'].currentStats.dmg = 10
         TestDungeon.characters['Jeff'].currentStats.mana = 50
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,1)]
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id,1)]
     })
     afterEach(() => {
         jest.clearAllMocks();
@@ -1301,6 +1372,8 @@ describe("DungeonMaster Actions", () => {
         TestDungeon.characters['Jeff'].currentStats.hp = 50
         TestDungeon.characters['Jeff'].currentStats.dmg = 10
         TestDungeon.characters['Jeff'].currentStats.mana = 50
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,1)]
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id,1)]
     })
 
     const actionHandler: ActionHandler = new ActionHandlerImpl(TestDungeonController);
@@ -1308,22 +1381,29 @@ describe("DungeonMaster Actions", () => {
     const addHp: AddHp = actionHandler.dmActions[triggers.addHp] as AddHp;
     const addMana: AddMana = actionHandler.dmActions[triggers.addMana] as AddMana;
     const removeHp: RemoveHp = actionHandler.dmActions[triggers.removeHp] as RemoveHp;
+    const removeMana: RemoveMana = actionHandler.dmActions[triggers.removeMana] as RemoveMana;
+    const removeDamage: RemoveDamage = actionHandler.dmActions[triggers.removeDamage] as RemoveDamage;
     const privateMessageFromDm: PrivateMessageFromDm = actionHandler.dmActions[triggers.whisper] as PrivateMessageFromDm;
     const broadcastMessageAction: BroadcastMessageAction = actionHandler.dmActions[triggers.broadcast] as BroadcastMessageAction;
+    const changePlayerPosition: ChangeRoom = actionHandler.dmActions[triggers.changeRoom] as ChangeRoom;
     const dieAction: DieAction = actionHandler.dieAction;
     const toggleConnectionAction: ToggleConnectionAction = actionHandler.dmActions[triggers.toggleConnection] as ToggleConnectionAction
-
+    const addItemToPlayer: AddItem = actionHandler.dmActions[triggers.addItem] as AddItem;
+    const addItemToRoom: AddRoomItem = actionHandler.dmActions[triggers.addRoomItem] as AddRoomItem;
+    const removeItemFromPlayer: RemoveItem = actionHandler.dmActions[triggers.removeItem] as RemoveItem;
+    const removeItemFromRoom: removeRoomItem = actionHandler.dmActions[triggers.removeRoomItem] as removeRoomItem
+    const kickPlayer: KickPlayer = actionHandler.dmActions[triggers.kickPlayer] as KickPlayer
+    const showDmActions: ShowDmActions = actionHandler.dmActions[triggers.showDmActions] as ShowDmActions
+    const banPlayer: BanPlayer = actionHandler.dmActions[triggers.banPlayer] as BanPlayer
 
     amqpAdapter.sendToClient = jest.fn();
     dieAction.performAction = jest.fn();
-
-    
 
     test('dungeonmaster should add amount of actual Damage to a Charakter', async () => {
         await addDamage.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 1 Schaden erhalten" },
+            data: { message: expect.anything(), room: "Raum-1" },
         });
     });
 
@@ -1337,11 +1417,27 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(20);
     });
 
+    test('dungeonmaster inputs a value that is not a number, when trying to add dmg to a character', async () => {
+        await addDamage.performAction('dungeonmaster', ['Jeff' , 'hallo']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('dungeonmaster inputs a character that does not exist, when trying to add dmg to a character', async () => {
+        await addDamage.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
     test('dungeonmaster should add amount of actual HP to a Charakter', async () => {
         await addHp.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 1 Leben erhalten" },
+            data: { message: expect.anything(), room: 'Raum-1' },
         });
     });
     
@@ -1355,11 +1451,27 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
     });
 
+    test('dungeonmaster inputs a value that is not a number, when trying to add hp to a character', async () => {
+        await addHp.performAction('dungeonmaster', ['Jeff' , 'hallo']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('dungeonmaster inputs a character that does not exist, when trying to add hp to a character', async () => {
+        await addHp.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
     test('dungeonmaster should add amount of actual Mana to a Charakter', async () => {
         await addMana.performAction('dungeonmaster', ['Jeff' , '1']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 1 Mana erhalten" },
+            data: { message: expect.anything(), room: 'Raum-1'},
         });
     });
         
@@ -1373,12 +1485,27 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(100);
     });
 
-                
+    test('dungeonmaster inputs a value that is not a number, when trying to add mana to a character', async () => {
+        await addMana.performAction('dungeonmaster', ['Jeff' , 'hallo']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('dungeonmaster inputs a character that does not exist, when trying to add mana to a character', async () => {
+        await addMana.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+ 
     test('dungeonmaster should remove hp from player', async () => {
         await removeHp.performAction('dungeonmaster', ['Jeff' , '2']);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: "Jeff hat 2 Leben verloren" },
+            data: { message: expect.anything(), room: 'Raum-1'},
         });
     });
         
@@ -1392,6 +1519,51 @@ describe("DungeonMaster Actions", () => {
         expect(TestDungeon.characters['Jeff'].getCharakterStats().hp).toEqual(100);
     });
 
+    
+    test('Jeff should lose 2 Mana and then have 48 in total', async () => {
+        await removeMana.performAction('dungeonmaster', ['Jeff' ,'2']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(48);
+    });
+
+    test('Jeff should lose so much mana so that he reaches 0', async () => {
+        await removeMana.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().mana).toEqual(0);
+    });
+
+    test('Jeff should lose 2 Damage and then have 8 in total', async () => {
+        await removeDamage.performAction('dungeonmaster', ['Jeff' ,'2']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(8);
+    });
+
+    test('Jeff should lose so much Damage so that he reaches 0', async () => {
+        await removeDamage.performAction('dungeonmaster', ['Jeff' ,'211']);
+        expect(TestDungeon.characters['Jeff'].getCharakterStats().dmg).toEqual(0);
+    });
+
+
+    test('ShowActions should call sendToClient on AmqpAdapter showing all available actions to the user', () => {
+        showDmActions.performAction('dungeonmaster', []);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+    test('dungeonmaster inputs a value that is not a number, when trying to remove hp to a character', async () => {
+        await removeHp.performAction('dungeonmaster', ['Jeff' , 'hallo']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('dungeonmaster inputs a character that does not exist, when trying to remove hp to a character', async () => {
+        await removeHp.performAction('dungeonmaster', ['Holger' , '1']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
     test('PrivateMessageAction should call sendToClient on the AmqpAdapter to both users with the correct payload when dungeon master whispers to a player', () => {
         privateMessageFromDm.performAction('dungeonmaster', [
             'Spieler',
@@ -1399,13 +1571,21 @@ describe("DungeonMaster Actions", () => {
         ]);
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
             action: 'message',
-            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+            data: { message: expect.anything(), room: 'Raum-1' },
         });
         expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Spieler', {
             action: 'message',
-            data: { message: `[privat] Dungeon Master -> Spieler: Hallo` },
+            data: { message: expect.anything() },
         });
     });
+
+    test('PrivateMessageAciton should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await privateMessageFromDm.performAction('dungeonmaster', ['Holger' , 'Hallo']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
 
     test('BroadcastMessageAction should call broadcast on the AmqpAdapter when dungeon master broadcasts a message', () => {
         broadcastMessageAction.performAction('dungeonmaster', [
@@ -1413,34 +1593,263 @@ describe("DungeonMaster Actions", () => {
         ]);
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Hallo` },
+            data: { message: expect.anything() },
         });
     });
 
+    test('dungeonmaster changes the position of Jeff (text)', () => {
+        changePlayerPosition.performAction('dungeonmaster', [
+            'Jeff', 'Raum-N'
+        ]);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything(), room: 'Raum-N' },
+        });
+    });
+
+    test('dungeonmaster changes the position of Jeff', async () => {
+        await changePlayerPosition.performAction('dungeonmaster', [
+            'Jeff', 'Raum-N'
+        ]);
+        expect(TestDungeon.characters['Jeff'].position).toBe(TestRoomNorth.id)
+    });
+
+    test('changePlayerPosition should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await changePlayerPosition.performAction('dungeonmaster', ['Holger' , 'Raum-N']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('changePlayerPosition should call sendToClient on the amqpAdapter to notify the dungeon master that the room does not exist in this dungeon', async () => {
+        await changePlayerPosition.performAction('dungeonmaster', ['Jeff' , 'Raum-Test']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+    
     test('ToggleConnectionAction should modify the connection between two rooms and call broadcast on the AmqpAdapter when dungeon master toggles a connection', () => {
         toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'closed');
         expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('closed')
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Der Durchgang zwischen Raum-1 und Raum-O wurde geschlossen!` },
+            data: { message: expect.anything() },
         });
         toggleConnectionAction.modifyConnection(TestRoom.id, 'east', 'open');
         expect(TestDungeon.rooms[TestRoom.id].connections.east).toBe('open')
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Der Durchgang zwischen Raum-1 und Raum-O wurde geoeffnet!` },
+            data: { message: expect.anything() },
         });
         toggleConnectionAction.modifyConnection(TestRoom.id, 'south', 'closed');
         expect(TestDungeon.rooms[TestRoom.id].connections.south).toBe('closed')
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geschlossen!` },
+            data: { message: expect.anything() },
         });
         toggleConnectionAction.modifyConnection(TestRoom.id, 'south', 'open');
         expect(TestDungeon.rooms[TestRoom.id].connections.south).toBe('open')
         expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
             action: 'message',
-            data: { message: `Der Durchgang zwischen Raum-1 und Raum-S wurde geoeffnet!` },
+            data: { message: expect.anything() },
         });
     });
+
+    test('AddItem should add an item to the players inventory and call sendToClient on the AmqpAdapter when dungeon master adds an item to a players inventory', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Schluessel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id, 1)])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything(), room: 'Raum-1' },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff',{
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('AddItem should increment the item count when the player receives an item he already owns', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('AddItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in this dungeon', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Jeff', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('AddItem should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await addItemToPlayer.performAction('dungeonmaster', ['Holger' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('AddRoomItem should add an item to the room and call broadcast on the AmqpAdapter when dungeon master adds an item to a room', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Schluessel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,1), new ItemInfo(TestItemDungeonMaster.id,1)])
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: expect.anything(), room: 'Raum-1' },
+        });
+    })
+
+    test('AddRoomItem should increment the item count when the room receives an item he already has', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('AddRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in this dungeon', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-1', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('AddRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that the room does not exist in this dungeon', async () => {
+        await addItemToRoom.performAction('dungeonmaster', ['Raum-Test' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    //
+    test('RemoveItem should remove an item from the players inventory and call sendToClient on the AmqpAdapter when dungeon master removes an item from a players inventory', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything(), room: 'Raum-1' },
+        });
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('Jeff',{
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('RemoveItem should decrement the item count when the player gets an item removed he already owns twice or more', async () => {
+        TestDungeon.characters['Jeff'].inventory = [new ItemInfo(TestItem.id,3)]
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Apfel'])
+        expect(TestDungeon.characters['Jeff'].inventory).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('RemoveItem should call sendToClient on the amqpAdapter to notify the dungeon master that the item does not exist in the dungeon when he tries to remove an item that does not exist in the dungeon', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('RemoveItem should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not have the item when he tries to remove an item that the character does not have', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Jeff', 'Gold'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('RemoveItem should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await removeItemFromPlayer.performAction('dungeonmaster', ['Holger' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('RemoveRoomItem should remove an item from the room and call broadcast on the AmqpAdapter when dungeon master removes an item from a room', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([])
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: expect.anything(), room: 'Raum-1' },
+        });
+    })
+
+    test('RemoveRoomItem should decrement the item count when the room gets an item removed it already has', async () => {
+        TestDungeon.rooms['1'].items = [new ItemInfo(TestItem.id,3)]
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Apfel'])
+        expect(TestDungeon.rooms['1'].items).toEqual([new ItemInfo(TestItem.id,2)])
+    })
+
+    test('RemoveRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in this dungeon', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Rubin'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('RemoveRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that this item does not exist in the room', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-1', 'Gold'])
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster',{
+            action: 'message',
+            data: { message: expect.anything()},
+        });
+    })
+
+    test('RemoveRoomItem should call sendToClient on the amqpAdapter to notify the dungeon master that the room does not exist in this dungeon', async () => {
+        await removeItemFromRoom.performAction('dungeonmaster', ['Raum-Test' , 'Apfel']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('KickPlayer should call broadcast on the amqpAdapter to notify every player when the dungeon master kicks a player', async () => {
+        await kickPlayer.performAction('dungeonmaster', ['CoolerTyp', 'Nicht gut'])
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('KickPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await kickPlayer.performAction('dungeonmaster', ['Holger' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('BanPlayer should call broadcast on the amqpAdapter to notify every player when the dungeon master bans a player', async () => {
+        await banPlayer.performAction('dungeonmaster', ['CoolerTyp', 'Nicht gut'])
+        expect(TestDungeon.blacklist).toContainEqual('4')
+        expect(amqpAdapter.broadcast).toHaveBeenCalledWith({
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('BanPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that the character does not exist in this dungeon', async () => {
+        await banPlayer.performAction('dungeonmaster', ['Holger' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('BanPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that he cannot ban the dungeon creator', async () => {
+        await banPlayer.performAction('dungeonmaster', ['Jeff' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
+
+    test('BanPlayer should call sendToClient on the amqpAdapter to notify the dungeon master that he cannot ban his own characters', async () => {
+        await banPlayer.performAction('dungeonmaster', ['Spieler' , 'Nicht gut']);
+        expect(amqpAdapter.sendToClient).toHaveBeenCalledWith('dungeonmaster', {
+            action: 'message',
+            data: { message: expect.anything() },
+        });
+    })
 })

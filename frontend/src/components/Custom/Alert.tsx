@@ -4,10 +4,9 @@ import { DisplaysMessageProps } from 'src/types/misc';
 import { Alert as ReactAlert } from 'react-bootstrap';
 import "./index.css";
 
-const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?: number }> = ({ setMessage, message, type, duration }) =>{
+const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?: number, title?: string }> = ({ setMessage, message, type, duration, title }) =>{
 
     const { t } = useTranslation();
-    const alertRef = useRef<any>();
 
     const variant = type === 'error' ? 'danger' : 'info';
 
@@ -24,7 +23,7 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
                 clearTimeout(autoHide);
             }
         }
-    }, [message, alertRef, duration, setMessage]);
+    }, [message, duration, setMessage]);
 
     if (message === '') {
         return null;
@@ -37,9 +36,9 @@ const Alert: React.FC<DisplaysMessageProps & { type: 'error' | 'info', duration?
         <div className="alert-container">
 
         <ReactAlert transition={true} variant={variant} dismissible onClose={() => setMessage("")}>
-            <ReactAlert.Heading>{t(`${type}.${message}.title`)}</ReactAlert.Heading>
-            <p ref={alertRef}>
-                {t(`${type}.${message}.text`)}
+            <ReactAlert.Heading>{title ? title : t(`${type}.${message}.title`)}</ReactAlert.Heading>
+            <p>
+                {title ? message : t(`${type}.${message}.text`)}
             </p>
         </ReactAlert>
         </div>

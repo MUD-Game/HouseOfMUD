@@ -56,6 +56,7 @@
     "dungeon_keys": {
         "name": "Name",
         "description": "Beschreibung",
+        "dungeon_password": "Dungeonpasswort",
         "npc": "NPC",
         "players": "Spieler",
         "status": "Status",
@@ -82,9 +83,22 @@
     "character_creator": {
         "pick_character": "Charakter auswählen",
         "create": "Charakter Erstellen",
-        "new_character": "Neuen Charakter anlegen"
+        "new_character": "Neuen Charakter anlegen",
+        "delete_character": {
+            "confirmation": {
+                "title": "Charakter löschen",
+                "text": "Bist du sicher, dass du diesen Charakter löschen möchtest? Alle Spielfortschritte mit diesem Charakter werden gelöscht! Dieser Schritt kann nicht rückgängig gemacht werden!"
+            }
+        }
     },
     "user_settings": {
+        "admin": {
+            "title": "Serveradministration",
+            "serverbroadcast": {
+                "title": "Serverbroadcast",
+                "confirmation": "Bist du sicher, dass du folgende Nachricht serverweit senden möchtest?"
+            }
+        },
         "title": "Benutzereinstellungen",
         "profile": "Profil",
         "account": "Account",
@@ -107,11 +121,21 @@
         }
     },
     "game": {
+        "noplayers": "Momentan ist niemand online",
         "leave": "Verlassen",
         "queue": "Warteschlange",
         "inventory": "Inventar",
         "filter": "Raum-Filter",
-        "onlineplayers": "Spieler online"
+        "onlineplayers": "Spieler online",
+        "playerInfo": {
+            "player": "Spieler",
+            "inventory": "Inventar",
+            "room": "Raum",
+            "stats": "Stats",
+            "health": "HP",
+            "mana": "Mana",
+            "damage": "DMG"
+        }
     },
     "verify_email": {
         "title": "Email-Verifizierung",
@@ -126,6 +150,10 @@
             "delete_room": "Raum löschen"
         },
         "confirmations": {
+            "canceldungeon":{
+                "title": "Sicher?",
+                "text": "Bist du sicher, dass du Zurück zum Dashboard gehen willst? Alle Änderungen werden verworfen!"
+            },
             "delete_class": {
                 "title": "Klasse löschen",
                 "text": "Bist du sicher, dass du diese Klasse löschen möchtest?"
@@ -163,6 +191,9 @@
             "description": {
                 "placeholder": "Beschreibung"
             },
+            "password": {
+                "placeholder": "Dungeonpasswort"
+            },
             "maxPlayers": {
                 "placeholder": "Maximale Spieleranzahl"
             },
@@ -183,11 +214,21 @@
             "create_npc": "neuen NPC erstellen",
             "create_gender": "neues Geschlecht",
             "create_species": "neue Spezies",
-            "create_action": "neue Aktion anlegen"
+            "create_action": "neue Aktion anlegen",
+            "edit_class": "Klasse bearbeiten",
+            "edit_item": "Item bearbeiten",
+            "edit_npc": "NPC bearbeiten",
+            "edit_gender": "Geschlecht bearbeiten",
+            "edit_species": "Spezies bearbeiten",
+            "edit_action": "Aktion bearbeiten",
+            "send_password": "Passwort abschicken"
         }
     },
     "common": {
+        "string_chars":"Zeichen",
+        "isprivate": "Passwortgeschützt",
         "select_items": "Items auswählen",
+        "back": "Zurück",
         "select_npcs": "NPCs auswählen",
         "select_actions": "Aktionen auswählen",
         "select_species": "Spezies auswählen",
@@ -196,7 +237,7 @@
         "404": "Seite nicht gefunden...",
         "amount": "Anzahl",
         "start_room": {
-            "name": "Start Raum",
+            "name": "Start_Raum",
             "description": "Dies ist der Startraum"
         }
     },
@@ -204,6 +245,8 @@
         "welcome": "Willkommen"
     },
     "button": {
+        "dmgive": "Dungeonmaster abgeben",
+        "shutdown": "Dungeon stoppen",
         "submit": "Senden",
         "ok": "O.K.",
         "join": "Beitreten",
@@ -226,18 +269,60 @@
         "login": "Anmelden",
         "register": "Registrieren"
     },
+    "alert": {
+        "dmgiveup":{
+            "title": "Du hast die Dungeon-Master Rolle abgegeben",
+            "text": "Bis der Dungeon gestoppt ist, kannst du nur als normaler Character spielen."
+        },
+        "kick": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Vom Dungeon Master gekickt!"
+        },
+        "ban": {
+            "title": "Du wurdest aus folgendem Grund gebannt:",
+            "default": "Vom Dungeon Master gebannt!"
+        },
+        "alreadyConnected": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Dieser Charakter befindet sich bereits auf diesem Dungeon"
+        },
+        "serverClosed": {
+            "title": "Du wurdest aus folgendem Grund gekickt:",
+            "default": "Der Dungeon wurde vom Dungeon Master beendet."
+        }
+    },
     "error": {
+        "notstarted":{
+            "title": "Dungeon nicht gestartet",
+            "text": "Der Dungeon läuft nicht oder wurde bereits beendet."
+        },
+        "isfull":{
+            "title": "Der Dungeon ist voll",
+            "text": "Der Dungeon hat seine maximale Spieleranzahl erreicht. Bitte warte bis ein anderer Spieler den Dungeon verlassen hat."
+        },
         "internal": {
             "title": "Interner Server Fehler",
             "text": "Es ist ein interner Server Fehler aufgetreten. Bitte versuche es später noch einmal, falls das Problem weiterhin besteht wenden Sie sich an einen Administrator."
+        },
+        "banned":{
+            "title": "Fehler beim beitreten",
+            "text": "Du bist von diesem Dungeon gebannt"
         },
         "unauthorized": {
             "title": "Falsche Anmeldedaten",
             "text": "Es wurde kein Nutzer mit den angegebenen Daten gefunden, oder die Anmeldedaten sind falsch! (Hinweis: Jedes Release verwendet eine neue Datenbank, du musst dich wahrscheinlich neu registrieren)"
         },
+        "dungeonunauthorized": {
+            "title": "Falsches Passwort",
+            "text": "Das angegebene Passwort ist falsch!"
+        },
         "actionalreadyexists":{
             "title": "Aktion existiert bereits",
             "text": "Es existiert bereits eine Aktion mit diesem Command!"
+        },
+        "characteralreadyexists":{
+            "title": "Charakter existiert bereits",
+            "text": "Es existiert bereits ein Charakter mit diesem Namen!"
         },
         "classalreadyexists":{
             "title": "Klasse existiert bereits",
@@ -372,7 +457,7 @@
     "info": {
         "verifyemail": {
             "title": "Registrierung erfolgreich",
-            "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst."
+            "text": "Bitte bestätige deine E-Mail-Adresse, indem du auf den Link in der E-Mail klickst. (Bitte schau auch in dein Spam-Verzeichnis falls du die Mail nicht findest)"
         },
         "forgotlogin": {
             "email_sent": {
@@ -380,5 +465,54 @@
                 "text": "Falls ein Account mit dieser E-Mail-Adresse existiert, wurde ein Link zum Ändern deines Passworts an deine E-Mail-Adresse geschickt."
             }
         }
-    }
+    },
+    "cryingLlama":{
+        "title": "Es sind momentan keine Dungeons gestartet",
+        "text": "Erstelle doch selbst einen Dungeon und starte ihn!"
+    },
+    "constraint":{
+        "max": "max.",
+        "name": 50,
+        "description": 500,
+        "maxPlayers": 1000000,
+        "dungeon_password": 50,
+        "maxhp": 1000000,
+        "maxmana": 1000000,
+        "maxdmg": 1000000,
+        "command": 50,
+        "output": 500,
+        "addhp": 1000000,
+        "addmana": 1000000,
+        "adddmg": 1000000,
+        "removehp": 1000000,
+        "removemana": 1000000,
+        "removedmg": 1000000,
+        "item_count": 1000000
+
+
+    },
+ "dungeonmasterleave":{
+     "title": "Dungeon Verlassen",
+     "text": "Der Dungeon läuft nicht ohne einen Dungeon-Master! Du kannst entweder den Dungeon verlassen, wodurch dieser gespeichter und gestoppt wird. Oder du kannst einen anderen zum Dungeon-Master ernennen",
+     "select": "Wähle einen neuen Dungeon-Master aus"
+ },
+ "minimap":{
+     "navigation":{
+         "title": "Minimap Navigation",
+         "zoom_in_out": "Rein und Raus-zoomen",
+         "drag": {
+             "title": "Minimap bewegen",
+             "text": "Die Map wird per Drag and Drop mit der Maus bewegt"
+         },
+         "refocus": "Focus auf deine Position",
+         "scroll_wheel": "Mausrad",
+         "toggle_connection":{
+             "title": "Verbindungen öffnen/schließen",
+             "text": "Durch einen Mausklick auf die Verbindungen werden sie geöffnet oder geschlossen"
+         },
+         "fullscreen": "Vollbild-Minimap"
+     }
+ }
+
+ 
 }

@@ -7,7 +7,7 @@
 
 
 import React from 'react'
-import { Col, Container, Row } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import { Check2Circle, X } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
@@ -117,34 +117,26 @@ const ResetPassword: React.FC<ResetPasswordProps> = (props) => {
                                 <span className="inputerror">{pwError}</span>
                                 <span className="inputerror">{confirmError}</span>
                             </div>
-                            <button className="btn mt-3 mb-3 drawn-border btn-green" type="submit">{t("button.submit")}</button>
-                            <div className="col-md-12" id="pwrequirements">
+                            <div className="col mt-3" id="pwrequirements">
                                 <span>{t("password.requirements.title")}</span>
                                 <Row>
-                                    <Col md={1}>{getLengthStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
-                                        <span>{t("password.requirements.size")}</span>
-                                    </Col>
+                                    <div className="col-2 col-xl-1">{getLengthStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11"><span>{t("password.requirements.size")}</span></div>
                                 </Row>
                                 <Row>
-                                    <Col md={1}>{getAlphaStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
-                                        <span>{t("password.requirements.alpha")}</span>
-                                    </Col>
+                                    <div className="col-2 col-xl-1">{getAlphaStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11"><span>{t("password.requirements.alpha")}</span></div>
                                 </Row>
                                 <Row>
-                                    <Col md={1}>{getNumberStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
-                                        <span>{t("password.requirements.number")}</span>
-                                    </Col>
+                                    <div className="col-2 col-xl-1">{getNumberStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11"><span>{t("password.requirements.number")}</span></div>
                                 </Row>
                                 <Row>
-                                    <Col md={1}>{getSymbolStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</Col>
-                                    <Col md={11}>
-                                        <span>{t("password.requirements.symbol")}</span>
-                                    </Col>
+                                    <div className="col-2 col-xl-1">{getSymbolStatus() ? <Check2Circle size={iconSize} color='var(--green)' /> : <X size={iconSize} color='var(--red)' />}</div>
+                                    <div className="col-10 col-xl-11"><span>{t("password.requirements.symbol")}</span></div>
                                 </Row>
                             </div>
+                            <button className="btn mt-3 drawn-border btn-green btn-xpadding" type="submit">{t("button.submit")}</button>
                         </form>
                     }
                 </div>

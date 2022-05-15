@@ -6,7 +6,7 @@
  * @props {@linkcode CreateNewCharacterProps}
  */
 
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { supervisor } from 'src/services/supervisor';
 import { CreateCharacterRequest, GetCharacterAttributesResponse } from '@supervisor/api';
 import { useGame } from 'src/hooks/useGame';
@@ -15,6 +15,7 @@ import MudInput from '../Custom/Input';
 import MudSelect from '../Custom/Select';
 import { useTranslation } from 'react-i18next';
 import { SendsMessagesProps } from '../../types/misc';
+import { validator } from 'src/utils/validator';
 
 export interface CreateNewCharacterProps extends GetCharacterAttributesResponse {
     onCreate: () => void
@@ -24,13 +25,14 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps & SendsMessagesProps>
 
     const game = useGame();
     const {t} = useTranslation();
+    const [name, setName] = useState("");
 
     const onCreateCharacter = (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
         let formData = new FormData(evt.currentTarget);
         let bodyData: CreateCharacterRequest = {
             characterData: {
-                name: formData.get("name") as string,
+                name: name,
                 characterClass: formData.get("class") as string,
                 characterSpecies: formData.get("species") as string,
                 characterGender: formData.get("gender") as string,
@@ -50,7 +52,7 @@ const CreateNewCharacter: React.FC<CreateNewCharacterProps & SendsMessagesProps>
         <form onSubmit={onCreateCharacter}>
             <p className="headline">{t("character_creator.new_character")}</p>
             <Row className="py-3 g-4">
-                <MudInput required colmd={6} name="name" type="text" placeholder="Charaktername wählen" />
+                <MudInput required colmd={6} name="name" value={name} onChange={event=>setName(validator.name(event.target))} type="text" placeholder="Charaktername wählen" />
                 <MudSelect required colmd={6} name="class" label={t("dungeon_keys.class")}>
                     {classes.map((cl, index) => {
                         return (

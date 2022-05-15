@@ -86,7 +86,7 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_npc`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_npc`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>

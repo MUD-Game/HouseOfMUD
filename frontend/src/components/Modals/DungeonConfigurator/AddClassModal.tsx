@@ -92,7 +92,7 @@ const AddClassModal: React.FC<AddClassModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_class`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_class`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>

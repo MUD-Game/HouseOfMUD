@@ -78,7 +78,7 @@ const AddSpeciesModal: React.FC<AddSpeciesModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_species`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_species`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>

@@ -176,7 +176,7 @@ const AddActionModal: React.FC<AddActionModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_action`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_action`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Alert type="error" message={error} setMessage={setError} />

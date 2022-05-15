@@ -82,7 +82,7 @@ const AddItemModal: React.FC<AddItemModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_item`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_item`)}
 
                     </Modal.Title>
                 </Modal.Header>

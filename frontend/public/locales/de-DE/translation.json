@@ -215,6 +215,12 @@
             "create_gender": "neues Geschlecht",
             "create_species": "neue Spezies",
             "create_action": "neue Aktion anlegen",
+            "edit_class": "Klasse bearbeiten",
+            "edit_item": "Item bearbeiten",
+            "edit_npc": "NPC bearbeiten",
+            "edit_gender": "Geschlecht bearbeiten",
+            "edit_species": "Spezies bearbeiten",
+            "edit_action": "Aktion bearbeiten",
             "send_password": "Passwort abschicken"
         }
     },

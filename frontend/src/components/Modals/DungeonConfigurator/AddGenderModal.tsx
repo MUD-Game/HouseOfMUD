@@ -78,7 +78,7 @@ const AddGenderModal: React.FC<AddGenderModalProps> = (props) => {
             <Container>
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        {t(`${dt}.buttons.create_gender`)}
+                        {t(`${dt}.buttons.${props.editData ? 'edit' : 'create'}_gender`)}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='row px-4 g-3' onKeyDown={handleEnterKey}>

@@ -139,7 +139,7 @@ export interface GetMyDungeonsResponse extends GetDungeonsResponse { }
  * @category Request
  */
 export interface CreateDungeonRequest extends SupervisorRequest {
-    dungeonData: any; //TODO: define Dungeon
+    dungeonData: any;
 }
 
 /**

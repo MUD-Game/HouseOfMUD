@@ -337,21 +337,21 @@ export class DungeonController {
 
     async sendMiniMapData(character: string) {
         let rooms:MiniMapData["rooms"] = {};
-        const isDm: boolean = DUNGEONMASTER === character; // TODO: Find it in another way
+        const isDm: boolean = DUNGEONMASTER === character;
         const exploredRooms = this.dungeon.getCharacter(character).exploredRooms;
         for (let room in this.dungeon.rooms) {
             rooms[room] = {
                 xCoordinate: this.dungeon.rooms[room].xCoordinate,
                 yCoordinate: this.dungeon.rooms[room].yCoordinate,
                 connections: this.dungeon.rooms[room].connections,
-                explored: exploredRooms[room] || false, // TODO: Find a way to check if the room is explored
+                explored: exploredRooms[room] || false,
                 name: isDm ? this.dungeon.rooms[room].name : undefined
             }
         }
         console.log(this.getDungeon().getCharacter(character).getPosition());
         await this.amqpAdapter.sendActionToClient(character, 'minimap.init', {
                 rooms: rooms,
-                startRoom:  this.getDungeon().getCharacter(character).getPosition() //TODO: Actually get the room the character is in at the start
+                startRoom:  this.getDungeon().getCharacter(character).getPosition();
             } as MiniMapData);
     }	
 

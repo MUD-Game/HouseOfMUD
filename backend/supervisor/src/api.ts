@@ -96,7 +96,6 @@ export class API {
         app.post('/auth/requestpassword', this.authProvider.requestPasswordReset);
         app.post('/auth/resetpassword', this.authProvider.resetPassword);
 
-        // TODO: Create actual authentication
         // platform authentication
         app.post('/auth/login', this.authProvider.auth ,  (req, res) => {
             res.status(200).json({ok:1});
@@ -156,9 +155,8 @@ export class API {
         });
 
         // start dungeon
-        app.post('/startDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
+        app.post('/startDungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
                 try {
                     if (await this.hostLink.startDungeon(dungeonID)) {
@@ -175,9 +173,8 @@ export class API {
         });
 
         // stop dungeon
-        app.post('/stopDungeon/:dungeonID', /*this.authProvider.auth,*/ async (req, res) => {
+        app.post('/stopDungeon/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
-            // TODO: Check permission
             if (this.hostLink.dungeonExists(dungeonID)) {
                 await this.hostLink.stopDungeon(dungeonID);
                 res.status(200).json({ ok: 1 });
@@ -193,7 +190,7 @@ export class API {
 
         // get my dungeons
         app.get('/myDungeons', this.authProvider.auth, async (req, res) => {
-            let userID = req.cookies.userID; // TODO: get myDungeons based on user   
+            let userID = req.cookies.userID;  
             res.status(200).json({ ok: 1, dungeons: this.hostLink.getDungeonsOfCreator(userID) });
         });
 
@@ -304,7 +301,6 @@ export class API {
         app.get('/characters/:dungeonID', this.authProvider.auth, async (req, res) => {
             let dungeonID: string = req.params.dungeonID;
             const userID = req.cookies.userID; // Cant be undefined because of auth middleware
-            //TODO: Get user-characters for dungeon
             this.dba.getAllCharactersFromUserInDungeon(userID!, dungeonID).then(characters => {
                 res.status(200).json({ ok: 1, characters: characters });
             }).catch(err => {

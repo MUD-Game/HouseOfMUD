@@ -33,7 +33,6 @@ function sendToHost(hostAction: string, data: any): void {
 
 async function main() {
     console.log(`Starting Dungeon ${dungeonID}`);
-    // TODO: get Dungeon from database
     const mongoConnString: string = process.argv[9];
     const database: string = process.argv[10];
     const dba: DatabaseAdapter = new DatabaseAdapter(mongoConnString, database);

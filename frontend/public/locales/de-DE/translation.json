@@ -97,7 +97,10 @@
             "serverbroadcast": {
                 "title": "Serverbroadcast",
                 "confirmation": "Bist du sicher, dass du folgende Nachricht serverweit senden möchtest?"
-            }
+            },
+            "dungeonlist": "Dungeonliste",
+            "softstop": "Softstop",
+            "forcestop": "Forcestop"
         },
         "title": "Benutzereinstellungen",
         "profile": "Profil",
@@ -288,7 +291,7 @@
         },
         "serverClosed": {
             "title": "Du wurdest aus folgendem Grund gekickt:",
-            "default": "Der Dungeon wurde vom Dungeon Master beendet."
+            "default": "Der Dungeon wurde beendet."
         }
     },
     "error": {

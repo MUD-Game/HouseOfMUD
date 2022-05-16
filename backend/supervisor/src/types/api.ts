@@ -111,6 +111,14 @@ export interface DungeonResponseData {
     isPrivate: boolean;
     status: 'online' | 'offline';
 }
+
+export interface AdminDungeonListResponse {
+    online: {
+        [host: string]: DungeonResponseData[]
+    }
+    offline: DungeonResponseData[]
+}
+
 /**
  * @category Response
  */
@@ -129,6 +137,11 @@ export interface GetDungeonResponse extends SupervisorResponse {
  * @category Request
  */
 export interface GetMyDungeonsRequest extends GetDungeonsRequest { }
+
+/**
+ * @category Request
+ */
+ export interface GetAdminDungeonListRequest extends GetDungeonsRequest { }
 
 /**
  * @category Response

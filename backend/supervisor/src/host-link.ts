@@ -234,7 +234,7 @@ export class HostLink {
     /**
      * @returns all online dungeons
      */
-    public async getOnlineDungeons(userID: string){
+    public getOnlineDungeons(){
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
             if (this.dungeons[dungeonID].status === 'online') {
@@ -274,6 +274,45 @@ export class HostLink {
             }
         }
         return dungeons;
+    }
+
+    public getAdminDungeonList() {
+        const onlineDungeons: {[host: string]: any} = {};
+        const offlineDungeons: any[] = [];
+
+        for (let host in this.hosts) {
+            onlineDungeons[host] = [];
+        }
+
+        for (let dungeonID in this.dungeons) {
+            let dungeon = this.dungeons[dungeonID];
+            if (dungeon.status === 'online' && dungeon.host && dungeon.host in onlineDungeons) {   
+                onlineDungeons[dungeon.host].push({
+                    id: dungeonID,
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
+                });
+            } else {
+                offlineDungeons.push({
+                    id: dungeonID,
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
+                });
+            }
+        }
+
+        return {
+            online: onlineDungeons,
+            offline: offlineDungeons
+        }
     }
 
     public deleteDungeon(dungeon: string) {

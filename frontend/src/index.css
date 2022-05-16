@@ -12,6 +12,9 @@
   --lightred: rgb(228, 61, 78);
   --blue: #0051ff;
   --lightblue: #2f71ff;
+  --yellow: rgb(255, 136, 0);
+  --lightyellow: rgb(255, 187, 0);
+
 
   --health: #ff0000;
   --mana: #0096b1;
@@ -257,6 +260,16 @@ a:hover {
   color: white;
   background-color: var(--blue);
 }
+
+.btn-yellow {
+  color: white;
+  background-color: var(--lightyellow);
+}
+.btn-yellow:hover {
+  color: white;
+  background-color: var(--yellow);
+}
+
 
 .btn-xpadding {
   padding: .4em 2em;

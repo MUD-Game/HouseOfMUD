@@ -130,6 +130,7 @@ export interface AdminDungeonListResponse {
     online: {
         [host: string]: {
             blocked: boolean,
+            players: number,
             dungeons: DungeonResponseData[]
         }
     }

@@ -30,7 +30,7 @@ const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDu
             <Accordion.Item eventKey={host}>
                 <Accordion.Header><Stack size={25} className="me-2"/>{host + `: ${players} Spieler` + (blocked ? ' (blockiert)' : '')}</Accordion.Header>
                 <Accordion.Body>
-                    <Row>
+                    <Row className="justify-content-between">
                         <div className="col-6">
                             <h4>{ t("user_settings.admin.hostoptions.title") }</h4>
                         </div>

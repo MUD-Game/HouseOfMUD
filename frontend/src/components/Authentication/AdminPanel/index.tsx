@@ -152,7 +152,7 @@ const AdminPanel: React.FC<AdminPanelProps> = (props) => {
                     <Accordion defaultActiveKey={['0']} alwaysOpen>
                         {
                             dungeons && Object.keys(dungeons!.online).map((host, index) => {
-                                return ( <Hosts host={host} dungeons={dungeons!.online[host]} key={index} fetchDungeons={fetchDungeons} messageCallback={setError} /> );
+                                return ( <Hosts host={host} blocked={dungeons!.online[host].blocked} dungeons={dungeons!.online[host].dungeons} key={index} fetchDungeons={fetchDungeons} messageCallback={setError} /> );
                             })
                         }
                     </Accordion>

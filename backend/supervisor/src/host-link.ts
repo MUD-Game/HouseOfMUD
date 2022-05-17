@@ -327,11 +327,19 @@ export class HostLink {
         }
     }
 
-    public stopHost(host: string, forceStop: boolean): boolean {
+    public async stopHost(host: string, forceStop: boolean): Promise<boolean> {
         if (host in this.hosts) {
             this.hosts[host].blocked = true;
             this.hosts[host].socket.emit('stopHost', forceStop);
-            return true;
+            if (forceStop || this.hosts[host].dungeons.length === 0) {
+                return new Promise((resolve, reject) => {
+                    this.hosts[host].socket.once('disconnect', () => {
+                        resolve(true);
+                    })
+                });
+            } else {
+                return true;
+            }
         }
         return false;
     }

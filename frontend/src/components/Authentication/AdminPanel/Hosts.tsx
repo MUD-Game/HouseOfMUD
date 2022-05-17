@@ -37,7 +37,7 @@ const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDu
                         {
                             !blocked && <div className="col-3">
                             <button className="btn drawn-border btn-yellow w-100" onClick={() => {
-                                supervisor.stopHost(host, { forceStop: false }, () => { setTimeout(fetchDungeons, 2000); }, (error) => { messageCallback(error.error) })
+                                supervisor.stopHost(host, { forceStop: false }, fetchDungeons, (error) => { messageCallback(error.error) })
                             }}>
                                     <Pause size={30} id="deleteIcon text-white" className="mx-1" />
                                     <span className="align-text-top">{t("user_settings.admin.hostoptions.softstop")}</span>
@@ -46,7 +46,7 @@ const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDu
                         }
                         <div className="col-3">
                             <button className="btn drawn-border btn-red w-100" onClick={() => {
-                            supervisor.stopHost(host, { forceStop: true }, () => { setTimeout(fetchDungeons, 2000); }, (error) => { messageCallback(error.error) })
+                            supervisor.stopHost(host, { forceStop: true }, fetchDungeons, (error) => { messageCallback(error.error) })
                         }}>
                                 <Stop size={30} id="deleteIcon text-white" className="mx-1" />
                                 <span className="align-text-top">{t("user_settings.admin.hostoptions.forcestop")}</span>

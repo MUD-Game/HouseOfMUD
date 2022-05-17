@@ -204,7 +204,7 @@ export class API {
             let host: string = req.params.host;
             let body: any = req.body;
             if (body?.forceStop !== undefined) {
-                if (this.hostLink.stopHost(host, body.forceStop)) {
+                if (await this.hostLink.stopHost(host, body.forceStop)) {
                     res.status(200).json({ ok: 1 });
                 } else {
                     res.status(400).json({ ok: 0, error: 'internal' });

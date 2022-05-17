@@ -197,7 +197,7 @@ export class DungeonController {
         } else { // Dungeon Master
             // Check if the dungeonmaster is actually the dungeonmasterid
             if(!this.dungeon.getIsMasterless()) {
-            this.stopDungeon();
+                this.stopDungeon();
             }
         }
     }
@@ -222,7 +222,12 @@ export class DungeonController {
         this.sendPlayerInformationData();
     }
 
+    stopping: boolean = false;
     async stopDungeon() {
+        if (this.stopping) {
+            return;
+        }
+        this.stopping = true;
         await this.persistAllCharacters();
         await this.kickAllPlayers({type: 'serverClosed'});
         await this.persistAllRooms();

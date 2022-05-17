@@ -21,7 +21,7 @@ export class AmqpAdapter {
     private clientExchange: string;
 
     private characterTokenTranslation: (character: string) => string | undefined;
-    
+
     constructor(dungeonID: string, url: string, port: string, user: string, password: string, serverExchange: string, clientExchange: string) {
         this.dungeonID = dungeonID;
         this.url = url;
@@ -80,9 +80,9 @@ export class AmqpAdapter {
         if (this.isConnected()) {
             try {
                 await this.channel?.deleteQueue(this.dungeonID);
-
+                
                 await this.channel?.deleteExchange(`${this.clientExchange}-${this.dungeonID}`);
-
+                
                 await this.channel?.close();
                 await this.connection?.close();
                 
@@ -272,7 +272,7 @@ export class AmqpAdapter {
     async consume(onMessage: (msg: amqplib.ConsumeMessage) => void): Promise<void> {
         if (this.isConnected()) {
             try {
-                this.channel!.consume(this.dungeonID, (msg: amqplib.ConsumeMessage | null) => {
+                await this.channel!.consume(this.dungeonID, (msg: amqplib.ConsumeMessage | null) => {
                     if (msg !== null) {
                         onMessage(msg);
                         this.channel?.ack(msg);

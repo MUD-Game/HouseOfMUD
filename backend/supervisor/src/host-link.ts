@@ -84,22 +84,23 @@ export class HostLink {
         serverSocket.on('error', console.error);
 
         serverSocket.on('connection', socket => {
-            const name: string | undefined = socket.handshake.query.name as | string | undefined;
-            const key: string | undefined = socket.handshake.query.key as | string | undefined;
-            const database: string | undefined = socket.handshake.query.database as | string | undefined;
-            const blocked: boolean | undefined = socket.handshake.query.blocked as | boolean | undefined;
+            const name: string | undefined = socket.handshake.query.name as string | undefined;
+            const key: string | undefined = socket.handshake.query.key as string | undefined;
+            const database: string | undefined = socket.handshake.query.database as string | undefined;
+
 
             if (key !== undefined && name !== undefined && database !== undefined) {
                 if (key === this.authKey && database === this.databaseAdapter.database && !(name in this.hosts)) {
                     this.hosts[name] = {
                         socket: socket,
-                        blocked: blocked !== undefined && blocked,
+                        blocked: false,
                         dungeons: [],
                     };
 
                     console.log(`Host '${name}' connected`);
 
-                    socket.emit('init', (data: { dungeonID: string; currentPlayers: number; }[]): void => {
+                    socket.emit('init', (data: { dungeonID: string; currentPlayers: number; }[], blocked: boolean): void => {
+                        this.hosts[name].blocked = blocked;
                         for (let dungeonStats of data) {
                             if (dungeonStats.dungeonID in this.dungeons) {
                                 console.log(`init ${dungeonStats.dungeonID}`);

@@ -55,8 +55,8 @@ export class SupervisorLink {
             console.log(`Connected to Supervisor`);
         });
 
-        socket.on('init', (callback: (data: { dungeonID: string; currentPlayers: number; }[]) => void) => {
-            callback(this.forkHandler.getDungeons());
+        socket.on('init', (callback: (data: { dungeonID: string; currentPlayers: number; }[], blocked: boolean) => void) => {
+            callback(this.forkHandler.getDungeons(), this.blocked);
         });
 
         socket.on('start', async (data: any, callback: (created: boolean) => {}) => {

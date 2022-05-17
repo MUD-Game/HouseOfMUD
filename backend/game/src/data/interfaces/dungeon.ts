@@ -1,3 +1,4 @@
+import { ConnectionInfo } from "../datasets/connectionInfo";
 import { ActionElement } from "./actionElement";
 import { Character } from "./character";
 import { CharacterClass } from "./characterClass";
@@ -5,7 +6,7 @@ import { CharacterGender } from "./characterGender";
 import { CharacterSpecies } from "./characterSpecies";
 import { Item } from "./item";
 import { Npc } from "./npc";
-import { Room } from "./room";
+import { Room, RoomImpl } from "./room";
 
 /**
  * Dungeon interface containing all necessary data for dungeons.
@@ -55,7 +56,7 @@ export interface Dungeon {
   getItem(itemId: string): Item
   getItemByName(itemName: string): Item
   getNpc(npcId: string): Npc
-  setMasterId(masterId:string): void
+  setMasterId(masterId: string): void
   getIsMasterless(): boolean
   setIsMasterless(isMasterless: boolean): void
 
@@ -160,6 +161,9 @@ export class DungeonImpl implements Dungeon {
   }
 
   getRoom(roomId: string): Room {
+    if (roomId === 'dm') { // Fake Room for Dungeon Master
+      return new RoomImpl('dm', 'dm', 'DM Fake Room', [], [], new ConnectionInfo('inactive', 'inactive'), [], 0, 0);
+    }
     let room: Room = this.rooms[roomId]
     if (room === undefined) {
       throw new Error("Room does not exist");
@@ -177,7 +181,10 @@ export class DungeonImpl implements Dungeon {
     }
   }
 
-  getRoomByName(roomName: string):Room {
+  getRoomByName(roomName: string): Room {
+    if (roomName === 'dm') { // Fake Room for Dungeon Master
+      return new RoomImpl('dm', 'dm', 'dm', [], [], new ConnectionInfo('inactive', 'inactive'), [], 0, 0);
+    }
     let room: Room | undefined = Object.values(this.rooms).find(room => room.name === roomName)
     if (room === undefined) {
       throw new Error("Room does not exist");

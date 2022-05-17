@@ -31,7 +31,7 @@ const AddNpcModal: React.FC<AddNpcModalProps> = (props) => {
             setDescription(props.editData.description);
             setSpeciesSelection(props.editData.species);
         }
-    })
+    },[props.editData])
 
     const { t } = useTranslation();
     const { species, npcs } = useDungeonConfigurator();

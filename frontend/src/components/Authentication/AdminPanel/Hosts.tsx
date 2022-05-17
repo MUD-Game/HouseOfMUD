@@ -15,19 +15,20 @@ import Dungeon from './Dungeon';
 export interface HostsProps {
     host: string;
     blocked: boolean;
+    players: number;
     dungeons: DungeonResponseData[];
     fetchDungeons: () => void;
     messageCallback: (msg: string) => void;
 }
 
-const Hosts: React.FC<HostsProps> = ({ host, dungeons, blocked, fetchDungeons, messageCallback }) => {
+const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDungeons, messageCallback }) => {
 
     const { t } = useTranslation();
 
     return (
         <>
             <Accordion.Item eventKey={host}>
-                <Accordion.Header><Stack size={25} className="me-2"/>{host + (blocked ? ' (blockiert)' : '')}</Accordion.Header>
+                <Accordion.Header><Stack size={25} className="me-2"/>{host + `: ${players} Spieler` + (blocked ? ' (blockiert)' : '')}</Accordion.Header>
                 <Accordion.Body>
                     <Row className="justify-content-end">
                         {

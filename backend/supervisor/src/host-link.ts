@@ -289,13 +289,15 @@ export class HostLink {
         for (let host in this.hosts) {
             onlineDungeons[host] = {
                 blocked: this.hosts[host].blocked,
+                players: 0,
                 dungeons: []
             };
         }
 
         for (let dungeonID in this.dungeons) {
             let dungeon = this.dungeons[dungeonID];
-            if (dungeon.status === 'online' && dungeon.host && dungeon.host in onlineDungeons) {   
+            if (dungeon.status === 'online' && dungeon.host && dungeon.host in onlineDungeons) {
+                onlineDungeons[dungeon.host].players += dungeon.currentPlayers;
                 onlineDungeons[dungeon.host].dungeons.push({
                     id: dungeonID,
                     name: dungeon.name,

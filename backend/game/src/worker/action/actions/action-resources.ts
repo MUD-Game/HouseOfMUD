@@ -8,6 +8,7 @@ import format from "./format";
 export const triggers = {
     discard: `ablegen`,
     inspect: `untersuche`,
+    unbanPlayer: `pardon`,
     inventory: `inv`,
     look: `umschauen`,
     message: `sag`,
@@ -41,6 +42,7 @@ export const triggers = {
 }
 
 export const actionMessages = {
+    playerUnbanned: `${format.bold}${format.color.green}%s wurde vom Dungeon entbannt.${format.reset}`,
     die: `${format.bold}${format.rgb(117, 23, 23)}Du bist gestorben!${format.reset}`,
     dieDungeonMaster: `${format.bold}${format.rgb(117, 23, 23)}%s ist in %s gestorben!${format.reset}`,
     inspect: `Du untersuchst %s: %s`,
@@ -80,6 +82,7 @@ export const actionMessages = {
 }
 
 export const errorMessages = {
+    playerNotBanned: `${format.color.red}%s ist nicht gebannt!${format.reset}`,
     itemNotOwned: `${format.color.red}Du besitzt dieses Item nicht! Gib ${format.bold}%s${format.reset} ein, um deine Items zu sehen.${format.reset}`,
     itemNotInRoom: `${format.color.red}Dieses Item existiert nicht in diesem Raum! Gib ${format.bold}%s${format.reset} ein, um die Items im Raum zu sehen.${format.reset}`,
     itemDoesntexist: `${format.color.red}Dieses Item existiert nicht!${format.reset}`,
@@ -167,7 +170,8 @@ export const dmActionDescriptions = {
     kickPlayer: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spielername>${format.reset} - Schmeiße einen Spieler aus der Lobby `, triggers.kickPlayer),
     whisper: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spieler> <Nachricht>${format.reset} - Sende eine private Nachricht an einen Spieler `, triggers.whisper),
     broadcast: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Nachricht>${format.reset} - Sende eine Nachricht an alle Spieler `, triggers.broadcast),
-    banPlayer: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spielername>${format.reset} - Banne einen Spieler permanent aus deinem Dungeon `, triggers.banPlayer),
+    banPlayer: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spielername>${format.reset} - Banne einen Spieler aus deinem Dungeon `, triggers.banPlayer),
+    unbanPlayer: parseResponseString(`\n\t${format.bold}%s${format.reset} ${format.italic}<Spielername>${format.reset} - Entbanne einen Spieler aus deinem Dungeon `, triggers.unbanPlayer),
     showDmActions: parseResponseString(`\n\t${format.bold}%s${format.reset} - Erhalte eine Beschreibung alle ausführbaren Aktionen `, triggers.showDmActions),
     toggleConnection: parseResponseString(`\nÜber die Minimap können außerdem die Verbindungen getoggled werden. Klick dafür auf die Verbindung zwischen den Räumen.`),
 }

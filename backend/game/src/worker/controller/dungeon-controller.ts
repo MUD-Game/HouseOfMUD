@@ -29,6 +29,7 @@ interface Tokens {
     [character: string]: string;
 }
 export class DungeonController {
+   
  
     
     private verifyTokens: Tokens;
@@ -196,7 +197,7 @@ export class DungeonController {
         } else { // Dungeon Master
             // Check if the dungeonmaster is actually the dungeonmasterid
             if(!this.dungeon.getIsMasterless()) {
-            this.stopDungeon();
+                this.stopDungeon();
             }
         }
     }
@@ -221,7 +222,12 @@ export class DungeonController {
         this.sendPlayerInformationData();
     }
 
+    stopping: boolean = false;
     async stopDungeon() {
+        if (this.stopping) {
+            return;
+        }
+        this.stopping = true;
         await this.persistAllCharacters();
         await this.kickAllPlayers({type: 'serverClosed'});
         await this.persistAllRooms();
@@ -289,7 +295,7 @@ export class DungeonController {
                 if (!(char.position in this.dungeon.rooms)) {
                     char.position = '0,0'; // Start Room
                 }
-                char.inventory = this.chekcInventory(char.inventory); // if items were deleted
+                char.inventory = this.checkInventory(char.inventory); // if items were deleted
                 return new CharacterImpl(char.userId, char.name, char.characterClass, char.characterSpecies, char.characterGender, new CharacterStatsImpl(maxStats.hp, maxStats.dmg, maxStats.mana), 
                     new CharacterStatsImpl(curStats.hp, curStats.dmg, curStats.mana), char.position, exploredRooms, char.inventory);
             }
@@ -299,7 +305,7 @@ export class DungeonController {
         }
     }
 
-    private chekcInventory(inventory: ItemInfo[]): ItemInfo[] {
+    private checkInventory(inventory: ItemInfo[]): ItemInfo[] {
         let checkedInv: ItemInfo[] = [];
         for (let item of inventory) {
             if (item.item in this.dungeon.items) {
@@ -318,8 +324,8 @@ export class DungeonController {
             '',
             new CharacterStatsImpl(0, 0, 0),
             new CharacterStatsImpl(0, 0, 0),
-            "0,0",
-            {"0,0":true},
+            'dm', // Fake room
+            {},
             []
         );
         // console.log(this.dungeon)
@@ -433,5 +439,9 @@ export class DungeonController {
 
     characterExists(character: string) {
         return character in this.dungeon.characters;
+    }
+
+    gerUserIdFromCharacter(characterToUnban: string) {
+        return this.databaseAdapter?.getUserIdFromCharacter(characterToUnban, this.getDungeon().id)
     }
 }

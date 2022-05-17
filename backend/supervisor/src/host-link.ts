@@ -8,6 +8,7 @@ const DUNGEON_EXIT_TIMEOUT = 5000;
 
 interface Host {
     socket: Socket;
+    blocked: boolean;
     dungeons: string[];
 }
 
@@ -83,20 +84,23 @@ export class HostLink {
         serverSocket.on('error', console.error);
 
         serverSocket.on('connection', socket => {
-            const name: string | undefined = socket.handshake.query.name as | string | undefined;
-            const key: string | undefined = socket.handshake.query.key as | string | undefined;
-            const database: string | undefined = socket.handshake.query.database as | string | undefined;
+            const name: string | undefined = socket.handshake.query.name as string | undefined;
+            const key: string | undefined = socket.handshake.query.key as string | undefined;
+            const database: string | undefined = socket.handshake.query.database as string | undefined;
+
 
             if (key !== undefined && name !== undefined && database !== undefined) {
                 if (key === this.authKey && database === this.databaseAdapter.database && !(name in this.hosts)) {
                     this.hosts[name] = {
                         socket: socket,
+                        blocked: false,
                         dungeons: [],
                     };
 
                     console.log(`Host '${name}' connected`);
 
-                    socket.emit('init', (data: { dungeonID: string; currentPlayers: number; }[]): void => {
+                    socket.emit('init', (data: { dungeonID: string; currentPlayers: number; }[], blocked: boolean): void => {
+                        this.hosts[name].blocked = blocked;
                         for (let dungeonStats of data) {
                             if (dungeonStats.dungeonID in this.dungeons) {
                                 console.log(`init ${dungeonStats.dungeonID}`);
@@ -166,6 +170,9 @@ export class HostLink {
         
         for (let hostName in this.hosts) {
             let host = this.hosts[hostName];
+            if (host.blocked) {
+                continue;
+            }
             let players: number = 0;
             for (let dungeon of host.dungeons) {
                 players += this.dungeons[dungeon].currentPlayers;
@@ -234,7 +241,7 @@ export class HostLink {
     /**
      * @returns all online dungeons
      */
-    public async getOnlineDungeons(userID: string){
+    public getOnlineDungeons(){
         const dungeons: any[] = [];
         for (let dungeonID in this.dungeons) {
             if (this.dungeons[dungeonID].status === 'online') {
@@ -274,6 +281,67 @@ export class HostLink {
             }
         }
         return dungeons;
+    }
+
+    public getAdminDungeonList() {
+        const onlineDungeons: {[host: string]: any} = {};
+        const offlineDungeons: any[] = [];
+
+        for (let host in this.hosts) {
+            onlineDungeons[host] = {
+                blocked: this.hosts[host].blocked,
+                players: 0,
+                dungeons: []
+            };
+        }
+
+        for (let dungeonID in this.dungeons) {
+            let dungeon = this.dungeons[dungeonID];
+            if (dungeon.status === 'online' && dungeon.host && dungeon.host in onlineDungeons) {
+                onlineDungeons[dungeon.host].players += dungeon.currentPlayers;
+                onlineDungeons[dungeon.host].dungeons.push({
+                    id: dungeonID,
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
+                });
+            } else {
+                offlineDungeons.push({
+                    id: dungeonID,
+                    name: dungeon.name,
+                    description: dungeon.description,
+                    isPrivate: (dungeon.password && dungeon.password !== '') ? true : false,
+                    maxPlayers: dungeon.maxPlayers,
+                    currentPlayers: dungeon.currentPlayers,
+                    status: dungeon.status
+                });
+            }
+        }
+
+        return {
+            online: onlineDungeons,
+            offline: offlineDungeons
+        }
+    }
+
+    public async stopHost(host: string, forceStop: boolean): Promise<boolean> {
+        if (host in this.hosts) {
+            this.hosts[host].blocked = true;
+            this.hosts[host].socket.emit('stopHost', forceStop);
+            if (forceStop || this.hosts[host].dungeons.length === 0) {
+                return new Promise((resolve, reject) => {
+                    this.hosts[host].socket.once('disconnect', () => {
+                        resolve(true);
+                    })
+                });
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     public deleteDungeon(dungeon: string) {

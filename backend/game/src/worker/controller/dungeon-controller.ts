@@ -29,6 +29,7 @@ interface Tokens {
     [character: string]: string;
 }
 export class DungeonController {
+   
  
     
     private verifyTokens: Tokens;
@@ -433,5 +434,9 @@ export class DungeonController {
 
     characterExists(character: string) {
         return character in this.dungeon.characters;
+    }
+
+    gerUserIdFromCharacter(characterToUnban: string) {
+        return this.databaseAdapter?.getUserIdFromCharacter(characterToUnban, this.getDungeon().id)
     }
 }

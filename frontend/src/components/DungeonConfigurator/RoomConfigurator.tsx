@@ -378,8 +378,8 @@ const RoomConfigurator: React.FC<RoomConfiguratorProps> = (props) => {
             {currentRoom ?
                 <>
                     <Row className="mt-2 g-1">
-                        <MudInput colmd={12} placeholder={t("dungeon_keys.name")} key={currentRoom.id + "name"} name={"name"} value={selectedRoomName} onChange={event => setSelectedRoomName(event.target.value)} />
-                        <MudInput colmd={12} name="description" placeholder={t("dungeon_keys.description")} key={currentRoom.id + "descr"} value={selectedRoomDescription} onChange={event => setSelectedRoomDescription(event.target.value)} />
+                        <MudInput colmd={12} placeholder={t("dungeon_keys.name")} key={currentRoom.id + "name"} name={"name"} value={selectedRoomName} onChange={event => setSelectedRoomName(validator.cirName(event.target))} />
+                        <MudInput colmd={12} name="description" placeholder={t("dungeon_keys.description")} key={currentRoom.id + "room-description"} value={selectedRoomDescription} onChange={event => setSelectedRoomDescription(event.target.value)} />
                         <MudTypeahead
                             colmd={12}
                             title={t(`dungeon_keys.actions`)}

@@ -294,7 +294,7 @@ a:hover {
 }
 
 .accordion-button {
-  background-color: var(--bgdark);
+  background-color: var(--bgcolor);
   border: solid var(--accent);
   border-radius: 0 0 2% 0/0 0 20% 0;
   border-width: 2px 2px 3px;

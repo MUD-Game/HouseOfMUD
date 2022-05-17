@@ -104,7 +104,8 @@
                 "forcestop": "Forcestop"
             },
             "dungeonoptions": {
-                "title": "Dungeons:"
+                "title": "Dungeons:",
+                "no_dungeons": "Es lauen aktuell keine Dungeons auf diesem Host"
             },
             "dungeonlist": "Dungeonliste"
         },

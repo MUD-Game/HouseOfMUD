@@ -59,6 +59,7 @@ const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDu
                             <h4>{ t("user_settings.admin.dungeonoptions.title") }</h4>
                         </div>
                     </Row>
+                    { dungeons.length !== 0 ?
                     <Row>
                         <div className="col-3">
                             <b><u>{t("dungeon_keys.name")}</u></b>
@@ -74,7 +75,9 @@ const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDu
                         </div>
                         <div className="col-1"></div>
                     </Row>
-                    {
+                    : t("user_settings.admin.dungeonoptions.no_dungeons")
+                    }                    
+                    {                        
                         dungeons.map((dungeon, index) => { 
                             return (<Dungeon key={index} dungeon={dungeon} fetchDungeons={fetchDungeons} messageCallback={messageCallback} />)
                         })

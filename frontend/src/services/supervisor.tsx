@@ -5,7 +5,7 @@
  * @category Service
  */
 
-import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData , CheckPasswordResponse} from "@supervisor/api";
+import { GetDungeonsRequest, ErrorResponse, GetMyDungeonsRequest, GetCharactersRequest, GetCharacterAttributesRequest, GetCharacterAttributesResponse, AuthenticateRequest, AuthenticateResponse, LoginRequest, LoginResponse, StartDungeonRequest, StartDungeonResponse, StopDungeonRequest, StopDungeonResponse, CreateDungeonRequest, CreateDungeonResponse, EditDungeonRequest, EditDungeonResponse, DeleteDungeonRequest, DeleteDungeonResponse, CreateCharacterRequest, CreateCharacterResponse, GetDungeonRequest, DeleteCharacterResponse, DeleteCharacterRequest, GetDungeonResponse, DungeonResponseData, CharactersResponseData, LoginResponseData , CheckPasswordResponse, GetAdminDungeonListRequest, AdminDungeonListResponse, StopHostRequest} from "@supervisor/api";
 import $ from "jquery";
 
 let connectionString = "";
@@ -99,6 +99,14 @@ const supervisor = {
 
     getMyDungeons(body: GetMyDungeonsRequest, dataCallBack: (data: DungeonResponseData[]) => void, error: (error: ErrorResponse) => void) {
         genericGet('/mydungeons', body, dataCallBack, error, "dungeons");
+    },
+
+    getAdminDungeonList(body: GetAdminDungeonListRequest, dataCallBack: (data: AdminDungeonListResponse) => void, error: (error: ErrorResponse) => void) {
+        genericGet('/adminDungeonList', body, dataCallBack, error, "data");
+    },
+
+    stopHost(host: string, body: StopHostRequest, dataCallBack: (data: StopDungeonResponse) => void, error: (error: ErrorResponse) => void) {
+        genericRequest(`/stopHost/${host}`, "POST", body, {}, dataCallBack, error);
     },
 
     getCharacters(dungeonID: string, body: GetCharactersRequest, dataCallBack: (data: CharactersResponseData[]) => void, error: (error: ErrorResponse) => void) {

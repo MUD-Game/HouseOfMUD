@@ -87,7 +87,21 @@ export interface StopDungeonRequest {}
 /**
  * @category Response
  */
-export interface StopDungeonResponse extends SupervisorResponse { }
+ export interface StopDungeonResponse extends SupervisorResponse { }
+
+
+/**
+ * Stops a host via POST: /stopHost
+ * @category Request
+ */
+export interface StopHostRequest {
+    forceStop: boolean;
+}
+
+/**
+ * @category Response
+ */
+export interface StopHostResponse extends SupervisorResponse { }
 
 /**
  * @category Request
@@ -111,6 +125,18 @@ export interface DungeonResponseData {
     isPrivate: boolean;
     status: 'online' | 'offline';
 }
+
+export interface AdminDungeonListResponse {
+    online: {
+        [host: string]: {
+            blocked: boolean,
+            players: number,
+            dungeons: DungeonResponseData[]
+        }
+    }
+    offline: DungeonResponseData[]
+}
+
 /**
  * @category Response
  */
@@ -129,6 +155,11 @@ export interface GetDungeonResponse extends SupervisorResponse {
  * @category Request
  */
 export interface GetMyDungeonsRequest extends GetDungeonsRequest { }
+
+/**
+ * @category Request
+ */
+ export interface GetAdminDungeonListRequest extends GetDungeonsRequest { }
 
 /**
  * @category Response

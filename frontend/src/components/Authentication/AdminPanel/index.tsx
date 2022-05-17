@@ -7,9 +7,9 @@
  */
 
 
-import React, { FormEvent, useEffect } from 'react'
-import { Container, Row } from 'react-bootstrap';
-import { Send, ChevronLeft } from 'react-bootstrap-icons';
+import React, { FormEvent, useEffect, useState } from 'react'
+import { Container, Row, Accordion } from 'react-bootstrap';
+import { Send, ChevronLeft, ArrowCounterclockwise } from 'react-bootstrap-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationDialog from 'src/components/Modals/BasicModals/ConfirmationDialog';
@@ -17,6 +17,9 @@ import { useAuth } from 'src/hooks/useAuth';
 import MudSelect from '../../Custom/Select';
 import { useRabbitMQ } from "src/hooks/useRabbitMQ";
 import Alert from 'src/components/Custom/Alert';
+import Hosts from './Hosts';
+import { AdminDungeonListResponse } from '@supervisor/api';
+import { supervisor } from 'src/services/supervisor';
 type AdminPanelProps = {}
 
 const format = {
@@ -45,11 +48,19 @@ const AdminPanel: React.FC<AdminPanelProps> = (props) => {
     const { t, i18n } = useTranslation();
     let auth = useAuth();
     const { sendServerbroadcast } = useRabbitMQ();
-
+    const [dungeons, setDungeons] = useState<AdminDungeonListResponse>();
 
     const [error, setError] = React.useState<string>("");
     const [showConfirmationDialog, setShowConfirmationDialog] = React.useState<{ show: boolean, message: string, title: string, onConfirm: () => void }>({ show: false, message: "", title: "", onConfirm: () => { } });
     const [serverbroadcast, setServerbroadcast] = React.useState("");
+
+    useEffect(() => {
+        fetchDungeons();
+    }, []);
+
+    const fetchDungeons = (callback?: VoidFunction) => {
+        supervisor.getAdminDungeonList({}, (data) => { setDungeons(data); callback && callback() }, error => setError(error.error))
+    }
 
     const showConfirmation = (title: string, message: string, onConfirm: () => void) => {
         setShowConfirmationDialog({
@@ -83,28 +94,7 @@ const AdminPanel: React.FC<AdminPanelProps> = (props) => {
             <ConfirmationDialog onHide={() => { setShowConfirmationDialog({ show: false, message: "", title: "", onConfirm: () => { } }) }} {...showConfirmationDialog} />
             <Alert type="error" message={error} setMessage={setError} />
 
-            <Container className="mt-4 mb-5">
-
-                <Row>
-                    <h1>{t("user_settings.admin.title")}</h1>
-                </Row>
-
-                <Row onKeyUp={handleEnterKey} className="h-100">
-                    <h3>{t("user_settings.admin.serverbroadcast.title")}</h3>
-                    <hr />
-                    <div className="col-10">
-                        <input type="text" name="serverbroadcast" placeholder={t("user_settings.admin.serverbroadcast.title")} className="input-standard drawn-border" required autoComplete='off' value={serverbroadcast} onChange={event => setServerbroadcast(event.target.value)} />
-                    </div>
-                    <div className="col-2">
-                        <button className="btn w-100 drawn-border btn-green" onClick={() => handleConfirmation(serverbroadcast)}>
-                            <Send />
-                        </button>
-                    </div>
-                </Row>
-            </Container>
-
             <Container className="mb-5 mt-4">
-
                 <Row className="mb-5">
                     <div className="col-lg-4 col-md-6 col-sm-8">
                         <MudSelect colmd={12} defaultValue={i18n.language} label={t("user_settings.language.label")} onChange={(event) => {
@@ -120,7 +110,53 @@ const AdminPanel: React.FC<AdminPanelProps> = (props) => {
                         </MudSelect>
                     </div>
                 </Row>
+            </Container>
 
+            <Container className="mt-4 mb-5">
+                <Row>
+                    <h1>{t("user_settings.admin.title")}</h1>
+                </Row>
+                <Row onKeyUp={handleEnterKey} className="h-100">
+                    <h3>{t("user_settings.admin.serverbroadcast.title")}</h3>
+                    <hr />
+                    <div className="col-10">
+                        <input type="text" name="serverbroadcast" placeholder={t("user_settings.admin.serverbroadcast.title")} className="input-standard drawn-border" required autoComplete='off' value={serverbroadcast} onChange={event => setServerbroadcast(event.target.value)} />
+                    </div>
+                    <div className="col-2">
+                        <button className="btn w-100 drawn-border btn-green" onClick={() => handleConfirmation(serverbroadcast)}>
+                            <Send />
+                        </button>
+                    </div>
+                </Row>
+            </Container>
+
+            <Container className="mt-4 mb-5">
+                <Row>
+                    <div className="col-8">
+                        <h3>{t("user_settings.admin.dungeonlist")}</h3>
+                    </div>
+                    <div className="col-4 text-end">
+                        <button onClick={(evt) => {
+                            const target: React.MouseEvent<HTMLButtonElement, MouseEvent>["currentTarget"] = evt.currentTarget;
+                            target.classList.add("spin");
+                            target.disabled = true;
+                            fetchDungeons(() => {
+                                setTimeout(()=>{target.classList.remove("spin")}, 750);
+                                target.disabled = false;
+                            })
+                        }} className="btn drawn-border btn-blue px-3" id="refreshButton" ><ArrowCounterclockwise size={30} /></button>
+                    </div>
+                    <hr />
+                </Row>
+                <Row>
+                    <Accordion defaultActiveKey={['0']} alwaysOpen>
+                        {
+                            dungeons && Object.keys(dungeons!.online).map((host, index) => {
+                                return ( <Hosts host={host} players={dungeons!.online[host].players} blocked={dungeons!.online[host].blocked} dungeons={dungeons!.online[host].dungeons} key={index} fetchDungeons={fetchDungeons} messageCallback={setError} /> );
+                            })
+                        }
+                    </Accordion>
+                </Row>
             </Container>
         </>
     )

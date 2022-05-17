@@ -36,6 +36,7 @@ function mapToArray(map: any): any[] {
  * encapsulation of the mongoose API
  */
 export class DatabaseAdapter {
+   
 
 
     public database: string;
@@ -448,5 +449,10 @@ export class DatabaseAdapter {
             return result.characters[0];
         }
         return null
+    }
+
+    async getUserIdFromCharacter(characterToUnban: string, dungeonId:string) {
+        let character = await this.character.findOne({ name: characterToUnban, dungeonId: dungeonId });
+        return character?.userId || undefined;
     }
 }

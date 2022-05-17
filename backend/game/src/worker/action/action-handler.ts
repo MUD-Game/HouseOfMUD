@@ -35,6 +35,7 @@ import { KickPlayer } from './dmactions/kickPlayer-action';
 import { ShowDmActions } from './dmactions/show-dmactions';
 import { BanPlayer } from './dmactions/banPlayer-action';
 import { DmGiveUpAction } from './dmactions/dmgiveup-action';
+import { UnbanPlayer } from './dmactions/unbanPlayer-action';
 
 
 // const regExpression = {
@@ -139,7 +140,8 @@ export class ActionHandlerImpl implements ActionHandler {
            new KickPlayer(dungeonController),
            new ShowDmActions(dungeonController),
            new BanPlayer(dungeonController),
-           new DmGiveUpAction(dungeonController)
+           new DmGiveUpAction(dungeonController),
+           new UnbanPlayer(dungeonController),
         ];
 
         dmActions.forEach(dmaction => {

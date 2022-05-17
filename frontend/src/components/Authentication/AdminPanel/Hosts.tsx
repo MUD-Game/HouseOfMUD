@@ -31,24 +31,48 @@ const Hosts: React.FC<HostsProps> = ({ host, dungeons, players, blocked, fetchDu
                 <Accordion.Header><Stack size={25} className="me-2"/>{host + `: ${players} Spieler` + (blocked ? ' (blockiert)' : '')}</Accordion.Header>
                 <Accordion.Body>
                     <Row className="justify-content-end">
+                        <div className="col-6">
+                            <h4>{ t("user_settings.admin.hostoptions.title") }</h4>
+                        </div>
                         {
-                            !blocked && <div className="col-2">
+                            !blocked && <div className="col-3">
                             <button className="btn drawn-border btn-yellow w-100" onClick={() => {
                                 supervisor.stopHost(host, { forceStop: false }, () => { setTimeout(fetchDungeons, 2000); }, (error) => { messageCallback(error.error) })
                             }}>
                                     <Pause size={30} id="deleteIcon text-white" className="mx-1" />
-                                    <span className="align-text-top">{t("user_settings.admin.softstop")}</span>
+                                    <span className="align-text-top">{t("user_settings.admin.hostoptions.softstop")}</span>
                                 </button>
                             </div>
                         }
-                        <div className="col-2">
+                        <div className="col-3">
                             <button className="btn drawn-border btn-red w-100" onClick={() => {
                             supervisor.stopHost(host, { forceStop: true }, () => { setTimeout(fetchDungeons, 2000); }, (error) => { messageCallback(error.error) })
                         }}>
                                 <Stop size={30} id="deleteIcon text-white" className="mx-1" />
-                                <span className="align-text-top">{t("user_settings.admin.forcestop")}</span>
+                                <span className="align-text-top">{t("user_settings.admin.hostoptions.forcestop")}</span>
                             </button>
                         </div>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <div className="col">
+                            <h4>{ t("user_settings.admin.dungeonoptions.title") }</h4>
+                        </div>
+                    </Row>
+                    <Row>
+                        <div className="col-3">
+                            <b><u>{t("dungeon_keys.name")}</u></b>
+                        </div>
+                        <div className="col-6">
+                            <b><u>{t("dungeon_keys.description")}</u></b>
+                        </div>
+                        <div className="col-1">
+                            <b><u>{t("dungeon_keys.players")}</u></b>
+                        </div>
+                        <div className="col-1">
+                            <b><u>{t("dungeon_keys.status")}</u></b>
+                        </div>
+                        <div className="col-1"></div>
                     </Row>
                     {
                         dungeons.map((dungeon, index) => { 

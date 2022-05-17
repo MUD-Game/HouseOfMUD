@@ -24,7 +24,7 @@ const Dungeon: React.FC<DungeonProps> = ({ dungeon, fetchDungeons, messageCallba
 
     return (
         <>
-            <Row className={`dashboard-list align-items-center pt-1 pb-2 mb-2`}>
+            <Row className={`dungeon-item align-items-center pt-1 pb-2 mb-2`}>
                 <div className="col-3">
                     {dungeon.name}
                 </div>

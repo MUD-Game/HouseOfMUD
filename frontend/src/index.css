@@ -1,5 +1,6 @@
 :root {
   --bgcolor: rgb(209, 203, 193);
+  --bgdark: rgb(175, 175, 175);
   --textcolor: #6b2a00;
   --offcolor: #2e2e2e;
   --accentlight: #a7795b;
@@ -21,8 +22,7 @@
   --damage: #6d6d6d;
 
   /* Inactive Room (not yet created) */
-  /* Inactive Room (not yet 
-  created */
+  /* Inactive Room (not yet created */
 
   --room-background:#f0f0f0;
 
@@ -280,6 +280,44 @@ a:hover {
   font-size: 0.7em;
 }
 
+/* Admin Panel*/
+.accordion-item {
+  background-color: transparent;
+  border: none;
+}
+.accordion-item:first-of-type .accordion-button:not(.collapsed), .accordion-item:last-of-type .accordion-button:not(.collapsed) { 
+  border-width: 2px 2px 3px; 
+  border-radius: .5em .5em 0 0 / .5em .5em 0 0;
+}
+.accordion-item:first-of-type .accordion-button.collapsed, .accordion-item:last-of-type .accordion-button.collapsed {
+  border-radius: .5em .5em 1em 0 / .5em .5em .8em 0;
+}
+
+.accordion-button {
+  background-color: var(--bgdark);
+  border: solid var(--accent);
+  border-radius: 0 0 2% 0/0 0 20% 0;
+  border-width: 2px 2px 3px;
+  color: var(--accent);
+}
+.accordion-button:not(.collapsed) {
+  background-color: var(--bgdark);
+  color: var(--offcolor);
+}
+.accordion-button:focus {
+  border-color: var(--accent);
+  box-shadow: none;
+}
+.accordion-button::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27 fill=%27%23212529%27%3e%3cpath fill-rule=%27evenodd%27 d=%27M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z%27/%3e%3c/svg%3e") !important; 
+}
+
+.accordion-body {  
+  border: solid var(--accent);  
+  border-width: 0 2px 2px;
+  border-radius: 0 0 .5em .5em / 0 0 .5em .5em;
+}
+
 /* Dashboard */
 .nav-tabs {
   border-bottom: 2px solid var(--textcolor);
@@ -346,7 +384,7 @@ a:hover {
   transform: scale(1.2);
 }
 
-.configurator-item, .character-item, .link-li {
+.configurator-item, .character-item, .link-li, .dungeon-item {
   border-radius: .3em;
   transition: background-color .1s ease-in;
 }
@@ -355,7 +393,7 @@ a:hover {
   cursor: pointer;
 }
 
-.configurator-item:hover, .character-item:hover, .dashboard-list:hover, .link-li:hover {
+.configurator-item:hover, .character-item:hover, .dashboard-list:hover, .link-li:hover, .dungeon-item:hover {
   background-color: rgba(146, 144, 141, 0.4);
   box-shadow: 0em 0em .3em rgb(146, 144, 141);
 }

@@ -98,9 +98,15 @@
                 "title": "Serverbroadcast",
                 "confirmation": "Bist du sicher, dass du folgende Nachricht serverweit senden möchtest?"
             },
-            "dungeonlist": "Dungeonliste",
-            "softstop": "Softstop",
-            "forcestop": "Forcestop"
+            "hostoptions": {
+                "title": "Hostoptionen:",
+                "softstop": "Softstop",
+                "forcestop": "Forcestop"
+            },
+            "dungeonoptions": {
+                "title": "Dungeons:"
+            },
+            "dungeonlist": "Dungeonliste"
         },
         "title": "Benutzereinstellungen",
         "profile": "Profil",

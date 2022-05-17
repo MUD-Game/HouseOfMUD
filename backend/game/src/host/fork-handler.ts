@@ -96,10 +96,10 @@ export class ForkHandler {
             }
             delete this.dungeonWorker[dungeon];
         }
+        console.error(`Dungeon ${dungeon} exited with code ${code}`);
         if (this.workerExitCallback !== undefined) {
             this.workerExitCallback(dungeon);
         }
-        console.error(`Dungeon ${dungeon} exited with code ${code}`);
     }
 
 

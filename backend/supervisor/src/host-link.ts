@@ -8,6 +8,7 @@ const DUNGEON_EXIT_TIMEOUT = 5000;
 
 interface Host {
     socket: Socket;
+    blocked: boolean;
     dungeons: string[];
 }
 
@@ -86,11 +87,13 @@ export class HostLink {
             const name: string | undefined = socket.handshake.query.name as | string | undefined;
             const key: string | undefined = socket.handshake.query.key as | string | undefined;
             const database: string | undefined = socket.handshake.query.database as | string | undefined;
+            const blocked: boolean | undefined = socket.handshake.query.blocked as | boolean | undefined;
 
             if (key !== undefined && name !== undefined && database !== undefined) {
                 if (key === this.authKey && database === this.databaseAdapter.database && !(name in this.hosts)) {
                     this.hosts[name] = {
                         socket: socket,
+                        blocked: blocked !== undefined && blocked,
                         dungeons: [],
                     };
 
@@ -166,6 +169,9 @@ export class HostLink {
         
         for (let hostName in this.hosts) {
             let host = this.hosts[hostName];
+            if (host.blocked) {
+                continue;
+            }
             let players: number = 0;
             for (let dungeon of host.dungeons) {
                 players += this.dungeons[dungeon].currentPlayers;
@@ -281,13 +287,16 @@ export class HostLink {
         const offlineDungeons: any[] = [];
 
         for (let host in this.hosts) {
-            onlineDungeons[host] = [];
+            onlineDungeons[host] = {
+                blocked: this.hosts[host].blocked,
+                dungeons: []
+            };
         }
 
         for (let dungeonID in this.dungeons) {
             let dungeon = this.dungeons[dungeonID];
             if (dungeon.status === 'online' && dungeon.host && dungeon.host in onlineDungeons) {   
-                onlineDungeons[dungeon.host].push({
+                onlineDungeons[dungeon.host].dungeons.push({
                     id: dungeonID,
                     name: dungeon.name,
                     description: dungeon.description,
@@ -313,6 +322,15 @@ export class HostLink {
             online: onlineDungeons,
             offline: offlineDungeons
         }
+    }
+
+    public stopHost(host: string, forceStop: boolean): boolean {
+        if (host in this.hosts) {
+            this.hosts[host].blocked = true;
+            this.hosts[host].socket.emit('stopHost', forceStop);
+            return true;
+        }
+        return false;
     }
 
     public deleteDungeon(dungeon: string) {

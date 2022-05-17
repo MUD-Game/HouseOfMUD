@@ -1,4 +1,5 @@
 import { create } from 'domain';
+import { exit } from 'process';
 import { io } from 'socket.io-client';
 import { ForkHandler } from './fork-handler';
 
@@ -15,6 +16,8 @@ export class SupervisorLink {
     private database: string;
 
     private forkHandler: ForkHandler;
+
+    private blocked: boolean;
 
     /**
      * @param name the name of the host
@@ -34,6 +37,8 @@ export class SupervisorLink {
         this.database = database;
 
         this.forkHandler = forkHandler;
+
+        this.blocked = false;
     }
 
     /**
@@ -71,11 +76,28 @@ export class SupervisorLink {
             }
         });
 
+        socket.on('stopHost', (forceStop: boolean) => {
+            this.blocked = true;
+            if (this.forkHandler.getDungeons().length === 0) {
+                socket.close();
+                exit(0);
+            } else if (forceStop) {
+                for (let dungeon of this.forkHandler.getDungeons()) {
+                    this.forkHandler.stopDungeon(dungeon.dungeonID);
+                }
+            }
+        });
+
         this.forkHandler.workerExitCallback = (dungeon: string) => {
             socket.emit('exit', {
                 dungeonID: dungeon
             });
-            socket.emit(`exit-${dungeon}`);  
+            socket.emit(`exit-${dungeon}`);
+            
+            if (this.blocked && this.forkHandler.getDungeons().length == 0) {
+                socket.close();
+                exit(0);
+            }
         };
 
         socket.on('setCharacterToken', (data: any) => {

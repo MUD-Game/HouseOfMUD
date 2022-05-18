@@ -5,6 +5,7 @@ import { Room } from "../../../data/interfaces/room";
 import { DungeonController } from "../../controller/dungeon-controller";
 import { Action } from "../action";
 import { actionDescriptions, actionMessages, errorMessages, triggers } from "./action-resources";
+import format from "./format";
 
 export class ShowActions extends Action {
 
@@ -31,17 +32,17 @@ export class ShowActions extends Action {
                     if (globalActions.includes(actionId)) {
                         return;
                     } else {
-                    let action: ActionElement = dungeon.getAction(actionId)
-                    let actionCommand: string = action.getCommand()
-                    let actionDescription: string = action.getDescription()
-                    actionString += `\n\t'${actionCommand}' - ${actionDescription};`
+                        let action: ActionElement = dungeon.getAction(actionId)
+                        let actionCommand: string = action.getCommand()
+                        let actionDescription: string = action.getDescription()
+                        actionString += `\n\t${format.bold}${actionCommand}${format.reset} - ${actionDescription};`
                     }
                 })
                 globalActions.forEach(actionId => {
                     let action: ActionElement = dungeon.getAction(actionId)
                     let actionCommand: string = action.getCommand()
                     let actionDescription: string = action.getDescription()
-                    actionString += `\n\t'${actionCommand}' - ${actionDescription};`
+                    actionString += `\n\t${format.bold}${actionCommand}${format.reset} - ${actionDescription};`
                 })
             } catch(e) {
                 //console.log(e)

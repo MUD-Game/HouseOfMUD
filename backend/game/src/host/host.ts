@@ -13,6 +13,8 @@ async function main() {
             name = process.argv[2];
         }
 
+        console.log(`Starting Host ${name} ...`);
+
         const forkHandler = new ForkHandler(config.amqpAdapter, config.mongodb);
         const supervisorLink = new SupervisorLink(name, config.supervisorLink.url, config.supervisorLink.port, config.supervisorLink.tls, config.supervisorLink.authKey, config.mongodb.database, forkHandler);
         supervisorLink.connect();

@@ -12,7 +12,8 @@ const filePath: (file: string) => string = (file: string) => path.resolve(__dirn
 const forkOptions: ForkOptions = {
     // inherit to pass through stdin/stdout/stderr
     // ipc for inter process communication
-    stdio: ['inherit', 'inherit', 'inherit', 'ipc']
+    stdio: ['ignore', 'ignore', 'ignore', 'ipc']
+    // stdio: ['inherit', 'inherit', 'inherit', 'ipc']
 };
 
 /**
@@ -96,7 +97,7 @@ export class ForkHandler {
             }
             delete this.dungeonWorker[dungeon];
         }
-        console.error(`Dungeon ${dungeon} exited with code ${code}`);
+        console.log(`[${dungeon}] Dungeon exited with code ${code}`);
         if (this.workerExitCallback !== undefined) {
             this.workerExitCallback(dungeon);
         }
@@ -112,6 +113,7 @@ export class ForkHandler {
             if (!(dungeon in this.dungeonWorker)) {
                 const mongoConnString: string = `mongodb://${this.mongodbConfig.user}:${encodeURIComponent(this.mongodbConfig.password)}@${this.mongodbConfig.host}:${this.mongodbConfig.port}`;
                 let args: string[] = [dungeon, this.amqpConfig.url, this.amqpConfig.port.toString(), this.amqpConfig.user, this.amqpConfig.password, this.amqpConfig.serverExchange, this.amqpConfig.clientExchange, mongoConnString, this.mongodbConfig.database];
+                console.error(`[${dungeon}] Starting dungeon ...`);
                 let dungeonFork: ChildProcess = fork(filePath('../worker/worker.js'), args, forkOptions);
                 dungeonFork.on('exit', (code: number | null): void => this.workerExitHandler(dungeon, code));
                 
@@ -122,6 +124,7 @@ export class ForkHandler {
 
                 dungeonFork.once('message', (data: any) => {
                     if (data.host_action == 'started') {
+                        console.error(`[${dungeon}] Dungeon successfully started`);
                         dungeonFork.on('message', (data: any): void => this.workerMessageHandler(dungeon, data));
                         this.dungeonWorker[dungeon] = {
                             fork: dungeonFork,
@@ -148,7 +151,7 @@ export class ForkHandler {
             this.sendToWorker(dungeon, 'stop', {});
             this.dungeonWorker[dungeon].killTimeout = setTimeout(() => {
                 if (dungeon in this.dungeonWorker) {
-                    console.log('kill');
+                    console.log(`[${dungeon}] Stop-Timeout: Process killed`);
                     this.dungeonWorker[dungeon].fork.kill();
                 }
             }, 1000 * 5);

@@ -49,7 +49,7 @@ export class SupervisorLink {
         const url: string = `${protocol}://${this.url}:${this.port}?name=${this.name}&key=${this.authKey}&database=${this.database}`;
         const socket = io(url);
 
-        socket.on('error', console.log);
+        socket.on('error', console.error);
 
         socket.on('connect', () => {
             console.log(`Connected to Supervisor`);
@@ -101,8 +101,6 @@ export class SupervisorLink {
         };
 
         socket.on('setCharacterToken', (data: any) => {
-
-            console.log(data);
 
             if (data.dungeon !== undefined && data.user !== undefined && data.character !== undefined && data.verifyToken !== undefined) {
                 let dungeonID = data.dungeon;

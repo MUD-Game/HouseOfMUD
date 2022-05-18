@@ -25,12 +25,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, group }) => {
     const [isLoading, setIsLoading] = React.useState(true);
     useEffect(() => {
         auth.isAuthenticated(() => {
-                setIsAuthenticated(true);
-                if(auth.user === "root"){
-                    setIsAdmin(true);
-                }else{
-                    setIsAdmin(false);
-                }
+            setIsAuthenticated(true);
             setIsLoading(false);
         }, () => {
             setIsAuthenticated(false);
@@ -46,10 +41,11 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, group }) => {
     if(isLoading){
         return <Busy/>
     } else if (isAuthenticated) {
-        if(group === 'admin' && !isAdmin){
-            return <Navigate to="/login" />
+        if(group === 'admin' && auth.user !== "root"){
+            console.log(group, auth.user, isAdmin)
+            return <Navigate to="/" />
         }
-        if(group === 'user' && isAdmin){
+        if(group === 'user' && auth.user === "root"){
             return <Navigate to="/admin-panel" />
         }
     }else{

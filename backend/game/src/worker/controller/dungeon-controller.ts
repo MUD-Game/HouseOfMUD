@@ -191,6 +191,7 @@ export class DungeonController {
                 this.selectedPlayer = undefined;
                 this.sendPlayerInformationData();
             }
+            sendToHost('dungeonState', { currentPlayers: Object.keys(this.dungeon.characters).length });
             this.amqpAdapter.broadcastAction('message', {
                 message: `${format.rgb(92, 92, 92)}${format.reset}${format.bold}${format.color.red}←${format.reset}${format.rgb(92, 92, 92)}${format.reset} ${characterName}`
             });
